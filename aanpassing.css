@@ -1,0 +1,577 @@
+/* Google Fonts Import - Voor een professionelere look */
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Oswald:wght@400;600;700&display=swap');
+
+/* Variabelen voor consistentie */
+:root {
+    --f1-red: #E10600;
+    --dark-bg: #121212;
+    --card-bg: #1e1e1e;
+    --text-light: #f0f0f0;
+    --text-dark-contrast: #c0c0c0;
+    --font-heading: 'Oswald', sans-serif;
+    --font-body: 'Roboto', sans-serif;
+}
+
+/* Base Styles */
+body {
+    font-family: var(--font-body);
+    line-height: 1.6;
+    margin: 0;
+    padding: 0;
+    background-color: var(--dark-bg);
+    color: var(--text-light);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+.container {
+    width: 92%; /* Iets breder voor meer content ruimte */
+    max-width: 1400px; /* Grotere max breedte */
+    margin: 0 auto;
+    padding: 20px 0;
+}
+
+/* Header */
+header {
+    background-color: #000;
+    color: #fff;
+    padding: 1.2rem 0;
+    border-bottom: 4px solid var(--f1-red); /* Dikkere rode lijn */
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+    position: sticky; /* Blijft bovenaan bij scrollen */
+    top: 0;
+    z-index: 1000; /* Zorgt ervoor dat het boven andere elementen blijft */
+}
+
+.header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.site-title {
+    font-family: var(--font-heading);
+    margin: 0;
+    font-size: 2.8rem;
+    letter-spacing: 3px; /* Meer spatiëring voor 'F1' look */
+    color: var(--f1-red);
+    text-transform: uppercase;
+    font-weight: 700;
+}
+
+.main-nav a {
+    color: var(--text-light);
+    text-decoration: none;
+    margin-left: 35px;
+    font-weight: 500;
+    font-size: 1.05rem;
+    position: relative;
+    transition: color 0.3s ease, transform 0.2s ease;
+    text-transform: uppercase;
+}
+
+.main-nav a::after {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 3px;
+    background-color: var(--f1-red);
+    left: 0;
+    bottom: -10px; /* Lager voor een subtielere underline */
+    transition: width 0.3s ease;
+}
+
+.main-nav a:hover,
+.main-nav a.active {
+    color: var(--f1-red);
+    transform: translateY(-2px); /* Lichte lift bij hover */
+}
+
+.main-nav a:hover::after,
+.main-nav a.active::after {
+    width: 100%;
+}
+
+/* Page Header Section */
+.page-header-section {
+    background: linear-gradient(135deg, #282828, #1a1a1a); /* Subtiele gradient */
+    padding: 50px 40px;
+    margin-bottom: 40px;
+    border-radius: 12px; /* Afgerondere hoeken */
+    text-align: center;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+    border: 1px solid #333; /* Subtiele rand */
+}
+
+.page-heading {
+    font-family: var(--font-heading);
+    font-size: 4rem; /* Groter lettertype */
+    color: var(--f1-red);
+    margin-top: 0;
+    margin-bottom: 20px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    font-weight: 700;
+    text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.4);
+}
+
+.page-intro {
+    font-size: 1.4rem;
+    color: var(--text-dark-contrast);
+    max-width: 900px;
+    margin: 0 auto;
+    font-weight: 300;
+}
+
+/* Race Calendar Section */
+.race-calendar {
+    background-color: var(--card-bg);
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+}
+
+.section-subtitle {
+    font-family: var(--font-heading);
+    font-size: 3rem;
+    color: var(--f1-red);
+    text-align: center;
+    margin-top: 0;
+    margin-bottom: 50px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    font-weight: 600;
+}
+
+.race-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); /* Iets flexibeler min-width */
+    gap: 30px;
+}
+
+/* Race Card Styles */
+.race-card {
+    background-color: #2b2b2b; /* Net iets donkerder dan hoofdachtergrond */
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Link Wrapper voor de kaart */
+.circuit-link {
+    text-decoration: none; /* Verwijder standaard link onderstreping */
+    color: inherit; /* Erf tekstkleur van parent */
+    display: flex;
+    flex-direction: column;
+    height: 100%; /* Zorgt dat de link de hele kaart omvat */
+}
+
+.race-card:hover {
+    transform: translateY(-10px); /* Meer uitgesproken lift */
+    box-shadow: 0 12px 25px rgba(0, 0, 0, 0.4);
+}
+
+.race-image-container {
+    width: 100%;
+    height: 220px; /* Iets hogere afbeelding */
+    overflow: hidden;
+    position: relative; /* Voor overlay effecten */
+}
+
+.circuit-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.4s ease; /* Snellere en vloeiendere zoom */
+}
+
+.race-card:hover .circuit-image {
+    transform: scale(1.1); /* Meer zoom op hover */
+}
+
+.race-info {
+    padding: 25px; /* Meer padding */
+    text-align: center;
+    flex-grow: 1; /* Zorgt dat de info de overgebleven ruimte inneemt */
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between; /* Datum/locatie onderaan */
+}
+
+.race-info h4 {
+    font-family: var(--font-heading);
+    color: var(--f1-red);
+    font-size: 2.1rem; /* Grotere titels */
+    margin-top: 0;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    font-weight: 700;
+    line-height: 1.2;
+}
+
+.race-info p {
+    margin: 6px 0;
+    font-size: 1.05rem;
+    color: var(--text-dark-contrast);
+}
+
+.race-info strong {
+    color: var(--text-light);
+    font-weight: 500;
+}
+
+/* Footer Styles */
+footer {
+    background-color: #000;
+    color: var(--text-light);
+    text-align: center;
+    padding: 2rem 0; /* Meer padding */
+    margin-top: 60px;
+    border-top: 4px solid var(--f1-red);
+    box-shadow: 0 -4px 15px rgba(0, 0, 0, 0.4);
+}
+
+.footer-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 20px; /* Ruimte tussen elementen in footer */
+}
+
+footer p {
+    margin: 0;
+    font-size: 0.95rem;
+    color: var(--text-dark-contrast);
+}
+
+.social-links a {
+    color: var(--text-light);
+    text-decoration: none;
+    margin-left: 25px;
+    font-weight: 500;
+    transition: color 0.3s ease, transform 0.2s ease;
+    font-size: 1rem;
+}
+
+.social-links a:hover {
+    color: var(--f1-red);
+    transform: translateY(-2px);
+}
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+    .container {
+        width: 95%;
+    }
+    .page-heading {
+        font-size: 3.5rem;
+    }
+    .section-subtitle {
+        font-size: 2.5rem;
+    }
+}
+
+@media (max-width: 992px) {
+    .site-title {
+        font-size: 2.2rem;
+        letter-spacing: 2px;
+    }
+    .main-nav a {
+        margin-left: 20px;
+        font-size: 0.95rem;
+    }
+    .page-heading {
+        font-size: 3rem;
+    }
+    .page-intro {
+        font-size: 1.2rem;
+    }
+    .section-subtitle {
+        font-size: 2rem;
+    }
+    .race-grid {
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 25px;
+    }
+    .race-info h4 {
+        font-size: 1.8rem;
+    }
+    .race-image-container {
+        height: 180px;
+    }
+}
+
+@media (max-width: 768px) {
+    .header-content,
+    .footer-content {
+        flex-direction: column;
+        text-align: center;
+        gap: 15px;
+    }
+    .main-nav {
+        margin-top: 15px;
+    }
+    .main-nav a {
+        margin: 0 10px;
+        display: inline-block; /* Zorgt dat links naast elkaar blijven */
+    }
+    .site-title {
+        font-size: 2rem;
+    }
+    .page-header-section {
+        padding: 40px 20px;
+    }
+    .page-heading {
+        font-size: 2.5rem;
+    }
+    .page-intro {
+        font-size: 1rem;
+    }
+    .section-subtitle {
+        font-size: 1.8rem;
+    }
+    .race-grid {
+        grid-template-columns: 1fr; /* Één kolom op kleine schermen */
+    }
+    .race-info h4 {
+        font-size: 1.6rem;
+    }
+    .race-image-container {
+        height: 200px; /* Hoger op mobiel voor betere zichtbaarheid */
+    }
+    .social-links {
+        margin-top: 10px;
+    }
+    .social-links a {
+        margin: 0 8px;
+    }
+}
+
+@media (max-width: 480px) {
+    .site-title {
+        font-size: 1.6rem;
+    }
+    .page-heading {
+        font-size: 2rem;
+        letter-spacing: 1px;
+    }
+    .page-intro {
+        font-size: 0.9rem;
+    }
+    .section-subtitle {
+        font-size: 1.6rem;
+    }
+    .race-info h4 {
+        font-size: 1.4rem;
+        letter-spacing: 0.5px;
+    }
+    .race-info p {
+        font-size: 0.95rem;
+    }
+}
+
+/* --- Circuit Detail Page Specific Styles --- */
+
+.circuit-detail-page {
+    padding-top: 40px;
+}
+
+.circuit-info-section {
+    background-color: var(--card-bg);
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+    text-align: center;
+}
+
+.circuit-header {
+    margin-bottom: 40px;
+}
+
+.circuit-main-map {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+    margin-bottom: 30px;
+}
+
+.circuit-title {
+    font-family: var(--font-heading);
+    font-size: 3.5rem;
+    color: var(--f1-red);
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    margin-top: 0;
+    margin-bottom: 10px;
+    font-weight: 700;
+}
+
+.circuit-location {
+    font-size: 1.5rem;
+    color: var(--text-dark-contrast);
+    font-weight: 300;
+}
+
+.circuit-details-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 25px;
+    margin-bottom: 40px;
+    padding: 0 20px;
+}
+
+.detail-card {
+    background-color: #2b2b2b;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    text-align: center;
+    transition: transform 0.2s ease, background-color 0.2s ease;
+}
+
+.detail-card:hover {
+    transform: translateY(-5px);
+    background-color: #3a3a3a;
+}
+
+.detail-card h4 {
+    font-family: var(--font-heading);
+    font-size: 1.2rem;
+    color: var(--f1-red);
+    text-transform: uppercase;
+    margin-top: 0;
+    margin-bottom: 10px;
+    font-weight: 600;
+}
+
+.detail-card p {
+    font-size: 1.1rem;
+    color: var(--text-light);
+    font-weight: 500;
+}
+
+.circuit-description,
+.circuit-highlights {
+    text-align: left;
+    margin-bottom: 40px;
+    padding: 0 20px;
+}
+
+.description-title,
+.highlights-title {
+    font-family: var(--font-heading);
+    font-size: 2.2rem;
+    color: var(--f1-red);
+    text-transform: uppercase;
+    margin-bottom: 25px;
+    border-bottom: 2px solid rgba(225, 6, 0, 0.5);
+    padding-bottom: 10px;
+    display: inline-block;
+    font-weight: 600;
+}
+
+.circuit-description p {
+    font-size: 1.15rem;
+    line-height: 1.8;
+    color: var(--text-dark-contrast);
+}
+
+.circuit-highlights ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.circuit-highlights li {
+    background-color: #2b2b2b;
+    margin-bottom: 15px;
+    padding: 15px 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    transition: background-color 0.2s ease;
+}
+
+.circuit-highlights li:hover {
+    background-color: #3a3a3a;
+}
+
+.circuit-highlights li p {
+    font-size: 1.1rem;
+    color: var(--text-light);
+    margin: 0;
+}
+
+.back-link-container {
+    text-align: center;
+    margin-top: 50px;
+}
+
+.back-to-calendar {
+    display: inline-block;
+    background-color: var(--f1-red);
+    color: #fff;
+    padding: 15px 30px;
+    text-decoration: none;
+    border-radius: 5px;
+    font-family: var(--font-heading);
+    font-size: 1.2rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.back-to-calendar:hover {
+    background-color: #cc0500; /* Iets donkerder rood */
+    transform: translateY(-3px);
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+}
+
+/* Responsive aanpassingen voor circuit details pagina */
+@media (max-width: 768px) {
+    .circuit-info-section {
+        padding: 20px;
+    }
+    .circuit-title {
+        font-size: 2.5rem;
+    }
+    .circuit-location {
+        font-size: 1.2rem;
+    }
+    .circuit-details-grid {
+        grid-template-columns: 1fr;
+        padding: 0;
+    }
+    .description-title,
+    .highlights-title {
+        font-size: 1.8rem;
+    }
+    .circuit-description p,
+    .circuit-highlights li p {
+        font-size: 1rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .circuit-title {
+        font-size: 2rem;
+    }
+    .circuit-location {
+        font-size: 1rem;
+    }
+    .detail-card h4 {
+        font-size: 1rem;
+    }
+    .detail-card p {
+        font-size: 0.9rem;
+    }
+    .back-to-calendar {
+        padding: 12px 20px;
+        font-size: 1rem;
+    }
+}

@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Circuit Details - F1 Seizoen 2025</title>
+    <link rel="stylesheet" href="aanpassing.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Oswald:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header>
+        <div class="header-content container">
+            <h1 class="site-title">FORMULA 1</h1>
+            <nav class="main-nav">
+                <a href="index.html">Home</a>
+                <a href="kalender.html">Schedule</a>
+                <a href="teams.html">Teams</a>
+                <a href="drivers.html">Drivers</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container circuit-detail-page">
+        <section class="page-header-section">
+            <h2 class="page-heading" id="circuit-title">CIRCUIT NAME</h2>
+            <p class="page-intro" id="circuit-name-intro">Ontdek alles over de iconische circuits van de Formule 1.</p>
+        </section>
+
+        <section class="circuit-info-section">
+            <div class="circuit-header">
+                <img src="https://www.formula1.com/content/dam/fom-website/2018-redesign-assets/Circuit%20maps%2016x9/Australia_Circuit.png" alt="Circuit Map" class="circuit-main-map" id="circuit-main-map">
+                <h3 class="circuit-title" id="circuit-title">Circuit Naam</h3>
+                <p class="circuit-location" id="circuit-location">Locatie, Land</p>
+            </div>
+
+            <div class="circuit-details-grid">
+                <div class="detail-card">
+                    <h4>Eerste Grand Prix</h4>
+                    <p id="first-gp">Jaar</p>
+                </div>
+                <div class="detail-card">
+                    <h4>Aantal ronden</h4>
+                    <p id="lap-count">X</p>
+                </div>
+                <div class="detail-card">
+                    <h4>Circuitlengte</h4>
+                    <p id="circuit-length">X.XXX km</p>
+                </div>
+                <div class="detail-card">
+                    <h4>Raceafstand</h4>
+                    <p id="race-distance">XXX.XXX km</p>
+                </div>
+                <div class="detail-card">
+                    <h4>Ronderecord</h4>
+                    <p id="lap-record">Tijd (Coureur, Jaar)</p>
+                </div>
+            </div>
+
+            <div class="circuit-description">
+                <h4 class="description-title">OVER HET CIRCUIT</h4>
+                <p id="circuit-description-text">
+                    Dit is een algemene beschrijving van het circuit. Hier zou gedetailleerde informatie komen over de geschiedenis van het circuit, unieke kenmerken, beroemde bochten, en wat het zo speciaal maakt voor zowel coureurs als fans. Bijvoorbeeld, de uitdagingen die het circuit biedt, de sfeer van de locatie, en memorabele momenten uit de Formule 1-geschiedenis die hier hebben plaatsgevonden.
+                </p>
+            </div>
+
+            <div class="circuit-highlights">
+                <h4 class="highlights-title">HOOGTEPUNTEN</h4>
+                <ul>
+                    <li><p>Kenmerk 1: Een uniek aspect van het circuit of de race.</p></li>
+                    <li><p>Kenmerk 2: Een beroemde bocht of sectie.</p></li>
+                    <li><p>Kenmerk 3: Belangrijke feiten of statistieken.</p></li>
+                </ul>
+            </div>
+
+            <div class="back-link-container">
+                <a href="kalender.html" class="back-to-calendar">Terug naar de kalender</a>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="footer-content container">
+            <p>&copy; 2025 Formula 1 Fanpagina. Alle rechten voorbehouden.</p>
+            <div class="social-links">
+                <a href="#" aria-label="Facebook">Facebook</a>
+                <a href="#" aria-label="Twitter">Twitter</a>
+                <a href="#" aria-label="Instagram">Instagram</a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const params = new URLSearchParams(window.location.search);
+            const circuitId = params.get('circuit');
+
+            const circuitData = {
+                'australia': {
+                    title: 'Albert Park Circuit',
+                    location: 'Melbourne, Australië',
+                    map: 'https://www.formula1.com/content/dam/fom-website/2018-redesign-assets/Circuit%20maps%2016x9/Australia_Circuit.png',
+                    firstGp: '1996',
+                    lapCount: '58',
+                    circuitLength: '5.303 km',
+                    raceDistance: '307.574 km',
+                    lapRecord: '1:20.260 (Charles Leclerc, 2022)',
+                    description: 'Het Albert Park Circuit is een semi-permanent stratencircuit rond het Albert Parkmeer in Melbourne. Het staat bekend om zijn snelle, vloeiende bochten en is vaak de openingsrace van het seizoen, wat zorgt voor veel spanning en onvoorspelbaarheid.',
+                    highlights: [
+                        'Snel, vloeiend stratencircuit.',
+                        'Thuisbasis van de seizoensopener.',
+                        'Veel inhaalmogelijkheden na de DRS-zones.'
+                    ]
+                },
+                'china': {
+                    title: 'Shanghai International Circuit',
+                    location: 'Shanghai, China',
+                    map: 'https://www.formula1.com/content/dam/fom-website/2018-redesign-assets/Circuit%20maps%2016x9/China_Circuit.png',
+                    firstGp: '2004',
+                    lapCount: '56',
+                    circuitLength: '5.451 km',
+                    raceDistance: '305.066 km',
+                    lapRecord: '1:32.238 (Michael Schumacher, 2004)',
+                    description: 'Het Shanghai International Circuit is ontworpen om te lijken op het Chinese karakter \'shang\' (上), wat \'boven\' of \'opkomst\' betekent. Het circuit staat bekend om zijn unieke bocht 1 en 2, een spiraalvormige sectie die zowel de coureur als de banden zwaar op de proef stelt.',
+                    highlights: [
+                        'Unieke "slakkenhuis" eerste bocht.',
+                        'Lange rechte stukken voor topsnelheid.',
+                        'Vaak onvoorspelbaar weer.'
+                    ]
+                },
+                'japan': {
+                    title: 'Suzuka International Racing Course',
+                    location: 'Suzuka, Japan',
+                    map: 'https://www.formula1.com/content/dam/fom-website/2018-redesign-assets/Circuit%20maps%2016x9/Japan_Circuit.png',
+                    firstGp: '1987',
+                    lapCount: '53',
+                    circuitLength: '5.807 km',
+                    raceDistance: '307.471 km',
+                    lapRecord: '1:30.983 (Lewis Hamilton, 2019)',
+                    description: 'Suzuka is een favoriet onder coureurs vanwege zijn unieke "figure-of-eight" lay-out met een overbrugd gedeelte. Het staat bekend om zijn uitdagende snelle S-bochten en de 130R, een van de meest veeleisende bochten in de F1.',
+                    highlights: [
+                        'Unieke figure-of-eight lay-out.',
+                        'Zeer technische S-bochten sectie.',
+                        'De legendarische 130R bocht.'
+                    ]
+                },
+                'bahrain': {
+                    title: 'Bahrain International Circuit',
+                    location: 'Sakhir, Bahrein',
+                    map: 'https://www.formula1.com/content/dam/fom-website/2018-redesign-assets/Circuit%20maps%2016x9/Bahrain_Circuit.png',
+                    firstGp: '2004',
+                    lapCount: '57',
+                    circuitLength: '5.412 km',
+                    raceDistance: '308.238 km',
+                    lapRecord: '1:31.447 (Pedro de la Rosa, 2005)',
+                    description: 'Het Bahrain International Circuit is een modern circuit gebouwd in de woestijn. Het staat bekend om zijn nachtraces onder kunstlicht, wat spectaculaire beelden en uitdagingen oplevert voor de teams met betrekking tot bandendegradatie en remslijtage.',
+                    highlights: [
+                        'Spectaculaire nachtrace onder kunstlicht.',
+                        'Agressieve lay-out met veel hard remmen.',
+                        'Hoge bandendegradatie door het woestijnzand en de hitte.'
+                    ]
+                },
+                'saudi-arabia': {
+                    title: 'Jeddah Corniche Circuit',
+                    location: 'Jeddah, Saudi-Arabië',
+                    map: 'https://media.formula1.com/image/upload/c_fit,h_704/q_auto/v1740000000/content/dam/fom-website/2018-redesign-assets/Circuit%20maps%2016x9/Saudi_Arabia_Circuit.webp',
+                    firstGp: '2021',
+                    lapCount: '50',
+                    circuitLength: '6.174 km',
+                    raceDistance: '308.450 km',
+                    lapRecord: '1:30.734 (Lewis Hamilton, 2021)',
+                    description: 'Het Jeddah Corniche Circuit is het snelste stratencircuit op de kalender, met veel blinde, snelle bochten die het ongelooflijk uitdagend en risicovol maken. Het ligt aan de kustlijn en biedt een prachtig uitzicht, maar de race is intens en vereist uiterste precisie.',
+                    highlights: [
+                        'Snelste stratencircuit op de kalender.',
+                        'Veel blinde, snelle bochten.',
+                        'Hoge G-krachten voor coureurs.'
+                    ]
+                },
+                'miami': {
+                    title: 'Miami International Autodrome',
+                    location: 'Miami, VS',
+                    map: 'https://www.formula1.com/content/dam/fom-website/2018-redesign-assets/Circuit%20maps%2016x9/Miami_Circuit.png',
+                    firstGp: '2022',
+                    lapCount: '57',
+                    circuitLength: '5.412 km',
+                    raceDistance: '308.326 km',
+                    lapRecord: '1:29.708 (Max Verstappen, 2022)',
+                    description: 'Het Miami International Autodrome is een semi-permanent circuit gebouwd rond het Hard Rock Stadium. Het circuit is ontworpen om een straatcircuitgevoel te geven, met een mix van snelle en technische secties en een unieke sfeer die de Amerikaanse GP-cultuur omarmt.',
+                    highlights: [
+                        'Semi-permanent circuit rond een sportstadion.',
+                        'Mix van snelle en krappe secties.',
+                        'Beroemd om zijn unieke, feestelijke sfeer.'
+                    ]
+                },
+                'emilia-romagna': {
+                    title: 'Autodromo Internazionale Enzo e Dino Ferrari',
+                    location: 'Imola, Italië',
+                    map: 'https://media.formula1.com/image/upload/c_fit,h_704/q_auto/v1740000000/content/dam/fom-website/2018-redesign-assets/Circuit%20maps%2016x9/Emilia_Romagna_Circuit.webp',
+                    firstGp: '1980 (als Italiaanse GP)',
+                    lapCount: '63',
+                    circuitLength: '4.909 km',
+                    raceDistance: '309.297 km',
+                    lapRecord: '1:15.484 (Lewis Hamilton, 2020)',
+                    description: 'Imola is een klassiek Europees circuit met een rijke geschiedenis. Bekend om zijn snelle en veeleisende aard, evenals de historische Tamburello-bocht. Het is een circuit dat geen fouten vergeeft en echte racevaardigheid vereist.',
+                    highlights: [
+                        'Historisch Europees circuit.',
+                        'Snel en veeleisend met weinig uitloopstroken.',
+                        'Thuisbasis van de voormalige San Marino Grand Prix.'
+                    ]
+                },
+                'monaco': {
+                    title: 'Circuit de Monaco',
+                    location: 'Monte Carlo, Monaco',
+                    map: 'https://www.formula1.com/content/dam/fom-website/2018-redesign-assets/Circuit%20maps%2016x9/Monaco_Circuit.png',
+                    firstGp: '1950',
+                    lapCount: '78',
+                    circuitLength: '3.337 km',
+                    raceDistance: '260.286 km',
+                    lapRecord: '1:12.909 (Lewis Hamilton, 2021)',
+                    description: 'Monaco is het kroonjuweel van de Formule 1-kalender. Het is het langzaamste en meest technische circuit, dat ongelooflijke precisie vereist. Passeren is bijna onmogelijk, wat de kwalificatie cruciaal maakt. De glamour en geschiedenis maken het een uniek evenement.',
+                    highlights: [
+                        'Het meest prestigieuze F1-evenement.',
+                        'Kraptste en langzaamste circuit.',
+                        'Beroemd om zijn tunnel en zwembad-gedeelte.'
+                    ]
+                },
+                'spain': {
+                    title: 'Circuit de Barcelona-Catalunya',
+                    location: 'Barcelona, Spanje',
+                    map: 'https://www.formula1.com/content/dam/fom-website/2018-redesign-assets/Circuit%20maps%2016x9/Spain_Circuit.png',
+                    firstGp: '1991',
+                    lapCount: '66',
+                    circuitLength: '4.675 km',
+                    raceDistance: '308.424 km',
+                    lapRecord: '1:18.149 (Max Verstappen, 2021)',
+                    description: 'Dit circuit is een vaste waarde op de kalender en staat bekend om zijn uitgebreide testmogelijkheden in het voorseizoen. Het biedt een mix van snelle en langzame bochten, wat het een goede indicator maakt voor de algemene prestaties van een auto. De lange laatste bocht is cruciaal voor de banden.',
+                    highlights: [
+                        'Vaak gebruikt voor wintertests.',
+                        'Mix van snelle en langzame secties.',
+                        'De laatste sector is cruciaal voor bandenmanagement.'
+                    ]
+                },
+                'canada': {
+                    title: 'Circuit Gilles Villeneuve',
+                    location: 'Montreal, Canada',
+                    map: 'https://www.formula1.com/content/dam/fom-website/2018-redesign-assets/Circuit%20maps%2016x9/Canada_Circuit.png',
+                    firstGp: '1978',
+                    lapCount: '70',
+                    circuitLength: '4.361 km',
+                    raceDistance: '305.270 km',
+                    lapRecord: '1:13.078 (Valtteri Bottas, 2019)',
+                    description: 'Het Circuit Gilles Villeneuve ligt op een kunstmatig eiland in Montreal en staat bekend om zijn snelle rechte stukken, krappe chicanes en de beruchte "Wall of Champions" bij de laatste bocht. Het is een circuit waar coureurs lef moeten tonen en vaak verrassende races oplevert.',
+                    highlights: [
+                        'Semi-stratencircuit op een eiland.',
+                        'De "Wall of Champions" is berucht.',
+                        'Hoge snelheid en veel remzones.'
+                    ]
+                },
+                'austria': {
+                    title: 'Red Bull Ring',
+                    location: 'Spielberg, Oostenrijk',
+                    map: 'https://www.formula1.com/content/dam/fom-website/2018-redesign-assets/Circuit%20maps%2016x9/Austria_Circuit.png',
+                    firstGp: '1970 (als Oostenrijkse GP op de Österreichring)',
+                    lapCount: '71',
+                    circuitLength: '4.318 km',
+                    raceDistance: '306.452 km',
+                    lapRecord: '1:05.619 (Carlos Sainz, 2020)',
+                    description: 'De Red Bull Ring is een kort, maar snel circuit in de Oostenrijkse bergen, met veel hoogteverschillen. Het circuit heeft relatief weinig bochten, wat resulteert in korte rondetijden en vaak spannende sprintraces. Inhaalacties zijn hier goed mogelijk.',
+                    highlights: [
+                        'Kort en snel circuit met hoogteverschillen.',
+                        'Veel inhaalmogelijkheden.',
+                        'Prachtige locatie in de Oostenrijkse Alpen.'
+                    ]
+                },
+                'great-britain': {
+                    title: 'Silverstone Circuit',
+                    location: 'Silverstone, Groot-Brittannië',
+                    map: 'https://www.formula1.com/content/dam/fom-website/2018-redesign-assets/Circuit%20maps%2016x9/Great_Britain_Circuit.png',
+                    firstGp: '1950',
+                    lapCount: '52',
+                    circuitLength: '5.891 km',
+                    raceDistance: '306.198 km',
+                    lapRecord: '1:27.097 (Max Verstappen, 2020)',
+                    description: 'Silverstone is de geboorteplaats van de Formule 1 en een van de snelste circuits op de kalender. Het staat bekend om zijn high-speed bochtcombinaties zoals Maggotts-Becketts-Chapel en de enorme hoeveelheid fans. Het weer kan hier een cruciale rol spelen.',
+                    highlights: [
+                        'De bakermat van de Formule 1.',
+                        'Zeer hoge snelheidsbochten.',
+                        'Massale Britse fans zorgen voor een geweldige sfeer.'
+                    ]
+                },
+                'belgium': {
+                    title: 'Circuit de Spa-Francorchamps',
+                    location: 'Spa-Francorchamps, België',
+                    map: 'https://www.formula1.com/content/dam/fom-website/2018-redesign-assets/Circuit%20maps%2016x9/Belgium_Circuit.png',
+                    firstGp: '1950',
+                    lapCount: '44',
+                    circuitLength: '7.004 km',
+                    raceDistance: '308.052 km',
+                    lapRecord: '1:46.286 (Valtteri Bottas, 2018)',
+                    description: 'Spa-Francorchamps is het langste en een van de meest geliefde circuits op de F1-kalender, beroemd om zijn iconische Eau Rouge/Raidillon-combinatie en de snelle, glooiende aard. Het Ardense weer is vaak onvoorspelbaar en draagt bij aan de spanning van de race.',
+                    highlights: [
+                        'Langste circuit op de F1-kalender.',
+                        'De legendarische Eau Rouge/Raidillon bocht.',
+                        'Onvoorspelbaar Ardenner weer.'
+                    ]
+                },
+                'hungary': {
+                    title: 'Hungaroring',
+                    location: 'Mogyoród, Hongarije',
+                    map: 'https://www.formula1.com/content/dam/fom-website/2018-redesign-assets/Circuit%20maps%2016x9/Hungary_Circuit.png',
+                    firstGp: '1986',
+                    lapCount: '70',
+                    circuitLength: '4.381 km',
+                    raceDistance: '306.670 km',
+                    lapRecord: '1:16.627 (Lewis Hamilton, 2020)',
+                    description: 'De Hungaroring staat bekend als een bochtig en technisch circuit, vaak vergeleken met een \'Monaco zonder muren\'. Het is moeilijk om hier in te halen, waardoor kwalificatie en strategie cruciaal zijn. De races vinden plaats in de zomerhitte, wat fysiek veeleisend is voor coureurs.',
+                    highlights: [
+                        'Technisch, bochtig circuit, moeilijk inhalen.',
+                        'Hoge temperaturen en fysiek veeleisend.',
+                        'Dichtbij Boedapest, populaire bestemming.'
+                    ]
+                },
+                'netherlands': {
+                    title: 'Circuit Park Zandvoort',
+                    location: 'Zandvoort, Nederland',
+                    map: 'https://www.formula1.com/content/dam/fom-website/2018-redesign-assets/Circuit%20maps%2016x9/Netherlands_Circuit.png',
+                    firstGp: '1952',
+                    lapCount: '72',
+                    circuitLength: '4.259 km',
+                    raceDistance: '306.648 km',
+                    lapRecord: '1:11.097 (Lewis Hamilton, 2021)',
+                    description: 'Circuit Zandvoort keerde na lange tijd terug op de kalender en staat bekend om zijn unieke kombochten (banking) en de smalle, vloeiende lay-out door de duinen. Het creëert een ongelooflijke sfeer met duizenden oranjegekleurde Nederlandse fans.',
+                    highlights: [
+                        'Unieke kombochten (banking).',
+                        'Smalle, vloeiende lay-out door de duinen.',
+                        'De "Oranje"-zee van fans.'
+                    ]
+                },
+                'italy': {
+                    title: 'Autodromo Nazionale Monza',
+                    location: 'Monza, Italië',
+                    map: 'https://www.formula1.com/content/dam/fom-website/2018-redesign-assets/Circuit%20maps%2016x9/Italy_Circuit.png',
+                    firstGp: '1950',
+                    lapCount: '53',
+                    circuitLength: '5.793 km',
+                    raceDistance: '306.720 km',
+                    lapRecord: '1:21.046 (Rubens Barrichello, 2004)',
+                    description: 'Monza, de "Tempel van Snelheid", is het snelste circuit op de kalender met lange rechte stukken en snelle chicanes. Het is de thuisbasis van de Tifosi, de gepassioneerde Ferrari-fans, en staat garant voor races met veel slipstreamen en hoge snelheden.',
+                    highlights: [
+                        'De "Tempel van Snelheid" - het snelste circuit.',
+                        'Legendarische parabolica-bocht.',
+                        'De passie van de Tifosi.'
+                    ]
+                },
+                'azerbaijan': {
+                    title: 'Baku City Circuit',
+                    location: 'Baku, Azerbeidzjan',
+                    map: 'https://media.formula1.com/image/upload/c_fit,h_704/q_auto/v1740000000/content/dam/fom-website/2018-redesign-assets/Circuit%20maps%2016x9/Baku_Circuit.webp',
+                    firstGp: '2016',
+                    lapCount: '51',
+                    circuitLength: '6.003 km',
+                    raceDistance: '306.049 km',
+                    lapRecord: '1:43.009 (Charles Leclerc, 2019)',
+                    description: 'Baku City Circuit is een uniek stratencircuit met een extreem lang recht stuk en een zeer smal, technisch deel rond de oude stadsmuren. Het staat bekend om zijn onvoorspelbaarheid en races vol incidenten en safety cars.',
+                    highlights: [
+                        'Extreem lang recht stuk (langste op de kalender).',
+                        'Zeer smal gedeelte door de oude stad.',
+                        'Beroemd om onvoorspelbare races.'
+                    ]
+                },
+                'singapore': {
+                    title: 'Marina Bay Street Circuit',
+                    location: 'Singapore',
+                    map: 'https://www.formula1.com/content/dam/fom-website/2018-redesign-assets/Circuit%20maps%2016x9/Singapore_Circuit.png',
+                    firstGp: '2008',
+                    lapCount: '61',
+                    circuitLength: '5.063 km',
+                    raceDistance: '308.706 km',
+                    lapRecord: '1:41.905 (Kevin Magnussen, 2018)',
+                    description: 'Het Marina Bay Street Circuit was de eerste nachtrace in de F1-geschiedenis en biedt een spectaculair stedelijk decor. Het is een fysiek veeleisend circuit door de hitte, vochtigheid en het grote aantal bochten, wat resulteert in lange, uitputtende races.',
+                    highlights: [
+                        'Eerste F1-nachtrace.',
+                        'Fysiek veeleisend door hitte en vochtigheid.',
+                        'Spectaculaire stadsomgeving.'
+                    ]
+                },
+                'united-states': {
+                    title: 'Circuit of the Americas',
+                    location: 'Austin, VS',
+                    map: 'https://www.formula1.com/content/dam/fom-website/2018-redesign-assets/Circuit%20maps%2016x9/USA_Circuit.png',
+                    firstGp: '2012',
+                    lapCount: '56',
+                    circuitLength: '5.513 km',
+                    raceDistance: '308.405 km',
+                    lapRecord: '1:32.029 (Charles Leclerc, 2019)',
+                    description: 'COTA is een modern circuit met veel hoogteverschillen en geïnspireerd op elementen van andere beroemde circuits (zoals Maggotts/Becketts van Silverstone). De iconische steile klim naar bocht 1 biedt een geweldige gelegenheid voor inhaalacties bij de start.',
+                    highlights: [
+                        'Iconische steile klim naar bocht 1.',
+                        'Mix van snelle en technische secties.',
+                        'Geïnspireerd op bochten van andere circuits.'
+                    ]
+                },
+                'mexico-city': {
+                    title: 'Autódromo Hermanos Rodríguez',
+                    location: 'Mexico-Stad, Mexico',
+                    map: 'https://www.formula1.com/content/dam/fom-website/2018-redesign-assets/Circuit%20maps%2016x9/Mexico_Circuit.png',
+                    firstGp: '1963',
+                    lapCount: '71',
+                    circuitLength: '4.304 km',
+                    raceDistance: '305.584 km',
+                    lapRecord: '1:17.774 (Valtteri Bottas, 2021)',
+                    description: 'Het Autódromo Hermanos Rodríguez staat bekend om zijn hoge ligging (boven 2.200 meter), wat de auto\'s en motoren zwaar beïnvloedt. Het heeft een unieke, stadionsfeer door de Foro Sol-sectie waar duizenden fans bijeenkomen.',
+                    highlights: [
+                        'Hoogste circuit op de kalender (ijle lucht).',
+                        'Spectaculaire Foro Sol stadionsectie.',
+                        'Lange rechte stukken gecombineerd met technische bochten.'
+                    ]
+                },
+                'brazil': {
+                    title: 'Autódromo José Carlos Pace',
+                    location: 'São Paulo, Brazilië',
+                    map: 'https://www.formula1.com/content/dam/fom-website/2018-redesign-assets/Circuit%20maps%2016x9/Brazil_Circuit.png',
+                    firstGp: '1973',
+                    lapCount: '71',
+                    circuitLength: '4.309 km',
+                    raceDistance: '305.909 km',
+                    lapRecord: '1:10.540 (Valtteri Bottas, 2018)',
+                    description: 'Interlagos is een legendarisch circuit met een rijke historie en veel races die het kampioenschap beslisten. Het is een van de weinige circuits die tegen de klok in wordt gereden en staat bekend om zijn glooiende lay-out, snelle bochten en onvoorspelbaar weer.',
+                    highlights: [
+                        'Tegen de klok in gereden circuit.',
+                        'Rijke historie met veel kampioenschapsbeslissingen.',
+                        'Vloeiende, snelle secties en veel hoogteverschil.'
+                    ]
+                },
+                'las-vegas': {
+                    title: 'Las Vegas Strip Circuit',
+                    location: 'Las Vegas, VS',
+                    map: 'https://www.formula1.com/content/dam/fom-website/2018-redesign-assets/Circuit%20maps%2016x9/Las_Vegas_Circuit.png',
+                    firstGp: '2023',
+                    lapCount: '50',
+                    circuitLength: '6.201 km',
+                    raceDistance: '310.050 km',
+                    lapRecord: '1:35.490 (Oscar Piastri, 2023)',
+                    description: 'Het Las Vegas Strip Circuit is een nieuw stratencircuit dat direct over de beroemde Las Vegas Strip loopt. Het is ontworpen voor spektakel, met extreem lange rechte stukken die hoge topsnelheden mogelijk maken, en races die diep in de nacht plaatsvinden.',
+                    highlights: [
+                        'Races direct over de Las Vegas Strip.',
+                        'Extreem lange rechte stukken voor topsnelheid.',
+                        'Nachtrace met neonlichten en entertainment.'
+                    ]
+                },
+                'qatar': {
+                    title: 'Lusail International Circuit',
+                    location: 'Lusail, Qatar',
+                    map: 'https://www.formula1.com/content/dam/fom-website/2018-redesign-assets/Circuit%20maps%2016x9/Qatar_Circuit.png',
+                    firstGp: '2021',
+                    lapCount: '57',
+                    circuitLength: '5.380 km',
+                    raceDistance: '306.660 km',
+                    lapRecord: '1:23.199 (Max Verstappen, 2021)',
+                    description: 'Het Lusail International Circuit is een relatief nieuw circuit op de F1-kalender, gelegen in de woestijn van Qatar. Het is een snel, vloeiend circuit met veel middelsnelle bochten en een lang recht stuk, en wordt onder kunstlicht gereden.',
+                    highlights: [
+                        'Snel, vloeiend circuit in de woestijn.',
+                        'Nachtrace onder kunstlicht.',
+                        'Hoge temperaturen en zand op de baan kunnen uitdagingen zijn.'
+                    ]
+                },
+                'abu-dhabi': {
+                    title: 'Yas Marina Circuit',
+                    location: 'Abu Dhabi, VAE',
+                    map: 'https://www.formula1.com/content/dam/fom-website/2018-redesign-assets/Circuit%20maps%2016x9/Abu_Dhabi_Circuit.png',
+                    firstGp: '2009',
+                    lapCount: '58',
+                    circuitLength: '5.281 km',
+                    raceDistance: '306.183 km',
+                    lapRecord: '1:26.103 (Max Verstappen, 2021)',
+                    description: 'Yas Marina is het toneel van de seizoensafsluiter van de Formule 1. Het is een modern circuit met een uniek hoteloverspanning en een tunneluitgang. De race begint bij zonsondergang en eindigt in het donker, wat zorgt voor prachtige beelden.',
+                    highlights: [
+                        'De seizoensafsluiter van de F1.',
+                        'Overgang van dag naar nacht tijdens de race.',
+                        'Moderne faciliteiten en een jachthaven setting.'
+                    ]
+                }
+                // ALLE andere circuits uit je kalender moeten hier als objecten worden toegevoegd.
+                // Zorg ervoor dat de 'key' (bijv. 'australia') exact overeenkomt met de 'circuit=...' parameter in je kalender.html.
+            };
+
+            const displayCircuitDetails = (data) => {
+                document.getElementById('circuit-name-intro').textContent = `Alle details over ${data.title}.`;
+                document.getElementById('circuit-title').textContent = data.title;
+                document.getElementById('circuit-location').textContent = data.location;
+                document.getElementById('circuit-main-map').src = data.map;
+                document.getElementById('circuit-main-map').alt = `Circuitkaart van ${data.title}`;
+                document.getElementById('first-gp').textContent = data.firstGp;
+                document.getElementById('lap-count').textContent = data.lapCount;
+                document.getElementById('circuit-length').textContent = data.circuitLength;
+                document.getElementById('race-distance').textContent = data.raceDistance;
+                document.getElementById('lap-record').textContent = data.lapRecord;
+                document.getElementById('circuit-description-text').textContent = data.description;
+
+                const highlightsList = document.querySelector('.circuit-highlights ul');
+                highlightsList.innerHTML = ''; // Maak de lijst leeg
+                data.highlights.forEach(highlight => {
+                    const li = document.createElement('li');
+                    const p = document.createElement('p');
+                    p.textContent = highlight;
+                    li.appendChild(p);
+                    highlightsList.appendChild(li);
+                });
+            };
+
+            if (circuitId && circuitData[circuitId]) {
+                displayCircuitDetails(circuitData[circuitId]);
+            } else {
+                // Toon een standaard circuit (bijv. Australië) of foutmelding als ID niet gevonden is
+                displayCircuitDetails(circuitData['australia']); // Val terug op Australië
+                console.warn('Circuit ID niet gevonden in URL of data, toon standaard circuit (Australië).');
+            }
+        });
+    </script>
+</body>
+</html>
