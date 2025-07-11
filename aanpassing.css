@@ -1,7 +1,4 @@
-/* Google Fonts Import - Voor een professionelere look */
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Oswald:wght@400;600;700&display=swap');
-
-/* Variabelen voor consistentie */
 :root {
     --f1-red: #E10600;
     --dark-bg: #121212;
@@ -12,7 +9,7 @@
     --font-body: 'Roboto', sans-serif;
 }
 
-/* Base Styles */
+
 body {
     font-family: var(--font-body);
     line-height: 1.6;
@@ -149,7 +146,7 @@ header {
     font-weight: 600;
 }
 
-.race-grid {
+.race-grid{
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); /* Iets flexibeler min-width */
     gap: 30px;
@@ -646,4 +643,82 @@ footer p {
     .driver-number {
         font-size: 1.3em;
     }
+}
+
+.team-name {
+    margin: 0;
+    font-size: 2.2em;
+    color: var(--text-dark);
+}
+
+.team-flag {
+    width: 70px; /* Iets grotere vlag */
+    height: 45px;
+    border: 2px solid var(--grey-medium);
+    border-radius: 8px;
+    object-fit: cover; /* Zorgt ervoor dat de vlag de ruimte vult zonder vervorming */
+}
+
+.team-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: calc(45% - 20px); /* Twee kaarten per rij op desktop, met rekening houden met gap */
+    max-width: 450px; /* Maximale breedte voor kaarten */
+    background-color: black;
+    border-radius: 15px;
+    padding: 25px;
+    border: 5px solid var(--border-color);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1); /* Zachte schaduw */
+}
+
+.team-card:hover {
+    transform: translateY(-5px); /* Subtiele lift bij hover */
+    box-shadow: 0 8px 20px var(--shadow-color); /* Meer uitgesproken schaduw */
+}
+
+.team-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    margin-bottom: 20px;
+    border-bottom: 1px solid var(--grey-light); /* Subtiele scheiding */
+    padding-bottom: 15px;
+}
+
+.team-grid {
+    padding: 0 20px; /* Horizontale padding */
+    max-width: 1200px;
+    margin: 0 auto 60px auto; /* Centreer de grid en geef ruimte onderaan */
+}
+
+.team-row {
+    display: flex;
+    justify-content: space-around;
+    flex-direction: row; 
+    gap: 40px;
+    margin-bottom: 40px;
+}
+
+/*hero-section*/
+
+.button {
+    display: inline-block;
+    background-color: var(--f1-red);
+    color: var(--text-light);
+    padding: 15px 30px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 1.1em;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+    border: none; /* Geen standaard rand */
+    cursor: pointer;
+}
+
+.button:hover {
+    background-color: #CC0000; /* Iets donkerder rood bij hover */
+    transform: translateY(-2px); /* Subtiele lift */
 }

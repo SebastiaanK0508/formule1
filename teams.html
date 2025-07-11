@@ -4,13 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Formula 1 Season 2025 - Teams</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="aanpassing.css">
 </head>
 <body>
     <header>
-        <div class="header-content">
-            <h1>Formula 1 Season 2025</h1>
-            <nav>
+        <div class="header-content container">
+            <h1 class="site-title">Formula 1 Season 2025</h1>
+            <nav class="main-nav">
                 <a href="index.html">Home</a>
                 <a href="kalender.html">Schedule</a>
                 <a href="teams.html" class="active">Teams</a>
@@ -20,11 +20,11 @@
         </div>
     </header>
 
-    <main>
-        <section class="page-title-section">
-            <h1 class="page-header">TEAMS</h1>
+    <main class="container">
+        <section class="page-header-section">
+            <h2 class="page-heading">TEAMS FORMULA 1 SEASON 2025</h1>
         </section>
-
+<!--
         <section class="carousel-section">
             <div class="carousel-container">
                 <div class="carousel">
@@ -50,17 +50,17 @@
                     <img src="https://cdn-3.motorsport.com/images/amp/0L17d5W2/s1000/logo-stakef1team-rgb-pos-1.jpg" alt="Stake Sauber Logo">
                 </div>
             </div>
-        </section>
+        </section>-->
 
-        <section class="team-grid">
-            <div class="team-row">
-                <div class="team-card" style="--border-color: rgb(255, 106, 0);">
+        <section class="race-calendar team-gird">
+            <div class="race-grid team-row">
+                <div class="driver-header team-card" style="--border-color: rgb(255, 106, 0);">
                     <div class="team-header">
                         <h2 class="team-name">McLaren</h2>
                         <img class="team-flag" src="https://i0.wp.com/britblog.nl/wordpress/wp-content/uploads/2019/07/1280px-Flag_of_the_United_Kingdom.svg_.png?fit=1280%2C640&ssl=1" alt="Britse vlag">
                     </div>
                     <div class="team-info">
-                        <a href="teams/mclaren.html" style="--color: rgb(255, 106, 0);" class="driver-link">Meer info over McLaren</a>
+                        <a href="teams/mclaren.html" style="--color: rgb(255, 106, 0);" class="driver-link"><button class="teaminfo-button">Meer info over McLaren</button></a>
                         <p class="team-principle">Andrea Stella</p>
                     </div>
                 </div>
@@ -171,7 +171,14 @@
     </main>
 
     <footer>
-        <p>&copy; 2025 Formula 1 Fan Site. All rights reserved.</p>
+        <div class="footer-content container">
+            <p>&copy; 2025 Webbair. Alle rechten voorbehouden.</p>
+            <div class="social-links">
+                <a href="#" aria-label="Facebook">Facebook</a>
+                <a href="#" aria-label="Twitter">Twitter</a>
+                <a href="#" aria-label="Instagram">Instagram</a>
+            </div>
+        </div>
     </footer>
 </body>
 </html>

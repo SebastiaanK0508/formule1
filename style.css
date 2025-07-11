@@ -143,7 +143,7 @@ header nav a.active { /* Stijl voor actieve pagina */
     align-items: center;
     width: calc(45% - 20px); /* Twee kaarten per rij op desktop, met rekening houden met gap */
     max-width: 450px; /* Maximale breedte voor kaarten */
-    background-color: var(--text-light);
+    background-color: black;
     border-radius: 15px;
     padding: 25px;
     border: 5px solid var(--border-color);
