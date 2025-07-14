@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Webbair Framework</title>
+    <!-- Laad Google Fonts: Inter voor strakke typografie -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <!-- Laad Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Laad custom backoffice CSS -->
+    <link rel="stylesheet" href="backoffice.css">
+    <link rel="icon" href="" type="image/x-icon">
+</head>
+<body class="font-inter bg-webbair-bg-light text-webbair-text-dark min-h-screen flex flex-col">
+    <header class="bg-white shadow-lg py-4 px-6 md:px-12 flex justify-between items-center fixed w-full z-10 top-0">
+        <div class="text-3xl font-extrabold text-webbair-primary tracking-wide">
+            <h1>Backoffice</h1>
+        </div>
+        <div class="flex items-center gap-4">
+            <img class="h-8 w-8 object-contain" src="/systeem/afbeeldingen/logokleinbackgroudremove.png" alt="LogoKlein">
+            <p class="font-semibold text-lg text-webbair-text-dark hidden sm:block">Formula 1</p>
+            <a href="index.html">
+                <button class="loguit-knop">Log Uit</button>
+            </a>
+        </div>
+    </header>
+
+    <main class="flex flex-1 pt-20 flex-col md:flex-row"> 
+        <section class="w-full md:w-64 bg-white shadow-md rounded-lg p-6 m-4 md:m-6 flex-shrink-0">
+            <div class="mb-8">
+                <h3 class="menu-kop">Website Beheer</h3>
+                <a class="menu-link" href="webshop.php">News</a>
+                <a class="menu-link" href="pos/pos.php">Schedule</a>
+                <a class="menu-link" href="pos/pos.php">Teams</a>
+                <a class="menu-link" href="pos/pos.php">Drivers</a>
+                <a class="menu-link" href="pos/pos.php">Standings</a>
+            </div>
+        </section>
+        <section class="flex-1 p-4 md:p-6 bg-white shadow-md rounded-lg m-4 md:m-6">
+            <div class="headerhoofdpagina">
+                <!-- Content for the main section will go here -->
+                <h2 class="text-2xl font-bold text-gray-700">Welkom in de Backoffice</h2>
+                <p class="text-gray-600 mt-2">Beheer hier al uw webshop- en administratieve taken.</p>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        // JavaScript om links in een klein venster te openen
+        function openInSmallWindow(event, url) {
+            event.preventDefault(); // Voorkom de standaard linkactie
+            const width = 1000;
+            const height = 700;
+            const left = (window.innerWidth / 2) - (width / 2);
+            const top = (window.innerHeight / 2) - (height / 2);
+            window.open(url, '_blank', `width=${width},height=${height},top=${top},left=${left}`);
+        }
+    </script>
+</body>
+</html>
