@@ -4,15 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Webbair Framework</title>
-    <!-- Laad Google Fonts: Inter voor strakke typografie -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
-    <!-- Laad Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Laad custom backoffice CSS -->
     <link rel="stylesheet" href="style.css">
     <link rel="icon" href="" type="image/x-icon">
 </head>
-<body class="">
+<body>
     <header class="main-header">
         <div class="header-title">
             <h1>Formula 1 site - Drivers</h1>
@@ -44,15 +41,22 @@
             </div>
             <div>
                 <div>
-                    
+                    <button class="" onclick="">➕</button>
+                    <button class="" onclick="">✖️</button>
                 </div>
             </div>
             <div>
                 <div>
-                    <h4>driveroverzicht</h4>
+                    <h4>driver overview</h4>
                 </div>
             </div>
         </section>
     </main>
+
+    <script>
+        fetch("https://api.openf1.org/v1/drivers?driver_number=1&session_key=9158")
+  .then((response) => response.json())
+  .then((jsonContent) => console.log(jsonContent));
+    </script>
 </body>
 </html>

@@ -90,6 +90,7 @@ body {
     flex: 1; /* flex-1 */
     padding-top: 5rem; /* pt-20, aangepast voor vaste header */
     flex-direction: column; /* flex-col */
+    margin-top: 2%;
 }
 
 @media (min-width: 768px) { /* md:flex-row */
@@ -215,6 +216,7 @@ body {
     }
 }
 
+/*drivers.php*/
 
 
 

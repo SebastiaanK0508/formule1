@@ -4,7 +4,7 @@ session_start();
 $servername = "localhost"; 
 $username = "root"; 
 $password = ""; 
-$dbname = "legpuzzelvandaag"; 
+$dbname = "formule1"; 
 
 $conn = new mysqli($servername, $username, $password, $dbname);
 
@@ -13,11 +13,11 @@ if ($conn->connect_error) {
 }
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    if (isset($_POST['email']) && isset($_POST['password_hash'])) {
-        $user = $_POST['email'];
+    if (isset($_POST['username']) && isset($_POST['password_hash'])) {
+        $user = $_POST['username'];
         $pass = $_POST['password_hash'];
 
-        $stmt = $conn->prepare("SELECT id, password_hash FROM users WHERE email = ?");
+        $stmt = $conn->prepare("SELECT id, password_hash FROM users WHERE username = ?");
         $stmt->bind_param("s", $user);
         $stmt->execute();
         $stmt->store_result();
@@ -29,7 +29,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             if (password_verify($pass, $hashed_password)) {
                 $_SESSION['loggedin'] = true;
                 $_SESSION['id'] = $id;
-                $_SESSION['email'] = $user;
+                $_SESSION['username'] = $user;
                 header("Location: dashboard.html");
                 exit;
             } else {
