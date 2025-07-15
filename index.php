@@ -11,7 +11,7 @@
         <div class="header-content container">
             <h1 class="site-title" id="sitename">FORMULA 1 SEASON 2025</h1>
             <nav class="main-nav">
-                <a href="index.html" class="active">Home</a>
+                <a href="index.php" class="active">Home</a>
                 <a href="kalender.html">Schedule</a>
                 <a href="teams.html">Teams</a>
                 <a href="drivers.html">Drivers</a>
