@@ -1,31 +1,27 @@
 <?php
 session_start();
-
-$servername = "localhost"; 
-$username = "root"; 
-$password = ""; 
-$dbname = "formule1"; 
-
-$conn = new mysqli($servername, $username, $password, $dbname);
-
-if ($conn->connect_error) {
-    die("Verbinding mislukt: " . $conn->connect_error);
+$servername = "localhost";
+$username = "root";
+$password = "root"; 
+$dbname = "formule1";
+try {
+    $conn = new PDO("mysql:host=$servername;dbname=$dbname;charset=utf8mb4", $username, $password);
+    $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    $conn->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
+} catch (PDOException $e) {
+    die("Verbinding mislukt: " . $e->getMessage());
 }
-
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if (isset($_POST['username']) && isset($_POST['password_hash'])) {
         $user = $_POST['username'];
         $pass = $_POST['password_hash'];
-
-        $stmt = $conn->prepare("SELECT id, password_hash FROM users WHERE username = ?");
-        $stmt->bind_param("s", $user);
+        $stmt = $conn->prepare("SELECT id, password_hash FROM users WHERE username = :username");
+        $stmt->bindParam(':username', $user);
         $stmt->execute();
-        $stmt->store_result();
-
-        if ($stmt->num_rows > 0) {
-            $stmt->bind_result($id, $hashed_password);
-            $stmt->fetch();
-
+        $user_data = $stmt->fetch(); 
+        if ($user_data) { 
+            $id = $user_data['id'];
+            $hashed_password = $user_data['password_hash'];
             if (password_verify($pass, $hashed_password)) {
                 $_SESSION['loggedin'] = true;
                 $_SESSION['id'] = $id;
@@ -33,19 +29,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 header("Location: dashboard.html");
                 exit;
             } else {
-                header("Location: index.html");
+                header("Location: index.html?error=invalid_credentials");
             }
         } else {
-            header("Location: index.html");
+            header("Location: index.html?error=invalid_credentials");
+            exit;
         }
-
-        $stmt->close();
     } else {
-        header("Location: index.html");
+        header("Location: index.html?error=missing_data");
+        exit;
     }
 } else {
     echo "Geen gegevens verzonden.";
 }
-
-$conn->close();
 ?>
