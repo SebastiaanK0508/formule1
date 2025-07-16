@@ -195,7 +195,7 @@ body {
     margin-left: 1.5rem; /* Ensure margin consistency for the main panel */
 }
 
-/* Aanpassingen voor kleinere schermen */
+
 @media (max-width: 768px) {
     .main-header {
         flex-direction: column;
@@ -216,7 +216,11 @@ body {
     }
 }
 
-/*drivers.php*/
-
+.adddriverbutton {
+    border: 2px solid var(--webbair-accent);
+    background-color: var(--webbair-accent);
+    border-radius: 6px;
+    width: 100px;
+}
 
 

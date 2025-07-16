@@ -41,7 +41,7 @@
             </div>
             <div>
                 <div>
-                    <button class="" onclick="">➕</button>
+                    <a href="add/add-drivers.php"><button class="" onclick="">➕</button></a>
                     <button class="" onclick="">✖️</button>
                 </div>
             </div>
@@ -50,12 +50,6 @@
                     <h4>driver overview</h4>
                 </div>
                 <div>
-
-
-                    <h1>F1 Data Update</h1>
-                    <form method="post">
-                        <button type="submit" name="update_data">Update F1 Coureursdata Nu!</button>
-                    </form>
                 </div>
             </div>
         </section>
@@ -68,16 +62,3 @@
     </script>
 </body>
 </html>
-<?php
-
-if (isset($_POST['update_data'])) {
-    $webhook_url = "http://localhost/~sebastiaanbaskamphuis/formule1/achterkant/aanpassing/api-koppelingen/update_f1_data.php?token=WJD83K9BCOQ13BW4ACZYVQEA3CEQM9ZV5J54EZO4HO0CC6RHZ5ROWPI4U1Q0QVX0";
-    $response = file_get_contents($webhook_url);
-    
-    if ($response === false) {
-        echo "<p style='color: red;'>Fout bij het triggeren van de update!</p>";
-    } else {
-        echo "<p style='color: green;'>Update succesvol getriggerd: " . htmlspecialchars($response) . "</p>";
-    }
-}
-?>

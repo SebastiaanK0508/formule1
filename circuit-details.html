@@ -522,7 +522,7 @@
                 document.getElementById('circuit-description-text').textContent = data.description;
 
                 const highlightsList = document.querySelector('.circuit-highlights ul');
-                highlightsList.innerHTML = ''; // Maak de lijst leeg
+                highlightsList.innerHTML = ''; 
                 data.highlights.forEach(highlight => {
                     const li = document.createElement('li');
                     const p = document.createElement('p');
@@ -531,12 +531,10 @@
                     highlightsList.appendChild(li);
                 });
             };
-
             if (circuitId && circuitData[circuitId]) {
                 displayCircuitDetails(circuitData[circuitId]);
             } else {
-                // Toon een standaard circuit (bijv. Australië) of foutmelding als ID niet gevonden is
-                displayCircuitDetails(circuitData['australia']); // Val terug op Australië
+                displayCircuitDetails(circuitData['australia']); 
                 console.warn('Circuit ID niet gevonden in URL of data, toon standaard circuit (Australië).');
             }
         });
