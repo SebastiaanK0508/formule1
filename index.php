@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Formula 1 Season 2025 - Home</title>
-    <link rel="stylesheet" href="aanpassing.css">
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <header>

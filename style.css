@@ -1,140 +1,662 @@
-/* Algemene reset en basisstijlen */
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Oswald:wght@400;600;700&display=swap');
 :root {
-    --primary-red: #E10600; /* F1 rood voor consistentie */
-    --text-light: #FFFFFF;
-    --text-dark: #333333;
-    --grey-light: #F0F0F0;
-    --grey-medium: #AAAAAA;
-    --shadow-color: rgba(0, 0, 0, 0.2);
+    --f1-red: #E10600;
+    --dark-bg: #121212;
+    --card-bg: #1e1e1e;
+    --text-light: #f0f0f0;
+    --text-dark-contrast: #c0c0c0;
+    --font-heading: 'Oswald', sans-serif;
+    --font-body: 'Roboto', sans-serif;
 }
+
 
 body {
-    margin: 0;
-    font-family: 'Arial', sans-serif;
+    font-family: var(--font-body);
     line-height: 1.6;
-    color: var(--text-dark);
-    background-color: var(--grey-light); /* Lichtgrijze achtergrond */
+    margin: 0;
+    padding: 0;
+    background-color: var(--dark-bg);
+    color: var(--text-light);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
 }
 
-/* Header styling */
+a {
+    color: var(--f1-red);
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.container {
+    width: 92%; /* Iets breder voor meer content ruimte */
+    max-width: 1400px; /* Grotere max breedte */
+    margin: 0 auto;
+    padding: 20px 0;
+}
+
+/* Header */
 header {
-    background-color: var(--primary-red);
-    padding: 15px 20px; /* Meer padding */
-    box-shadow: 0 2px 5px var(--shadow-color);
-    display: flex;
-    justify-content: center; /* Centreer de content */
-    align-items: center;
-    flex-wrap: wrap; /* Zorgt ervoor dat content op kleinere schermen naar beneden springt */
+    background-color: #000;
+    color: #fff;
+    padding: 1.2rem 0;
+    border-bottom: 4px solid var(--f1-red); /* Dikkere rode lijn */
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+    position: sticky; /* Blijft bovenaan bij scrollen */
+    top: 0;
+    z-index: 1000; /* Zorgt ervoor dat het boven andere elementen blijft */
 }
 
 .header-content {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    width: 100%; /* Neemt de volledige breedte in de header */
-    max-width: 1200px; /* Maximale breedte voor grote schermen */
 }
 
-header h1 {
+.site-title {
+    font-family: var(--font-heading);
+    margin: 0;
+    font-size: 2.8rem;
+    letter-spacing: 3px; /* Meer spatiëring voor 'F1' look */
+    color: var(--f1-red);
+    text-transform: uppercase;
+    font-weight: 700;
+}
+
+.main-nav a {
     color: var(--text-light);
-    margin: 0; /* Verwijder standaard margin van h1 */
-    font-size: 2em; /* Relatieve lettergrootte */
-    text-align: left; /* Terug naar links voor betere lay-out met nav */
-    flex-grow: 1; /* Neemt beschikbare ruimte in */
-}
-
-header nav {
-    display: flex;
-    gap: 25px; /* Ruimte tussen navigatielinks */
-}
-
-header nav a {
     text-decoration: none;
-    color: var(--text-light);
-    font-weight: bold;
-    padding: 5px 10px;
-    transition: color 0.3s ease, background-color 0.3s ease;
-    border-radius: 5px;
-}
-
-header nav a:hover,
-header nav a.active { /* Stijl voor actieve pagina */
-    color: var(--primary-red);
-    background-color: var(--text-light);
-}
-
-/* Paginatitel sectie */
-.page-title-section {
-    text-align: center;
-    margin: 40px 0 20px 0; /* Meer ruimte boven en onder */
-    padding-bottom: 15px;
-    border-bottom: 3px solid var(--primary-red);
-}
-
-.page-header {
-    color: var(--text-dark);
-    font-size: 3.5em; /* Grotere lettergrootte */
-    margin: 0; /* Verwijder standaard margin */
-    letter-spacing: 2px; /* Iets meer ruimte tussen letters */
-}
-
-/* Carousel sectie */
-.carousel-section {
-    padding: 20px 0;
-    background-color: #F8F8F8; /* Lichte achtergrond voor de carousel */
-    box-shadow: inset 0 0 10px rgba(0,0,0,0.1); /* Subtiele innerlijke schaduw */
-    margin-bottom: 40px; /* Ruimte onder de carousel */
-}
-
-.carousel-container {
-    width: 100%;
-    overflow: hidden;
+    margin-left: 35px;
+    font-weight: 500;
+    font-size: 1.05rem;
     position: relative;
-    padding: 10px 0; /* Verticale padding voor de afbeeldingen */
+    transition: color 0.3s ease, transform 0.2s ease;
+    text-transform: uppercase;
 }
 
-.carousel {
+.main-nav a::after {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 3px;
+    background-color: var(--f1-red);
+    left: 0;
+    bottom: -10px; /* Lager voor een subtielere underline */
+    transition: width 0.3s ease;
+}
+
+.main-nav a:hover,
+.main-nav a.active {
+    color: var(--f1-red);
+    transform: translateY(-2px); /* Lichte lift bij hover */
+}
+
+.main-nav a:hover::after,
+.main-nav a.active::after {
+    width: 100%;
+}
+
+/* Page Header Section */
+.page-header-section {
+    background: linear-gradient(135deg, #282828, #1a1a1a); /* Subtiele gradient */
+    padding: 50px 40px;
+    margin-bottom: 40px;
+    border-radius: 12px; /* Afgerondere hoeken */
+    text-align: center;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+    border: 1px solid #333; /* Subtiele rand */
+}
+
+.page-heading {
+    font-family: var(--font-heading);
+    font-size: 4rem; /* Groter lettertype */
+    color: var(--f1-red);
+    margin-top: 0;
+    margin-bottom: 20px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    font-weight: 700;
+    text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.4);
+}
+
+.page-intro {
+    font-size: 1.4rem;
+    color: var(--text-dark-contrast);
+    max-width: 900px;
+    margin: 0 auto;
+    font-weight: 300;
+}
+
+/* Race Calendar Section */
+.race-calendar {
+    background-color: var(--card-bg);
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+}
+
+.section-subtitle {
+    font-family: var(--font-heading);
+    font-size: 3rem;
+    color: var(--f1-red);
+    text-align: center;
+    margin-top: 0;
+    margin-bottom: 50px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    font-weight: 600;
+}
+
+.race-grid{
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); /* Iets flexibeler min-width */
+    gap: 30px;
+}
+
+/* Race Card Styles */
+.race-card {
+    background-color: #2b2b2b; /* Net iets donkerder dan hoofdachtergrond */
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
     display: flex;
-    animation: continuous-scroll 30s linear infinite; /* Langzamere animatie */
-    width: fit-content;
-    will-change: transform; /* Optimalisatie voor animatie */
+    flex-direction: column;
 }
 
-.carousel img {
-    width: 200px; /* Net iets kleiner voor meer items */
+/* Link Wrapper voor de kaart */
+.circuit-link {
+    text-decoration: none; /* Verwijder standaard link onderstreping */
+    color: inherit; /* Erf tekstkleur van parent */
+    display: flex;
+    flex-direction: column;
+    height: 100%; /* Zorgt dat de link de hele kaart omvat */
+}
+
+.race-card:hover {
+    transform: translateY(-10px); /* Meer uitgesproken lift */
+    box-shadow: 0 12px 25px rgba(0, 0, 0, 0.4);
+}
+
+.race-image-container {
+    width: 100%;
+    height: 220px; /* Iets hogere afbeelding */
+    overflow: hidden;
+    position: relative; /* Voor overlay effecten */
+}
+
+.circuit-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.4s ease; /* Snellere en vloeiendere zoom */
+}
+
+.race-card:hover .circuit-image {
+    transform: scale(1.1); /* Meer zoom op hover */
+}
+
+.race-info {
+    padding: 25px; /* Meer padding */
+    text-align: center;
+    flex-grow: 1; /* Zorgt dat de info de overgebleven ruimte inneemt */
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between; /* Datum/locatie onderaan */
+}
+
+.race-info h4 {
+    font-family: var(--font-heading);
+    color: var(--f1-red);
+    font-size: 2.1rem; /* Grotere titels */
+    margin-top: 0;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    font-weight: 700;
+    line-height: 1.2;
+}
+
+.race-info p {
+    margin: 6px 0;
+    font-size: 1.05rem;
+    color: var(--text-dark-contrast);
+}
+
+.race-info strong {
+    color: var(--text-light);
+    font-weight: 500;
+}
+
+/* Footer Styles */
+footer {
+    background-color: #000;
+    color: var(--text-light);
+    text-align: center;
+    padding: 2rem 0; /* Meer padding */
+    margin-top: 60px;
+    border-top: 4px solid var(--f1-red);
+    box-shadow: 0 -4px 15px rgba(0, 0, 0, 0.4);
+}
+
+.footer-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 20px; /* Ruimte tussen elementen in footer */
+}
+
+footer p {
+    margin: 0;
+    font-size: 0.95rem;
+    color: var(--text-dark-contrast);
+}
+
+.social-links a {
+    color: var(--text-light);
+    text-decoration: none;
+    margin-left: 25px;
+    font-weight: 500;
+    transition: color 0.3s ease, transform 0.2s ease;
+    font-size: 1rem;
+}
+
+.social-links a:hover {
+    color: var(--f1-red);
+    transform: translateY(-2px);
+}
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+    .container {
+        width: 95%;
+    }
+    .page-heading {
+        font-size: 3.5rem;
+    }
+    .section-subtitle {
+        font-size: 2.5rem;
+    }
+}
+
+@media (max-width: 992px) {
+    .site-title {
+        font-size: 2.2rem;
+        letter-spacing: 2px;
+    }
+    .main-nav a {
+        margin-left: 20px;
+        font-size: 0.95rem;
+    }
+    .page-heading {
+        font-size: 3rem;
+    }
+    .page-intro {
+        font-size: 1.2rem;
+    }
+    .section-subtitle {
+        font-size: 2rem;
+    }
+    .race-grid {
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 25px;
+    }
+    .race-info h4 {
+        font-size: 1.8rem;
+    }
+    .race-image-container {
+        height: 180px;
+    }
+}
+
+@media (max-width: 768px) {
+    .header-content,
+    .footer-content {
+        flex-direction: column;
+        text-align: center;
+        gap: 15px;
+    }
+    .main-nav {
+        margin-top: 15px;
+    }
+    .main-nav a {
+        margin: 0 10px;
+        display: inline-block; /* Zorgt dat links naast elkaar blijven */
+    }
+    .site-title {
+        font-size: 2rem;
+    }
+    .page-header-section {
+        padding: 40px 20px;
+    }
+    .page-heading {
+        font-size: 2.5rem;
+    }
+    .page-intro {
+        font-size: 1rem;
+    }
+    .section-subtitle {
+        font-size: 1.8rem;
+    }
+    .race-grid {
+        grid-template-columns: 1fr; /* Één kolom op kleine schermen */
+    }
+    .race-info h4 {
+        font-size: 1.6rem;
+    }
+    .race-image-container {
+        height: 200px; /* Hoger op mobiel voor betere zichtbaarheid */
+    }
+    .social-links {
+        margin-top: 10px;
+    }
+    .social-links a {
+        margin: 0 8px;
+    }
+}
+
+@media (max-width: 480px) {
+    .site-title {
+        font-size: 1.6rem;
+    }
+    .page-heading {
+        font-size: 2rem;
+        letter-spacing: 1px;
+    }
+    .page-intro {
+        font-size: 0.9rem;
+    }
+    .section-subtitle {
+        font-size: 1.6rem;
+    }
+    .race-info h4 {
+        font-size: 1.4rem;
+        letter-spacing: 0.5px;
+    }
+    .race-info p {
+        font-size: 0.95rem;
+    }
+}
+
+/* --- Circuit Detail Page Specific Styles --- */
+
+.circuit-detail-page {
+    padding-top: 40px;
+}
+
+.circuit-info-section {
+    background-color: var(--card-bg);
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+    text-align: center;
+}
+
+.circuit-header {
+    margin-bottom: 40px;
+}
+
+.circuit-main-map {
+    max-width: 100%;
     height: auto;
-    object-fit: contain; /* Zorgt ervoor dat de hele afbeelding zichtbaar blijft */
-    margin-right: 20px; /* Ruimte tussen afbeeldingen */
-    border-radius: 8px; /* Afgeronde hoeken */
-    box-shadow: 2px 2px 8px var(--shadow-color); /* Lichte schaduw */
+    border-radius: 8px;
+    margin-bottom: 30px;
 }
 
-@keyframes continuous-scroll {
-    0% {
-        transform: translateX(0);
+.circuit-title {
+    font-family: var(--font-heading);
+    font-size: 3.5rem;
+    color: var(--f1-red);
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    margin-top: 0;
+    margin-bottom: 10px;
+    font-weight: 700;
+}
+
+.circuit-location {
+    font-size: 1.5rem;
+    color: var(--text-dark-contrast);
+    font-weight: 300;
+}
+
+.circuit-details-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 25px;
+    margin-bottom: 40px;
+    padding: 0 20px;
+}
+
+.detail-card {
+    background-color: #2b2b2b;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    text-align: center;
+    transition: transform 0.2s ease, background-color 0.2s ease;
+}
+
+.detail-card:hover {
+    transform: translateY(-5px);
+    background-color: #3a3a3a;
+}
+
+.detail-card h4 {
+    font-family: var(--font-heading);
+    font-size: 1.2rem;
+    color: var(--f1-red);
+    text-transform: uppercase;
+    margin-top: 0;
+    margin-bottom: 10px;
+    font-weight: 600;
+}
+
+.detail-card p {
+    font-size: 1.1rem;
+    color: var(--text-light);
+    font-weight: 500;
+}
+
+.circuit-description,
+.circuit-highlights {
+    text-align: left;
+    margin-bottom: 40px;
+    padding: 0 20px;
+}
+
+.description-title,
+.highlights-title {
+    font-family: var(--font-heading);
+    font-size: 2.2rem;
+    color: var(--f1-red);
+    text-transform: uppercase;
+    margin-bottom: 25px;
+    border-bottom: 2px solid rgba(225, 6, 0, 0.5);
+    padding-bottom: 10px;
+    display: inline-block;
+    font-weight: 600;
+}
+
+.circuit-description p {
+    font-size: 1.15rem;
+    line-height: 1.8;
+    color: var(--text-dark-contrast);
+}
+
+.circuit-highlights ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.circuit-highlights li {
+    background-color: #2b2b2b;
+    margin-bottom: 15px;
+    padding: 15px 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    transition: background-color 0.2s ease;
+}
+
+.circuit-highlights li:hover {
+    background-color: #3a3a3a;
+}
+
+.circuit-highlights li p {
+    font-size: 1.1rem;
+    color: var(--text-light);
+    margin: 0;
+}
+
+.back-link-container {
+    text-align: center;
+    margin-top: 50px;
+}
+
+.back-to-calendar {
+    display: inline-block;
+    background-color: var(--f1-red);
+    color: #fff;
+    padding: 15px 30px;
+    text-decoration: none;
+    border-radius: 5px;
+    font-family: var(--font-heading);
+    font-size: 1.2rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.back-to-calendar:hover {
+    background-color: #cc0500; /* Iets donkerder rood */
+    transform: translateY(-3px);
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+}
+
+/* Responsive aanpassingen voor circuit details pagina */
+@media (max-width: 768px) {
+    .circuit-info-section {
+        padding: 20px;
     }
-    100% {
-        /* De totale breedte van alle *unieke* afbeeldingen + hun marges.
-           Hier zijn 10 unieke afbeeldingen, elk 200px breed + 20px marge.
-           (200px + 20px) * 10 = 2200px.
-           Zorg ervoor dat je de animatie aanpast als je meer/minder unieke afbeeldingen hebt. */
-        transform: translateX(-2200px);
+    .circuit-title {
+        font-size: 2.5rem;
+    }
+    .circuit-location {
+        font-size: 1.2rem;
+    }
+    .circuit-details-grid {
+        grid-template-columns: 1fr;
+        padding: 0;
+    }
+    .description-title,
+    .highlights-title {
+        font-size: 1.8rem;
+    }
+    .circuit-description p,
+    .circuit-highlights li p {
+        font-size: 1rem;
     }
 }
 
-/* Team Grid sectie */
-.team-grid {
-    padding: 0 20px; /* Horizontale padding */
-    max-width: 1200px;
-    margin: 0 auto 60px auto; /* Centreer de grid en geef ruimte onderaan */
+@media (max-width: 480px) {
+    .circuit-title {
+        font-size: 2rem;
+    }
+    .circuit-location {
+        font-size: 1rem;
+    }
+    .detail-card h4 {
+        font-size: 1rem;
+    }
+    .detail-card p {
+        font-size: 0.9rem;
+    }
+    .back-to-calendar {
+        padding: 12px 20px;
+        font-size: 1rem;
+    }
 }
 
-.team-row {
+.driver-name {
     display: flex;
-    justify-content: center; /* Centreer de teams in de rij */
-    flex-wrap: wrap; /* Belangrijk voor responsiviteit */
-    gap: 40px; /* Ruimte tussen teamkaarten */
-    margin-bottom: 40px; /* Ruimte tussen rijen */
+    font-size: 1.8em;
+    margin: 0;
+    color: var(--text-dark);
+    align-items: center;
+}
+
+.driver-info {
+    text-align: center;
+    width: 100%;
+}
+
+.driver-team {
+    font-size: 1.1em;
+    color: #555;
+    margin-bottom: 5px;
+}
+
+.driver-number {
+    font-size: 1.5em;
+    font-weight: bold;
+    color: var(--driver-color);
+    margin-bottom: 10px;
+}
+
+.flag-icon {
+    width: 50px;
+    height: 30px; 
+    border-radius: 3px; 
+    object-fit: cover;
+    border: #000000 1px solid; 
+}
+
+.driver-header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+@media (max-width: 768px) {
+    .driver-grid {
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 20px;
+    }
+
+    .driver-card {
+        padding: 15px;
+    }
+
+    .driver-header img {
+        width: 120px;
+        height: 120px;
+    }
+
+    .driver-name {
+        font-size: 1.6em;
+        text-align: center;
+    }
+
+    .driver-number {
+        font-size: 1.3em;
+    }
+}
+
+.team-name {
+    margin: 0;
+    font-size: 2.2em;
+    color: var(--text-dark);
+}
+
+.team-flag {
+    width: 70px; /* Iets grotere vlag */
+    height: 45px;
+    border: 2px solid var(--grey-medium);
+    border-radius: 8px;
+    object-fit: cover; /* Zorgt ervoor dat de vlag de ruimte vult zonder vervorming */
 }
 
 .team-card {
@@ -166,184 +688,25 @@ header nav a.active { /* Stijl voor actieve pagina */
     padding-bottom: 15px;
 }
 
-.team-name {
-    margin: 0;
-    font-size: 2.2em;
-    color: var(--text-dark);
+.team-grid {
+    padding: 0 20px; /* Horizontale padding */
+    max-width: 1200px;
+    margin: 0 auto 60px auto; /* Centreer de grid en geef ruimte onderaan */
 }
 
-.team-flag {
-    width: 70px; /* Iets grotere vlag */
-    height: 45px;
-    border: 2px solid var(--grey-medium);
-    border-radius: 8px;
-    object-fit: cover; /* Zorgt ervoor dat de vlag de ruimte vult zonder vervorming */
-}
-
-.team-info {
+.team-row {
     display: flex;
-    flex-direction: column;
-    align-items: flex-start; /* Links uitlijnen van de details */
-    width: 100%;
+    justify-content: space-around;
+    flex-direction: row; 
+    gap: 40px;
+    margin-bottom: 40px;
 }
 
-.driver-link {
-    text-decoration: none;
-    color: var(--text-dark);
-    font-size: 1.2em;
-    font-weight: bold;
-    margin-bottom: 10px; /* Ruimte tussen coureurs */
-    transition: color 0.3s ease;
-}
-
-.driver-link b {
-    font-weight: 900; /* Extra bold voor rugnummer */
-    margin-left: 8px;
-}
-
-.driver-link:hover {
-    color: var(--color); /* Gebruik de variabele kleur bij hover */
-}
-
-.team-principle {
-    font-size: 1em;
-    color: var(--grey-medium);
-    margin-top: 15px; /* Ruimte boven team principle */
-    border-top: 1px dashed var(--grey-light); /* Gestippelde lijn */
-    padding-top: 10px;
-    width: 100%;
-}
-
-/* Media Queries voor responsiviteit */
-@media (max-width: 992px) {
-    header .header-content {
-        flex-direction: column; /* Stapel header items */
-        text-align: center;
-    }
-
-    header nav {
-        margin-top: 15px;
-        justify-content: center;
-        width: 100%;
-    }
-
-    .page-header {
-        font-size: 2.8em;
-    }
-
-    .carousel img {
-        width: 150px; /* Kleinere afbeeldingen op tablets */
-        margin-right: 15px;
-    }
-
-    @keyframes continuous-scroll {
-        100% {
-            transform: translateX(calc(-1 * (150px + 15px)*10)); /* Pas aan voor kleinere afbeeldingen */
-        }
-    }
-
-    .team-card {
-        width: calc(80% - 20px); /* Eén kaart per rij op tablets */
-    }
-}
-
-@media (max-width: 768px) {
-    header h1 {
-        font-size: 1.8em;
-    }
-
-    header nav {
-        flex-wrap: wrap; /* Navigatie links kunnen nu ook naar beneden springen */
-        gap: 15px;
-    }
-
-    .page-header {
-        font-size: 2.2em;
-    }
-
-    .carousel img {
-        width: 120px; /* Nog kleinere afbeeldingen op mobiel */
-        margin-right: 10px;
-    }
-
-    @keyframes continuous-scroll {
-        100% {
-            transform: translateX(calc(-1 * (120px + 10px)*10)); /* Pas aan voor nog kleinere afbeeldingen */
-        }
-    }
-
-    .team-row {
-        gap: 25px; /* Minder ruimte tussen teams op mobiel */
-        margin-bottom: 25px;
-    }
-
-    .team-card {
-        width: calc(95% - 20px); /* Bijna volledige breedte op mobiel */
-        padding: 20px;
-    }
-
-    .team-name {
-        font-size: 1.8em;
-    }
-
-    .team-flag {
-        width: 50px;
-        height: 35px;
-    }
-
-    .driver-link {
-        font-size: 1.1em;
-    }
-}
-
-@media (max-width: 480px) {
-    header {
-        padding: 10px 15px;
-    }
-
-    header nav a {
-        padding: 5px 8px;
-    }
-
-    .page-header {
-        font-size: 1.8em;
-    }
-
-    .team-card {
-        padding: 15px;
-    }
-}
-
-/* --- Hero Section --- */
-.hero-section {
-    background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('https://media.formula1.com/image/upload/f_auto,c_limit,q_75,w_1920/content/dam/fom-website/manual/Misc/2024/F1%20Launch/Main-Hero.jpg') no-repeat center center/cover;
-    color: var(--text-light);
-    text-align: center;
-    padding: 100px 20px; /* Ruimte boven en onder */
-    margin-bottom: 50px;
-}
-
-.hero-content {
-    max-width: 800px;
-    margin: 0 auto;
-}
-
-.hero-section h2 {
-    font-size: 3.5em;
-    margin-bottom: 20px;
-    color: var(--text-light); /* Zorg dat de kleur wit is */
-    text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
-}
-
-.hero-section p {
-    font-size: 1.3em;
-    margin-bottom: 30px;
-    color: var(--text-light);
-}
+/*hero-section*/
 
 .button {
     display: inline-block;
-    background-color: var(--primary-red);
+    background-color: var(--f1-red);
     color: var(--text-light);
     padding: 15px 30px;
     border-radius: 8px;
@@ -358,665 +721,4 @@ header nav a.active { /* Stijl voor actieve pagina */
 .button:hover {
     background-color: #CC0000; /* Iets donkerder rood bij hover */
     transform: translateY(-2px); /* Subtiele lift */
-}
-
-/* --- Highlight Carousel Section (gebruikt bestaande carousel stijlen, maar kan specifieke aanpassingen krijgen indien nodig) --- */
-.highlight-carousel-section {
-    margin-bottom: 50px;
-    background-color: var(--grey-light); /* Consistent met body */
-}
-
-/* Pas de animatie snelheid van de homepage carousel aan indien anders gewenst */
-.highlight-carousel-section .carousel {
-    animation-duration: 25s; /* Iets sneller dan de team logo carousel */
-}
-
-/* --- News Section --- */
-.news-section {
-    padding: 40px 20px;
-    max-width: 1200px;
-    margin: 0 auto 50px auto;
-    background-color: var(--text-light); /* Witte achtergrond voor de sectie */
-    border-radius: 15px;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-}
-
-.section-title {
-    text-align: center;
-    font-size: 3em;
-    margin-bottom: 40px;
-    color: var(--primary-red);
-}
-
-.news-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); /* Responsief grid */
-    gap: 30px; /* Ruimte tussen artikelen */
-}
-
-.news-article {
-    background-color: var(--grey-light);
-    padding: 25px;
-    border-radius: 12px;
-    border: 1px solid #E0E0E0;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between; /* Voor 'read more' link onderaan */
-}
-
-.news-article:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 8px 20px rgba(0,0,0,0.15);
-}
-
-.news-article h3 {
-    font-size: 1.8em;
-    color: var(--text-dark);
-    margin-top: 0;
-    margin-bottom: 15px;
-}
-
-.news-article p {
-    font-size: 1em;
-    color: #555;
-    line-height: 1.7;
-    margin-bottom: 20px;
-    flex-grow: 1; /* Zorgt ervoor dat paragrafen de beschikbare ruimte vullen */
-}
-
-.read-more {
-    color: var(--primary-red);
-    font-weight: bold;
-    text-decoration: none;
-    align-self: flex-end; /* Lijn de link rechts uit */
-}
-
-.read-more:hover {
-    text-decoration: underline;
-}
-
-/* --- Call to Action (CTA) Section --- */
-.cta-section {
-    background-color: var(--primary-red);
-    color: var(--text-light);
-    text-align: center;
-    padding: 60px 20px;
-    margin-top: 50px;
-}
-
-.cta-section h2 {
-    font-size: 2.8em;
-    margin-bottom: 20px;
-    color: var(--text-light);
-}
-
-.cta-section p {
-    font-size: 1.2em;
-    margin-bottom: 30px;
-}
-
-.newsletter-form {
-    display: flex;
-    justify-content: center;
-    gap: 15px;
-    max-width: 600px;
-    margin: 0 auto;
-    flex-wrap: wrap; /* Zorgt ervoor dat elementen naar de volgende regel springen op kleine schermen */
-}
-
-.newsletter-form input[type="email"] {
-    padding: 12px 20px;
-    border-radius: 8px;
-    border: none;
-    width: 60%; /* Relatieve breedte */
-    min-width: 250px; /* Minimale breedte */
-    font-size: 1em;
-}
-
-/* --- Footer --- */
-footer {
-    background-color: var(--text-dark);
-    color: var(--text-light);
-    text-align: center;
-    padding: 20px;
-    margin-top: 50px;
-    font-size: 0.9em;
-}
-
-
-/* --- Media Queries voor responsiviteit op de Homepagina --- */
-
-@media (max-width: 992px) {
-    .hero-section {
-        padding: 80px 20px;
-    }
-
-    .hero-section h2 {
-        font-size: 2.8em;
-    }
-
-    .section-title {
-        font-size: 2.5em;
-    }
-
-    .news-grid {
-        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    }
-}
-
-@media (max-width: 768px) {
-    .hero-section {
-        padding: 60px 20px;
-    }
-
-    .hero-section h2 {
-        font-size: 2.2em;
-    }
-
-    .hero-section p {
-        font-size: 1.1em;
-    }
-
-    .button {
-        padding: 12px 25px;
-        font-size: 1em;
-    }
-
-    .section-title {
-        font-size: 2em;
-        margin-bottom: 30px;
-    }
-
-    .news-grid {
-        grid-template-columns: 1fr; /* Eén kolom op mobiele telefoons */
-    }
-
-    .news-article {
-        padding: 20px;
-    }
-
-    .cta-section {
-        padding: 40px 20px;
-    }
-
-    .cta-section h2 {
-        font-size: 2em;
-    }
-
-    .newsletter-form {
-        flex-direction: column; /* Stapel de input en knop op mobiel */
-        align-items: center;
-        gap: 10px;
-    }
-
-    .newsletter-form input[type="email"] {
-        width: 80%; /* Bredere input op mobiel */
-    }
-
-    footer {
-        padding: 15px;
-    }
-}
-
-@media (max-width: 480px) {
-    .hero-section h2 {
-        font-size: 1.8em;
-    }
-}
-
-/* ============================================== */
-/* === STIJLEN VOOR INDIVIDUELE DRIVER PAGINA === */
-/* ============================================== */
-
-.driver-detail-section {
-    padding: 40px 20px;
-    max-width: 900px;
-    margin: 0 auto 60px auto;
-    background-color: var(--text-light);
-    border-radius: 15px;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-}
-
-.driver-main-info {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 25px;
-    padding-bottom: 30px;
-    margin-bottom: 30px;
-    border-bottom: 2px solid var(--driver-color); /* Kleurrijke scheiding */
-    text-align: center;
-}
-
-.driver-profile-img {
-    width: 300px;
-    height: 950px;
-    border-radius: 10px;
-    object-fit: cover;
-    border: 6px solid var(--driver-color);
-    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-}
-
-.driver-key-details {
-    font-size: 1.1em;
-    color: var(--text-dark);
-}
-
-.driver-key-details p {
-    margin: 8px 0;
-}
-
-.driver-key-details strong {
-    color: #333;
-}
-
-.number-highlight {
-    font-size: 1.5em;
-    font-weight: bold;
-    color: var(--driver-color); /* Rugnummer in teamkleur */
-    margin-left: 5px;
-}
-
-.driver-bio-section,
-.driver-stats-section,
-.career-highlights-section {
-    margin-bottom: 30px;
-}
-
-.driver-bio-section h2,
-.driver-stats-section h2,
-.career-highlights-section h2 {
-    font-size: 2.2em;
-    color: var(--primary-red);
-    border-bottom: 1px solid var(--grey-medium);
-    padding-bottom: 10px;
-    margin-bottom: 20px;
-}
-
-.driver-bio-section p {
-    font-size: 1.1em;
-    line-height: 1.8;
-    color: #444;
-}
-
-.driver-stats-section ul,
-.career-highlights-section ul {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-}
-
-.driver-stats-section li,
-.career-highlights-section li {
-    background-color: var(--grey-light);
-    padding: 12px 15px;
-    border-left: 4px solid var(--primary-red);
-    margin-bottom: 10px;
-    border-radius: 5px;
-    font-size: 1em;
-    color: var(--text-dark);
-}
-
-.driver-stats-section li strong,
-.career-highlights-section li strong {
-    color: var(--primary-red);
-    margin-right: 5px;
-}
-
-.back-link-container {
-    text-align: center;
-    margin-top: 40px;
-}
-
-.back-button {
-    background-color: var(--grey-medium);
-    color: var(--text-light);
-    padding: 10px 20px;
-}
-
-.back-button:hover {
-    background-color: #777;
-}
-
-/* Media Queries voor individuele driver pagina */
-@media (min-width: 769px) { /* Op grotere schermen, zet info naast afbeelding */
-    .driver-main-info {
-        flex-direction: row;
-        text-align: left;
-        justify-content: center; /* Centreer de elementen horizontaal */
-        align-items: flex-start; /* Lijn de items bovenaan uit */
-    }
-
-    .driver-profile-img {
-        margin-right: 30px; /* Ruimte tussen afbeelding en tekst */
-        margin-bottom: 0;
-    }
-
-    .driver-key-details {
-        text-align: left;
-    }
-}
-
-@media (max-width: 768px) {
-    .driver-detail-section {
-        padding: 25px 15px;
-    }
-
-    .driver-main-info {
-        flex-direction: column;
-        gap: 20px;
-    }
-
-    .driver-profile-img {
-        width: 150px;
-        height: 150px;
-    }
-
-    .driver-bio-section h2,
-    .driver-stats-section h2,
-    .career-highlights-section h2 {
-        font-size: 1.8em;
-    }
-
-    .driver-stats-section li,
-    .career-highlights-section li {
-        padding: 10px 12px;
-        font-size: 0.95em;
-    }
-}
-
-@media (max-width: 480px) {
-    .driver-detail-section {
-        padding: 20px 10px;
-    }
-
-    .page-header {
-        font-size: 2em;
-    }
-
-    .driver-profile-img {
-        width: 120px;
-        height: 120px;
-    }
-
-    .driver-key-details {
-        font-size: 1em;
-    }
-
-    .number-highlight {
-        font-size: 1.3em;
-    }
-
-    .driver-bio-section h2,
-    .driver-stats-section h2,
-    .career-highlights-section h2 {
-        font-size: 1.6em;
-    }
-}
-
-/* ==================================== */
-/* === STIJLEN VOOR DE DRIVERS PAGINA === */
-/* ==================================== */
-
-.driver-grid-section {
-    padding: 40px 20px;
-    max-width: 1200px;
-    margin: 0 auto 60px auto;
-}
-
-.driver-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); /* Responsief grid */
-    gap: 30px; /* Ruimte tussen de kaarten */
-    justify-content: center; /* Centreer items als er niet genoeg zijn om een hele rij te vullen */
-}
-
-.driver-card {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    background-color: var(--text-light);
-    border-radius: 15px;
-    padding: 20px;
-    border: 5px solid var(--driver-color); /* Gebruik de specifieke coureur kleur */
-    text-decoration: none; /* Verwijder de onderstreping van de link */
-    color: var(--text-dark); /* Standaard tekstkleur */
-    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-.driver-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 8px 20px var(--shadow-color);
-}
-
-.driver-header {
-    text-align: center;
-    margin-bottom: 15px;
-}
-
-.driver-header img {
-    width: 150px; /* Grootte van de coureurafbeelding */
-    height: 150px;
-    border-radius: 50%; /* Maak de afbeelding rond */
-    object-fit: cover;
-    border: 3px solid var(--driver-color); /* Rand in teamkleur */
-    margin-bottom: 10px;
-}
-
-.driver-name {
-    font-size: 1.8em;
-    margin: 0;
-    color: var(--text-dark);
-}
-
-.driver-info {
-    text-align: center;
-    width: 100%;
-}
-
-.driver-team {
-    font-size: 1.1em;
-    color: #555;
-    margin-bottom: 5px;
-}
-
-.driver-number {
-    font-size: 1.5em;
-    font-weight: bold;
-    color: var(--driver-color);
-    margin-bottom: 10px;
-}
-
-.driver-nationality {
-    font-size: 0.9em;
-    color: #777;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px; /* Ruimte tussen tekst en vlag */
-}
-
-.driver-nationality {
-    width: 30px;
-    height: 20px;
-    border: 1px solid #ddd;
-    border-radius: 3px;
-    object-fit: cover;
-}
-
-.flag-icon {
-    width: 50px;
-    height: 30px; 
-    border-radius: 3px; 
-    object-fit: cover;
-    border: #000000 1px solid; 
-}
-
-/* Media Queries voor responsiviteit op de Drivers pagina */
-@media (max-width: 768px) {
-    .driver-grid {
-        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-        gap: 20px;
-    }
-
-    .driver-card {
-        padding: 15px;
-    }
-
-    .driver-header img {
-        width: 120px;
-        height: 120px;
-    }
-
-    .driver-name {
-        font-size: 1.6em;
-    }
-
-    .driver-number {
-        font-size: 1.3em;
-    }
-}
-
-@media (max-width: 480px) {
-    .driver-grid {
-        grid-template-columns: 1fr; /* Eén coureur per rij op kleine mobiele schermen */
-        gap: 15px;
-    }
-
-    .driver-card {
-        width: 90%; /* Geef ze meer breedte op zeer kleine schermen */
-        margin: 0 auto; /* Centreer de kaarten */
-    }
-
-    .driver-header img {
-        width: 100px;
-        height: 100px;
-    }
-
-    .driver-name {
-        font-size: 1.4em;
-    }
-}
-
-/* --- Team Detail Page Styles --- */
-
-.team-detail-section {
-    padding: 20px;
-    max-width: 1200px;
-    margin: 20px auto;
-    background-color: #ffffff;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    color: #000000;
-}
-
-.team-main-info {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 30px;
-    margin-bottom: 30px;
-    padding: 25px;
-    border-radius: 8px;
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0.8));
-    border-left: 8px solid var(--team-color, #fff); /* Gebruikt de teamkleur variabele */
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
-}
-
-.team-logo {
-    width: 150px; /* Grotere logo's voor detailpagina */
-    height: auto;
-    border-radius: 50%; /* Als je cirkel logo's wilt */
-    border: 3px solid var(--team-color, #fff);
-    object-fit: contain; /* Zorgt ervoor dat het logo past zonder vervorming */
-    padding: 5px;
-    background-color: #fff; /* Witte achtergrond voor logo */
-}
-
-.team-key-details {
-    flex-grow: 1;
-    font-size: 1.1em;
-    line-height: 1.6;
-}
-
-.team-key-details p {
-    margin: 5px 0;
-}
-
-.team-key-details strong {
-    color: var(--team-color, #fff); /* Gebruik teamkleur voor labels */
-}
-
-.team-bio-section,
-.team-drivers-section {
-    background-color: #ffffff;
-    padding: 25px;
-    border-radius: 8px;
-    margin-bottom: 20px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-}
-
-.team-bio-section h2,
-.team-drivers-section h2 {
-    color: var(--team-color); /* Titel in teamkleur */
-    margin-top: 0;
-    margin-bottom: 15px;
-    font-size: 1.8em;
-    border-bottom: 2px solid var(--team-color, rgba(255,255,255,0.3));
-    padding-bottom: 10px;
-}
-
-.team-bio-section p {
-    line-height: 1.7;
-    margin-bottom: 15px;
-}
-
-.team-drivers-section ul {
-    list-style: none;
-    padding: 0;
-}
-
-.team-drivers-section ul li {
-    background-color: #ffffff;
-    margin-bottom: 10px;
-    padding: 12px 15px;
-    border-radius: 5px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    border-left: 5px solid var(--team-color, #fff);
-}
-
-.team-drivers-section ul li a {
-    color: #575757;
-    text-decoration: none;
-    font-weight: bold;
-    font-size: 1.1em;
-    transition: color 0.3s ease;
-}
-
-.team-drivers-section ul li a:hover {
-    color: var(--team-color, #ddd);
-    text-decoration: underline;
-}
-
-.race-item .circuit-image {
-    max-width: 100%; 
-    height: auto;
-    border-radius: 8px; 
-    margin-top: 15px; 
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-}
-
-@media (max-width: 768px) {
-    .team-main-info {
-        flex-direction: column;
-        text-align: center;
-    }
-
-    .team-logo {
-        margin-bottom: 20px;
-    }
 }

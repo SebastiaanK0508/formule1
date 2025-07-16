@@ -25,5 +25,10 @@ CREATE TABLE drivers (
     team_name VARCHAR(100),                   
     championships_won INT DEFAULT 0,          
     career_points DECIMAL(10, 2) DEFAULT 0.00,
+    image_url VARCHAR(255),
     is_active BOOLEAN DEFAULT TRUE            
 );
+
+ALTER TABLE drivers
+ADD COLUMN image VARCHAR(255);
+

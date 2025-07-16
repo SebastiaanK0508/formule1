@@ -183,6 +183,8 @@ body {
     transform: scaleX(1);
 }
 
+
+/* Hoofdinhoud Paneel */
 .main-content-panel {
     flex: 1; /* flex-1 */
     padding: 1.5rem; /* p-6 */
@@ -214,35 +216,7 @@ body {
     }
 }
 
-.result-box { border: 1px solid #ddd; padding: 15px; border-radius: 8px; background-color: #e9f7ef; color: #333; }
-.result-box p { margin: 0 0 5px 0; }
-.result-box strong { color: #007bff; }
-
-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 1rem; /* mt-4 */
-}
-th, td {
-    padding: 0.75rem; /* py-3 px-4 */
-    text-align: left;
-    border-bottom: 1px solid var(--webbair-border); /* border-b */
-}
-th {
-    background-color: var(--webbair-bg-light); /* bg-webbair-bg-light */
-    color: var(--webbair-text-dark); /* text-webbair-text-dark */
-    font-weight: 600; /* font-semibold */
-}
-td {
-    color: var(--webbair-text-light); /* text-webbair-text-light */
-}
-tr:hover {
-    background-color: var(--webbair-accent); /* hover:bg-webbair-bg-dark */
-    color: white; /* hover:text-white */
-    cursor: pointer; /* Pointer cursor voor hover effect */
-}
-
-.achterkantbutton {
+.adddriverbutton {
     border: 2px solid var(--webbair-accent);
     background-color: var(--webbair-accent);
     border-radius: 6px;
@@ -250,7 +224,7 @@ tr:hover {
     transition: all 0.2s ease-in-out;
 }
 
-.achterkantbutton:hover {
+.adddriverbutton:hover {
     background-color: var(--webbair-secondary);
     border-color: var(--webbair-secondary);
     transform: translateY(-5px); 
@@ -258,3 +232,40 @@ tr:hover {
     box-shadow: 0 0 10px rgba(0, 123, 255, 0.5);
     color: white;
 }
+
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;  
+    background-color: whitesmoke;
+    box-shadow: 3px 3px 10px rgb(204, 204, 204);
+    padding: 1.5rem; 
+    border-radius: 0.75rem;
+}
+
+input[type="text"],
+input[type="number"],
+input[type="email"],
+input[type="date"] {
+    padding: 0.5rem;
+    border: 1px solid var(--webbair-accent);
+    border-radius: 0.375rem; /* rounded-md */
+    font-size: 1rem; /* text-base */
+    width: 100%;
+    box-sizing: border-box; /* Zorgt ervoor dat padding en border worden meegerekend in de breedte */
+}
+select {
+    padding: 0.5rem;
+    border: 1px solid var(--webbair-accent);
+    border-radius: 0.375rem; /* rounded-md */
+    font-size: 1rem; /* text-base */
+    width: 100%;
+    box-sizing: border-box; /* Zorgt ervoor dat padding en border worden meegerekend in de breedte */
+}
+
+input::selection {
+    background-color: var(--webbair-accent);
+    color: white;
+    border-color: var(--webbair-accent);
+}
+
