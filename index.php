@@ -13,8 +13,8 @@
             <nav class="main-nav">
                 <a href="index.php" class="active">Home</a>
                 <a href="kalender.html">Schedule</a>
-                <a href="teams.html">Teams</a>
-                <a href="drivers.html">Drivers</a>
+                <a href="teams.php">Teams</a>
+                <a href="drivers.php">Drivers</a>
                 <a href="standings.html">Standings</a>
             </nav>
         </div>

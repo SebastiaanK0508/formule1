@@ -32,3 +32,11 @@ CREATE TABLE drivers (
 ALTER TABLE drivers
 ADD COLUMN image VARCHAR(255);
 
+-- Add the flag_url column
+ALTER TABLE drivers
+ADD COLUMN flag_url VARCHAR(255) NULL;
+
+-- Add the driver_color column
+ALTER TABLE drivers
+ADD COLUMN driver_color VARCHAR(50) NULL;
+
