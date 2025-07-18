@@ -116,6 +116,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['driver_id'])) {
                                         <td><?php echo htmlspecialchars($driver['first_name']); ?></td>
                                         <td><?php echo htmlspecialchars($driver['last_name']); ?></td>
                                         <td><?php echo htmlspecialchars($driver['driver_number']); ?></td>
+                                        <td><?php echo htmlspecialchars($driver['team_name']); ?></td>
                                     </tr>
                                 <?php endforeach; ?>
                                 <?php else: ?>

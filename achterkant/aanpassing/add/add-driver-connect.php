@@ -28,6 +28,8 @@ $teamName = $_POST['team_name'] ?? '';
 $championshipsWon = $_POST['championships_won'] ?? 0;
 $careerPoints = $_POST['career_points'] ?? 0.00;
 $imageUrl = $_POST['image'] ?? null;
+$placeOfBirth = $_POST['place_of_birth'] ?? null;
+$description = $_POST['description'] ?? null;
 $isActive = isset($_POST['is_active']) ? 1 : 0;
 
 $sql = "INSERT INTO drivers (
@@ -40,6 +42,8 @@ $sql = "INSERT INTO drivers (
             championships_won,
             career_points,
             image,
+            place_of_birth,
+            description,
             is_active
         ) VALUES (
             :first_name,
@@ -51,6 +55,8 @@ $sql = "INSERT INTO drivers (
             :championships_won,
             :career_points,
             :image,
+            :place_of_birth,
+            :description,
             :is_active
         )";
 
@@ -66,6 +72,8 @@ try {
     $stmt->bindParam(':championships_won', $championshipsWon, PDO::PARAM_INT);
     $stmt->bindParam(':career_points', $careerPoints);
     $stmt->bindParam(':image', $imageUrl);
+    $stmt->bindparam(':place_of_birth',$dateOfBirth);
+    $stmt->bindparam(':description',$description);
     $stmt->bindParam(':is_active', $isActive, PDO::PARAM_INT);
 
     $stmt->execute();

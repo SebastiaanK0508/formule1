@@ -1,3 +1,23 @@
+<?php
+// Include the database connection file
+require_once 'db_config.php';
+
+/** @var PDO $pdo */ // This line is for your IDE's auto-completion and analysis
+
+$teams = []; // Initialize an empty array for teams
+
+try {
+    // Fetch all team names and their IDs from the 'teams' table, ordered alphabetically
+    $stmt_teams = $pdo->query("SELECT team_id, team_name FROM teams ORDER BY team_name ASC");
+    $teams = $stmt_teams->fetchAll(PDO::FETCH_ASSOC);
+} catch (PDOException $e) {
+    // Log the error for debugging purposes (e.g., to your server's error log)
+    error_log("Database error fetching teams: " . $e->getMessage());
+    // Optionally, display a user-friendly message without revealing sensitive error details
+    // echo "<p>Er is een probleem opgetreden bij het laden van de teams. Probeer het later opnieuw.</p>";
+}
+?>
+
 <!DOCTYPE html>
 <html lang="nl">
 <head>
@@ -12,16 +32,16 @@
 <body>
     <header class="main-header">
         <div class="header-title">
-            <h1>Formula 1 site - Add Drivers</h1>
+            <h1>Formula 1 site - Coureurs Toevoegen</h1>
         </div>
     </header>
-    <main class="main-content-area"> 
+    <main class="main-content-area">
         <section class="main-content-panel">
             <div class="headerhoofdpagina">
-                <h2 class="main-title">Drivers</h2>
+                <h2 class="main-title">Nieuwe Coureur Toevoegen</h2>
             </div>
             <div>
-                <a href="../drivers.php"><button class="adddriverbutton">Back</button></a>
+                <a href="../drivers.php"><button class="adddriverbutton">Terug naar Coureurs Overzicht</button></a>
             </div>
             <div>
                 <form action="add-driver-connect.php" method="POST" class="">
@@ -51,20 +71,15 @@
                     </div>
 
                     <div>
-                        <label for="team_name" class="block text-sm font-medium text-gray-700 mb-1">Teamnaam (huidig):</label>
-                        <select class="" name="team_name" id="team_name">
-                        <option value="" disabled selected>--select--</option>
-                        <option value="McLaren">McLaren</option>
-                        <option value="Ferrari">Ferrari</option>
-                        <option value="Oracle Red Bull Racing">Oracle Red Bull Racing</option>
-                        <option value="Mercedes-AMG Petronas F1 Team">Mercedes-AMG Petronas F1 Team</option>
-                        <option value="Alpine">Alpine</option>
-                        <option value="Aston Martin Aramco F1 Team">Aston Martin Aramco F1 Team</option>
-                        <option value="Visa Cash App RB">Visa Cash App RB</option>
-                        <option value="Williams">Williams</option>
-                        <option value="Haas">Haas</option>
-                        <option value="Stake Sauber F1">Stake Sauber F1</option>
-                        <option value="No Team">N.V.T.</option>
+                        <label for="team_id" class="block text-sm font-medium text-gray-700 mb-1">Teamnaam (huidig):</label>
+                        <select class="" name="team_id" id="team_id">
+                            <option value="" disabled selected>--selecteer team--</option>
+                            <?php foreach ($teams as $team): ?>
+                                <option value="<?php echo htmlspecialchars($team['team_id']); ?>">
+                                    <?php echo htmlspecialchars($team['team_name']); ?>
+                                </option>
+                            <?php endforeach; ?>
+                            <option value="0">N.V.T. (Geen team)</option>
                         </select>
                     </div>
 
@@ -75,17 +90,32 @@
 
                     <div>
                         <label for="career_points" class="block text-sm font-medium text-gray-700 mb-1">Carrièrepunten:</label>
-                        <input type="number" id="career_points" name="career_points" step="0.5" min="0" value="0.0" class="">
+                        <input type="number" id="career_points" name="career_points" step="0.01" min="0" value="0.00" class="">
                     </div>
 
                     <div>
-                        <label for="image" class="block text-sm font-medium text-gray-700 mb-1">Image URL:</label>
-                        <input type="text" id="image" name="image" step="0.5"  class="">
+                        <label for="image_url" class="block text-sm font-medium text-gray-700 mb-1">Coureursfoto URL:</label>
+                        <input type="text" id="image_url" name="image_url" class="">
+                    </div>
+                    
+                    <div>
+                        <label for="flag_url" class="block text-sm font-medium text-gray-700 mb-1">Landvlag URL:</label>
+                        <input type="text" id="flag_url" name="flag_url" class="">
+                    </div>
+
+                    <div>
+                        <label for="place_of_birth" class="block text-sm font-medium text-gray-700 mb-1">Geboorteplaats:</label>
+                        <input type="text" id="place_of_birth" name="place_of_birth" class="">
+                    </div>
+
+                    <div>
+                        <label for="description" class="block text-sm font-medium text-gray-700 mb-1">Beschrijving:</label>
+                        <textarea id="description" name="description" rows="5" class=""></textarea>
                     </div>
 
                     <div class="flex items-center">
-                        <input type="checkbox" id="is_active" name="is_active" checked class="">
-                        <label for="is_active" class="">Momenteel actief?</label>
+                        <input type="checkbox" id="is_active" name="is_active" checked class="mr-2">
+                        <label for="is_active" class="text-sm font-medium text-gray-700">Momenteel actief?</label>
                     </div>
 
                     <div>
@@ -97,6 +127,7 @@
     </main>
 
     <script>
+        // Deze API call is voor testen/debugging, je kunt deze verwijderen of aanpassen indien nodig
         fetch("https://api.openf1.org/v1/drivers?driver_number=1&session_key=9158")
         .then((response) => response.json())
         .then((jsonContent) => console.log(jsonContent));

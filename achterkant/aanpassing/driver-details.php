@@ -15,19 +15,21 @@ $options = [
 
 $pdo = null;
 $driverDetails = null; // Voor de details van de coureur
-$teams = []; // Voor de lijst van teams
+$teams = []; // Voor de lijst van teams uit de 'teams' tabel
 $message = ''; // Voor succes- of foutmeldingen
 
 try {
     $pdo = new PDO($dsn, $user, $pass, $options);
 
-    // Haal alle unieke teamnamen op voor de dropdown
-    $stmt = $pdo->query("SELECT DISTINCT team_name FROM drivers WHERE team_name IS NOT NULL AND team_name != '' ORDER BY team_name ASC");
-    $teams = $stmt->fetchAll(PDO::FETCH_COLUMN);
+    // --- AANPASSING HIER: Haal teams op uit de 'teams' tabel ---
+    $stmt_teams = $pdo->query("SELECT team_id, team_name FROM teams ORDER BY team_name ASC");
+    $teams = $stmt_teams->fetchAll(PDO::FETCH_ASSOC);
 
-    if (!in_array('No Team', $teams)) {
-        $teams[] = 'No Team';
-    }
+    // Voeg de "No Team" optie handmatig toe aan de teams array
+    // Zorg voor een unieke ID die niet conflicteert met bestaande team_id's (bijv. 0 of -1)
+    // En zorg dat je drivers tabel NULL toelaat voor team_id, of een team_id 0 heeft voor "Geen team"
+    $teams[] = ['team_id' => 0, 'team_name' => 'N.V.T. (Geen team)']; // Voeg als een associatieve array toe
+    // --- EINDE AANPASSING ---
 
 } catch (\PDOException $e) {
     die("Verbindingsfout: " . $e->getMessage());
@@ -43,22 +45,39 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $driverId) {
         $nationality = $_POST['nationality'] ?? '';
         $dateOfBirth = $_POST['date_of_birth'] ?? null;
         $driverNumber = $_POST['driver_number'] ?? null;
-        $teamName = $_POST['team_name'] ?? '';
+        // --- AANPASSING HIER: team_id ophalen i.p.v. team_name ---
+        $teamId = $_POST['team_id'] ?? null;
+        // Als team_id 0 is (N.V.T.), sla dan NULL op in de database
+        if ($teamId == 0) {
+            $teamId = null;
+        }
+        // --- EINDE AANPASSING ---
         $championshipsWon = $_POST['championships_won'] ?? 0;
         $careerPoints = $_POST['career_points'] ?? 0.00;
         $imageUrl = $_POST['image'] ?? null;
+        // --- NIEUW: flag_url toevoegen ---
+        $flagUrl = $_POST['flag_url'] ?? null;
+        // --- EINDE NIEUW ---
+        // --- NIEUW: place_of_birth en description toevoegen ---
+        $placeOfBirth = $_POST['place_of_birth'] ?? null;
+        $description = $_POST['description'] ?? null;
+        // --- EINDE NIEUW ---
         $isActive = isset($_POST['is_active']) ? 1 : 0;
 
+        // --- AANPASSING HIER: UPDATE query om team_id, flag_url, place_of_birth, description te gebruiken ---
         $sql = "UPDATE drivers SET
                     first_name = :first_name,
                     last_name = :last_name,
                     nationality = :nationality,
                     date_of_birth = :date_of_birth,
                     driver_number = :driver_number,
-                    team_name = :team_name,
+                    team_id = :team_id, -- Aangepast naar team_id
                     championships_won = :championships_won,
                     career_points = :career_points,
                     image = :image,
+                    flag_url = :flag_url, -- Toegevoegd
+                    place_of_birth = :place_of_birth, -- Toegevoegd
+                    description = :description, -- Toegevoegd
                     is_active = :is_active
                 WHERE driver_id = :driver_id";
 
@@ -69,20 +88,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $driverId) {
         $stmt->bindParam(':nationality', $nationality);
         $stmt->bindParam(':date_of_birth', $dateOfBirth);
         $stmt->bindParam(':driver_number', $driverNumber, PDO::PARAM_INT);
-        $stmt->bindParam(':team_name', $teamName);
+        $stmt->bindParam(':team_id', $teamId, PDO::PARAM_INT); // Aangepast naar team_id
         $stmt->bindParam(':championships_won', $championshipsWon, PDO::PARAM_INT);
         $stmt->bindParam(':career_points', $careerPoints);
         $stmt->bindParam(':image', $imageUrl);
+        $stmt->bindParam(':flag_url', $flagUrl); // Toegevoegd
+        $stmt->bindParam(':place_of_birth', $placeOfBirth); // Toegevoegd
+        $stmt->bindParam(':description', $description); // Toegevoegd
         $stmt->bindParam(':is_active', $isActive, PDO::PARAM_INT);
         $stmt->bindParam(':driver_id', $driverId, PDO::PARAM_INT);
 
         if ($stmt->execute()) {
             $message = "<p class='success-message'>Coureurgegevens succesvol bijgewerkt!</p>";
             // Herlaad de driverDetails na de update om de nieuwste gegevens te tonen
-            $stmt = $pdo->prepare("SELECT * FROM drivers WHERE driver_id = :driver_id");
+            // --- AANPASSING HIER: JOIN om team_name op te halen voor weergave ---
+            $stmt = $pdo->prepare("
+                SELECT d.*, t.team_name
+                FROM drivers d
+                LEFT JOIN teams t ON d.team_id = t.team_id
+                WHERE d.driver_id = :driver_id
+            ");
             $stmt->bindParam(':driver_id', $driverId, PDO::PARAM_INT);
             $stmt->execute();
             $driverDetails = $stmt->fetch();
+            // --- EINDE AANPASSING ---
         } else {
             $message = "<p class='error-message'>Fout bij het bijwerken van coureurgegevens.</p>";
         }
@@ -95,10 +124,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $driverId) {
 // Haal de driver details op voor weergave (ook na een POST-update)
 if ($driverId && !$driverDetails) {
     try {
-        $stmt = $pdo->prepare("SELECT * FROM drivers WHERE driver_id = :driver_id");
+        // --- AANPASSING HIER: JOIN om team_name op te halen voor weergave ---
+        $stmt = $pdo->prepare("
+            SELECT d.*, t.team_name
+            FROM drivers d
+            LEFT JOIN teams t ON d.team_id = t.team_id
+            WHERE d.driver_id = :driver_id
+        ");
         $stmt->bindParam(':driver_id', $driverId, PDO::PARAM_INT);
         $stmt->execute();
         $driverDetails = $stmt->fetch();
+
+        // Als team_id NULL is, zorg dat team_name 'N.V.T. (Geen team)' wordt
+        if (empty($driverDetails['team_id']) && !isset($driverDetails['team_name'])) {
+            $driverDetails['team_name'] = 'N.V.T. (Geen team)';
+        }
+        // --- EINDE AANPASSING ---
 
         if (!$driverDetails) {
             $message = "<p class='error-message'>Coureur met ID " . htmlspecialchars($driverId) . " niet gevonden.</p>";
@@ -130,6 +171,7 @@ if (!is_array($driverDetails)) {
         input[type="text"],
         input[type="number"],
         input[type="date"],
+        textarea, /* Toegevoegd */
         select {
             width: calc(100% - 22px);
             padding: 10px;
@@ -144,6 +186,7 @@ if (!is_array($driverDetails)) {
         input[type="text"]:focus,
         input[type="number"]:focus,
         input[type="date"]:focus,
+        textarea:focus, /* Toegevoegd */
         select:focus {
             outline: none;
             border-color: #007bff;
@@ -153,6 +196,7 @@ if (!is_array($driverDetails)) {
         input[type="text"]:not([readonly]),
         input[type="number"]:not([readonly]),
         input[type="date"]:not([readonly]),
+        textarea:not([readonly]), /* Toegevoegd */
         select:not([disabled]) {
             background-color: white;
         }
@@ -212,8 +256,18 @@ if (!is_array($driverDetails)) {
                 </div>
 
                 <div class="form-group">
+                    <label for="flag_url">Landvlag URL:</label>
+                    <input type="text" id="flag_url" name="flag_url" value="<?php echo htmlspecialchars($driverDetails['flag_url'] ?? ''); ?>" readonly>
+                </div>
+
+                <div class="form-group">
                     <label for="date_of_birth">Geboortedatum:</label>
                     <input type="date" id="date_of_birth" name="date_of_birth" value="<?php echo htmlspecialchars($driverDetails['date_of_birth'] ?? ''); ?>" readonly>
+                </div>
+
+                <div class="form-group">
+                    <label for="place_of_birth">Geboorteplaats:</label>
+                    <input type="text" id="place_of_birth" name="place_of_birth" value="<?php echo htmlspecialchars($driverDetails['place_of_birth'] ?? ''); ?>" readonly>
                 </div>
 
                 <div class="form-group">
@@ -222,18 +276,22 @@ if (!is_array($driverDetails)) {
                 </div>
 
                 <div class="form-group">
-                    <label for="team_name">Teamnaam (huidig):</label>
-                    <select id="team_name" name="team_name" disabled>
-                        <option value="">-- Geen Team --</option>
+                    <label for="team_id">Teamnaam (huidig):</label>
+                    <select id="team_id" name="team_id" disabled>
+                        <option value="0">-- selecteer team --</option>
                         <?php foreach ($teams as $team): ?>
-                            <option value="<?php echo htmlspecialchars($team); ?>"
-                                <?php if (isset($driverDetails['team_name']) && $driverDetails['team_name'] === $team) echo 'selected'; ?>>
-                                <?php echo htmlspecialchars($team); ?>
+                            <option value="<?php echo htmlspecialchars($team['team_id']); ?>"
+                                <?php
+                                // Controleer of de huidige team_id overeenkomt met de team_id van de coureur
+                                if (isset($driverDetails['team_id']) && $driverDetails['team_id'] === $team['team_id']) {
+                                    echo 'selected';
+                                }
+                                ?>>
+                                <?php echo htmlspecialchars($team['team_name']); ?>
                             </option>
                         <?php endforeach; ?>
                     </select>
                 </div>
-
                 <div class="form-group">
                     <label for="championships_won">Kampioenschappen gewonnen:</label>
                     <input type="number" id="championships_won" name="championships_won" value="<?php echo htmlspecialchars($driverDetails['championships_won'] ?? 0); ?>" min="0" readonly>
@@ -247,6 +305,11 @@ if (!is_array($driverDetails)) {
                 <div class="form-group">
                     <label for="image">Image URL:</label>
                     <input type="text" id="image" name="image" value="<?php echo htmlspecialchars($driverDetails['image'] ?? ''); ?>" readonly>
+                </div>
+
+                <div class="form-group">
+                    <label for="description">Beschrijving:</label>
+                    <textarea id="description" name="description" rows="5" readonly><?php echo htmlspecialchars($driverDetails['description'] ?? ''); ?></textarea>
                 </div>
 
                 <div class="form-group">
@@ -272,15 +335,16 @@ if (!is_array($driverDetails)) {
             const form = document.querySelector('form');
             const editButton = document.getElementById('editButton');
             const saveButton = document.getElementById('saveButton');
-            const inputs = form.querySelectorAll('input:not([type="hidden"]), select'); // Selecteer alle relevante velden
+            // Selecteer alle relevante velden, inclusief de nieuwe textarea
+            const inputs = form.querySelectorAll('input:not([type="hidden"]), select, textarea');
 
             // Functie om velden bewerkbaar te maken
             function setEditable(isEditable) {
                 inputs.forEach(input => {
                     if (input.type === 'checkbox') {
                         input.disabled = !isEditable; // Checkboxen gebruiken 'disabled'
-                    } else if (input.tagName === 'SELECT') {
-                        input.disabled = !isEditable; // Selects gebruiken 'disabled'
+                    } else if (input.tagName === 'SELECT' || input.tagName === 'TEXTAREA') { // Ook textarea
+                        input.disabled = !isEditable; // Selects en textareas gebruiken 'disabled'
                     } else {
                         input.readOnly = !isEditable; // Text/number/date inputs gebruiken 'readonly'
                     }

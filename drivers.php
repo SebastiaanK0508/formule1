@@ -58,35 +58,33 @@
         <section class="race-calandar">
             <div class="race-grid">
 
-                <?php
-                // Loop door ALLE opgehaalde coureurs en genereer dynamisch de HTML
-                if (!empty($allDrivers)) {
-                    foreach ($allDrivers as $driver) {
-                        // Zorg ervoor dat alle benodigde velden bestaan in je database en query.
-                        // Een fallback voor kleur als deze niet in de DB staat
-                        $driverColor = isset($driver['driver_color']) && $driver['driver_color'] ? htmlspecialchars($driver['driver_color']) : 'rgb(0,0,0)'; // Standaard zwart
+<?php
+// Loop door ALLE opgehaalde coureurs en genereer dynamisch de HTML
+if (!empty($allDrivers)) {
+    foreach ($allDrivers as $driver) {
+        // Zorg ervoor dat alle benodigde velden bestaan in je database en query.
+        // Een fallback voor kleur als deze niet in de DB staat
+        $driverColor = isset($driver['driver_color']) && $driver['driver_color'] ? htmlspecialchars($driver['driver_color']) : 'rgb(0,0,0)'; // Standaard zwart
 
-                        // Dynamische link naar individuele coureurspagina (indien deze bestaat)
-                        // Maak de URL dynamisch, bijv. "drivers/max-verstappen.html"
-                        $driverPageUrl = 'drivers/' . strtolower(str_replace(' ', '-', htmlspecialchars($driver['first_name'] . '-' . $driver['last_name']))) . '.html';
+        // Dynamische link naar de generieke driver.php pagina
+        // Pass de 'slug' (bijv. max-verstappen) mee als een GET-parameter
+        $driverSlug = strtolower(str_replace(' ', '-', htmlspecialchars($driver['first_name'] . '-' . $driver['last_name'])));
+        $driverPageUrl = 'driver-details.php?slug=' . $driverSlug; // Changed to driver.php
 
-                        echo '<a href="' . $driverPageUrl . '" class="race-card" style="--driver-color: ' . $driverColor . ';">';
-                        echo '    <div class="driver-header">';
-                        echo '        <h2 class="driver-name">' . htmlspecialchars($driver['first_name']) . ' ' . htmlspecialchars($driver['last_name']) . '</h2>'; // Correcte afsluiting
-                        echo '    </div>';
-                        echo '    <div class="driver-info">';
-                        echo '        <p class="driver-team">' . htmlspecialchars($driver['team_name']) . '</p>';
-                        echo '        <p class="driver-number">#' . htmlspecialchars($driver['driver_number']) . '</p>';
-                        // Controleer of flag_url bestaat in de database
-                        $flagUrl = isset($driver['flag_url']) && $driver['flag_url'] ? htmlspecialchars($driver['flag_url']) : 'pad/naar/standaard/vlag.png'; // Fallback vlag
-                        echo '        <p class="driver-nationality"><img class="flag-icon" src="' . $flagUrl . '" alt="' . htmlspecialchars($driver['first_name']) . ' ' . htmlspecialchars($driver['last_name']) . ' Flag"></p>';
-                        echo '    </div>';
-                        echo '</a>';
-                    }
-                } else {
-                    echo "<p>Geen coureurs beschikbaar om weer te geven.</p>";
-                }
-                ?>
+        echo '<a href="' . $driverPageUrl . '" class="race-card" style="--driver-color: ' . $driverColor . ';">';
+        echo '    <div class="driver-header">';
+        echo '        <h2 class="driver-name">' . htmlspecialchars($driver['first_name']) . ' ' . htmlspecialchars($driver['last_name']) . '</h2>';
+        echo '    </div>';
+        echo '    <div class="driver-info">';
+        echo '        <p class="driver-team">' . htmlspecialchars($driver['team_name']) . '</p>';
+        echo '        <p class="driver-number">#' . htmlspecialchars($driver['driver_number']) . '</p>';
+        echo '    </div>';
+        echo '</a>';
+    }
+} else {
+    echo "<p>Geen coureurs beschikbaar om weer te geven.</p>";
+}
+?>
 
             </div>
         </section>
