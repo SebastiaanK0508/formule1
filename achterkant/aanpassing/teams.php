@@ -1,21 +1,72 @@
 <!DOCTYPE html>
 <html lang="nl">
 <head>
+    <?php
+// Database configuratie
+$host = "localhost";
+$db = "formule1"; // Zorg dat dit overeenkomt met je database naam
+$user = "root"; // Zorg dat dit overeenkomt met je database gebruikersnaam
+$pass = "root"; // Zorg dat dit overeenkomt met je database wachtwoord
+$charset = "utf8mb4";
+
+$dsn = "mysql:host=$host;dbname=$db;charset=$charset";
+$options = [
+    PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
+    PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+    PDO::ATTR_EMULATE_PREPARES   => false,
+];
+
+$pdo = null; // Initialiseer $pdo buiten de try-block
+
+try {
+    // Maak verbinding met de database via PDO
+    $pdo = new PDO($dsn, $user, $pass, $options);
+} catch (\PDOException $e) {
+    // Afhandeling van verbindingsfouten
+    die("Verbindingsfout: " . $e->getMessage());
+}
+
+// Haal alle coureurs op voor de dropdown lijst
+$drivers = [];
+try {
+    $stmt = $pdo->query("SELECT driver_id, first_name, last_name, driver_number FROM drivers ORDER BY driver_number ASC");
+    $drivers = $stmt->fetchAll();
+} catch (\PDOException $e) {
+    echo "Fout bij het ophalen van coureurs: " . $e->getMessage();
+}
+
+// Verwerk het formulier als het is ingediend
+$selectedDriver = null;
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['driver_id'])) {
+    $driverId = $_POST['driver_id'];
+
+    try {
+        // Haal de details van de geselecteerde coureur op
+        $stmt = $pdo->prepare("SELECT first_name, last_name, driver_number FROM drivers WHERE driver_id = :driver_id");
+        $stmt->bindParam(':driver_id', $driverId, PDO::PARAM_INT);
+        $stmt->execute();
+        $selectedDriver = $stmt->fetch();
+
+        if (!$selectedDriver) {
+            echo "Coureur niet gevonden.";
+        }
+    } catch (\PDOException $e) {
+        echo "Fout bij het ophalen van coureurdetails: " . $e->getMessage();
+    }
+}
+?>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Webbair Framework</title>
-    <!-- Laad Google Fonts: Inter voor strakke typografie -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
-    <!-- Laad Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Laad custom backoffice CSS -->
     <link rel="stylesheet" href="style.css">
     <link rel="icon" href="" type="image/x-icon">
 </head>
 <body>
     <header class="main-header">
         <div class="header-title">
-            <h1>Formula 1 site - Teams</h1>
+            <h1>Formula 1 site - Drivers</h1>
         </div>
         <div class="header-info">
             <p class="header-sitename">Formula 1</p>
@@ -38,6 +89,58 @@
                 <a class="menu-link" href="standings.php">Standings</a>
             </div>
         </section>
+        <section class="main-content-panel">
+            <div class="headerhoofdpagina">
+                <h2 class="main-title">Teams</h2>
+            </div>
+            <div>
+                <div>
+                    <a href="add/add-drivers.php"><button class="achterkantbutton">Add Team</button></a>
+                    <a href="../dashboard.html"><button class="achterkantbutton">Dashboard</button></a>
+                </div>
+            </div>
+            <div>
+                <div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Team name</th>
+                            <th>Location</th>
+                            <th>Team principal</th>
+                        </tr>
+                    </thead>
+                        <tbody>
+                            <?php if (!empty($drivers)): ?>
+                                <?php foreach ($drivers as $driver): ?>
+                                    <tr data-driver-id="<?php echo htmlspecialchars($driver['team_id']); ?>">
+                                        <td><?php echo htmlspecialchars($driver['full_team_name']); ?></td>
+                                        <td><?php echo htmlspecialchars($driver['base_location']); ?></td>
+                                        <td><?php echo htmlspecialchars($driver['team_principal']); ?></td>
+                                    </tr>
+                                <?php endforeach; ?>
+                                <?php else: ?>
+                                    <tr><td colspan="3">Geen team gevonden in de database.</td></tr>
+                            <?php endif; ?>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
     </main>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const tableRows = document.querySelectorAll('tbody tr');
+
+            tableRows.forEach(row => {
+                row.addEventListener('dblclick', function() {
+                    const driverId = this.dataset.driverId;
+                    if (driverId) {
+                        // Stuur de gebruiker door naar de detailpagina met de driver_id
+                        window.location.href = 'driver-details.php?id=' + driverId;
+                    }
+                });
+            });
+        });
+    </script>
 </body>
 </html>

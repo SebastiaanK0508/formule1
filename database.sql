@@ -38,7 +38,6 @@ ADD COLUMN flag_url VARCHAR(255) NULL;
 ALTER TABLE drivers
 ADD COLUMN driver_color VARCHAR(50) NULL;
 
---alles hierboven gereed in beide databases--
 CREATE TABLE teams (
     team_id INT PRIMARY KEY AUTO_INCREMENT,
     team_name VARCHAR(100) NOT NULL UNIQUE,
@@ -105,3 +104,5 @@ ADD COLUMN place_of_birth VARCHAR(255);
 
 ALTER TABLE drivers
 ADD COLUMN description VARCHAR(255);
+
+--alles hierboven gereed in beide databases--
