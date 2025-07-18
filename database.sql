@@ -20,7 +20,7 @@ CREATE TABLE drivers (
     first_name VARCHAR(50) NOT NULL,          
     last_name VARCHAR(50) NOT NULL,           
     nationality VARCHAR(50) NOT NULL,         
-    date_of_birth DATE,                       
+    date_of_birth DATE,                   
     driver_number INT UNIQUE,                 
     team_name VARCHAR(100),                   
     championships_won INT DEFAULT 0,          
@@ -30,13 +30,12 @@ CREATE TABLE drivers (
 );
 
 ALTER TABLE drivers
-ADD COLUMN image VARCHAR(255);
+ADD COLUMN image VARCHAR(255); 
 
--- Add the flag_url column
 ALTER TABLE drivers
 ADD COLUMN flag_url VARCHAR(255) NULL;
 
--- Add the driver_color column
 ALTER TABLE drivers
 ADD COLUMN driver_color VARCHAR(50) NULL;
 
+--alles hierboven gereed in beide databases--
