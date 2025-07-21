@@ -9,7 +9,7 @@
     /** @var PDO $pdo */
     $allDrivers = []; 
     try {
-        $stmt = $pdo->query("SELECT driver_id, first_name, last_name, driver_number, team_name, flag_url, driver_color FROM drivers ORDER BY driver_number ASC");
+    $stmt = $pdo->query("SELECT driver_id, first_name, last_name, driver_number, team_name, flag_url, driver_color, is_active FROM drivers WHERE is_active = TRUE ORDER BY driver_number ASC");
         $allDrivers = $stmt->fetchAll();
     } catch (\PDOException $e) {
         error_log("Fout bij het ophalen van alle coureurs: " . $e->getMessage());

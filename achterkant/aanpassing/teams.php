@@ -29,7 +29,7 @@ try {
 // Haal alle coureurs op voor de dropdown lijst
 $drivers = [];
 try {
-    $stmt = $pdo->query("SELECT driver_id, first_name, last_name, driver_number FROM drivers ORDER BY driver_number ASC");
+    $stmt = $pdo->query("SELECT team_id, full_team_name, base_location, team_principal FROM teams ORDER BY full_team_name ASC");
     $drivers = $stmt->fetchAll();
 } catch (\PDOException $e) {
     echo "Fout bij het ophalen van coureurs: " . $e->getMessage();
@@ -37,13 +37,13 @@ try {
 
 // Verwerk het formulier als het is ingediend
 $selectedDriver = null;
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['driver_id'])) {
-    $driverId = $_POST['driver_id'];
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['team_id'])) {
+    $driverId = $_POST['team_id'];
 
     try {
         // Haal de details van de geselecteerde coureur op
-        $stmt = $pdo->prepare("SELECT first_name, last_name, driver_number FROM drivers WHERE driver_id = :driver_id");
-        $stmt->bindParam(':driver_id', $driverId, PDO::PARAM_INT);
+        $stmt = $pdo->prepare("SELECT full_team_name, base_location, team_principal FROM teams WHERE team_id = :team_id");
+        $stmt->bindParam(':team_id', $driverId, PDO::PARAM_INT);
         $stmt->execute();
         $selectedDriver = $stmt->fetch();
 
@@ -66,7 +66,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['driver_id'])) {
 <body>
     <header class="main-header">
         <div class="header-title">
-            <h1>Formula 1 site - Drivers</h1>
+            <h1>Formula 1 site - Teams</h1>
         </div>
         <div class="header-info">
             <p class="header-sitename">Formula 1</p>
@@ -95,7 +95,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['driver_id'])) {
             </div>
             <div>
                 <div>
-                    <a href="add/add-drivers.php"><button class="achterkantbutton">Add Team</button></a>
+                    <a href="add/add-team.php"><button class="achterkantbutton">Add Team</button></a>
                     <a href="../dashboard.html"><button class="achterkantbutton">Dashboard</button></a>
                 </div>
             </div>
@@ -136,7 +136,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['driver_id'])) {
                     const driverId = this.dataset.driverId;
                     if (driverId) {
                         // Stuur de gebruiker door naar de detailpagina met de driver_id
-                        window.location.href = 'driver-details.php?id=' + driverId;
+                        window.location.href = 'team-details.php?id=' + driverId;
                     }
                 });
             });

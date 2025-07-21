@@ -50,10 +50,6 @@ try {
     echo "Databasefout: " . $e->getMessage();
     exit;
 }
-
-
-// Now you have the $driver array with all the details for the specific driver
-// You can now display this information on the page.
 ?>
 <!DOCTYPE html>
 <html lang="nl">
@@ -67,60 +63,19 @@ try {
             --driver-main-color: <?php echo isset($driver['team_color']) && $driver['team_color'] ? htmlspecialchars($driver['team_color']) : 'rgb(0,0,0)'; ?>;
         }
 
-        .container {
+        .details-container {
             max-width: 800px;
             margin: 20px auto;
             background-color: #343434ff;
             padding: 30px;
             border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-
-        }
-
-        .drivername {
-            color: var(--driver-main-color);
-            border-bottom: 2px solid #eee;
-            padding-bottom: 10px;
-            margin-bottom: 20px;
-        }
-
-        .driver-detail-item {
-            margin-bottom: 15px;
-            padding: 10px;
-            background-color: #343434ff;
-            border-left: 5px solid var(--driver-main-color);
-            border-radius: 4px;
-        }
-
-        .driver-detail-item strong {
-            display: inline-block;
-            width: 120px;
-            color: #555;
-        }
-
-        .driver-image {
-            float: right;
-            margin-left: 20px;
-            border-radius: 5px;
-            max-width: 200px; /* Adjust as needed */
-            height: auto;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-        }
-
-        .back-link {
-            display: block;
-            margin-top: 30px;
-            text-align: center;
-            text-decoration: none;
-            color: #007bff;
-            font-weight: bold;
         }
     </style>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Oswald:wght@400;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
     <header>
-        <div class="header-content">
+        <div class="header-content container">
             <h1 class="site-title">Formula 1 Season 2025</h1>
             <nav class="main-nav">
                 <a href="index.php">Home</a>
@@ -131,11 +86,11 @@ try {
             </nav>
         </div>
     </header>
-    <div class="container">
+    <div class="details-container">
         <h1 class="drivername"><?php echo htmlspecialchars($driver['first_name'] . ' ' . $driver['last_name']); ?></h1>
 
         <?php if (!empty($driver['image'])): ?>
-            <img src="<?php echo htmlspecialchars($driver['image']); ?>" alt="<?php echo htmlspecialchars($driver['first_name'] . ' ' . $driver['last_name']); ?>" class="driver-image">
+            <img src="<?php echo htmlspecialchars($driver['image']); ?>" alt="<?php echo htmlspecialchars($driver['first_name'] . ' ' . $driver['last_name']); ?>" class="driver-image-details">
         <?php endif; ?>
 
         <div class="driver-details">

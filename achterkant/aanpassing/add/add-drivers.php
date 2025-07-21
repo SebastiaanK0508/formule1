@@ -1,20 +1,15 @@
 <?php
-// Include the database connection file
 require_once 'db_config.php';
 
-/** @var PDO $pdo */ // This line is for your IDE's auto-completion and analysis
+/** @var PDO $pdo */ 
 
-$teams = []; // Initialize an empty array for teams
+$teams = [];
 
 try {
-    // Fetch all team names and their IDs from the 'teams' table, ordered alphabetically
     $stmt_teams = $pdo->query("SELECT team_id, team_name FROM teams ORDER BY team_name ASC");
     $teams = $stmt_teams->fetchAll(PDO::FETCH_ASSOC);
 } catch (PDOException $e) {
-    // Log the error for debugging purposes (e.g., to your server's error log)
     error_log("Database error fetching teams: " . $e->getMessage());
-    // Optionally, display a user-friendly message without revealing sensitive error details
-    // echo "<p>Er is een probleem opgetreden bij het laden van de teams. Probeer het later opnieuw.</p>";
 }
 ?>
 
@@ -125,12 +120,5 @@ try {
             </div>
         </section>
     </main>
-
-    <script>
-        // Deze API call is voor testen/debugging, je kunt deze verwijderen of aanpassen indien nodig
-        fetch("https://api.openf1.org/v1/drivers?driver_number=1&session_key=9158")
-        .then((response) => response.json())
-        .then((jsonContent) => console.log(jsonContent));
-    </script>
 </body>
 </html>

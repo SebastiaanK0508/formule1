@@ -49,3 +49,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 $conn->close();
 ?>
+
+//api Toevoegen
+// ...
+$jsonInput = file_get_contents('php://input');
+$requestData = json_decode($jsonInput, true);
+
+// Gebruik dan $requestData in plaats van $_POST
+$team_name = $requestData['team_name'] ?? '';
+// ... enzovoort voor alle variabelen
