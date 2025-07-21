@@ -22,39 +22,38 @@
 
     <main class="container">
         <section class="page-header-section">
-                <h2 class="page-heading">Welcome to the Formula 1 Season 2025</h2>
-                <p class="page-intro">Get ready for an electrifying season of speed, strategy, and pure racing adrenaline!</p>
-                <a href="kalender.html" class="button">View Schedule</a> 
+            <h2 class="page-heading">Welcome to the Formula 1 Season 2025</h2>
+            <p class="page-intro">Get ready for an electrifying season of speed, strategy, and pure racing adrenaline!</p>
         </section>
 
-    <section class="page-header-section">
-        <h2 class="page-heading">NEWS</h2>
-        <section class="race-calendar">
-            <h3 class="section-title">Latest News</h3>
-            <div class="news-grid">
-                <article class="news-article">
-                    <h3>Historic Rule Changes for 2025 Season</h3>
-                    <p>The FIA has announced sweeping changes to the technical regulations for the 2025 Formula 1 season, aimed at increasing competitive parity and reducing the aerodynamic dependency of cars. Expect closer racing and more overtakes!</p>
-                    <a href="#" class="read-more">Read More &rarr;</a>
-                </article>
-                <article class="news-article">
-                    <h3>New Driver Lineups Confirmed</h3>
-                    <p>Exciting times ahead as several key driver moves have been officially confirmed. Lewis Hamilton joins Ferrari, and Carlos Sainz finds a new home at Williams, setting the stage for thrilling battles.</p>
-                    <a href="#" class="read-more">Read More &rarr;</a>
-                </article>
-                <article class="news-article">
-                    <h3>Record-Breaking Calendar Revealed</h3>
-                    <p>The 2025 F1 calendar will feature an unprecedented 25 races, including a highly anticipated return to the Kyalami Grand Prix in South Africa. Fans worldwide can look forward to more action than ever before.</p>
-                    <a href="#" class="read-more">Read More &rarr;</a>
-                </article>
-                 <article class="news-article">
-                    <h3>Pre-Season Testing Concludes with Surprises</h3>
-                    <p>The final day of pre-season testing in Bahrain saw unexpected pace from several midfield teams, hinting at a much tighter championship battle than anticipated. Red Bull and Ferrari still look strong, but McLaren and Mercedes are hot on their heels.</p>
-                    <a href="#" class="read-more">Read More &rarr;</a>
-                </article>
-            </div>
+        <section class="page-header-section">
+            <h2 class="page-heading">NEWS</h2>
+            <section class="race-calendar">
+                <h3 class="section-title">Latest News</h3>
+                <div class="news-grid">
+                    <article class="news-article">
+                        <h3>Historic Rule Changes for 2025 Season</h3>
+                        <p>The FIA has announced sweeping changes to the technical regulations for the 2025 Formula 1 season, aimed at increasing competitive parity and reducing the aerodynamic dependency of cars. Expect closer racing and more overtakes!</p>
+                        <a href="#" class="read-more">Read More &rarr;</a>
+                    </article>
+                    <article class="news-article">
+                        <h3>New Driver Lineups Confirmed</h3>
+                        <p>Exciting times ahead as several key driver moves have been officially confirmed. Lewis Hamilton joins Ferrari, and Carlos Sainz finds a new home at Williams, setting the stage for thrilling battles.</p>
+                        <a href="#" class="read-more">Read More &rarr;</a>
+                    </article>
+                    <article class="news-article">
+                        <h3>Record-Breaking Calendar Revealed</h3>
+                        <p>The 2025 F1 calendar will feature an unprecedented 25 races, including a highly anticipated return to the Kyalami Grand Prix in South Africa. Fans worldwide can look forward to more action than ever before.</p>
+                        <a href="#" class="read-more">Read More &rarr;</a>
+                    </article>
+                    <article class="news-article">
+                        <h3>Pre-Season Testing Concludes with Surprises</h3>
+                        <p>The final day of pre-season testing in Bahrain saw unexpected pace from several midfield teams, hinting at a much tighter championship battle than anticipated. Red Bull and Ferrari still look strong, but McLaren and Mercedes are hot on their heels.</p>
+                        <a href="#" class="read-more">Read More &rarr;</a>
+                    </article>
+                </div>
+            </section>
         </section>
-    </section>
 
         <section class="container">
             <h2>Never Miss a Moment!</h2>

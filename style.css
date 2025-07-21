@@ -266,43 +266,51 @@ header {
 }
 
 /* Footer Styles */
-footer {
-    background-color: #000;
-    color: var(--text-light);
-    text-align: center;
-    padding: 2rem 0; /* Meer padding */
-    margin-top: 60px;
-    border-top: 4px solid var(--f1-red);
-    box-shadow: 0 -4px 15px rgba(0, 0, 0, 0.4);
+ footer {
+    background-color: #000000; /* Donkere achtergrond */
+    color: #ffffff;
+    padding: 1.5rem 0;
+    margin-top: 3rem;
 }
 
 .footer-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 0.5rem;
     display: flex;
-    justify-content: space-between;
+    flex-direction: column;
     align-items: center;
-    flex-wrap: wrap;
-    gap: 20px; /* Ruimte tussen elementen in footer */
+    justify-content: space-between;
+    font-size: 0.875rem;
 }
 
-footer p {
-    margin: 0;
-    font-size: 0.95rem;
-    color: var(--text-dark-contrast);
+.social-links {
+    margin-top: 1rem;
 }
 
 .social-links a {
-    color: var(--text-light);
+    color: #ffffff;
     text-decoration: none;
-    margin-left: 25px;
-    font-weight: 500;
-    transition: color 0.3s ease, transform 0.2s ease;
-    font-size: 1rem;
+    margin-left: 1rem;
+    transition: color 0.3s ease;
 }
 
 .social-links a:hover {
-    color: var(--f1-red);
-    transform: translateY(-2px);
+    color: #ef4444; /* Rode accentkleur */
 }
+
+        /* Media queries voor algemene responsiviteit */
+        @media (min-width: 768px) {
+            .header-content, .footer-content {
+                flex-direction: row;
+            }
+            .site-title {
+                margin-bottom: 0;
+            }
+            .social-links {
+                margin-top: 0;
+            }
+        }
 
 /* Responsive Design */
 @media (max-width: 1200px) {
@@ -682,12 +690,6 @@ footer p {
     }
 }
 
-.team-name {
-    margin: 0;
-    font-size: 2.2em;
-    color: var(--text-dark);
-}
-
 .team-flag {
     width: 70px; /* Iets grotere vlag */
     height: 45px;
@@ -708,6 +710,13 @@ footer p {
     border: 5px solid var(--border-color);
     transition: transform 0.3s ease, box-shadow 0.3s ease;
     box-shadow: 0 4px 10px rgba(0,0,0,0.1); /* Zachte schaduw */
+}
+
+.team-card p {
+    color: #d1d5db; /* Lichtere tekstkleur voor details */
+    font-size: 1em;
+    margin: 5px 0;
+    text-align: center;
 }
 
 .team-card:hover {
@@ -733,10 +742,10 @@ footer p {
 
 .team-row {
     display: flex;
-    justify-content: space-around;
     flex-direction: row; 
     gap: 40px;
     margin-bottom: 40px;
+    flex-wrap: wrap; /* Zorgt dat de kaarten netjes onder elkaar vallen op kleinere schermen */
 }
 
 /*hero-section*/

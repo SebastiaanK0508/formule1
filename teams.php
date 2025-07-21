@@ -5,6 +5,51 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Formula 1 Season 2025 - Teams</title>
     <link rel="stylesheet" href="style.css">
+        <?php
+    require_once 'db_config.php';
+    /** @var PDO $pdo */
+    $allTeams = []; 
+    try {
+    $stmt = $pdo->query("SELECT team_id, team_name, base_location, team_principal, team_color FROM teams WHERE is_active = TRUE ORDER BY team_name ASC");
+        $allTeams = $stmt->fetchAll();
+    } catch (\PDOException $e) {
+        error_log("Fout bij het ophalen van alle teams: " . $e->getMessage());
+        echo "<p>Er is een fout opgetreden bij het laden van de teams. Probeer het later opnieuw.</p>";
+    }
+    $selectedTeam = null; 
+    if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['team_id'])) {
+        $teamId = $_POST['team_id'];
+
+        try {
+            $stmt = $pdo->prepare("SELECT team_id, team_name, base_location, team_principal, team_color FROM teams WHERE team_id = :team_id");
+            $stmt->bindParam(':driver_id', $teamId, PDO::PARAM_INT);
+            $stmt->execute();
+            $selectedTeam = $stmt->fetch();
+
+            if (!$selectedTeam) {
+                echo "<p>Coureur niet gevonden met ID: " . htmlspecialchars($teamId) . "</p>";
+            }
+        } catch (\PDOException $e) {
+            error_log("Fout bij het ophalen van geselecteerde teamdetails: " . $e->getMessage());
+            echo "<p>Er is een fout opgetreden bij het ophalen van teamdetails.</p>";
+        }
+    }
+    ?>
+    <style>
+        :root {
+            --team-main-color: <?php echo isset($allTeams['team_color']) && $allTeams['team_color'] ? htmlspecialchars($teamId['team_color']) : 'rgb(0,0,0)'; ?>;
+            --font-heading: 'Oswald', sans-serif;
+        }
+
+        .team-name {
+            margin: 0;
+            font-size: 2.2em;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: var(--font-heading);
+        }
+    </style>
 </head>
 <body>
     <header>
@@ -52,119 +97,26 @@
             </div>
         </section>-->
 
-        <section class="race-calendar team-gird">
-            <div class="race-grid team-row">
-                <div class="driver-header team-card" style="--border-color: rgb(255, 106, 0);">
-                    <div class="team-header">
-                        <h2 class="team-name">McLaren</h2>
-                        <img class="team-flag" src="https://i0.wp.com/britblog.nl/wordpress/wp-content/uploads/2019/07/1280px-Flag_of_the_United_Kingdom.svg_.png?fit=1280%2C640&ssl=1" alt="Britse vlag">
-                    </div>
-                    <div class="team-info">
-                        <a href="teams/mclaren.html" style="--color: rgb(255, 106, 0);" class="driver-link"><button class="teaminfo-button">Meer info over McLaren</button></a>
-                        <p class="team-principle">Andrea Stella</p>
-                    </div>
-                </div>
-                <div class="team-card" style="--border-color: red;">
-                    <div class="team-header">
-                        <h2 class="team-name">Ferrari</h2>
-                        <img class="team-flag" src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/41/Flag_of_Italy_%282003%E2%80%932006%29.svg/330px-Flag_of_Italy_%282003%E2%80%932006%29.svg.png" alt="Italiaanse vlag">
-                    </div>
-                    <div class="team-info">
-                        <a href="teams/ferrari.html" style="--color: red;" class="driver-link">Meer info over Ferrari</a>
-                        <p class="team-principle">Frederic Vasseur</p>
-                    </div>
-                </div>
-            </div>
+<section class="race-calendar">
+            <div class="team-grid">
+                <div class="team-row">
+                <?php
+                    if (!empty($allTeams)) {
+                        foreach ($allTeams as $team) { // Verander $teams naar $team voor consistentie
+                            $teamSlug = strtolower(str_replace(' ', '-', htmlspecialchars($team['team_name'])));
+                            $teamPageUrl = 'team-details.php?slug=' . $teamSlug;
 
-            <div class="team-row">
-                <div class="team-card" style="--border-color: rgb(13, 0, 193);">
-                    <div class="team-header">
-                        <h2 class="team-name">Red Bull</h2>
-                        <img class="team-flag" src="https://www.vlaggenclub.nl/media/catalog/category/Vlag-Oostenrijk.jpg" alt="Oostenrijkse vlag">
-                    </div>
-                    <div class="team-info">
-                        <a href="teams/red-bull-racing.html" style="--color: rgb(13, 0, 193);" class="driver-link">Meer info over Red Bull</a>
-                        <p class="team-principle">Laurant Mekies</p>
-                    </div>
-                </div>
-                <div class="team-card" style="--border-color: rgb(0, 255, 238);">
-                    <div class="team-header">
-                        <h2 class="team-name">Mercedes</h2>
-                        <img class="team-flag" src="https://www.countryflags.com/wp-content/uploads/germany-flag-png-large.png" alt="Duitse vlag">
-                    </div>
-                    <div class="team-info">
-                        <a href="teams/mercedes.html" style="--color: rgb(0, 255, 238);" class="driver-link">Meer info over Mercedes</a>
-                        <p class="team-principle">Toto Wolff</p>
-                    </div>
-                </div>
-            </div>
-
-            <div class="team-row">
-                <div class="team-card" style="--border-color: rgb(0, 87, 163);">
-                    <div class="team-header">
-                        <h2 class="team-name">Alpine</h2>
-                        <img class="team-flag" src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/3f/Ensign_of_France.svg/250px-Ensign_of_France.svg.png" alt="Franse vlag">
-                    </div>
-                    <div class="team-info">
-                        <a href="teams/alpine.html" style="--color: rgb(0, 87, 163);" class="driver-link">Meer info over Alpine</a>
-                        <p class="team-principle">Flavio Briatore</p>
-                    </div>
-                </div>
-                <div class="team-card" style="--border-color: rgb(0, 101, 15);">
-                    <div class="team-header">
-                        <h2 class="team-name">Aston Martin</h2>
-                        <img class="team-flag" src="https://i0.wp.com/britblog.nl/wordpress/wp-content/uploads/2019/07/1280px-Flag_of_the_United_Kingdom.svg_.png?fit=1280%2C640&ssl=1" alt="Britse vlag">
-                    </div>
-                    <div class="team-info">
-                        <a href="teams/aston-martin.html" style="--color: rgb(0, 101, 15);" class="driver-link">Meer info over Aston Martin</a>
-                        <p class="team-principle">Andy Cowell</p>
-                    </div>
-                </div>
-            </div>
-
-            <div class="team-row">
-                <div class="team-card" style="--border-color: rgb(42, 0, 182);">
-                    <div class="team-header">
-                        <h2 class="team-name">Williams</h2>
-                        <img class="team-flag" src="https://i0.wp.com/britblog.nl/wordpress/wp-content/uploads/2019/07/1280px-Flag_of_the_United_Kingdom.svg_.png?fit=1280%2C640&ssl=1" alt="Britse vlag">
-                    </div>
-                    <div class="team-info">
-                        <a href="teams/williams.html" style="--color: rgb(42, 0, 182);" class="driver-link">Meer info over Williams</a>
-                        <p class="team-principle">James Vowles</p>
-                    </div>
-                </div>
-                <div class="team-card" style="--border-color: rgb(25, 0, 255);">
-                    <div class="team-header">
-                        <h2 class="team-name">RB F1 Team</h2>
-                        <img class="team-flag" src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/41/Flag_of_Italy_%282003%E2%80%932006%29.svg/330px-Flag_of_Italy_%282003%E2%80%932006%29.svg.png" alt="Italiaanse vlag">
-                    </div>
-                    <div class="team-info">
-                        <a href="teams/rb.html" style="--color: rgb(25, 0, 255);" class="driver-link">Meer info over RB F1 Team</a>
-                        <p class="team-principle">Alan Permane</p>
-                    </div>
-                </div>
-            </div>
-
-            <div class="team-row">
-                <div class="team-card" style="--border-color: rgb(126, 126, 126);">
-                    <div class="team-header">
-                        <h2 class="team-name">Haas</h2>
-                        <img class="team-flag" src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a4/Flag_of_the_United_States.svg/960px-Flag_of_the_United_States.svg.png" alt="Amerikaanse vlag">
-                    </div>
-                    <div class="team-info">
-                        <a href="teams/haas.html" style="--color: rgb(126, 126, 126);" class="driver-link">Meer info over Haas</a>
-                        <p class="team-principle">Ayao Komatsu</p>
-                    </div>
-                </div>
-                <div class="team-card" style="--border-color: rgb(0, 255, 4);">
-                    <div class="team-header">
-                        <h2 class="team-name">Stake Sauber</h2>
-                        <img class="team-flag" src="https://www.hollandvlaggen.nl/wp-content/uploads/2019/07/Europese20vlaggen20-20Vlag20Zwitserland20-2013811-1440x925.png" alt="Zwitserse vlag">
-                    </div>
-                    <div class="team-info">
-                        <a href="teams/sauber.html" style="--color: rgb(0, 255, 4);" class="driver-link">Meer info over Stake Sauber</a>
-                        <p class="team-principle">Alessandro Alunni Bravi</p>
-                    </div>
+                            // De team-card link met de juiste klassen en PHP variabele
+                            echo '<a href="' . $teamPageUrl . '" class="team-card" ' . (isset($teamColor) ? $teamColor : '') . '>';
+                            echo '  <h2 class="team-name">' . htmlspecialchars($team['team_name']) . '</h2>';
+                            echo '  <p>' . htmlspecialchars($team['base_location']) . '</p>';
+                            echo '  <p>' . htmlspecialchars($team['team_principal']) . '</p>';
+                            echo '</a>';
+                        }
+                    } else {
+                        echo "<p>Geen teams beschikbaar om weer te geven.</p>";
+                    }
+                    ?>
                 </div>
             </div>
         </section>
