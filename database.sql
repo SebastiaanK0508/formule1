@@ -105,7 +105,6 @@ ADD COLUMN place_of_birth VARCHAR(255);
 ALTER TABLE drivers
 ADD COLUMN description VARCHAR(255);
 
---alles hierboven gereed in beide databases--
 
 INSERT INTO drivers (first_name, last_name, nationality, date_of_birth, driver_number, team_name, championships_won, career_points, image, is_active) VALUES
 ('Max', 'Verstappen', 'Dutch', '1997-09-30', 1, 'Red Bull Racing', 3, 2850.00, 'https://placehold.co/150x150/000000/FFFFFF?text=Max+Verstappen', TRUE),
@@ -254,3 +253,5 @@ INSERT INTO points_system (position, points) VALUES
 (18, 0.00),
 (19, 0.00),
 (20, 0.00);
+
+--alles hierboven gereed in beide databases--
