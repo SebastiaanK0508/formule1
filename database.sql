@@ -312,3 +312,32 @@ CREATE TABLE race_results (
     FOREIGN KEY (driver_id) REFERENCES drivers(driver_id)
 );
 
+ALTER TABLE circuits
+ADD COLUMN race_datetime DATETIME; 
+
+UPDATE circuits SET race_datetime = '2025-03-16 06:00:00' WHERE circuit_key = 'australia';     -- Zondag 16 maart (Melbourne, lokale tijd 16:00)
+UPDATE circuits SET race_datetime = '2025-03-23 07:00:00' WHERE circuit_key = 'china';         -- Zondag 23 maart (Shanghai, lokale tijd 15:00)
+UPDATE circuits SET race_datetime = '2025-04-06 06:00:00' WHERE circuit_key = 'japan';         -- Zondag 6 april (Suzuka, lokale tijd 14:00)
+UPDATE circuits SET race_datetime = '2025-04-13 14:00:00' WHERE circuit_key = 'bahrain';       -- Zondag 13 april (Sakhir, lokale tijd 16:00)
+UPDATE circuits SET race_datetime = '2025-04-20 17:00:00' WHERE circuit_key = 'saudi_arabia';  -- Zondag 20 april (Jeddah, lokale tijd 19:00)
+UPDATE circuits SET race_datetime = '2025-05-04 19:30:00' WHERE circuit_key = 'miami';         -- Zondag 4 mei (Miami, lokale tijd 15:30)
+UPDATE circuits SET race_datetime = '2025-05-18 13:00:00' WHERE circuit_key = 'emilia_romagna';-- Zondag 18 mei (Imola, lokale tijd 15:00)
+UPDATE circuits SET race_datetime = '2025-05-25 13:00:00' WHERE circuit_key = 'monaco';        -- Zondag 25 mei (Monaco, lokale tijd 15:00)
+UPDATE circuits SET race_datetime = '2025-06-01 13:00:00' WHERE circuit_key = 'spain';         -- Zondag 1 juni (Barcelona, lokale tijd 15:00)
+UPDATE circuits SET race_datetime = '2025-06-15 18:00:00' WHERE circuit_key = 'canada';        -- Zondag 15 juni (Montreal, lokale tijd 14:00)
+UPDATE circuits SET race_datetime = '2025-06-29 13:00:00' WHERE circuit_key = 'austria';       -- Zondag 29 juni (Spielberg, lokale tijd 15:00)
+UPDATE circuits SET race_datetime = '2025-07-06 14:00:00' WHERE circuit_key = 'great_britain'; -- Zondag 6 juli (Silverstone, lokale tijd 15:00)
+UPDATE circuits SET race_datetime = '2025-07-27 13:00:00' WHERE circuit_key = 'belgium';       -- Zondag 27 juli (Spa-Francorchamps, lokale tijd 15:00)
+UPDATE circuits SET race_datetime = '2025-08-03 13:00:00' WHERE circuit_key = 'hungary';       -- Zondag 3 augustus (Hungaroring, lokale tijd 15:00)
+UPDATE circuits SET race_datetime = '2025-08-31 13:00:00' WHERE circuit_key = 'netherlands';   -- Zondag 31 augustus (Zandvoort, lokale tijd 15:00)
+UPDATE circuits SET race_datetime = '2025-09-07 13:00:00' WHERE circuit_key = 'italy';         -- Zondag 7 september (Monza, lokale tijd 15:00)
+UPDATE circuits SET race_datetime = '2025-09-21 11:00:00' WHERE circuit_key = 'azerbaijan';    -- Zondag 21 september (Baku, lokale tijd 15:00)
+UPDATE circuits SET race_datetime = '2025-10-05 12:00:00' WHERE circuit_key = 'singapore';     -- Zondag 5 oktober (Marina Bay, lokale tijd 20:00)
+UPDATE circuits SET race_datetime = '2025-10-19 19:00:00' WHERE circuit_key = 'usa';           -- Zondag 19 oktober (Austin, lokale tijd 14:00)
+UPDATE circuits SET race_datetime = '2025-10-26 19:00:00' WHERE circuit_key = 'mexico';        -- Zondag 26 oktober (Mexico-Stad, lokale tijd 14:00)
+UPDATE circuits SET race_datetime = '2025-11-09 16:00:00' WHERE circuit_key = 'brazil';        -- Zondag 9 november (Interlagos, lokale tijd 14:00)
+UPDATE circuits SET race_datetime = '2025-11-22 06:00:00' WHERE circuit_key = 'las_vegas';     -- Zaterdag 22 november (Las Vegas, lokale tijd 22:00 zaterdag)
+UPDATE circuits SET race_datetime = '2025-11-30 14:00:00' WHERE circuit_key = 'qatar';         -- Zondag 30 november (Lusail, lokale tijd 16:00)
+UPDATE circuits SET race_datetime = '2025-12-07 13:00:00' WHERE circuit_key = 'abu_dhabi';     -- Zondag 7 december (Yas Marina, lokale tijd 16:00)
+
+

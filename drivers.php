@@ -42,10 +42,10 @@
             <h1 class="site-title">FORMULA 1 SEASON 2025</h1>
             <nav class="main-nav">
                 <a href="index.php">Home</a>
-                <a href="kalender.html">Schedule</a>
+                <a href="kalender.php">Schedule</a>
                 <a href="teams.php">Teams</a>
                 <a href="drivers.php" class="active">Drivers</a>
-                <a href="standings.html">Standings</a>
+                <a href="standings.php">Standings</a>
             </nav>
         </div>
     </header>

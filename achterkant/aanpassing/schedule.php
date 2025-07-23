@@ -27,24 +27,20 @@ $circuitsData = [];
 try {
     // Haal ALLE circuits op voor weergave in de tabel
     // Sorteer op calendar_order ASC om de juiste kalendervolgorde te krijgen
-    $stmt = $pdo->query("SELECT circuit_key, grandprix, location FROM circuits ORDER BY calendar_order ASC");
+    $stmt = $pdo->query("SELECT circuit_key, grandprix, location, race_datetime FROM circuits ORDER BY calendar_order ASC");
     $circuitsData = $stmt->fetchAll();
 } catch (\PDOException $e) {
     echo "Fout bij het ophalen van circuits: " . $e->getMessage();
 }
 
-// De rest van de code voor de dropdown en POST-verwerking is hier niet direct relevant voor de tabelweergave
-// en is daarom weggelaten voor de duidelijkheid van dit specifieke probleem.
-// Als je die functionaliteit nog nodig hebt, kun je die hier weer toevoegen.
 $selectedCircuit = null;
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['circuit_key'])) {
     $circuitkey = $_POST['circuit_key'];
 
     try {
-        // Haal de details van het geselecteerde circuit op
-        // Let op: de tabelnaam was 'circuit' in je voorbeeld, dit moet 'circuits' zijn
-        $stmt = $pdo->prepare("SELECT grandprix, location FROM circuits WHERE circuit_key = :circuit_key");
-        $stmt->bindParam(':circuit_key', $circuitkey, PDO::PARAM_STR); // Gebruik $circuitkey en PDO::PARAM_STR
+
+        $stmt = $pdo->prepare("SELECT grandprix, location, race_datetime FROM circuits WHERE circuit_key = :circuit_key");
+        $stmt->bindParam(':circuit_key', $circuitkey, PDO::PARAM_STR); 
         $stmt->execute();
         $selectedCircuit = $stmt->fetch();
 
@@ -99,11 +95,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['circuit_key'])) {
                 <p class="">Bekijk alle circuits van het komende F1 seizoen.</p>
             </div>
 
+            <div>
+                <div>
+                    <a href="add/add-circuit.php"><button class="achterkantbutton">Add</button></a>
+                    <a href="../dashboard.html"><button class="achterkantbutton">Dashboard</button></a>
+                </div>
+            </div>
+
             <table class="circuits-table">
                 <thead>
                     <tr>
                         <th>Grand Prix</th>
                         <th>Locatie</th>
+                        <th>Date</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -112,6 +116,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['circuit_key'])) {
                             <tr data-circuit-key="<?php echo htmlspecialchars($circuit['circuit_key']); ?>">
                                 <td><?php echo htmlspecialchars($circuit['grandprix']); ?></td>
                                 <td><?php echo htmlspecialchars($circuit['location']); ?></td>
+                                <td><?php echo htmlspecialchars($circuit['race_datetime']); ?></td>
                             </tr>
                         <?php endforeach; ?>
                     <?php else: ?>

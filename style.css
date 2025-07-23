@@ -163,6 +163,33 @@ header {
     font-weight: 300;
 }
 
+.countdown-container {
+    text-align: center;
+    padding: 20px;
+    background-color: #282828;
+    border-radius: 8px;
+    margin-top: 20px;
+}
+
+.countdown-time {
+    font-size: 2.5em;
+    font-weight: bold;
+    color: #dc0000;
+}
+
+.countdown-label {
+    font-size: 0.9em;
+    color: #ffffff;
+    display: block;
+    margin-top: 5px;
+}
+
+.next-gp-info {
+    font-size: 1.2em;
+    margin-bottom: 15px;
+    color: #ffffff;
+}
+
 /* Race Calendar Section */
 .race-calendar {
     background-color: var(--card-bg);
@@ -425,9 +452,14 @@ header {
 }
 
 /* --- Circuit Detail Page Specific Styles --- */
-
-.circuit-detail-page {
-    padding-top: 40px;
+.detail-card h3 {
+    font-family: 'Oswald', sans-serif;
+    font-size: 2em;
+    color: var(--f1-red);
+    margin-top: 0;
+    margin-bottom: 15px;
+    border-bottom: 2px solid var(--f1-red);
+    padding-bottom: 5px;
 }
 
 .circuit-info-section {
@@ -438,15 +470,51 @@ header {
     text-align: center;
 }
 
-.circuit-header {
-    margin-bottom: 40px;
+.detail-item {
+    margin-bottom: 20px;
 }
 
-.circuit-main-map {
-    max-width: 100%;
-    height: auto;
-    border-radius: 8px;
+.detail-item strong {
+    display: block;
+    font-weight: 600;
+    color: var(--f1-red);
+    margin-bottom: 3px;
+    font-size: 1.5em;
+    font-family: 'Oswald', sans-serif;
+}
+
+.details-section {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
     margin-bottom: 30px;
+}
+
+.detail-item span, .detail-item p {
+    color: #ffffff;
+    font-size: 1em;
+}
+
+/* Beschrijving en Highlights */
+.description-section, .highlights-section {
+    margin-bottom: 30px;
+}
+
+.description-section h3, .highlights-section h3 {
+    font-family: 'Oswald', sans-serif;
+    font-size: 1.8em;
+    color: #dc0000;
+    margin-bottom: 15px;
+    border-bottom: 2px solid #dc0000;
+    padding-bottom: 5px;
+}
+
+.description-section p, .highlights-section p {
+    background-color: var(--card-bg);
+    padding: 15px;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    white-space: pre-wrap; /* Behoudt enters en spaties in textarea output */
 }
 
 .circuit-title {
@@ -458,6 +526,23 @@ header {
     margin-top: 0;
     margin-bottom: 10px;
     font-weight: 700;
+}
+
+.circuit-image-display {
+    width: 100%;
+    max-height: 800px; /* Max hoogte voor de afbeelding */
+    overflow: hidden;
+    background-color: var(--card-bg);
+    border-radius: 8px;
+    margin-bottom: 30px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.circuit-image-display img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
 }
 
 .circuit-location {
@@ -767,4 +852,154 @@ header {
 .button:hover {
     background-color: #CC0000; /* Iets donkerder rood bij hover */
     transform: translateY(-2px); /* Subtiele lift */
+}
+
+/*standings*/
+
+.standings-grid {
+    display: flex; /* Gebruik flexbox voor naast elkaar plaatsen */
+    flex-wrap: wrap; /* Zorgt ervoor dat tabellen onder elkaar komen op kleinere schermen */
+    gap: 30px; /* Ruimte tussen de tabellen */
+    justify-content: center; /* Centreer de tabellen horizontaal */
+    padding: 20px 0; /* Verticale padding voor de grid */
+}
+
+/* Standen Tabellen Container */
+.standings-table-container {
+    flex: 1; /* Neemt gelijke ruimte in beslag binnen de flex container */
+    min-width: 450px; /* Minimale breedte voor de tabellen */
+    max-width: calc(50% - 15px); /* Max breedte, rekening houdend met de gap */
+    overflow-x: auto; /* Maakt tabel scrollbaar op kleine schermen */
+    margin-bottom: 40px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+    background-color: #282828; /* Donkere achtergrond voor de container */
+    border: 1px solid #444; /* Donkerdere rand */
+}
+
+/* Tabel Algemeen - Override standaard lichte achtergronden */
+.standings-table-container table {
+    background-color: #282828; /* Donkere achtergrond voor de tabel zelf */
+    color: #f0f0f0; /* Lichte tekstkleur */
+    border: none; /* Verwijder standaard lichte rand */
+    width: 100%; /* Zorg ervoor dat de tabel de container vult */
+    border-collapse: collapse; /* Voor strakke randen */
+}
+
+/* Tabel Header (thead) */
+.standings-table-container thead {
+    background-color: #1a1a1a; /* Nog donkerdere header */
+}
+
+.standings-table-container th {
+    color: #dc0000; /* F1 rood voor headers */
+    font-family: 'Oswald', sans-serif;
+    font-weight: 700;
+    text-transform: uppercase;
+    padding: 15px 20px; /* Meer padding */
+    border-bottom: 2px solid #dc0000; /* Rode onderstreping voor headers */
+    text-align: left; /* Standaard links uitlijnen */
+}
+
+/* Tabel Body (tbody) */
+.standings-table-container tbody tr {
+    background-color: #282828; /* Standaard rij achtergrond */
+    transition: background-color 0.2s ease;
+}
+
+.standings-table-container tbody tr:nth-child(even) {
+    background-color: #333; /* Iets afwijkend voor even rijen */
+}
+
+.standings-table-container tbody tr:hover {
+    background-color: #444; /* Hover effect */
+}
+
+.standings-table-container td {
+    color: #f0f0f0; /* Lichte tekst voor cellen */
+    padding: 12px 20px; /* Meer padding */
+    border-bottom: 1px solid #444; /* Donkerdere rij scheiding */
+    font-size: 0.95em;
+}
+
+.standings-table-container tbody tr:last-child td {
+    border-bottom: none; /* Geen rand voor de laatste rij */
+}
+
+/* Specifieke kolom styling voor positie en punten */
+.standings-table-container td:first-child { /* Positie kolom */
+    font-weight: 700;
+    color: #dc0000; /* F1 rood voor positienummer */
+    text-align: center;
+}
+.standings-table-container td:last-child { /* Punten kolom */
+    font-weight: 700;
+    color: #007bff; /* Blauw voor punten, of een andere accentkleur */
+}
+
+
+/* Responsive aanpassingen */
+@media (max-width: 992px) { /* Aanpassen voor middelgrote schermen */
+    .standings-grid {
+        flex-direction: column; /* Stapel tabellen verticaal */
+        gap: 20px;
+    }
+    .standings-table-container {
+        max-width: 100%; /* Neem de volledige breedte in wanneer gestapeld */
+        min-width: unset; /* Reset min-width */
+    }
+}
+
+@media (max-width: 768px) {
+    .header-content {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .site-title {
+        margin-right: 0;
+        margin-bottom: 15px;
+    }
+
+    .main-nav {
+        width: 100%;
+        justify-content: space-around;
+        gap: 15px;
+    }
+
+    .main-nav a {
+        font-size: 1em;
+    }
+
+    main {
+        padding: 20px;
+    }
+
+    h3 {
+        font-size: 1.7em;
+    }
+
+    .standings-table-container th,
+    .standings-table-container td {
+        padding: 10px 12px;
+    }
+}
+
+@media (max-width: 480px) {
+    .site-title {
+        font-size: 1.8em;
+    }
+
+    .main-nav {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .main-nav a {
+        padding: 5px 10px;
+    }
+
+    h3 {
+        font-size: 1.5em;
+    }
 }
