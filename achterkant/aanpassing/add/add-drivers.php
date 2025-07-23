@@ -67,7 +67,7 @@ try {
 
                     <div>
                         <label for="team_id" class="block text-sm font-medium text-gray-700 mb-1">Teamnaam (huidig):</label>
-                        <select class="" name="team_id" id="team_id">
+                        <select class="" name="team_name" id="team_id">
                             <option value="" disabled selected>--selecteer team--</option>
                             <?php foreach ($teams as $team): ?>
                                 <option value="<?php echo htmlspecialchars($team['team_id']); ?>">

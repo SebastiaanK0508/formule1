@@ -1,4 +1,11 @@
 <?php
+ob_start(); // Start output buffering
+ini_set('display_errors', 0);
+ini_set('display_errors', 0); // Schakel weergave op het scherm uit
+ini_set('log_errors', 1);    // Schakel logging naar de error log in
+ini_set('error_reporting', E_ALL); // Log alle fouten, waarschuwingen, notices
+error_reporting(E_ALL);
+
 // Database configuratie
 $host = "localhost";
 $db = "formule1";
@@ -11,13 +18,16 @@ $options = [
     PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
     PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
     PDO::ATTR_EMULATE_PREPARES   => false,
+    PDO::ATTR_AUTOCOMMIT         => 1, // Zorg ervoor dat auto-commit aanstaat
 ];
 
 $pdo = null;
 $message = '';
 $circuits = [];
 $drivers = [];
-$pointsSystem = []; // Variabele voor het puntensysteem
+$racePointsSystem = []; // Variabele voor het normale puntensysteem
+$sprintPointsSystem = []; // Variabele voor het sprint puntensysteem
+$errors = []; // Initialiseer de errors array hier alvast
 
 try {
     $pdo = new PDO($dsn, $user, $pass, $options);
@@ -30,15 +40,31 @@ try {
     $stmt_drivers = $pdo->query("SELECT driver_id, first_name, last_name FROM drivers ORDER BY last_name ASC");
     $drivers = $stmt_drivers->fetchAll();
 
-    // Haal het puntensysteem op uit de database
-    $stmt_points = $pdo->query("SELECT position, points FROM points_system ORDER BY position ASC");
-    $pointsSystem = $stmt_points->fetchAll(PDO::FETCH_KEY_PAIR); // Haalt op als [positie => punten]
+    // Haal het normale puntensysteem op uit de database
+    $stmt_race_points = $pdo->query("SELECT position, points FROM points_system ORDER BY position ASC");
+    $racePointsSystem = $stmt_race_points->fetchAll(PDO::FETCH_KEY_PAIR); // Haalt op als [positie => punten]
+
+    // Haal het sprint puntensysteem op uit de database
+    // BELANGRIJK: Zorg dat je een tabel genaamd 'sprint_points_system' hebt met sprintpunten!
+    $stmt_sprint_points = $pdo->query("SELECT position, points FROM sprint_points_system ORDER BY position ASC");
+    $sprintPointsSystem = $stmt_sprint_points->fetchAll(PDO::FETCH_KEY_PAIR);
 
 } catch (\PDOException $e) {
-    die("Verbindingsfout: " . $e->getMessage());
+    // Dit catch-blok is voor verbindingsfouten of fouten bij het ophalen van basisgegevens
+    error_log("Database Connection/Fetch Error - Code: " . $e->getCode() . " Message: " . $e->getMessage());
+    $message = "<p class='error-message'>Er is een probleem met de databaseverbinding of het ophalen van basisgegevens: " . $e->getMessage() . "</p>";
 }
 
+$errors = [];
+$message = ''; // Zorg dat $message ook leeg is
+
+// Start van de POST-verwerking
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    //die("TEST: De POST-logica wordt uitgevoerd!"); // <-- DEZE REGEL TOEVOEGEN
+
+    error_log("POST Data Received: " . print_r($_POST, true));
+
+
     // Haal algemene racegegevens op
     $circuit_key = $_POST['circuit_key'] ?? '';
     $race_year = $_POST['race_year'] ?? '';
@@ -49,7 +75,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $positions = $_POST['positions'] ?? []; // Dit is de vaste positie 1-20
     $laps_completed_arr = $_POST['laps_completed_arr'] ?? [];
     $finish_statuses = $_POST['finish_statuses'] ?? [];
-    $awarded_points = $_POST['awarded_points'] ?? []; // De automatisch toegekende punten (verborgen veld)
 
     // Optionele velden die voor één coureur van toepassing zijn (bijv. snelste ronde, pole)
     $fastest_lap_time = $_POST['fastest_lap_time'] ?? null;
@@ -61,7 +86,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $message = "<p class='error-message'>Vul de algemene racegegevens (jaar, Grand Prix, type) in.</p>";
     } else {
         $resultsInserted = 0;
-        $errors = [];
+        // $errors array is al geïnitialiseerd bovenaan
+
+        // Selecteer het juiste puntensysteem voor de POST-verwerking
+        $currentPointsSystem = ($race_type === 'Sprint') ? $sprintPointsSystem : $racePointsSystem;
 
         // Loop door de ingediende coureurgegevens
         // We gebruiken de 'positions' array als basis, aangezien deze altijd 1-20 zal zijn
@@ -70,14 +98,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $position = (int)$pos; // De vaste positie (1-20)
             $laps_completed = $laps_completed_arr[$index] ?? null;
             $finish_status = $finish_statuses[$index] ?? null;
-            $points = $awarded_points[$index] ?? 0.00;
 
             // Alleen invoegen als een coureur is geselecteerd voor deze positie
             if (!empty($driver_id) && $driver_id !== '0') { // '0' kan de waarde zijn voor 'Kies een coureur'
                 try {
-                    // Server-side validatie van punten: haal de punten opnieuw op uit het puntensysteem
-                    // Dit voorkomt manipulatie via de client-side
-                    $actual_points = $pointsSystem[$position] ?? 0.00;
+                    // Server-side validatie van punten: haal de punten opnieuw op uit het geselecteerde puntensysteem
+                    $actual_points = $currentPointsSystem[$position] ?? 0.00; // Gebruik de correcte pointsSystem
 
                     // Controleer of deze coureur de pole position had
                     $is_pole_position = ($pole_position_driver_id == $driver_id) ? 1 : 0;
@@ -95,23 +121,37 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $stmt->bindParam(':points', $actual_points); // Gebruik de server-side berekende punten
                     $stmt->bindParam(':laps_completed', $laps_completed, PDO::PARAM_INT);
                     $stmt->bindParam(':finish_status', $finish_status);
-                    $stmt->bindParam(':fastest_lap_time', $fastest_lap_time); // Deze wordt alleen voor de eerste coureur ingevoerd
-                    $stmt->bindParam(':time_offset', $time_offset); // Deze wordt alleen voor de eerste coureur ingevoerd
+                    // Fastest lap en time offset alleen binden als ze daadwerkelijk waarden hebben, anders null
+                    $stmt->bindParam(':fastest_lap_time', $fastest_lap_time, is_null($fastest_lap_time) ? PDO::PARAM_NULL : PDO::PARAM_STR);
+                    $stmt->bindParam(':time_offset', $time_offset, is_null($time_offset) ? PDO::PARAM_NULL : PDO::PARAM_STR);
                     $stmt->bindParam(':is_pole_position', $is_pole_position, PDO::PARAM_INT);
 
                     $stmt->execute();
                     $resultsInserted++;
 
                 } catch (\PDOException $e) {
+                    // Log de exacte foutcode en het bericht naar de PHP error log
+                    // Probeer ook de gebonden parameters te loggen
+                    $error_message_detail = "PDO Exception - Code: " . $e->getCode() . " Message: " . $e->getMessage() . " - SQL: " . $sql;
+                    // Het loggen van parameters na execute() kan lastig zijn zonder extra code
+                    // Maar de Message van de exception zal vaak al de 'Duplicate entry' details bevatten.
+                    error_log($error_message_detail);
+
+
                     // Specifieke foutafhandeling voor unieke constraint (dubbele invoer)
                     if ($e->getCode() == 23000) {
-                        $errors[] = "Uitslag voor coureur " . htmlspecialchars($driver_ids[$index]) . " op positie " . $position . " is al ingevoerd.";
+                        // Let op: $driver_ids[$index] kan leeg zijn als de driver_id 0 was en deze code bereikt werd
+                        $driver_info = isset($driver_ids[$index]) && $driver_ids[$index] !== '0' ? "coureur " . htmlspecialchars($driver_ids[$index]) . " op" : "deze";
+                        $errors[] = "Uitslag voor " . $driver_info . " positie " . $position . " is al ingevoerd.";
                     } else {
                         $errors[] = "Databasefout voor coureur " . htmlspecialchars($driver_ids[$index]) . " op positie " . $position . ": " . $e->getMessage();
                     }
                 }
             }
         }
+        // Log nadat de loop is voltooid
+        error_log("Race results insertion loop completed. Results inserted: " . $resultsInserted . ". Errors found: " . count($errors));
+
 
         if ($resultsInserted > 0) {
             $message = "<p class='success-message'>" . $resultsInserted . " uitslag(en) succesvol toegevoegd!</p>";
@@ -124,6 +164,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $message .= "</ul></div>";
         }
         if ($resultsInserted == 0 && empty($errors)) {
+            // Dit bericht alleen tonen als er geen resultaten zijn ingevoegd EN er geen fouten waren
+            // Dit kan gebeuren als geen enkele coureur is geselecteerd (allemaal waarde '0')
              $message = "<p class='error-message'>Geen uitslagen ingevoerd. Zorg dat er minstens één coureur is geselecteerd.</p>";
         }
     }
@@ -137,11 +179,41 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Race Uitslagen Toevoegen</title>
     <style>
-        body { font-family: Arial, sans-serif; margin: 20px; background-color: #f4f4f4; color: #333; }
-        .container { max-width: 900px; margin: 20px auto; background-color: white; padding: 30px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
-        h1 { color: #0056b3; text-align: center; margin-bottom: 30px; }
-        .form-group { margin-bottom: 15px; }
-        label { display: block; margin-bottom: 5px; font-weight: bold; color: #555; }
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+        .container {
+            max-width: 900px;
+            margin: 20px auto;
+            background-color: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #0056b3;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        h2 {
+            color: #0056b3;
+            margin-top: 25px;
+            margin-bottom: 15px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 5px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #555;
+        }
         input[type="text"],
         input[type="number"],
         select {
@@ -149,7 +221,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             padding: 10px;
             border: 1px solid #ccc;
             border-radius: 4px;
-            box-sizing: border-box;
+            box-sizing: border-box; /* Zorgt ervoor dat padding en border binnen de opgegeven breedte vallen */
         }
         input[type="checkbox"] {
             margin-right: 10px;
@@ -163,40 +235,108 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             cursor: pointer;
             font-size: 16px;
             margin-top: 20px;
-            width: auto; /* Maak de knop niet 100% breed */
+            width: auto;
+            display: block; /* Zorgt ervoor dat de knop een eigen lijn krijgt */
+            margin-left: auto; /* Centreer de knop als je wilt, anders verwijderen */
+            margin-right: auto; /* Centreer de knop als je wilt, anders verwijderen */
         }
-        button[type="submit"]:hover { background-color: #0056b3; }
-        .message { padding: 10px; margin-bottom: 20px; border-radius: 4px; }
-        .success-message { background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
-        .error-message { background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+        button[type="submit"]:hover {
+            background-color: #0056b3;
+        }
+        .message {
+            padding: 10px;
+            margin-bottom: 20px;
+            border-radius: 4px;
+        }
+        .success-message {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .error-message {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
 
+        /* --- Aanpassingen voor de results-grid --- */
         .results-grid {
             display: grid;
-            grid-template-columns: 50px 1fr 100px 120px 80px; /* Pos, Coureur, Ronden, Status, Punten */
-            gap: 10px;
+            /* Kolommen: Pos (vast), Coureur (flexibel), Status (vast), Punten (vast) */
+            /* Gebruik minmax om minimale breedte te garanderen en 1fr voor flexibiliteit */
+            grid-template-columns: 50px minmax(150px, 1fr) 120px 80px;
+            gap: 10px 15px; /* Verticaal en horizontaal grotere afstand */
             margin-top: 20px;
-            align-items: center;
+            align-items: center; /* Lijn items verticaal uit in het midden */
+            padding: 0 5px; /* Kleine padding aan de zijkanten van de grid */
         }
         .results-grid-header {
             font-weight: bold;
-            padding-bottom: 5px;
-            border-bottom: 1px solid #ccc;
+            padding-bottom: 8px; /* Meer ruimte onder de headers */
+            border-bottom: 2px solid #ccc; /* Dikkere lijn onder de headers */
+            text-align: center; /* Centreer de headers */
+            white-space: nowrap; /* Voorkom dat headers afbreken op kleinere schermen */
         }
-        .results-grid input, .results-grid select {
+        /* Specifieke styling voor Positie kolomheader */
+        .results-grid-header:nth-child(1) { /* Positie header */
+            text-align: center;
+        }
+        /* Specifieke styling voor Coureur kolomheader */
+        .results-grid-header:nth-child(2) { /* Coureur header */
+             text-align: left; /* Coureurnamen staan links uitgelijnd */
+        }
+        /* Specifieke styling voor Status kolomheader */
+        .results-grid-header:nth-child(3) { /* Status header */
+            text-align: center;
+        }
+        /* Specifieke styling voor Punten kolomheader */
+        .results-grid-header:nth-child(4) { /* Punten header */
+            text-align: center;
+        }
+
+
+        .results-grid input,
+        .results-grid select {
             width: 100%;
-            padding: 5px;
+            padding: 8px; /* Iets meer padding voor betere visuele spacing */
             box-sizing: border-box;
+            font-size: 14px; /* Iets kleinere font-size in de grid-elementen */
+            margin: 0; /* Verwijder eventuele standaardmarges van input/select */
         }
         .results-grid input[type="number"] {
             text-align: center;
         }
         .results-grid input[readonly] {
             background-color: #e9e9e9;
+            cursor: default;
         }
         .results-grid .position-col {
             text-align: center;
             font-weight: bold;
+            padding: 8px 0; /* Verticale padding voor de positienummers */
         }
+
+        /* Responsive aanpassingen voor kleinere schermen */
+        @media (max-width: 768px) {
+            .results-grid {
+                grid-template-columns: 40px 1fr 100px 70px; /* Pas kolommen aan voor kleinere schermen */
+                gap: 8px;
+            }
+            .container {
+                padding: 20px;
+            }
+        }
+        @media (max-width: 480px) {
+            .results-grid {
+                grid-template-columns: 35px 1fr 90px 60px; /* Nog kleiner voor mobiel */
+                gap: 5px;
+            }
+            input[type="text"], input[type="number"], select, button[type="submit"] {
+                padding: 8px;
+                font-size: 14px;
+            }
+        }
+
         .optional-fields {
             margin-top: 30px;
             padding-top: 20px;
@@ -240,7 +380,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <div class="results-grid">
                 <div class="results-grid-header">Pos</div>
                 <div class="results-grid-header">Coureur</div>
-                <div class="results-grid-header">Ronden</div>
                 <div class="results-grid-header">Status</div>
                 <div class="results-grid-header">Punten</div>
 
@@ -256,9 +395,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                 </option>
                             <?php endforeach; ?>
                         </select>
-                    </div>
-                    <div>
-                        <input type="number" name="laps_completed_arr[]" placeholder="Ronden" min="0">
                     </div>
                     <div>
                         <input type="text" name="finish_statuses[]" value="Finished" placeholder="Finished, DNF, etc.">
@@ -300,28 +436,42 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Punten systeem van PHP naar JavaScript
-            const pointsSystem = <?php echo json_encode($pointsSystem); ?>;
+            // Beide punten systemen naar JavaScript
+            const racePointsSystem = <?php echo json_encode($racePointsSystem); ?>;
+            const sprintPointsSystem = <?php echo json_encode($sprintPointsSystem); ?>;
 
-            // Selecteer alle coureur-select elementen
             const driverSelects = document.querySelectorAll('.driver-select');
+            const raceTypeSelect = document.getElementById('race_type'); // Referentie naar race_type dropdown
 
-            driverSelects.forEach(selectElement => {
-                selectElement.addEventListener('change', function() {
-                    const position = parseInt(this.dataset.position); // Haal de positie op uit het data-attribuut
-                    const pointsOutput = this.closest('div').nextElementSibling.nextElementSibling.querySelector('.points-output');
+            // Functie om punten te berekenen en weer te geven
+            function updatePoints() {
+                const selectedRaceType = raceTypeSelect.value;
+                // Kies het juiste punten systeem gebaseerd op race_type
+                const currentPointsSystem = (selectedRaceType === 'Sprint') ? sprintPointsSystem : racePointsSystem;
+
+                driverSelects.forEach(selectElement => {
+                    const position = parseInt(selectElement.dataset.position);
+                    const pointsOutput = selectElement.closest('div').nextElementSibling.nextElementSibling.querySelector('.points-output');
 
                     if (!isNaN(position) && position >= 1 && position <= 20) {
-                        const awardedPoints = pointsSystem[position] !== undefined ? parseFloat(pointsSystem[position]) : 0.00;
-                        pointsOutput.value = awardedPoints.toFixed(2); // Formatteer naar 2 decimalen
+                        const awardedPoints = currentPointsSystem[position] !== undefined ? parseFloat(currentPointsSystem[position]) : 0.00;
+                        pointsOutput.value = awardedPoints.toFixed(2);
                     } else {
-                        pointsOutput.value = '0.00'; // Reset naar 0 als ongeldige positie
+                        pointsOutput.value = '0.00';
                     }
                 });
+            }
 
-                // Trigger de change event bij laden om initiële punten in te vullen als er al een coureur geselecteerd is (niet van toepassing bij nieuwe form)
-                // selectElement.dispatchEvent(new Event('change'));
+            // Luister naar veranderingen in de coureur dropdowns
+            driverSelects.forEach(selectElement => {
+                selectElement.addEventListener('change', updatePoints);
             });
+
+            // Luister naar veranderingen in de 'Type Race' dropdown
+            raceTypeSelect.addEventListener('change', updatePoints);
+
+            // Trigger updatePoints bij het laden van de pagina om initiële waarden te zetten
+            updatePoints();
         });
     </script>
 </body>

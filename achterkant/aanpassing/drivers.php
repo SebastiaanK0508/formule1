@@ -29,7 +29,7 @@ try {
 // Haal alle coureurs op voor de dropdown lijst
 $drivers = [];
 try {
-    $stmt = $pdo->query("SELECT driver_id, first_name, last_name, driver_number FROM drivers ORDER BY driver_number ASC");
+    $stmt = $pdo->query("SELECT driver_id, first_name, last_name, driver_number, team_name FROM drivers ORDER BY driver_number ASC");
     $drivers = $stmt->fetchAll();
 } catch (\PDOException $e) {
     echo "Fout bij het ophalen van coureurs: " . $e->getMessage();
@@ -107,6 +107,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['driver_id'])) {
                             <th>Voornaam</th>
                             <th>Achternaam</th>
                             <th>Nummer</th>
+                            <th>Team</th>
                         </tr>
                     </thead>
                         <tbody>

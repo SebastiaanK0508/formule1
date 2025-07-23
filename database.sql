@@ -121,7 +121,8 @@ INSERT INTO drivers (first_name, last_name, nationality, date_of_birth, driver_n
 ('Alexander', 'Albon', 'Thai', '1996-03-23', 23, 'Williams', 0, 220.00, 'https://placehold.co/150x150/000000/FFFFFF?text=Alexander+Albon', TRUE),
 ('Esteban', 'Ocon', 'French', '1996-09-17', 31, 'Haas', 0, 420.00, 'https://placehold.co/150x150/000000/FFFFFF?text=Esteban+Ocon', TRUE), -- Overstap naar Haas
 ('Pierre', 'Gasly', 'French', '1996-02-07', 10, 'Alpine', 0, 480.00, 'https://placehold.co/150x150/000000/FFFFFF?text=Pierre+Gasly', TRUE),
-('Liam', 'Lawson', 'New Zealander', '2002-02-11', 30, 'RB', 0, 10.00, 'https://placehold.co/150x150/000000/FFFFFF?text=Liam+Lawson', TRUE); -- Overstap naar RB
+('Liam', 'Lawson', 'New Zealander', '2002-02-11', 30, 'RB', 0, 10.00, 'https://placehold.co/150x150/000000/FFFFFF?text=Liam+Lawson', TRUE)
+('Franco', 'Colapinto', 'Argentijn', '2002-02-11', 43, 'Alpine', 0, 10.00, 'https://placehold.co/150x150/000000/FFFFFF?text=Liam+Lawson', TRUE); -- Overstap naar RB
 
 -- Nieuwe coureurs voor 2025
 INSERT INTO drivers (first_name, last_name, nationality, date_of_birth, driver_number, team_name, championships_won, career_points, image, is_active) VALUES
@@ -255,3 +256,59 @@ INSERT INTO points_system (position, points) VALUES
 (20, 0.00);
 
 --alles hierboven gereed in beide databases--
+SELECT
+    d.driver_id, d.first_name, d.last_name, t.team_name
+FROM
+    drivers d
+JOIN
+    teams t ON d.team_name = t.team_name; 
+
+CREATE TABLE sprint_points_system (
+    position INT PRIMARY KEY NOT NULL,
+    points DECIMAL(5,2) NOT NULL
+);
+
+INSERT INTO sprint_points_system (position, points) VALUES
+(1, 8.00),
+(2, 7.00),
+(3, 6.00),
+(4, 5.00),
+(5, 4.00),
+(6, 3.00),
+(7, 2.00),
+(8, 1.00),
+(9, 0.00),
+(10, 0.00),
+(11, 0.00),
+(12, 0.00),
+(13, 0.00),
+(14, 0.00),
+(15, 0.00),
+(16, 0.00),
+(17, 0.00),
+(18, 0.00),
+(19, 0.00),
+(20, 0.00);
+
+--verijder race result en voeg deze toe!--
+
+CREATE TABLE race_results (
+    result_id INT AUTO_INCREMENT PRIMARY KEY,
+    circuit_key VARCHAR(50) NOT NULL,
+    driver_id INT NOT NULL,
+    race_year INT NOT NULL,
+    race_type ENUM('Race', 'Sprint') NOT NULL,
+    position INT NOT NULL,
+    points DECIMAL(5,2),
+    laps_completed INT,
+    finish_status VARCHAR(50),
+    fastest_lap_time VARCHAR(20),
+    time_offset VARCHAR(20),
+    pole_position BOOLEAN,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    UNIQUE KEY UQ_race_position (circuit_key, race_year, race_type, position),
+    FOREIGN KEY (circuit_key) REFERENCES circuits(circuit_key),
+    FOREIGN KEY (driver_id) REFERENCES drivers(driver_id)
+);
+

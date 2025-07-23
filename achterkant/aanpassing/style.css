@@ -2,7 +2,7 @@
 :root {
     --webbair-primary: #007bff; /* Bright, clean blue */
     --webbair-secondary: #0056b3; /* Darker blue for contrast */
-    --webbair-accent: #28a745; /* Vibrant green for accents */
+    --webbair-accent: #99ffb1; /* Vibrant green for accents */
     --webbair-bg-light: #f8f9fa; /* Very light gray */
     --webbair-bg-dark: #343a40; /* Dark gray for footer/sections */
     --webbair-text-dark: #212529; /* Dark gray for main text */
@@ -236,10 +236,14 @@ th {
 td {
     color: var(--webbair-text-light); 
 }
+tr {
+    transition: background-color 0.1s ease-in-out, color 0.3s ease-in-out;
+}
+
 tr:hover {
-    background-color: var(--webbair-accent); 
+    background-color: var(--webbair-accent);
     color: white;
-    cursor: pointer; 
+    cursor: pointer;
 }
 
 .achterkantbutton {

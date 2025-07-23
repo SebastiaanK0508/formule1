@@ -66,29 +66,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['circuit_key'])) {
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="style.css">
     <link rel="icon" href="" type="image/x-icon">
-    <style>
-        /* Basisstijlen voor de tabel voor betere leesbaarheid */
-        .circuits-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-        }
-        .circuits-table th, .circuits-table td {
-            border: 1px solid #ddd;
-            padding: 8px;
-            text-align: left;
-        }
-        .circuits-table th {
-            background-color: #f2f2f2;
-        }
-        /* Voeg een cursor toe om aan te geven dat rijen klikbaar zijn */
-        .circuits-table tbody tr {
-            cursor: pointer;
-        }
-        .circuits-table tbody tr:hover {
-            background-color: #f9f9f9; /* Lichtgrijze achtergrond bij hover */
-        }
-    </style>
 </head>
 <body class="">
     <header class="main-header">
