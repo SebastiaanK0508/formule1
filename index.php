@@ -14,6 +14,39 @@ try {
     $nextGrandPrix = null; 
 }
 ?>
+
+<?php
+require_once 'db_config.php';
+/** @var PDO $pdo */
+
+$news = [];
+try {
+    $stmt = $pdo->query("SELECT news_id, title, news_content, image_url, keywords, source, date FROM news ORDER BY date DESC");
+    $news = $stmt->fetchAll();
+} catch (\PDOException $e) {
+    echo "Fout bij het ophalen van nieuws artikelen: " . $e->getMessage();
+}
+
+// Verwerk het formulier als het is ingediend
+$selectednews = null;
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['news_id'])) {
+    $newsid = $_POST['news_id'];
+
+    try {
+        // Haal de details van de geselecteerde coureur op
+        $stmt = $pdo->prepare("SELECT news_id, title, source FROM news WHERE news_content = :newsconten");
+        $stmt->bindParam(':news_id', $newsid, PDO::PARAM_INT);
+        $stmt->execute();
+        $selectednews = $stmt->fetch();
+
+        if (!$selectednews) {
+            echo "Nieuws niet gevonden.";
+        }
+    } catch (\PDOException $e) {
+        echo "Fout bij het ophalen van niewsartikelen: " . $e->getMessage();
+    }
+}
+?>
 <!DOCTYPE html>
 <html lang="nl">
 <head>
@@ -59,28 +92,33 @@ try {
             <h2 class="page-heading">NEWS</h2>
             <section class="race-calendar">
                 <h3 class="section-title">Latest News</h3>
-                <div class="news-grid">
-                    <article class="news-article" id="news1">
-                        <h3>Historic Rule Changes for 2025 Season</h3>
-                        <p>The FIA has announced sweeping changes to the technical regulations for the 2025 Formula 1 season, aimed at increasing competitive parity and reducing the aerodynamic dependency of cars. Expect closer racing and more overtakes!</p>
-                        <a href="#" class="read-more">Read More &rarr;</a>
-                    </article>
-                    <article class="news-article" id="news2">
-                        <h3>New Driver Lineups Confirmed</h3>
-                        <p>Exciting times ahead as several key driver moves have been officially confirmed. Lewis Hamilton joins Ferrari, and Carlos Sainz finds a new home at Williams, setting the stage for thrilling battles.</p>
-                        <a href="#" class="read-more">Read More &rarr;</a>
-                    </article>
-                    <article class="news-article" id="news3">
-                        <h3>Record-Breaking Calendar Revealed</h3>
-                        <p>The 2025 F1 calendar will feature an unprecedented 25 races, including a highly anticipated return to the Kyalami Grand Prix in South Africa. Fans worldwide can look forward to more action than ever before.</p>
-                        <a href="#" class="read-more">Read More &rarr;</a>
-                    </article>
-                    <article class="news-article">
-                        <h3>Pre-Season Testing Concludes with Surprises</h3>
-                        <p>The final day of pre-season testing in Bahrain saw unexpected pace from several midfield teams, hinting at a much tighter championship battle than anticipated. Red Bull and Ferrari still look strong, but McLaren and Mercedes are hot on their heels.</p>
-                        <a href="#" class="read-more">Read More &rarr;</a>
-                    </article>
+                    <?php if ($news): ?>
+                        <table class="news-table">
+                            <thead>
+                                <tr>
+                                    <th>Titel</th>
+                                    <th>Bron</th>
+                                    <th>Datum</th>
+                                    <th>select</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php foreach ($news as $item): ?>
+                                    <tr>
+                                        <form action="">
+                                        <td><img src="<?php echo htmlspecialchars($item['image_url']); ?>" alt=""></td>
+                                        <td><?php echo htmlspecialchars($item['title']); ?></td>
+                                        <td><?php echo htmlspecialchars($item['date']); ?></td>
+                                        </form>
+                                    </tr>
+                                <?php endforeach; ?>
+                            </tbody>
+                        </table>
+                    <?php else: ?>
+                        <p>Er zijn momenteel geen nieuwsartikelen beschikbaar.</p>
+                    <?php endif; ?>
                 </div>
+            </div>
             </section>
         </section>
     </main>

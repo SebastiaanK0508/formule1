@@ -23,7 +23,7 @@
                 <h2 class="main-title">Nieuw bericht Toevoegen</h2>
             </div>
             <div>
-                <a href="../news.php"><button class="adddriverbutton">Terug naar nieuws Overzicht</button></a>
+                <a href="../news.php"><button class="achterkantbutton">Back</button></a>
             </div>
             <div>
                 <?php echo $message; // Toon status- of foutmeldingen ?>

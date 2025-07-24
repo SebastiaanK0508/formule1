@@ -256,7 +256,7 @@ if ($team) {
             <p class="team-detail-item"><strong>Teamleider:</strong> <?php echo htmlspecialchars($team['team_principal']); ?></p>
             <p class="team-detail-item"><strong>Technisch directeur:</strong> <?php echo htmlspecialchars($team['technical_director']); ?></p>
             <p class="team-detail-item"><strong>Chassis:</strong> <?php echo htmlspecialchars($team['chassis']); ?></p>
-            <p class="team-detail-item"><strong>Motorleverancier:</strong> <?php echo htmlspecialchars($team['power_unit']); ?></p>
+            <p class="team-detail-item"><strong>Motorleverancier:</strong> <?php echo htmlspecialchars($team['current_engine_supplier']); ?></p>
             <?php if (isset($team['championships_won'])): ?>
                 <p class="team-detail-item"><strong>Constructeurskampioenschappen:</strong> <?php echo htmlspecialchars($team['championships_won']); ?></p>
             <?php endif; ?>

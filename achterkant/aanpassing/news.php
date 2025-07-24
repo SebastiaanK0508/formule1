@@ -76,10 +76,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['news_id'])) {
             </div>
             <div class="content-panel">
                 <div class="news-actions">
-                    <a href="add/add_news.php" class="button add-news-button"><button class="achterkantbutton">add</button></a>
                     <a href="../dashboard.html" class="button dashboard-button"><button class="achterkantbutton">Dashboard</button></a>
-                    <a href="edit_news.php" class="button edit-news-button">Bewerk Nieuws</a>
-                    <a href="delete_news.php" class="button delete-news-button">Verwijder Nieuws</a>
+                    <a href="add/add-news.php" class="button add-news-button"><button class="achterkantbutton">add</button></a>
+                    <a href="edit_news.php" class="button edit-news-button"><button class="achterkantbutton">Edit</button></a>
+                    <a href="delete_news.php" class="button delete-news-button"><button class="achterkantbutton">Delete</button></a>
                 </div>
                 <div>
                     <?php if ($news): ?>
@@ -89,14 +89,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['news_id'])) {
                                     <th>Titel</th>
                                     <th>Bron</th>
                                     <th>Datum</th>
+                                    <th>select</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <?php foreach ($news as $item): ?>
                                     <tr>
+                                        <form action="">
                                         <td><?php echo htmlspecialchars($item['title']); ?></td>
                                         <td><?php echo htmlspecialchars($item['source']); ?></td>
                                         <td><?php echo htmlspecialchars($item['date']); ?></td>
+                                        <td><input type="checkbox"></td>
+                                        </form>
                                     </tr>
                                 <?php endforeach; ?>
                             </tbody>
