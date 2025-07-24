@@ -15,7 +15,7 @@
 <body class="">
     <header class="main-header">
         <div class="header-title">
-            <h1>Formula 1 site</h1>
+            <h1>Formula 1 site - News</h1>
         </div>
         <div class="header-info">
             <p class="header-sitename">Formula 1 - News</p>
@@ -42,6 +42,17 @@
             <div class="headerhoofdpagina">
                 <h2 class="">Welkom in de Webbair Framework</h2>
                 <p class="">De achterkant voor uw website!</p>
+            </div>
+        </section>
+        <section>
+            <div class="content-panel">
+                <h3 class="content-title">Nieuws</h3>
+                <p class="content-text">Hier kunt u nieuwsberichten toevoegen, bewerken of verwijderen.</p>
+                <div class="news-actions">
+                    <a href="add_news.php" class="button add-news-button">Voeg Nieuws Toe</a>
+                    <a href="edit_news.php" class="button edit-news-button">Bewerk Nieuws</a>
+                    <a href="delete_news.php" class="button delete-news-button">Verwijder Nieuws</a>
+                </div>
             </div>
         </section>
     </main>

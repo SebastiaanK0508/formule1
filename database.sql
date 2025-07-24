@@ -255,7 +255,6 @@ INSERT INTO points_system (position, points) VALUES
 (19, 0.00),
 (20, 0.00);
 
---alles hierboven gereed in beide databases--
 SELECT
     d.driver_id, d.first_name, d.last_name, t.team_name
 FROM
@@ -340,4 +339,16 @@ UPDATE circuits SET race_datetime = '2025-11-22 06:00:00' WHERE circuit_key = 'l
 UPDATE circuits SET race_datetime = '2025-11-30 14:00:00' WHERE circuit_key = 'qatar';         -- Zondag 30 november (Lusail, lokale tijd 16:00)
 UPDATE circuits SET race_datetime = '2025-12-07 13:00:00' WHERE circuit_key = 'abu_dhabi';     -- Zondag 7 december (Yas Marina, lokale tijd 16:00)
 
+--hier alles hierboven gereed in beide databases--
 
+ALTER TABLE news
+ADD COLUMN date DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP;
+
+ALTER TABLE news
+ADD COLUMN source VARCHAR(255) NULL;
+
+ALTER TABLE news
+ADD COLUMN keywords VARCHAR(255) NULL;
+
+ALTER TABLE news
+CHANGE COLUMN id news_id INT AUTO_INCREMENT;
