@@ -1,73 +1,84 @@
 <?php
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+echo "je script is gestart<br>"; // Voeg <br> toe voor betere leesbaarheid
+
 $host = "localhost";
 $db = "formule1";
 $user = "root";
 $pass = "root";
 $charset = "utf8mb4";
+
 $dsn = "mysql:host=$host;dbname=$db;charset=$charset";
-
 $options = [
-    PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,   
-    PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,         
-    PDO::ATTR_EMULATE_PREPARES   => false,                   
+    PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,   // Zorgt ervoor dat PDO Exceptions gooit bij fouten
+    PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,         // Haalt rijen op als associatieve arrays
+    PDO::ATTR_EMULATE_PREPARES   => false,                    // Zorgt voor echte voorbereide statements (veiliger, sneller)
 ];
-
-$pdo = null; 
-$message = ''; 
 
 try {
     $pdo = new PDO($dsn, $user, $pass, $options);
+    // echo "Succesvol verbonden met de database.<br>"; // Optioneel: bevestig verbinding
 } catch (\PDOException $e) {
+    // Dit vangt verbindingsfouten op
     die("Verbindingsfout met de database: " . $e->getMessage());
 }
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    try {
-        $title = $_POST['title'] ?? '';
-        $newscontent = $_POST['news_content'] ?? ''; 
-        $imageUrl = $_POST['image_url'] ?? null;
-        $source = $_POST['source'] ?? null;
-        $keywords = $_POST['keywords'] ?? null;
-        $dateFromForm = $_POST['date'] ?? ''; 
+$title = $_POST['title'] ?? '';
+$newscontent = $_POST['news_content'] ?? ''; 
+$imageUrl = $_POST['image_url'] ?? null;
+$source = $_POST['source'] ?? null;
+$keywords = $_POST['keywords'] ?? null;
+$dateFromForm = $_POST['date'] ?? ''; 
 
-        if (empty($title) || empty($newscontent)) {
-            $message = "<p class='error-message'>Vul alle verplichte velden in (Titel, Nieuwscontent).</p>";
-        } else {
-            $columns = ['title', 'text', 'image_url', 'source', 'keywords'];
-            $placeholders = [':title', ':text', ':image_url', ':source', ':keywords'];
+// ----- START VAN DE OPLOSSING -----
 
-            if (!empty($dateFromForm)) {
-                $columns[] = 'date';
-                $placeholders[] = ':date';
-            }
+$columns = "title, news_content, image_url, source, keywords";
+$placeholders = ":title, :news_content, :image_url, :source, :keywords";
+$params = [
+    ':title' => $title,
+    ':news_content' => $newscontent, // LET OP: Je gebruikte :text, moet :news_content zijn om overeen te komen met de kolomnaam
+    ':image_url' => $imageUrl,
+    ':source' => $source,
+    ':keywords' => $keywords
+];
 
-            $sql = "INSERT INTO news (" . implode(', ', $columns) . ") VALUES (" . implode(', ', $placeholders) . ")";
-            
-            $stmt = $pdo->prepare($sql);
+if (!empty($dateFromForm)) {
+    $columns .= ", date"; // Voeg de kolom 'date' toe aan de lijst
+    $placeholders .= ", :date"; // Voeg de placeholder ':date' toe aan de lijst
+    $params[':date'] = $dateFromForm; // Voeg de datum toe aan de parameters
+}
 
-            $stmt->bindParam(':title', $title);
-            $stmt->bindParam(':text', $newscontent); 
-            $stmt->bindParam(':image_url', $imageUrl);
-            $stmt->bindParam(':source', $source);
-            $stmt->bindParam(':keywords', $keywords);
+$sql = "INSERT INTO news ($columns) VALUES ($placeholders)";
 
-            if (!empty($dateFromForm)) {
-                $stmt->bindParam(':date', $dateFromForm);
-            }
+// ----- EINDE VAN DE OPLOSSING -----
 
-            if ($stmt->execute()) {
-                $message = "<p class='success-message'>Nieuwsbericht succesvol toegevoegd!</p>";
-                $_POST = array(); 
-            } else {
-                $message = "<p class='error-message'>Fout bij het toevoegen van het nieuwsbericht.</p>";
-            }
-        }
-    } catch (\PDOException $e) {
-        if ($e->getCode() == 23000) { 
-            $message = "<p class='error-message'>Fout: Een nieuwsbericht met deze titel of een andere unieke combinatie bestaat al.</p>";
-        } else {
-            $message = "<p class='error-message'>Databasefout bij toevoegen: " . $e->getMessage() . "</p>";
-        }
+try {
+    $stmt = $pdo->prepare($sql);
+
+    // Bind alle parameters in één keer, nu in een loop
+    foreach ($params as $paramName => $paramValue) {
+        $stmt->bindValue($paramName, $paramValue);
+    }
+
+    // VOEG DEZE REGEL TOE: De query moet worden uitgevoerd!
+    $stmt->execute();
+
+    header("Location: ../news.php?message=Nieuwsbericht succesvol toegevoegd!");
+    echo "Nieuwsbericht succesvol toegevoegd!<br>";
+
+} catch (\PDOException $e) {
+    // Dit vangt fouten op die optreden tijdens prepare() of execute()
+    if ($e->getCode() == 23000) { // Specifieke foutcode voor duplicate entry
+        $message = "<p class='error-message'>Fout: Een nieuwsbericht met deze titel of een andere unieke combinatie bestaat al.</p>";
+        echo $message;
+    } else {
+        $message = "<p class='error-message'>Databasefout bij toevoegen: " . $e->getMessage() . "</p>";
+        echo $message; // Toon de algemene databasefout
     }
 }
+
+// Optioneel: Voeg hier code toe om de pagina af te sluiten of door te sturen
+// echo "Einde van het script."; // Je kunt hier ook testen of het script de einde bereikt
 ?>

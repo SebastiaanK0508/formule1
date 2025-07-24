@@ -1,3 +1,35 @@
+<?php
+require_once 'db_config.php';
+/** @var PDO $pdo */
+
+$news = [];
+try {
+    $stmt = $pdo->query("SELECT news_id, title, news_content, image_url, keywords, source, date FROM news ORDER BY date DESC");
+    $news = $stmt->fetchAll();
+} catch (\PDOException $e) {
+    echo "Fout bij het ophalen van nieuws artikelen: " . $e->getMessage();
+}
+
+// Verwerk het formulier als het is ingediend
+$selectednews = null;
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['news_id'])) {
+    $newsid = $_POST['news_id'];
+
+    try {
+        // Haal de details van de geselecteerde coureur op
+        $stmt = $pdo->prepare("SELECT news_id, title, source FROM news WHERE news_content = :newsconten");
+        $stmt->bindParam(':news_id', $newsid, PDO::PARAM_INT);
+        $stmt->execute();
+        $selectednews = $stmt->fetch();
+
+        if (!$selectednews) {
+            echo "Nieuws niet gevonden.";
+        }
+    } catch (\PDOException $e) {
+        echo "Fout bij het ophalen van niewsartikelen: " . $e->getMessage();
+    }
+}
+?>
 <!DOCTYPE html>
 <html lang="nl">
 <head>
@@ -40,21 +72,59 @@
         </section>
         <section class="main-content-panel">
             <div class="headerhoofdpagina">
-                <h2 class="">Welkom in de Webbair Framework</h2>
-                <p class="">De achterkant voor uw website!</p>
+                <h2 class="">News section</h2>
             </div>
-        </section>
-        <section>
             <div class="content-panel">
-                <h3 class="content-title">Nieuws</h3>
-                <p class="content-text">Hier kunt u nieuwsberichten toevoegen, bewerken of verwijderen.</p>
                 <div class="news-actions">
-                    <a href="add_news.php" class="button add-news-button">Voeg Nieuws Toe</a>
+                    <a href="add/add_news.php" class="button add-news-button"><button class="achterkantbutton">add</button></a>
+                    <a href="../dashboard.html" class="button dashboard-button"><button class="achterkantbutton">Dashboard</button></a>
                     <a href="edit_news.php" class="button edit-news-button">Bewerk Nieuws</a>
                     <a href="delete_news.php" class="button delete-news-button">Verwijder Nieuws</a>
+                </div>
+                <div>
+                    <?php if ($news): ?>
+                        <table class="news-table">
+                            <thead>
+                                <tr>
+                                    <th>Titel</th>
+                                    <th>Bron</th>
+                                    <th>Datum</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php foreach ($news as $item): ?>
+                                    <tr>
+                                        <td><?php echo htmlspecialchars($item['title']); ?></td>
+                                        <td><?php echo htmlspecialchars($item['source']); ?></td>
+                                        <td><?php echo htmlspecialchars($item['date']); ?></td>
+                                    </tr>
+                                <?php endforeach; ?>
+                            </tbody>
+                        </table>
+                    <?php else: ?>
+                        <p>Er zijn momenteel geen nieuwsartikelen beschikbaar.</p>
+                    <?php endif; ?>
                 </div>
             </div>
         </section>
     </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const tableRows = document.querySelectorAll('tbody tr');
+
+            tableRows.forEach(row => {
+                row.addEventListener('dblclick', function() {
+                    // CORRECTIE 1: Gebruik camelCase voor dataset property
+                    const newsid = this.dataset.newsid; // 'data-circuit-key' wordt 'dataset.circuitKey'
+
+                    if (newsid) {
+                        // CORRECTIE 2: Zorg dat de URL parameter 'key' is, zoals circuit-details.php verwacht
+                        window.location.href = 'news-details.php?key=' + newsid;
+                    }
+                });
+            });
+        });
+    </script>
 </body>
 </html>

@@ -34,17 +34,24 @@ body {
     top: 0;
 }
 
-.header-title h1 {
-    font-size: 2.25rem; /* text-3xl */
-    font-weight: 800; /* font-extrabold */
+.headerhoofdpagina h2{
+    font-size: 1.5rem; 
+    font-weight: 700; 
     color: var(--webbair-primary);
-    letter-spacing: 0.05em; /* tracking-wide */
+    margin-bottom: 0.5rem; 
+}
+
+.header-title h1 {
+    font-size: 2.25rem; 
+    font-weight: 800; 
+    color: var(--webbair-primary);
+    letter-spacing: 0.05em; 
 }
 
 .header-info {
     display: flex;
     align-items: center;
-    gap: 1rem; /* gap-4 */
+    gap: 1rem; 
 }
 
 .header-logo {
