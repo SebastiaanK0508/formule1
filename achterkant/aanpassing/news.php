@@ -36,15 +36,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['news_id'])) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Webbair Framework</title>
-    <!-- Laad Google Fonts: Inter voor strakke typografie -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
-    <!-- Laad Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Laad custom backoffice CSS -->
     <link rel="stylesheet" href="style.css">
     <link rel="icon" href="" type="image/x-icon">
 </head>
-<body class="">
+<body>
     <header class="main-header">
         <div class="header-title">
             <h1>Formula 1 site - News</h1>

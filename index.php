@@ -26,14 +26,11 @@ try {
 } catch (\PDOException $e) {
     echo "Fout bij het ophalen van nieuws artikelen: " . $e->getMessage();
 }
-
-// Verwerk het formulier als het is ingediend
 $selectednews = null;
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['news_id'])) {
     $newsid = $_POST['news_id'];
 
     try {
-        // Haal de details van de geselecteerde coureur op
         $stmt = $pdo->prepare("SELECT news_id, title, source FROM news WHERE news_content = :newsconten");
         $stmt->bindParam(':news_id', $newsid, PDO::PARAM_INT);
         $stmt->execute();
@@ -54,6 +51,135 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['news_id'])) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Formula 1 Season 2025 - Home</title>
     <link rel="stylesheet" href="style.css">
+    <style>
+        /* Basisstyling voor de hele nieuwssectie */
+.page-header-section {
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    margin-bottom: 30px;
+}
+
+.page-heading,
+.section-title {
+    text-align: center;
+    margin-bottom: 25px;
+}
+
+.section-title {
+    font-size: 1.8em;
+    border-bottom: 2px solid #eee;
+    padding-bottom: 10px;
+}
+
+/* Styling voor de nieuwscontainer (om items te rangschikken) */
+.news-container {
+    display: grid; /* Gebruik grid voor een responsieve lay-out */
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); /* Responsieve kolommen */
+    gap: 30px; /* Ruimte tussen nieuwsitems */
+    justify-content: center; /* Centreer items als ze de rij niet vullen */
+    padding: 20px;
+}
+
+/* Styling voor elke individuele nieuwsitemlink */
+.news-item-link {
+    text-decoration: none; /* Verwijder onderstreping van links */
+    color: inherit; /* Erf tekstkleur van ouder */
+    display: block; /* Maak het hele gebied klikbaar */
+    transition: transform 0.2s ease-in-out; /* Vloeiend zweefeffect */
+}
+
+.news-item-link:hover {
+    transform: translateY(-5px); /* Lift-effect bij hover */
+}
+
+/* Styling voor de inhoud van het nieuwsartikel */
+.news-item {
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    overflow: hidden; /* Zorgt ervoor dat de hoeken van de afbeelding afgerond zijn */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); /* Zachte schaduw */
+    display: flex; /* Rangschik afbeelding en inhoud */
+    flex-direction: column; /* Stapel afbeelding boven inhoud */
+    height: 100%; /* Zorg ervoor dat alle items dezelfde hoogte hebben in het raster */
+}
+
+.news-image {
+    width: 100%;
+    height: 200px; /* Vaste hoogte voor afbeeldingen */
+    overflow: hidden;
+}
+
+.news-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Snijd afbeeldingen netjes bij */
+    display: block;
+}
+
+.news-content {
+    padding: 15px;
+    flex-grow: 1; /* Laat inhoud de resterende ruimte innemen */
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between; /* Duw datum naar beneden */
+}
+
+.news-content h4 {
+    margin-top: 0;
+    margin-bottom: 10px;
+    color: #007bff; /* Een mooie blauwe kleur voor titels */
+    font-size: 1.3em;
+}
+
+.news-content .news-date {
+    font-size: 0.9em;
+    color: #777;
+    text-align: right;
+    margin-top: auto; /* Duwt de datum naar de onderkant van het inhoudsgebied */
+}
+
+/* Bericht wanneer er geen nieuws beschikbaar is */
+p {
+    text-align: center;
+    color: #666;
+    padding: 20px;
+}
+
+/* Responsieve aanpassingen */
+@media (max-width: 768px) {
+    .news-container {
+        grid-template-columns: 1fr; /* Enkele kolom op kleinere schermen */
+        padding: 10px;
+    }
+
+    .news-item {
+        flex-direction: row; /* Afbeelding en inhoud naast elkaar op kleinere schermen */
+        height: auto;
+    }
+
+    .news-image {
+        width: 150px; /* Vaste breedte voor afbeelding in rij-lay-out */
+        height: 100%;
+        min-height: 120px; /* Zorg ervoor dat afbeelding enige hoogte heeft */
+    }
+
+    .news-content {
+        padding: 10px;
+    }
+}
+
+@media (max-width: 480px) {
+    .news-item {
+        flex-direction: column; /* Opnieuw stapelen op zeer kleine schermen */
+    }
+    .news-image {
+        width: 100%;
+        height: 180px;
+    }
+}
+    </style>
 </head>
 <body>
     <header>
@@ -70,57 +196,42 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['news_id'])) {
     </header>
 
     <main class="container">
-        <section class="page-header-section">
-            <?php if ($nextGrandPrix): ?>
-            <h2 class="page-heading"><?php echo htmlspecialchars($nextGrandPrix['grandprix']); ?></h2>
-            <div class="news-grid">
-                    <div id="countdown" class="countdown-time">Laden...</div>
-                <?php else: ?>
-                    <p>Geen aankomende Grand Prix gevonden of er is een probleem met de database.</p>
-                <?php endif; ?>
+<section class="page-header-section">
+    <h2 class="page-heading">NIEUWS</h2>
+    <section class="race-calendar">
+        <h3 class="section-title">Laatste Nieuws</h3>
+        <?php
+
+        if ($news):
+            $displayed_news = array_slice($news, 0, 10);
+        ?>
+            <div class="news-container">
+                <?php foreach ($displayed_news as $item): ?>
+                    <a href="news-detail.php?news_id=<?php echo htmlspecialchars($item['news_id']); ?>" class="news-item-link">
+                        <article class="news-item">
+                            <div class="news-image">
+                                <img src="<?php echo htmlspecialchars($item['image_url']); ?>" alt="<?php echo htmlspecialchars($item['title']); ?>">
+                            </div>
+                            <div class="news-content">
+                                <h4><?php echo htmlspecialchars($item['title']); ?></h4>
+                                <p class="news-date"><?php echo htmlspecialchars($item['date']); ?></p>
+                            </div>
+                        </article>
+                    </a>
+                <?php endforeach; ?>
             </div>
-        </section>
 
-        <section class="page-header-section">
-            <h2 class="page-heading">Welcome to the Formula 1 Season 2025</h2>
-            <p class="page-intro">Get ready for an electrifying season of speed, strategy, and pure racing adrenaline!</p>
-        </section>
-
-
-
-        <section class="page-header-section">
-            <h2 class="page-heading">NEWS</h2>
-            <section class="race-calendar">
-                <h3 class="section-title">Latest News</h3>
-                    <?php if ($news): ?>
-                        <table class="news-table">
-                            <thead>
-                                <tr>
-                                    <th>Titel</th>
-                                    <th>Bron</th>
-                                    <th>Datum</th>
-                                    <th>select</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <?php foreach ($news as $item): ?>
-                                    <tr>
-                                        <form action="">
-                                        <td><img src="<?php echo htmlspecialchars($item['image_url']); ?>" alt=""></td>
-                                        <td><?php echo htmlspecialchars($item['title']); ?></td>
-                                        <td><?php echo htmlspecialchars($item['date']); ?></td>
-                                        </form>
-                                    </tr>
-                                <?php endforeach; ?>
-                            </tbody>
-                        </table>
-                    <?php else: ?>
-                        <p>Er zijn momenteel geen nieuwsartikelen beschikbaar.</p>
-                    <?php endif; ?>
+            <?php if (count($news) > 1): // Toon de knop alleen als er meer dan 10 artikelen zijn ?>
+                <div class="more-news-button-container">
+                    <a href="all-news.php" class="button primary-button">Meer nieuws</a>
                 </div>
-            </div>
-            </section>
-        </section>
+            <?php endif; ?>
+
+        <?php else: ?>
+            <p>Er zijn momenteel geen nieuwsartikelen beschikbaar.</p>
+        <?php endif; ?>
+    </section>
+</section>
     </main>
 
     <footer>
