@@ -269,3 +269,9 @@ tr:hover {
     box-shadow: 0 0 10px rgba(0, 123, 255, 0.5);
     color: white;
 }
+.function-buttons-news {
+    display: flex;
+    justify-content: space-around;
+    flex-direction: column;
+    margin-top: 1rem;
+}

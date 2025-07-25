@@ -163,33 +163,6 @@ header {
     font-weight: 300;
 }
 
-.countdown-container {
-    text-align: center;
-    padding: 20px;
-    background-color: #282828;
-    border-radius: 8px;
-    margin-top: 20px;
-}
-
-.countdown-time {
-    font-size: 2.5em;
-    font-weight: bold;
-    color: #dc0000;
-}
-
-.countdown-label {
-    font-size: 0.9em;
-    color: #ffffff;
-    display: block;
-    margin-top: 5px;
-}
-
-.next-gp-info {
-    font-size: 1.2em;
-    margin-bottom: 15px;
-    color: #ffffff;
-}
-
 /* Race Calendar Section */
 .race-calendar {
     background-color: var(--card-bg);
@@ -1004,53 +977,261 @@ header {
     }
 }
 
-        .article-body {
-            font-family: Arial, sans-serif;
-            line-height: 1.6;
-            margin: 0;
-            padding: 20px;
+.article-body {
+    font-family: var(--font-body);
+    line-height: 1.6;
+    margin: 0;
+    padding: 20px;
+}
+.article-container {
+    max-width: 800px;
+    margin: 20px auto;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+.article-image {
+    width: 100%;
+    height: auto;
+    max-height: 400px;
+    object-fit: cover;
+    border-radius: 8px;
+    margin-bottom: 20px;
+}
+.article-title {
+    color: var(--f1-red);
+    font-size: 2.5em;
+    margin-bottom: 10px;
+}
+.article-date {
+    color: #777;
+    font-size: 0.9em;
+    margin-bottom: 20px;
+    display: block;
+}
+.article-content {
+    font-size: 1.1em;
+    text-align: justify;
+}
+.back-button {
+    display: inline-block;
+    margin-top: 30px;
+    padding: 10px 20px;
+    background-color: var(--f1-red);
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+    transition: color 0.3s ease;
+}
+.back-button:hover {    
+    background-color: rgb(255, 255, 255);
+    color: rgb(0, 0, 0);
+}
+/* Container voor alle nieuwsitems - zorgt dat ze onder elkaar staan */
+.all-news-container {
+    display: grid;
+    grid-template-columns: 1fr; /* Elk item neemt de volledige breedte in, dus ze stapelen */
+    gap: 20px; /* Ruimte tussen de nieuwsitems */
+    margin: 0 auto;
+    padding: 30px;
+    max-width: 1200px;
+    margin-bottom: 40px;
+    background-color: var(--background-light);
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    overflow: auto;
+    overflow-x: hidden;
+    padding-bottom: 50px;   
+}
 
-        }
-        .article-container {
-            max-width: 800px;
-            margin: 20px auto;
-            padding: 30px;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
-        .article-image {
-            width: 100%;
-            height: auto;
-            max-height: 400px;
-            object-fit: cover;
-            border-radius: 8px;
-            margin-bottom: 20px;
-        }
-        .article-title {
-            color: var(--f1-red);
-            font-size: 2.5em;
-            margin-bottom: 10px;
-        }
-        .article-date {
-            color: #777;
-            font-size: 0.9em;
-            margin-bottom: 20px;
-            display: block;
-        }
-        .article-content {
-            font-size: 1.1em;
-            text-align: justify;
-        }
-        .back-button {
-            display: inline-block;
-            margin-top: 30px;
-            padding: 10px 20px;
-            background-color: var(--f1-red);
-            color: white;
-            text-decoration: none;
-            border-radius: 5px;
-            transition: background-color 0.3s ease;
-        }
-        .back-button:hover {
-            background-color: rgb(255, 54, 54);
-        }
+/* Een enkel nieuwsitem - zorgt dat afbeelding en tekst naast elkaar staan */
+.news-item-link {
+    text-decoration: none; /* Verwijdert de onderstreping van de link */
+    color: inherit; /* Behoudt de tekstkleur van de ouder */
+    display: block; /* Zorgt dat de link het hele news-item beslaat */
+    border-radius: 8px; /* Past de border-radius aan voor de link zelf */
+    background-color: var(--card-bg);
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    transition: transform 0.2s ease-in-out; /* Mooi hover-effect */
+}
+
+.news-item-link:hover {
+    transform: translateY(-5px); /* Beweegt het item een beetje omhoog bij hover */
+}
+
+.news-item {
+    display: flex; /* Maakt een flexbox voor afbeelding en inhoud */
+    flex-direction: row; /* Zorgt dat de afbeelding en tekst naast elkaar staan */
+    align-items: center; /* Centreert items verticaal in de rij */
+    gap: 20px; /* Ruimte tussen afbeelding en tekst */
+    padding: 20px; /* Binnenste padding van elk nieuwsitem */
+    /* Geen border-radius, background-color, box-shadow hier, die staan nu op news-item-link */
+    /* margin-bottom is ook niet meer nodig door de 'gap' op de container */
+    overflow: hidden;
+    max-height: unset; /* Haal onnodige hoogtebeperking weg */
+}
+
+/* Afbeelding binnen het nieuwsitem */
+.news-image {
+    flex-shrink: 0; /* Voorkomt dat de afbeelding kleiner wordt dan nodig */
+    width: 200px; /* Vaste breedte voor de afbeelding */
+    height: 120px; /* Vaste hoogte voor de afbeelding */
+    border-radius: 8px;
+    overflow: hidden; /* Zorgt dat de afbeelding binnen de afgeronde hoeken blijft */
+}
+
+.all-news-img {
+    width: 100%;
+    height: 100%; /* Afbeelding vult de news-image div */
+    object-fit: cover; /* Zorgt dat de afbeelding het vlak vult zonder vervorming */
+    display: block; /* Verwijdert eventuele extra ruimte onder de afbeelding */
+    /* Geen margin-bottom hier, want de gap in news-item regelt de afstand */
+}
+
+/* Inhoud van het nieuwsitem (titel en datum) */
+.news-content {
+    flex-grow: 1; /* Neemt de resterende ruimte in beslag */
+    display: flex;
+    flex-direction: column;
+    justify-content: center; /* Centreert de tekst verticaal */
+}
+
+.news-content h4 {
+    margin-top: 0;
+    margin-bottom: 5px; /* Ruimte onder de titel */
+    font-size: 1.2em; /* Grotere titel */
+    color: var(--f1-red); /* Donkerdere tekstkleur */
+}
+
+.news-date {
+    font-size: 0.9em;
+    color: #777; /* Lichtere kleur voor de datum */
+}
+
+.back-button-section {
+    margin-top: 20px;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+}
+
+.page-header-section {
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    margin-bottom: 30px;
+}
+
+.page-heading,
+.section-title {
+    text-align: center;
+    margin-bottom: 25px;
+}
+
+.section-title {
+    font-size: 1.8em;
+    border-bottom: 2px solid #eee;
+    padding-bottom: 10px;
+}
+
+/* Styling voor de nieuwscontainer (om items te rangschikken) */
+.news-container {
+    display: grid; /* Gebruik grid voor een responsieve lay-out */
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); /* Responsieve kolommen */
+    gap: 30px; /* Ruimte tussen nieuwsitems */
+    justify-content: center; /* Centreer items als ze de rij niet vullen */
+    padding: 20px;
+}
+
+/* Styling voor elke individuele nieuwsitemlink */
+.news-item-link {
+    text-decoration: none; /* Verwijder onderstreping van links */
+    color: inherit; /* Erf tekstkleur van ouder */
+    display: block; /* Maak het hele gebied klikbaar */
+    transition: transform 0.2s ease-in-out; /* Vloeiend zweefeffect */
+}
+
+.news-item-link:hover {
+    transform: translateY(-5px); /* Lift-effect bij hover */
+}
+
+.news-item {
+    background-color: rgb(43, 43, 43);
+    border-radius: 8px;
+    overflow: hidden; /* Zorgt ervoor dat de hoeken van de afbeelding afgerond zijn */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); /* Zachte schaduw */
+    display: flex; /* Rangschik afbeelding en inhoud */
+    flex-direction: column; /* Stapel afbeelding boven inhoud */
+    height: 100%; /* Zorg ervoor dat alle items dezelfde hoogte hebben in het raster */
+}
+
+.news-image {
+    width: 100%;
+    height: 200px; /* Vaste hoogte voor afbeeldingen */
+    overflow: hidden;
+}
+
+.news-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Snijd afbeeldingen netjes bij */
+    display: block;
+}
+
+.news-content {
+    padding: 15px;
+    flex-grow: 1; /* Laat inhoud de resterende ruimte innemen */
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between; /* Duw datum naar beneden */
+}
+
+.news-content h4 {
+    margin-top: 0;
+    margin-bottom: 10px;
+    color: var(--f1-red); /* Een mooie blauwe kleur voor titels */
+    font-size: 1.3em;
+}
+
+.news-content .news-date {
+    font-size: 0.9em;
+    color: #777;
+    text-align: right;
+    margin-top: auto; /* Duwt de datum naar de onderkant van het inhoudsgebied */
+}
+
+/* Responsieve aanpassingen */
+@media (max-width: 768px) {
+    .news-container {
+        grid-template-columns: 1fr; /* Enkele kolom op kleinere schermen */
+        padding: 10px;
+    }
+
+    .news-item {
+        flex-direction: row; /* Afbeelding en inhoud naast elkaar op kleinere schermen */
+        height: auto;
+    }
+
+    .news-image {
+        width: 150px; /* Vaste breedte voor afbeelding in rij-lay-out */
+        height: 100%;
+        min-height: 120px; /* Zorg ervoor dat afbeelding enige hoogte heeft */
+    }
+
+    .news-content {
+        padding: 10px;
+    }
+}
+
+@media (max-width: 480px) {
+    .news-item {
+        flex-direction: column; /* Opnieuw stapelen op zeer kleine schermen */
+    }
+    .news-image {
+        width: 100%;
+        height: 180px;
+    }
+}

@@ -22,7 +22,7 @@ try {
 // Het POST-gedeelte dat je had, is hier niet nodig.
 // De links op deze pagina gebruiken GET om naar news-detail.php te gaan.
 // Dit blok code kan veilig worden verwijderd, tenzij je hier een andere POST-functionaliteit voor had.
-/*
+
 $selectednews = null;
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['news_id'])) {
     $newsid = $_POST['news_id'];                
@@ -39,7 +39,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['news_id'])) {
         echo "Fout bij het ophalen van nieuwsartikelen: " . $e->getMessage();
     }
 }
-*/
+
 
 // Sorteren is al gedaan in de SQL-query (ORDER BY date DESC), dus usort is hier redundant.
 // Mocht je op een ander criterium willen sorteren, dan kun je usort hier nog steeds gebruiken.
@@ -54,67 +54,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['news_id'])) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Al het Nieuws - Formula 1</title>
-    <!--<link rel="stylesheet" href="style.css">-->
-    <style>
- 
-        .page-title {
-            text-align: center;
-            color: #333;
-            margin-top: 30px;
-            margin-bottom: 30px;
-            font-size: 2.2em;
-        }
-
-        .all-news-container {
-            display: grid; /* Gebruik grid voor een nette lay-out */
-            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-            gap: 25px; /* Ruimte tussen de items */
-            padding: 20px;
-            max-width: 1200px;
-            margin: 20px auto; /* Centreer de container */
-        }
-
-        /* Responsive aanpassing voor all-news-container */
-        @media (max-width: 768px) {
-            .all-news-container {
-                grid-template-columns: 1fr; /* Op kleinere schermen één kolom */
-                padding: 15px;
-            }
-        }
-
-        .back-to-home-button-container {
-            text-align: center;
-            margin-top: 40px;
-            margin-bottom: 50px;
-        }
-
-        /* Knoppen styling (herhaling van style.css, zorg dat het consistent is) */
-        .button {
-            display: inline-block;
-            padding: 12px 25px;
-            font-size: 1em;
-            font-weight: bold;
-            text-align: center;
-            text-decoration: none;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
-        }
-
-        .secondary-button {
-            background-color: #f0f0f0; /* Een lichte kleur */
-            color: #333;
-            border: 1px solid #ccc;
-        }
-
-        .secondary-button:hover {
-            background-color: #e0e0e0;
-            border-color: #bbb;
-        }
-    </style>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <h1 class="page-title">Al het Nieuws</h1>
+    <header>
+        <div class="header-content container">
+            <h1 class="site-title" id="sitename">FORMULA 1 SEASON 2025</h1>
+            <nav class="main-nav">
+                <a href="index.php" class="active">Home</a>
+                <a href="kalender.php">Schedule</a>
+                <a href="teams.php">Teams</a>
+                <a href="drivers.php">Drivers</a>
+                <a href="standings.php">Standings</a>
+            </nav>
+        </div>
+    </header>
+
+    <div class="back-button-section">
+        <a class="back-button" href="index.php">Terug naar overzicht</a>
+    </div>
 
     <?php if ($news): ?>
         <div class="all-news-container">
@@ -123,9 +81,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['news_id'])) {
                     <article class="news-item">
                         <div class="news-image">
                             <?php if (!empty($item['image_url'])): ?>
-                                <img src="<?php echo htmlspecialchars($item['image_url']); ?>" alt="<?php echo htmlspecialchars($item['title']); ?>">
+                                <img class="all-news-img" src="<?php echo htmlspecialchars($item['image_url']); ?>" alt="<?php echo htmlspecialchars($item['title']); ?>">
                             <?php else: ?>
-                                <img src="placeholder.png" alt="Geen afbeelding beschikbaar" class="placeholder-image">
+                                <img class="all-news-img" src="placeholder.png" alt="Geen afbeelding beschikbaar" class="placeholder-image">
                             <?php endif; ?>
                         </div>
                         <div class="news-content">
@@ -139,10 +97,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['news_id'])) {
     <?php else: ?>
         <p style="text-align: center;">Er zijn momenteel geen nieuwsartikelen beschikbaar.</p>
     <?php endif; ?>
-
-    <div class="back-to-home-button-container">
-        <a href="index.php" class="button secondary-button">Terug naar overzicht</a>
-    </div>
 
 </body>
 </html>
