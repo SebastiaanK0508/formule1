@@ -431,22 +431,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </div>
 
             <button type="submit">Uitslagen Opslaan</button>
-        </form>
+            <button type="button" id="terugButton">Terug</button>
+    </form>
     </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Beide punten systemen naar JavaScript
             const racePointsSystem = <?php echo json_encode($racePointsSystem); ?>;
             const sprintPointsSystem = <?php echo json_encode($sprintPointsSystem); ?>;
 
             const driverSelects = document.querySelectorAll('.driver-select');
-            const raceTypeSelect = document.getElementById('race_type'); // Referentie naar race_type dropdown
-
-            // Functie om punten te berekenen en weer te geven
+            const raceTypeSelect = document.getElementById('race_type');
             function updatePoints() {
                 const selectedRaceType = raceTypeSelect.value;
-                // Kies het juiste punten systeem gebaseerd op race_type
                 const currentPointsSystem = (selectedRaceType === 'Sprint') ? sprintPointsSystem : racePointsSystem;
 
                 driverSelects.forEach(selectElement => {
@@ -461,18 +458,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     }
                 });
             }
-
-            // Luister naar veranderingen in de coureur dropdowns
             driverSelects.forEach(selectElement => {
                 selectElement.addEventListener('change', updatePoints);
             });
-
-            // Luister naar veranderingen in de 'Type Race' dropdown
             raceTypeSelect.addEventListener('change', updatePoints);
-
-            // Trigger updatePoints bij het laden van de pagina om initiële waarden te zetten
             updatePoints();
         });
+            const terugButton = document.getElementById('terugButton');
+            if (terugButton) {
+                terugButton.addEventListener('click', function() {
+                    window.location.href = '../standings.php';
+                });
+            }
+    </script>
+    <script>
+
     </script>
 </body>
 </html>

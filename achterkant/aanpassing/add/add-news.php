@@ -11,7 +11,6 @@
     <link rel="icon" href="" type="image/x-icon">
 </head>
 <body>
-    <!--formulier werkt nog niet!!-->
     <header class="main-header">
         <div class="header-title">
             <h1>Formula 1 site - Nieuws Toevoegen</h1>
@@ -20,13 +19,12 @@
     <main class="main-content-area">
         <section class="main-content-panel">
             <div class="headerhoofdpagina">
-                <h2 class="main-title">Nieuw bericht Toevoegen</h2>
+                <h2 class="">Nieuw bericht Toevoegen</h2>
             </div>
             <div>
                 <a href="../news.php"><button class="achterkantbutton">Back</button></a>
             </div>
             <div>
-                <?php echo $message; // Toon status- of foutmeldingen ?>
                 <form action="add-news-connect.php" method="POST" class="">
                     <div>
                         <label for="title" class="block text-sm font-medium text-gray-700 mb-1">Titel:</label>

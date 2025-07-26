@@ -339,8 +339,6 @@ UPDATE circuits SET race_datetime = '2025-11-22 06:00:00' WHERE circuit_key = 'l
 UPDATE circuits SET race_datetime = '2025-11-30 14:00:00' WHERE circuit_key = 'qatar';         -- Zondag 30 november (Lusail, lokale tijd 16:00)
 UPDATE circuits SET race_datetime = '2025-12-07 13:00:00' WHERE circuit_key = 'abu_dhabi';     -- Zondag 7 december (Yas Marina, lokale tijd 16:00)
 
---hier alles hierboven gereed in beide databases--
-
 ALTER TABLE news
 ADD COLUMN date DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP;
 
@@ -355,3 +353,5 @@ CHANGE COLUMN id news_id INT AUTO_INCREMENT;
 
 ALTER TABLE news
 MODIFY COLUMN image_url TEXT;
+
+--hier alles hierboven gereed in beide databases--
