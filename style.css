@@ -828,99 +828,112 @@ header {
 }
 
 /*standings*/
+/* Je bestaande CSS, zorg dat deze in style.css staat */
 
 .standings-grid {
-    display: flex; /* Gebruik flexbox voor naast elkaar plaatsen */
-    flex-wrap: wrap; /* Zorgt ervoor dat tabellen onder elkaar komen op kleinere schermen */
-    gap: 30px; /* Ruimte tussen de tabellen */
-    justify-content: center; /* Centreer de tabellen horizontaal */
-    padding: 20px 0; /* Verticale padding voor de grid */
+    display: flex;
+    flex-direction: row;
+    gap: 30px;
+    justify-content: center;
+    padding: 20px 0;
 }
 
-/* Standen Tabellen Container */
 .standings-table-container {
-    flex: 1; /* Neemt gelijke ruimte in beslag binnen de flex container */
-    min-width: 450px; /* Minimale breedte voor de tabellen */
-    max-width: calc(50% - 15px); /* Max breedte, rekening houdend met de gap */
-    overflow-x: auto; /* Maakt tabel scrollbaar op kleine schermen */
+    flex: 1;
+    min-width: 450px;
+    max-width: calc(50% - 15px);
+    overflow-x: auto;
     margin-bottom: 40px;
     border-radius: 8px;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
-    background-color: #282828; /* Donkere achtergrond voor de container */
-    border: 1px solid #444; /* Donkerdere rand */
+    background-color: #282828;
+    border: 1px solid #444;
 }
 
-/* Tabel Algemeen - Override standaard lichte achtergronden */
-.standings-table-container table {
-    background-color: #282828; /* Donkere achtergrond voor de tabel zelf */
-    color: #f0f0f0; /* Lichte tekstkleur */
-    border: none; /* Verwijder standaard lichte rand */
-    width: 100%; /* Zorg ervoor dat de tabel de container vult */
-    border-collapse: collapse; /* Voor strakke randen */
+.standings-table-container .standings-table { /* Aangepast: gebruik .standings-table klasse die we nu toevoegen */
+    background-color: #282828;
+    color: #f0f0f0;
+    border: none;
+    width: 100%;
+    border-collapse: collapse;
+    height: auto;
 }
 
-/* Tabel Header (thead) */
 .standings-table-container thead {
-    background-color: #1a1a1a; /* Nog donkerdere header */
+    background-color: #1a1a1a;
 }
 
 .standings-table-container th {
-    color: #dc0000; /* F1 rood voor headers */
+    color: #dc0000;
     font-family: 'Oswald', sans-serif;
     font-weight: 700;
     text-transform: uppercase;
-    padding: 15px 20px; /* Meer padding */
-    border-bottom: 2px solid #dc0000; /* Rode onderstreping voor headers */
-    text-align: left; /* Standaard links uitlijnen */
+    padding: 15px 20px;
+    border-bottom: 2px solid #dc0000;
+    text-align: left;
 }
 
-/* Tabel Body (tbody) */
 .standings-table-container tbody tr {
-    background-color: #282828; /* Standaard rij achtergrond */
+    background-color: #282828;
     transition: background-color 0.2s ease;
 }
 
 .standings-table-container tbody tr:nth-child(even) {
-    background-color: #333; /* Iets afwijkend voor even rijen */
+    background-color: #333;
 }
 
 .standings-table-container tbody tr:hover {
-    background-color: #444; /* Hover effect */
+    background-color: #444;
 }
 
 .standings-table-container td {
-    color: #f0f0f0; /* Lichte tekst voor cellen */
-    padding: 12px 20px; /* Meer padding */
-    border-bottom: 1px solid #444; /* Donkerdere rij scheiding */
+    color: #f0f0f0;
+    padding: 12px 20px;
+    border-bottom: 1px solid #444;
     font-size: 0.95em;
+    font-family: var(--font-heading); /* Zorg dat --font-heading gedefinieerd is */
 }
 
 .standings-table-container tbody tr:last-child td {
-    border-bottom: none; /* Geen rand voor de laatste rij */
+    border-bottom: none;
 }
 
-/* Specifieke kolom styling voor positie en punten */
-.standings-table-container td:first-child { /* Positie kolom */
+.standings-table-container td:first-child {
     font-weight: 700;
-    color: #dc0000; /* F1 rood voor positienummer */
+    color: #dc0000;
     text-align: center;
 }
-.standings-table-container td:last-child { /* Punten kolom */
+.standings-table-container td:last-child {
     font-weight: 700;
-    color: #007bff; /* Blauw voor punten, of een andere accentkleur */
+    color: #007bff; /* Of een andere accentkleur */
 }
 
-
-/* Responsive aanpassingen */
-@media (max-width: 992px) { /* Aanpassen voor middelgrote schermen */
+@media (max-width: 992px) {
     .standings-grid {
-        flex-direction: column; /* Stapel tabellen verticaal */
+        flex-direction: column;
         gap: 20px;
     }
     .standings-table-container {
-        max-width: 100%; /* Neem de volledige breedte in wanneer gestapeld */
-        min-width: unset; /* Reset min-width */
+        max-width: 100%;
+        min-width: unset;
     }
+}
+
+/* Eventueel basisvariabelen als je die nog niet hebt */
+:root {
+    --font-heading: 'Oswald', sans-serif;
+    /* andere kleuren of fonts hier */
+}
+
+/* Basisstijlen voor h4 titels boven de tabellen */
+.standings-table-container h4 {
+    color: #f0f0f0; /* Lichte kleur voor de titels */
+    font-family: 'Oswald', sans-serif;
+    font-weight: 700;
+    text-align: center;
+    padding: 15px 0;
+    margin-bottom: 10px;
+    border-bottom: 1px solid #444; /* Optionele lijn onder de titel */
 }
 
 @media (max-width: 768px) {

@@ -1,147 +1,150 @@
-<?php
-$host = 'localhost';    
-$dbname = 'formule1';  
-$username = 'root';    
-$password = 'root';   
-
-try {
-    $dsn = "mysql:host=$host;dbname=$dbname;charset=utf8mb4";
-    $pdo = new PDO($dsn, $username, $password);
-    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-} catch (PDOException $e) {
-
-    die("Databaseverbinding mislukt: " . $e->getMessage());
-}
-
-$sql_drivers = "
-    SELECT
-        d.driver_id,
-        d.first_name,
-        d.last_name,
-        t.team_name,
-        SUM(ps.points) AS total_points
-    FROM
-        drivers d
-    JOIN
-        teams t ON d.team_name = t.team_name
-    JOIN
-        race_results rr ON d.driver_id = rr.driver_id
-    JOIN
-        points_system ps ON rr.position = ps.position
-    GROUP BY
-        d.driver_id, d.first_name, d.last_name, t.team_name
-    ORDER BY
-        total_points DESC, d.last_name ASC;
-";
-
-$stmt_drivers = $pdo->query($sql_drivers);
-$driver_standings = $stmt_drivers->fetchAll(PDO::FETCH_ASSOC);
-
-$sql_teams = "
-    SELECT
-        t.team_id,
-        t.team_name,
-        SUM(ps.points) AS total_points
-    FROM
-        teams t
-    JOIN
-        drivers d ON t.team_name = d.team_name -- Weer de join via team_name
-    JOIN
-        race_results rr ON d.driver_id = rr.driver_id
-    JOIN
-        points_system ps ON rr.position = ps.position
-    GROUP BY
-        t.team_id, t.team_name
-    ORDER BY
-        total_points DESC, t.team_name ASC;
-";
-
-$stmt_teams = $pdo->query($sql_teams);
-$team_standings = $stmt_teams->fetchAll(PDO::FETCH_ASSOC);
-
-?>
 <!DOCTYPE html>
 <html lang="nl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Formula 1 Season 2025 - Drivers</title>
+    <meta name="viewport" content="width=device-width, initial=" initial-scale.0">
+    <title>Formula 1 Season 2025 - Standings</title>
     <link rel="stylesheet" href="style.css">
-    <style></style>
 </head>
 <body>
     <header>
         <div class="header-content container">
-            <h1 class="site-title">Formula 1 Season 2025</h1>
+            <h1 class="site-title" id="sitename">FORMULA 1 SEASON 2025</h1>
             <nav class="main-nav">
                 <a href="index.php">Home</a>
                 <a href="kalender.php">Schedule</a>
-                <a href="teams.php" >Teams</a>
+                <a href="teams.php">Teams</a>
                 <a href="drivers.php">Drivers</a>
                 <a href="standings.php" class="active">Standings</a>
             </nav>
         </div>
     </header>
 
-    <main id="f1-standings-container" class="container">
-        <section class="standings-grid">
-                <div class="standings-table-container mt-4">
-                    <h3 class="">Coureur Standen</h3>
-                    <?php if (!empty($driver_standings)): ?>
-                    <table class="min-w-full bg-white border border-gray-300 shadow-md rounded-lg overflow-hidden">
-                        <thead class="">
-                            <tr class="standingstrtab">
-                                <th class="standingstabheader">Positie</th>
-                                <th class="standingstabheader">Coureur</th>
-                                <th class="standingstabheader">Team</th>
-                                <th class="standingstabheader">Punten</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <?php $position = 1; ?>
-                            <?php foreach ($driver_standings as $driver): ?>
-                                <tr class="standingstrtab">
-                                    <td class="standingstabheader"><?php echo $position++; ?></td>
-                                    <td class="standingstabheader"><?php echo htmlspecialchars($driver['first_name'] . ' ' . $driver['last_name']); ?></td>
-                                    <td class="standingstabheader"><?php echo htmlspecialchars($driver['team_name']); ?></td>
-                                    <td class="standingstabheader"><?php echo intval($driver['total_points']); ?></td>
-                                </tr>
-                            <?php endforeach; ?>
-                        </tbody>
-                    </table>
-                    <?php else: ?>
-                        <p class="text-gray-600">Geen coureurstanden gevonden. Controleer de database en of er gegevens zijn ingevoerd.</p>
-                    <?php endif; ?>
-                </div>
+<main class="container">
+    <section class="page-header-section">
+        <h2 class="page-heading">Standings 2025</h2>
+    </section>
 
-
-                <div class="standings-table-container">
-                    <h3 class="text-xl font-bold mt-8 mb-4">Team Standen</h3>
-                    <?php if (!empty($team_standings)): ?>
-                    <table class="min-w-full bg-white border border-gray-300 shadow-md rounded-lg overflow-hidden">
-                        <thead class="bg-gray-200">
-                            <tr>
-                                <th class="py-3 px-4 border-b text-left text-sm font-semibold text-gray-700">Positie</th>
-                                <th class="py-3 px-4 border-b text-left text-sm font-semibold text-gray-700">Team</th>
-                                <th class="py-3 px-4 border-b text-left text-sm font-semibold text-gray-700">Punten</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <?php $position_team = 1; ?>
-                            <?php foreach ($team_standings as $team): ?>
-                                <tr class="<?php echo ($position_team % 2 == 0) ? 'bg-gray-50' : 'bg-white'; ?>">
-                                    <td class="py-2 px-4 border-b text-sm text-gray-800"><?php echo $position_team++; ?></td>
-                                    <td class="py-2 px-4 border-b text-sm text-gray-800"><?php echo htmlspecialchars($team['team_name']); ?></td>
-                                    <td class="py-2 px-4 border-b text-sm text-gray-800 font-bold"><?php echo intval($team['total_points']); ?></td>
-                                </tr>
-                            <?php endforeach; ?>
-                        </tbody>
-                    </table>
-                    <?php else: ?>
-                        <p class="text-gray-600">Geen teamstanden gevonden. Controleer de database en of er gegevens zijn ingevoerd.</p>
-                    <?php endif; ?>
-                </div>
+    <section id="standings-content">
+        <p>Loading...</p>
         </section>
     </main>
+
+        <footer>
+            <div class="footer-content container">
+                <p>&copy; 2025 Webbair. Alle rechten voorbehouden.</p>
+                <div class="social-links">
+                    <a href="#" aria-label="Facebook">Facebook</a>
+                    <a href="#" aria-label="Twitter">X</a>
+                    <a href="#" aria-label="Instagram">Instagram</a>
+                </div>
+            </div>
+        </footer>
+
+<script>
+    const standingsContent = document.getElementById('standings-content'); // Naam gewijzigd naar standings-content
+
+    async function fetchChampionshipStandings() {
+        try {
+            // Pas de URL aan naar de locatie van je PHP-script
+            // Let op: De URL 'achterkant/aanpassing/api-koppelingen/standings_api.php' is relatief.
+            // Zorg ervoor dat dit pad klopt vanaf de locatie van dit standings.php bestand.
+            // Als standings.php in de root staat en standings_api.php in die submap, is het pad correct.
+            const response = await fetch('achterkant/aanpassing/api-koppelingen/standings_api.php');
+            const data = await response.json();
+
+            if (data.status === 'success') {
+                displayChampionshipStandings(data.drivers, data.constructors);
+            } else {
+                standingsContent.innerHTML = `<p class="error-message">Fout bij het laden van klassementen: ${data.message}</p>`;
+                console.error('API Error:', data.message);
+            }
+        } catch (error) {
+            standingsContent.innerHTML = `<p class="error-message">Netwerkfout bij het laden van klassementen.</p>`;
+            console.error('Fetch Error:', error);
+        }
+    }
+
+    function displayChampionshipStandings(drivers, constructors) {
+        let html = '<div class="standings-grid">'; // Start de grid container hier
+
+        // Coureursklassement
+        html += '<div class="standings-table-container">'; // Container voor de coureurstabel
+        html += '<h4>Coureursklassement</h4>';
+        if (drivers.length > 0) {
+            html += `
+                <table class="standings-table"> <thead>
+                        <tr>
+                            <th>Pos.</th>
+                            <th>Driver</th>
+                            <th>Team</th>
+                            <th>Points</th>
+                            <th>Wins</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+            drivers.forEach(driver => {
+                html += `
+                    <tr>
+                        <td>${driver.position}</td>
+                        <td>${driver.given_name} ${driver.family_name}</td>
+                        <td>${driver.constructor_name}</td>
+                        <td>${driver.points}</td>
+                        <td>${driver.wins}</td>
+                    </tr>
+                `;
+            });
+            html += `
+                    </tbody>
+                </table>
+            `;
+        } else {
+            html += '<p>Geen coureursklassement beschikbaar op dit moment.</p>';
+        }
+        html += '</div>'; // Sluit standings-table-container voor coureurs
+
+        // Constructeursklassement
+        html += '<div class="standings-table-container">'; // Container voor de constructeurstabel
+        html += '<h4>Constructeursklassement</h4>';
+        if (constructors.length > 0) {
+            html += `
+                <table class="standings-table"> <thead>
+                        <tr>
+                            <th>Pos.</th>
+                            <th>Team</th>
+                            <th>Points</th>
+                            <th>Wins</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+            constructors.forEach(constructor => {
+                html += `
+                    <tr>
+                        <td>${constructor.position}</td>
+                        <td>${constructor.name}</td>
+                        <td>${constructor.points}</td>
+                        <td>${constructor.wins}</td>
+                    </tr>
+                `;
+            });
+            html += `
+                    </tbody>
+                </table>
+            `;
+        } else {
+            html += '<p>Geen constructeursklassement beschikbaar op dit moment.</p>';
+        }
+        html += '</div>'; // Sluit standings-table-container voor constructeurs
+
+        html += '</div>'; // Sluit de standings-grid container
+
+        standingsContent.innerHTML = html; // Injecteer alle gegenereerde HTML
+    }
+
+    // Roep de functie aan bij het laden van de pagina
+    fetchChampionshipStandings();
+</script>
 </body>
 </html>

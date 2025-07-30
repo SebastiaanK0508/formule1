@@ -66,9 +66,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['news_id'])) {
         </div>
     </header>
 
-    <main class="container">
+<main class="container">
+    <div class="page-header-section">
+                <div>
+            <h3 class="page-heading">
+                <?php
+                if ($nextGrandPrix) {
+                    echo htmlspecialchars($nextGrandPrix['grandprix']);
+                } else {
+                    echo "No upcoming Grand Prix"; // Or a suitable message
+                }
+                ?>
+            </h3>
+        </div>
+        <div class="page-heading" id="countdown"></div>
+    </div>
+
 <section class="page-header-section">
-    <h2 class="page-heading">NIEUWS</h2>
+    <h2 class="page-heading">NEWS</h2>
     <section class="race-calendar">
         <h3 class="section-title">Laatste Nieuws</h3>
         <?php
@@ -92,7 +107,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['news_id'])) {
                 <?php endforeach; ?>
             </div>
 
-            <?php if (count($news) > 1): // Toon de knop alleen als er meer dan 10 artikelen zijn ?>
+            <?php if (count($news) > 1): ?>
                 <div class="">
                     <a href="all-news.php" class="back-button">More News</a>
                 </div>
@@ -103,14 +118,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['news_id'])) {
         <?php endif; ?>
     </section>
 </section>
-    </main>
+</main>
 
     <footer>
         <div class="footer-content container">
             <p>&copy; 2025 Webbair. Alle rechten voorbehouden.</p>
             <div class="social-links">
                 <a href="#" aria-label="Facebook">Facebook</a>
-                <a href="#" aria-label="Twitter">Twitter</a>
+                <a href="#" aria-label="Twitter">X</a>
                 <a href="#" aria-label="Instagram">Instagram</a>
             </div>
         </div>
@@ -132,7 +147,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['news_id'])) {
                 clearInterval(countdownInterval);
             } else {
                 countdownElement.innerHTML =
-                    `${days}d ${hours}u ${minutes}m ${seconds}s`;
+                    `${days}d ${hours}h ${minutes}m ${seconds}s`;
             }
         }
         updateCountdown();
