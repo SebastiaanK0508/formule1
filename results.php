@@ -51,9 +51,6 @@ require_once 'achterkant/aanpassing/api-koppelingen/result_api.php';
         <section class="f1-section">
             <div class="grid">
                 <h2 class="page-heading">FORMULE 1 RACE RESULTS <?php echo $current_year; ?></h2>
-        
-
-
                     <?php if (empty($race_results)): ?>
                         <p class="error-message">Geen uitslagen beschikbaar voor de geselecteerde race. Mogelijk is deze race nog niet verreden.</p>
                     <?php else: ?>

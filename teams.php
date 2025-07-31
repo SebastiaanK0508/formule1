@@ -4,13 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Formula 1 Season 2025 - Teams</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style2.css">
         <?php
     require_once 'db_config.php';
     /** @var PDO $pdo */
     $allTeams = []; 
     try {
-    $stmt = $pdo->query("SELECT team_id, team_name, base_location, team_principal, team_color FROM teams WHERE is_active = TRUE ORDER BY team_name ASC");
+    $stmt = $pdo->query("SELECT team_id, team_name, base_location, team_principal, team_color, full_team_name FROM teams WHERE is_active = TRUE ORDER BY team_name ASC");
         $allTeams = $stmt->fetchAll();
     } catch (\PDOException $e) {
         error_log("Fout bij het ophalen van alle teams: " . $e->getMessage());
@@ -21,7 +21,7 @@
         $teamId = $_POST['team_id'];
 
         try {
-            $stmt = $pdo->prepare("SELECT team_id, team_name, base_location, team_principal, team_color FROM teams WHERE team_id = :team_id");
+            $stmt = $pdo->prepare("SELECT team_id, team_name, base_location, team_principal, team_color, full_team_name FROM teams WHERE team_id = :team_id");
             $stmt->bindParam(':driver_id', $teamId, PDO::PARAM_INT);
             $stmt->execute();
             $selectedTeam = $stmt->fetch();
@@ -83,27 +83,25 @@
             </div>
         </section>-->
 
-<section class="f1-section">
-            <div class="grid">
-                <div class="team-row">
-                <?php
-                    if (!empty($allTeams)) {
-                        foreach ($allTeams as $team) { // Verander $teams naar $team voor consistentie
-                            $teamSlug = strtolower(str_replace(' ', '-', htmlspecialchars($team['team_name'])));
-                            $teamPageUrl = 'team-details.php?slug=' . $teamSlug;
-
-                            // De team-card link met de juiste klassen en PHP variabele
-                            echo '<a href="' . $teamPageUrl . '" class="team-card" ' . (isset($teamColor) ? $teamColor : '') . '>';
-                            echo '  <h2 class="team-name">' . htmlspecialchars($team['team_name']) . '</h2>';
-                            echo '  <p>' . htmlspecialchars($team['base_location']) . '</p>';
-                            echo '  <p>' . htmlspecialchars($team['team_principal']) . '</p>';
-                            echo '</a>';
-                        }
-                    } else {
-                        echo "<p>Geen teams beschikbaar om weer te geven.</p>";
-                    }
-                    ?>
-                </div>
+        <section class="f1-section">
+            <div class="data-card-row">
+                <?php if (!empty($allTeams)): ?>
+                    <?php foreach ($allTeams as $team): ?>
+                        <article class="data-card">
+                            <a href="team-details.php?id=<?php echo htmlspecialchars($team['team_id']); ?>" class="team-link">
+                                <div class="info">
+                                    <h3 class="team-name" style="color: <?php echo htmlspecialchars($team['team_color']); ?>; padding-left: 10px;">
+                                        <?php echo htmlspecialchars($team['full_team_name']); ?>
+                                    </h3>
+                                    <p><strong>Base:</strong> <?php echo htmlspecialchars($team['base_location']); ?></p>
+                                    <p><strong>Team Principal:</strong> <?php echo htmlspecialchars($team['team_principal']); ?></p>
+                                </div>
+                            </a>
+                        </article>
+                    <?php endforeach; ?>
+                <?php else: ?>
+                    <p>Geen teams beschikbaar om weer te geven.</p>
+                <?php endif; ?>
             </div>
         </section>
     </main>

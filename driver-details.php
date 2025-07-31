@@ -57,20 +57,7 @@ try {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Driver Details</title>
-    <link rel="stylesheet" href="style.css">
-    <style>
-        :root {
-            --driver-main-color: <?php echo isset($driver['team_color']) && $driver['team_color'] ? htmlspecialchars($driver['team_color']) : 'rgb(0,0,0)'; ?>;
-        }
-
-        .details-container {
-            max-width: 800px;
-            margin: 20px auto;
-            background-color: #343434ff;
-            padding: 30px;
-            border-radius: 8px;
-        }
-    </style>
+    <link rel="stylesheet" href="style2.css">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Oswald:wght@400;600;700&display=swap" rel="stylesheet">
 </head>
 <body>

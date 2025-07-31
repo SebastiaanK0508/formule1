@@ -34,7 +34,7 @@
         }
     }
     ?>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style2.css">
 </head>
 <body>
     <header>
@@ -56,37 +56,32 @@
             <h2 class="page-heading">DRIVERS FORMULA 1 2025</h2>
         </section>
 
-        <section class="race-calandar">
-            <div class="race-grid">
-
-<?php
-// Loop door ALLE opgehaalde coureurs en genereer dynamisch de HTML
-if (!empty($allDrivers)) {
-    foreach ($allDrivers as $driver) {
-        // Zorg ervoor dat alle benodigde velden bestaan in je database en query.
-        // Een fallback voor kleur als deze niet in de DB staat
-        $driverColor = isset($driver['driver_color']) && $driver['driver_color'] ? htmlspecialchars($driver['driver_color']) : 'rgb(0,0,0)'; // Standaard zwart
-
-        // Dynamische link naar de generieke driver.php pagina
-        // Pass de 'slug' (bijv. max-verstappen) mee als een GET-parameter
-        $driverSlug = strtolower(str_replace(' ', '-', htmlspecialchars($driver['first_name'] . '-' . $driver['last_name'])));
-        $driverPageUrl = 'driver-details.php?slug=' . $driverSlug; // Changed to driver.php
-
-        echo '<a href="' . $driverPageUrl . '" class="race-card" style="--driver-color: ' . $driverColor . ';">';
-        echo '    <div class="driver-header">';
-        echo '        <h2 class="driver-name">' . htmlspecialchars($driver['first_name']) . ' ' . htmlspecialchars($driver['last_name']) . '</h2>';
-        echo '    </div>';
-        echo '    <div class="driver-info">';
-        echo '        <p class="driver-team">' . htmlspecialchars($driver['team_name']) . '</p>';
-        echo '        <p class="driver-number">#' . htmlspecialchars($driver['driver_number']) . '</p>';
-        echo '    </div>';
-        echo '</a>';
-    }
-} else {
-    echo "<p>Geen coureurs beschikbaar om weer te geven.</p>";
-}
-?>
-
+<section class="f1-section">
+            <div class="data-card-row">
+                <?php if (!empty($allDrivers)): ?>
+                    <?php foreach ($allDrivers as $driver): ?>
+                        <?php
+                            $driverSlug = strtolower(str_replace(' ', '-', htmlspecialchars($driver['first_name'] . '-' . $driver['last_name'])));
+                            $driverPageUrl = 'driver-details.php?slug=' . $driverSlug;
+                            $driverColor = isset($driver['driver_color']) && $driver['driver_color'] ? htmlspecialchars($driver['driver_color']) : '#CCCCCC'; // Standaard grijs
+                        ?>
+                        <article class="data-card">
+                            <a href="<?php echo $driverPageUrl; ?>" class="driver-link">
+                                <div class="info">
+                                    <h3 class="driver-name" style="padding-left: 10px;">
+                                        <?php echo htmlspecialchars($driver['first_name'] . ' ' . $driver['last_name']); ?>
+                                    </h3>
+                                    <div class="driver-details">
+                                        <p><strong>Team:</strong> <?php echo htmlspecialchars($driver['team_name']); ?></p>
+                                        <p><strong>Number:</strong> #<?php echo htmlspecialchars($driver['driver_number']); ?></p>
+                                    </div>
+                                </div>
+                            </a>
+                        </article>
+                    <?php endforeach; ?>
+                <?php else: ?>
+                    <p>Geen coureurs beschikbaar om weer te geven.</p>
+                <?php endif; ?>
             </div>
         </section>
     </main>

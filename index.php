@@ -1,48 +1,5 @@
 <?php
-require_once 'db_config.php';
-/** @var PDO $pdo */
-try {
-    $pdo = new PDO($dsn, $user, $pass, $pdoOptions);
-    $stmt = $pdo->prepare("SELECT grandprix, location, race_datetime FROM circuits WHERE race_datetime > NOW() ORDER BY calendar_order ASC LIMIT 1");
-    $stmt->execute();
-    $nextGrandPrix = $stmt->fetch();
-    if ($nextGrandPrix) {
-        $targetDateTime = (new DateTime($nextGrandPrix['race_datetime']))->format(DateTime::ATOM);
-    }
-} catch (\PDOException $e) {
-    error_log("Databasefout bij ophalen volgende Grand Prix: " . $e->getMessage());
-    $nextGrandPrix = null; 
-}
-?>
-
-<?php
-require_once 'db_config.php';
-/** @var PDO $pdo */
-
-$news = [];
-try {
-    $stmt = $pdo->query("SELECT news_id, title, news_content, image_url, keywords, source, date FROM news ORDER BY date DESC");
-    $news = $stmt->fetchAll();
-} catch (\PDOException $e) {
-    echo "Fout bij het ophalen van nieuws artikelen: " . $e->getMessage();
-}
-$selectednews = null;
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['news_id'])) {
-    $newsid = $_POST['news_id'];
-
-    try {
-        $stmt = $pdo->prepare("SELECT news_id, title, source FROM news WHERE news_content = :newsconten");
-        $stmt->bindParam(':news_id', $newsid, PDO::PARAM_INT);
-        $stmt->execute();
-        $selectednews = $stmt->fetch();
-
-        if (!$selectednews) {
-            echo "Nieuws niet gevonden.";
-        }
-    } catch (\PDOException $e) {
-        echo "Fout bij het ophalen van niewsartikelen: " . $e->getMessage();
-    }
-}
+require_once 'achterkant/aanpassing/api-koppelingen/1result_api.php';
 ?>
 <!DOCTYPE html>
 <html lang="nl">
@@ -50,7 +7,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['news_id'])) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Formula 1 Season 2025 - Home</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style2.css">
 </head>
 <body>
     <header>
@@ -69,21 +26,77 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['news_id'])) {
 
 <main class="container">
     <div class="page-header-section">
-                <div>
+        <div>
             <h3 class="page-heading">
                 <?php
                 if ($nextGrandPrix) {
                     echo htmlspecialchars($nextGrandPrix['grandprix']);
                 } else {
-                    echo "No upcoming Grand Prix"; // Or a suitable message
+                    echo "Geen aankomende Grand Prix";
                 }
                 ?>
             </h3>
         </div>
-        <div class="page-heading" id="countdown"></div>
+        <div class="page-heading" id="countdown">
+        </div>
     </div>
-</main>
+        <?php if ($error_message): ?>
+            <div class="error-message">
+                <?php echo $error_message; ?>
+            </div>
+        <?php else: ?>
+            <div class="selection-link">
+                <?php if (!empty($races_in_season)): ?>
+                <?php else: ?>
+                    <p>Geen races gevonden</p>
+                <?php endif; ?>
+            </div>
 
+        <?php if ($race_details): ?>
+        <section class="f1-section">
+            <div class="race-info-card">
+                <h2 class="page-heading">Result <?php echo htmlspecialchars($race_details['name']); ?></h2>
+                <p><strong>Location:</strong> <?php echo htmlspecialchars($race_details['circuit']); ?>, <?php echo htmlspecialchars($race_details['location']); ?>, <?php echo htmlspecialchars($race_details['country']); ?></p>
+                <p><strong>Date:</strong> <?php echo htmlspecialchars((new DateTime($race_details['date']))->format('d-m-Y')); ?></p>
+            </div>
+            <?php if (!empty($race_results)): ?>
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Pos</th>
+                        <th>Driver</th>
+                        <th>Team</th>
+                        <th>Time / Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach ($race_results as $result): ?>
+                        <tr>
+                            <td style="border-left: 5px solid <?php echo htmlspecialchars($result['team_color']); ?>;">
+                                <?php echo htmlspecialchars($result['position']); ?>
+                            </td>
+                            <td>
+                                <?php echo htmlspecialchars($result['driver_name']); ?>
+                            </td>
+                            <td>
+                                <?php echo htmlspecialchars($result['team_name']); ?>
+                            </td>
+                            <td style="border-right: 5px solid <?php echo htmlspecialchars($result['team_color']); ?>;">
+                                <?php echo htmlspecialchars($result['lap_time_or_status']); ?>
+                            </td>
+                        </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+            <?php else: ?>
+            <p>Er zijn geen resultaten beschikbaar voor deze race.</p>
+            <?php endif; ?>
+        </section>
+        <?php else: ?>
+            <p>Selecteer een race om de resultaten te bekijken.</p>
+        <?php endif; ?>
+    <?php endif; ?>
+</main>
     <footer>
         <div class="footer-content container">
             <p>&copy; 2025 Webbair. Alle rechten voorbehouden.</p>
@@ -91,6 +104,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['news_id'])) {
                 <a href="#" aria-label="Facebook">Facebook</a>
                 <a href="#" aria-label="Twitter">X</a>
                 <a href="#" aria-label="Instagram">Instagram</a>
+            </div>
+            <div class="social-links">
+                <a href="privacy.html">Privacy Beleid</a>
+                <a href="algemenevoorwaarden.html">Algemene Voorwaarden</a>
+                <a href="contact.html">Contact</a>
             </div>
         </div>
     </footer>

@@ -72,9 +72,6 @@
   font-weight: 500;
 }
 
-/*
- * Footer styles (Kept dark)
- */
 footer {
   background-color: #000000;
   color: #ffffff;
@@ -95,6 +92,11 @@ footer {
 
 .social-links {
   margin-top: 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  flex-direction: column;
 }
 
 .social-links a {
@@ -108,9 +110,6 @@ footer {
   color: #ef4444;
 }
 
-/*
- * Circuit detail page styles (Lighter)
- */
 .detail-card h3 {
   font-family: 'Oswald', sans-serif;
   font-size: 2em;

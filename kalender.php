@@ -1,11 +1,8 @@
 <?php
 require_once 'db_config.php';
 /** @var PDO $pdo */ 
-
 $circuitsData = [];
 try {
-    // Haal ALLE circuits op voor weergave in de tabel
-    // Sorteer op calendar_order ASC om de juiste kalendervolgorde te krijgen
     $stmt = $pdo->query("SELECT circuit_key, grandprix, location, map_url, race_datetime, title FROM circuits ORDER BY calendar_order ASC");
     $circuitsData = $stmt->fetchAll();
 } catch (\PDOException $e) {
@@ -34,16 +31,14 @@ try {
             </nav>
         </div>
     </header>
-
     <main class="container">
         <section class="page-header-section">
             <h2 class="page-heading">F1 SEASON 2025 SCHEDULE</h2>
         </section>
-
         <section class="f1-section">
-            <div class="grid">
-
-                <?php if (!empty($circuitsData)): ?>
+            <div class="data-card-row">
+                
+                    <?php if (!empty($circuitsData)): ?>
                     <?php foreach ($circuitsData as $circuit): ?>
                         <?php
                             $raceDateTime = new DateTime($circuit['race_datetime']);
@@ -68,10 +63,11 @@ try {
                                 </div>
                             </a>
                         </article>
-                    <?php endforeach; ?>
-                <?php else: ?>
-                    <p class="text-gray-600">Geen circuits gevonden in de database. Voeg circuits toe via de beheerpagina.</p>
-                <?php endif; ?>
+                        <?php endforeach; ?>
+                    <?php else: ?>
+                        <p class="text-gray-600">Geen circuits gevonden in de database. Voeg circuits toe via de beheerpagina.</p>
+                    <?php endif; ?>
+                
             </div>
         </section>
     </main>
