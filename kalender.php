@@ -29,6 +29,7 @@ try {
                 <a href="kalender.php" class="active">Schedule</a>
                 <a href="teams.php">Teams</a>
                 <a href="drivers.php">Drivers</a>
+                <a href="results.php">Results</a>
                 <a href="standings.php">Standings</a>
             </nav>
         </div>

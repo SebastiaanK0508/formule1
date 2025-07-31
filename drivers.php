@@ -45,6 +45,7 @@
                 <a href="kalender.php">Schedule</a>
                 <a href="teams.php">Teams</a>
                 <a href="drivers.php" class="active">Drivers</a>
+                <a href="results.php">Results</a>
                 <a href="standings.php">Standings</a>
             </nav>
         </div>

@@ -54,43 +54,33 @@ CREATE TABLE teams (
     is_active BOOLEAN DEFAULT TRUE
 );
 
--- RED BULL RACING
 INSERT INTO teams (team_name, team_color, full_team_name, base_location, team_principal, technical_director, championships_won, first_entry_year, website_url, logo_url, current_engine_supplier, is_active) VALUES
 ('Red Bull Racing', '#0600EF', 'Oracle Red Bull Racing', 'Milton Keynes, UK', 'Christian Horner', 'Pierre Waché', 7, 2005, 'https://www.redbullracing.com/', 'url_naar_redbull_logo.png', 'Honda RBPT', TRUE);
 
--- MERCEDES
 INSERT INTO teams (team_name, team_color, full_team_name, base_location, team_principal, technical_director, championships_won, first_entry_year, website_url, logo_url, current_engine_supplier, is_active) VALUES
 ('Mercedes', '#00D2BE', 'Mercedes-AMG Petronas Formula One Team', 'Brackley, UK', 'Toto Wolff', 'James Allison', 8, 2010, 'https://www.mercedesamgf1.com/', 'url_naar_mercedes_logo.png', 'Mercedes', TRUE);
 
--- FERRARI
 INSERT INTO teams (team_name, team_color, full_team_name, base_location, team_principal, technical_director, championships_won, first_entry_year, website_url, logo_url, current_engine_supplier, is_active) VALUES
 ('Ferrari', '#DC0000', 'Scuderia Ferrari', 'Maranello, Italy', 'Frédéric Vasseur', 'Enrico Cardile', 16, 1950, 'https://www.ferrari.com/en-EN/formula1', 'url_naar_ferrari_logo.png', 'Ferrari', TRUE);
 
--- MCLAREN
 INSERT INTO teams (team_name, team_color, full_team_name, base_location, team_principal, technical_director, championships_won, first_entry_year, website_url, logo_url, current_engine_supplier, is_active) VALUES
 ('McLaren', '#FF8700', 'McLaren Formula 1 Team', 'Woking, UK', 'Andrea Stella', 'Peter Prodromou', 8, 1966, 'https://www.mclaren.com/racing/formula-1/', 'url_naar_mclaren_logo.png', 'Mercedes', TRUE);
 
--- ASTON MARTIN
 INSERT INTO teams (team_name, team_color, full_team_name, base_location, team_principal, technical_director, championships_won, first_entry_year, website_url, logo_url, current_engine_supplier, is_active) VALUES
 ('Aston Martin', '#006F62', 'Aston Martin Aramco Formula One Team', 'Silverstone, UK', 'Mike Krack', 'Dan Fallows', 0, 2021, 'https://www.astonmartinf1.com/', 'url_naar_aston_martin_logo.png', 'Mercedes', TRUE);
 
--- ALPINE
 INSERT INTO teams (team_name, team_color, full_team_name, base_location, team_principal, technical_director, championships_won, first_entry_year, website_url, logo_url, current_engine_supplier, is_active) VALUES
 ('Alpine', '#0090FF', 'BWT Alpine F1 Team', 'Enstone, UK', 'Bruno Famin', 'Matt Harman', 0, 2021, 'https://www.alpinecars.com/en/f1/', 'url_naar_alpine_logo.png', 'Renault', TRUE);
 
--- WILLIAMS
 INSERT INTO teams (team_name, team_color, full_team_name, base_location, team_principal, technical_director, championships_won, first_entry_year, website_url, logo_url, current_engine_supplier, is_active) VALUES
 ('Williams', '#64C4FF', 'Williams Racing', 'Grove, UK', 'James Vowles', 'Pat Fry', 9, 1977, 'https://www.williamsf1.com/', 'url_naar_williams_logo.png', 'Mercedes', TRUE);
 
--- HAAS
 INSERT INTO teams (team_name, team_color, full_team_name, base_location, team_principal, technical_director, championships_won, first_entry_year, website_url, logo_url, current_engine_supplier, is_active) VALUES
 ('Haas', '#B6BABC', 'MoneyGram Haas F1 Team', 'Kannapolis, USA', 'Ayao Komatsu', 'Simone Resta', 0, 2016, 'https://www.haasf1team.com/', 'url_naar_haas_logo.png', 'Ferrari', TRUE);
 
--- RB (Racing Bulls)
 INSERT INTO teams (team_name, team_color, full_team_name, base_location, team_principal, technical_director, championships_won, first_entry_year, website_url, logo_url, current_engine_supplier, is_active) VALUES
 ('RB', '#6692FF', 'Visa Cash App RB Formula 1 Team', 'Faenza, Italy', 'Laurent Mekies', 'Jody Egginton', 0, 2006, 'https://www.visacashapprb.com/', 'url_naar_rb_logo.png', 'Honda RBPT', TRUE);
 
--- SAUBER (Kick Sauber)
 INSERT INTO teams (team_name, team_color, full_team_name, base_location, team_principal, technical_director, championships_won, first_entry_year, website_url, logo_url, current_engine_supplier, is_active) VALUES
 ('Sauber', '#52E252', 'Stake F1 Team Kick Sauber', 'Hinwil, Switzerland', 'Alessandro Alunni Bravi', 'James Key', 0, 1993, 'https://www.sauber-group.com/motorsport/formula-1/', 'url_naar_sauber_logo.png', 'Ferrari', TRUE);
 
@@ -108,23 +98,22 @@ ADD COLUMN description VARCHAR(255);
 
 INSERT INTO drivers (first_name, last_name, nationality, date_of_birth, driver_number, team_name, championships_won, career_points, image, is_active) VALUES
 ('Max', 'Verstappen', 'Dutch', '1997-09-30', 1, 'Red Bull Racing', 3, 2850.00, 'https://placehold.co/150x150/000000/FFFFFF?text=Max+Verstappen', TRUE),
-('Lewis', 'Hamilton', 'British', '1985-01-07', 44, 'Ferrari', 7, 4850.00, 'https://placehold.co/150x150/000000/FFFFFF?text=Lewis+Hamilton', TRUE), -- Overstap naar Ferrari
+('Lewis', 'Hamilton', 'British', '1985-01-07', 44, 'Ferrari', 7, 4850.00, 'https://placehold.co/150x150/000000/FFFFFF?text=Lewis+Hamilton', TRUE), 
 ('Charles', 'Leclerc', 'Monegasque', '1997-10-16', 16, 'Ferrari', 0, 1400.00, 'https://placehold.co/150x150/000000/FFFFFF?text=Charles+Leclerc', TRUE),
 ('Lando', 'Norris', 'British', '1999-11-13', 4, 'McLaren', 0, 950.00, 'https://placehold.co/150x150/000000/FFFFFF?text=Lando+Norris', TRUE),
 ('Fernando', 'Alonso', 'Spanish', '1981-07-29', 14, 'Aston Martin', 2, 2350.00, 'https://placehold.co/150x150/000000/FFFFFF?text=Fernando+Alonso', TRUE),
 ('George', 'Russell', 'British', '1998-02-15', 63, 'Mercedes', 0, 650.00, 'https://placehold.co/150x150/000000/FFFFFF?text=George+Russell', TRUE),
-('Yuki', 'Tsunoda', 'Japanese', '2000-05-11', 22, 'Red Bull Racing', 0, 200.00, 'https://placehold.co/150x150/000000/FFFFFF?text=Yuki+Tsunoda', TRUE), -- Overstap naar Red Bull
-('Carlos', 'Sainz', 'Spanish', '1994-09-01', 55, 'Williams', 0, 1100.00, 'https://placehold.co/150x150/000000/FFFFFF?text=Carlos+Sainz', TRUE), -- Overstap naar Williams
+('Yuki', 'Tsunoda', 'Japanese', '2000-05-11', 22, 'Red Bull Racing', 0, 200.00, 'https://placehold.co/150x150/000000/FFFFFF?text=Yuki+Tsunoda', TRUE),
+('Carlos', 'Sainz', 'Spanish', '1994-09-01', 55, 'Williams', 0, 1100.00, 'https://placehold.co/150x150/000000/FFFFFF?text=Carlos+Sainz', TRUE), 
 ('Oscar', 'Piastri', 'Australian', '2001-04-06', 81, 'McLaren', 0, 300.00, 'https://placehold.co/150x150/000000/FFFFFF?text=Oscar+Piastri', TRUE),
-('Nico', 'Hulkenberg', 'German', '1987-08-19', 27, 'Sauber', 0, 580.00, 'https://placehold.co/150x150/000000/FFFFFF?text=Nico+Hulkenberg', TRUE), -- Overstap naar Sauber
+('Nico', 'Hulkenberg', 'German', '1987-08-19', 27, 'Sauber', 0, 580.00, 'https://placehold.co/150x150/000000/FFFFFF?text=Nico+Hulkenberg', TRUE), 
 ('Lance', 'Stroll', 'Canadian', '1998-10-29', 18, 'Aston Martin', 0, 320.00, 'https://placehold.co/150x150/000000/FFFFFF?text=Lance+Stroll', TRUE),
 ('Alexander', 'Albon', 'Thai', '1996-03-23', 23, 'Williams', 0, 220.00, 'https://placehold.co/150x150/000000/FFFFFF?text=Alexander+Albon', TRUE),
-('Esteban', 'Ocon', 'French', '1996-09-17', 31, 'Haas', 0, 420.00, 'https://placehold.co/150x150/000000/FFFFFF?text=Esteban+Ocon', TRUE), -- Overstap naar Haas
+('Esteban', 'Ocon', 'French', '1996-09-17', 31, 'Haas', 0, 420.00, 'https://placehold.co/150x150/000000/FFFFFF?text=Esteban+Ocon', TRUE), 
 ('Pierre', 'Gasly', 'French', '1996-02-07', 10, 'Alpine', 0, 480.00, 'https://placehold.co/150x150/000000/FFFFFF?text=Pierre+Gasly', TRUE),
 ('Liam', 'Lawson', 'New Zealander', '2002-02-11', 30, 'RB', 0, 10.00, 'https://placehold.co/150x150/000000/FFFFFF?text=Liam+Lawson', TRUE)
-('Franco', 'Colapinto', 'Argentijn', '2002-02-11', 43, 'Alpine', 0, 10.00, 'https://placehold.co/150x150/000000/FFFFFF?text=Liam+Lawson', TRUE); -- Overstap naar RB
+('Franco', 'Colapinto', 'Argentijn', '2002-02-11', 43, 'Alpine', 0, 10.00, 'https://placehold.co/150x150/000000/FFFFFF?text=Liam+Lawson', TRUE); 
 
--- Nieuwe coureurs voor 2025
 INSERT INTO drivers (first_name, last_name, nationality, date_of_birth, driver_number, team_name, championships_won, career_points, image, is_active) VALUES
 ('Andrea Kimi', 'Antonelli', 'Italian', '2006-08-25', 12, 'Mercedes', 0, 0.00, 'https://placehold.co/150x150/000000/FFFFFF?text=Kimi+Antonelli', TRUE),
 ('Oliver', 'Bearman', 'British', '2005-05-08', 87, 'Haas', 0, 0.00, 'https://placehold.co/150x150/000000/FFFFFF?text=Oliver+Bearman', TRUE),
@@ -205,20 +194,20 @@ UPDATE circuits SET calendar_order = 24 WHERE circuit_key = 'abu_dhabi';
 
 CREATE TABLE race_results (
     result_id INT AUTO_INCREMENT PRIMARY KEY,
-    circuit_key VARCHAR(50) NOT NULL, -- Verwijst naar circuit_key in 'circuits' tabel
-    driver_id INT NOT NULL,           -- Verwijst naar driver_id in 'drivers' tabel
-    race_year INT NOT NULL,           -- Jaar van de race
-    race_type ENUM('Race', 'Sprint') NOT NULL, -- Type race (bijv. Hoofd race, Sprint)
-    position INT NOT NULL,            -- Eindpositie van de coureur
-    points DECIMAL(5,2) NOT NULL DEFAULT 0.00, -- Aantal behaalde punten
-    laps_completed INT NOT NULL,      -- Aantal voltooide ronden
-    finish_status VARCHAR(50),        -- Bijv. 'Finished', 'DNF', 'Disqualified'
-    fastest_lap_time VARCHAR(20),     -- Snelste rondetijd (optioneel, bijv. '1:23.456')
-    time_offset VARCHAR(50),          -- Tijdverschil met winnaar (bijv. '+1.234s' of '1 lap')
-    pole_position BOOLEAN DEFAULT FALSE, -- Of deze coureur pole position had
+    circuit_key VARCHAR(50) NOT NULL,
+    driver_id INT NOT NULL,
+    race_year INT NOT NULL,
+    race_type ENUM('Race', 'Sprint') NOT NULL,
+    position INT NOT NULL,       
+    points DECIMAL(5,2) NOT NULL DEFAULT 0.00, 
+    laps_completed INT NOT NULL,
+    finish_status VARCHAR(50),
+    fastest_lap_time VARCHAR(20),     
+    time_offset VARCHAR(50),
+    pole_position BOOLEAN DEFAULT FALSE,
     FOREIGN KEY (circuit_key) REFERENCES circuits(circuit_key),
     FOREIGN KEY (driver_id) REFERENCES drivers(driver_id),
-    UNIQUE (circuit_key, race_year, race_type, driver_id) -- Voorkom dubbele resultaten voor dezelfde coureur in dezelfde race
+    UNIQUE (circuit_key, race_year, race_type, driver_id) 
 );
 
 ALTER TABLE circuits
@@ -229,7 +218,6 @@ CREATE TABLE points_system (
     points DECIMAL(5,2) NOT NULL
 );
 
--- Invoegen van standaard F1 puntensysteem (top 10)
 INSERT INTO points_system (position, points) VALUES
 (1, 25.00),
 (2, 18.00),
@@ -242,7 +230,6 @@ INSERT INTO points_system (position, points) VALUES
 (9, 2.00),
 (10, 1.00);
 
--- Invoegen van 0 punten voor posities 11 t/m 20 (indien van toepassing)
 INSERT INTO points_system (position, points) VALUES
 (11, 0.00),
 (12, 0.00),
@@ -289,8 +276,6 @@ INSERT INTO sprint_points_system (position, points) VALUES
 (19, 0.00),
 (20, 0.00);
 
---verijder race result en voeg deze toe!--
-
 CREATE TABLE race_results (
     result_id INT AUTO_INCREMENT PRIMARY KEY,
     circuit_key VARCHAR(50) NOT NULL,
@@ -314,30 +299,30 @@ CREATE TABLE race_results (
 ALTER TABLE circuits
 ADD COLUMN race_datetime DATETIME; 
 
-UPDATE circuits SET race_datetime = '2025-03-16 06:00:00' WHERE circuit_key = 'australia';     -- Zondag 16 maart (Melbourne, lokale tijd 16:00)
-UPDATE circuits SET race_datetime = '2025-03-23 07:00:00' WHERE circuit_key = 'china';         -- Zondag 23 maart (Shanghai, lokale tijd 15:00)
-UPDATE circuits SET race_datetime = '2025-04-06 06:00:00' WHERE circuit_key = 'japan';         -- Zondag 6 april (Suzuka, lokale tijd 14:00)
-UPDATE circuits SET race_datetime = '2025-04-13 14:00:00' WHERE circuit_key = 'bahrain';       -- Zondag 13 april (Sakhir, lokale tijd 16:00)
-UPDATE circuits SET race_datetime = '2025-04-20 17:00:00' WHERE circuit_key = 'saudi_arabia';  -- Zondag 20 april (Jeddah, lokale tijd 19:00)
-UPDATE circuits SET race_datetime = '2025-05-04 19:30:00' WHERE circuit_key = 'miami';         -- Zondag 4 mei (Miami, lokale tijd 15:30)
-UPDATE circuits SET race_datetime = '2025-05-18 13:00:00' WHERE circuit_key = 'emilia_romagna';-- Zondag 18 mei (Imola, lokale tijd 15:00)
-UPDATE circuits SET race_datetime = '2025-05-25 13:00:00' WHERE circuit_key = 'monaco';        -- Zondag 25 mei (Monaco, lokale tijd 15:00)
-UPDATE circuits SET race_datetime = '2025-06-01 13:00:00' WHERE circuit_key = 'spain';         -- Zondag 1 juni (Barcelona, lokale tijd 15:00)
-UPDATE circuits SET race_datetime = '2025-06-15 18:00:00' WHERE circuit_key = 'canada';        -- Zondag 15 juni (Montreal, lokale tijd 14:00)
-UPDATE circuits SET race_datetime = '2025-06-29 13:00:00' WHERE circuit_key = 'austria';       -- Zondag 29 juni (Spielberg, lokale tijd 15:00)
-UPDATE circuits SET race_datetime = '2025-07-06 14:00:00' WHERE circuit_key = 'great_britain'; -- Zondag 6 juli (Silverstone, lokale tijd 15:00)
-UPDATE circuits SET race_datetime = '2025-07-27 13:00:00' WHERE circuit_key = 'belgium';       -- Zondag 27 juli (Spa-Francorchamps, lokale tijd 15:00)
-UPDATE circuits SET race_datetime = '2025-08-03 13:00:00' WHERE circuit_key = 'hungary';       -- Zondag 3 augustus (Hungaroring, lokale tijd 15:00)
-UPDATE circuits SET race_datetime = '2025-08-31 13:00:00' WHERE circuit_key = 'netherlands';   -- Zondag 31 augustus (Zandvoort, lokale tijd 15:00)
-UPDATE circuits SET race_datetime = '2025-09-07 13:00:00' WHERE circuit_key = 'italy';         -- Zondag 7 september (Monza, lokale tijd 15:00)
-UPDATE circuits SET race_datetime = '2025-09-21 11:00:00' WHERE circuit_key = 'azerbaijan';    -- Zondag 21 september (Baku, lokale tijd 15:00)
-UPDATE circuits SET race_datetime = '2025-10-05 12:00:00' WHERE circuit_key = 'singapore';     -- Zondag 5 oktober (Marina Bay, lokale tijd 20:00)
-UPDATE circuits SET race_datetime = '2025-10-19 19:00:00' WHERE circuit_key = 'usa';           -- Zondag 19 oktober (Austin, lokale tijd 14:00)
-UPDATE circuits SET race_datetime = '2025-10-26 19:00:00' WHERE circuit_key = 'mexico';        -- Zondag 26 oktober (Mexico-Stad, lokale tijd 14:00)
-UPDATE circuits SET race_datetime = '2025-11-09 16:00:00' WHERE circuit_key = 'brazil';        -- Zondag 9 november (Interlagos, lokale tijd 14:00)
-UPDATE circuits SET race_datetime = '2025-11-22 06:00:00' WHERE circuit_key = 'las_vegas';     -- Zaterdag 22 november (Las Vegas, lokale tijd 22:00 zaterdag)
-UPDATE circuits SET race_datetime = '2025-11-30 14:00:00' WHERE circuit_key = 'qatar';         -- Zondag 30 november (Lusail, lokale tijd 16:00)
-UPDATE circuits SET race_datetime = '2025-12-07 13:00:00' WHERE circuit_key = 'abu_dhabi';     -- Zondag 7 december (Yas Marina, lokale tijd 16:00)
+UPDATE circuits SET race_datetime = '2025-03-16 06:00:00' WHERE circuit_key = 'australia';    
+UPDATE circuits SET race_datetime = '2025-03-23 07:00:00' WHERE circuit_key = 'china';         
+UPDATE circuits SET race_datetime = '2025-04-06 06:00:00' WHERE circuit_key = 'japan';         
+UPDATE circuits SET race_datetime = '2025-04-13 14:00:00' WHERE circuit_key = 'bahrain';       
+UPDATE circuits SET race_datetime = '2025-04-20 17:00:00' WHERE circuit_key = 'saudi_arabia'; 
+UPDATE circuits SET race_datetime = '2025-05-04 19:30:00' WHERE circuit_key = 'miami';         
+UPDATE circuits SET race_datetime = '2025-05-18 13:00:00' WHERE circuit_key = 'emilia_romagna';
+UPDATE circuits SET race_datetime = '2025-05-25 13:00:00' WHERE circuit_key = 'monaco';        
+UPDATE circuits SET race_datetime = '2025-06-01 13:00:00' WHERE circuit_key = 'spain';         
+UPDATE circuits SET race_datetime = '2025-06-15 18:00:00' WHERE circuit_key = 'canada';       
+UPDATE circuits SET race_datetime = '2025-06-29 13:00:00' WHERE circuit_key = 'austria';       
+UPDATE circuits SET race_datetime = '2025-07-06 14:00:00' WHERE circuit_key = 'great_britain'; 
+UPDATE circuits SET race_datetime = '2025-07-27 13:00:00' WHERE circuit_key = 'belgium';       
+UPDATE circuits SET race_datetime = '2025-08-03 13:00:00' WHERE circuit_key = 'hungary';      
+UPDATE circuits SET race_datetime = '2025-08-31 13:00:00' WHERE circuit_key = 'netherlands';  
+UPDATE circuits SET race_datetime = '2025-09-07 13:00:00' WHERE circuit_key = 'italy';        
+UPDATE circuits SET race_datetime = '2025-09-21 11:00:00' WHERE circuit_key = 'azerbaijan';    
+UPDATE circuits SET race_datetime = '2025-10-05 12:00:00' WHERE circuit_key = 'singapore';     
+UPDATE circuits SET race_datetime = '2025-10-19 19:00:00' WHERE circuit_key = 'usa';          
+UPDATE circuits SET race_datetime = '2025-10-26 19:00:00' WHERE circuit_key = 'mexico';      
+UPDATE circuits SET race_datetime = '2025-11-09 16:00:00' WHERE circuit_key = 'brazil';      
+UPDATE circuits SET race_datetime = '2025-11-22 06:00:00' WHERE circuit_key = 'las_vegas';
+UPDATE circuits SET race_datetime = '2025-11-30 14:00:00' WHERE circuit_key = 'qatar';        
+UPDATE circuits SET race_datetime = '2025-12-07 13:00:00' WHERE circuit_key = 'abu_dhabi';     
 
 ALTER TABLE news
 ADD COLUMN date DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP;

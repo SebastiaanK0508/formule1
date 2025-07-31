@@ -234,12 +234,13 @@ if ($team) {
 <body>
     <header>
         <div class="header-content container">
-            <h1 class="site-title">Formula 1 Season 2025</h1>
+            <h1 class="site-title">FORMULA 1 SEASON 2025</h1>
             <nav class="main-nav">
                 <a href="index.php">Home</a>
                 <a href="kalender.php">Schedule</a>
                 <a href="teams.php" class="active">Teams</a>
                 <a href="drivers.php">Drivers</a>
+                <a href="results.php">Results</a>
                 <a href="standings.php">Standings</a>
             </nav>
         </div>
