@@ -18,7 +18,7 @@ try {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Formule 1 Kalender 2025 - Overzicht</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style2.css">
 </head>
 <body>
     <header>
@@ -38,12 +38,10 @@ try {
     <main class="container">
         <section class="page-header-section">
             <h2 class="page-heading">F1 SEASON 2025 SCHEDULE</h2>
-            <p class="page-intro">Alle races, circuits en datums voor de complete Formule 1-kalender van 2025.</p>
         </section>
 
-        <section class="race-calendar">
-            <h3 class="section-subtitle">GRAND PRIX OVERZICHT</h3>
-            <div class="race-grid">
+        <section class="f1-section">
+            <div class="grid">
 
                 <?php if (!empty($circuitsData)): ?>
                     <?php foreach ($circuitsData as $circuit): ?>
@@ -57,12 +55,12 @@ try {
                                 $displayDate = ($raceDay - 1) . ' - ' . $raceDay . ' ' . $raceMonthEnglish . ' ' . $raceYear . ' (Zaterdag)';
                             }
                         ?>
-                        <article class="race-card">
-                            <a href="circuit-details.php?key=<?php echo htmlspecialchars($circuit['circuit_key']); ?>" class="circuit-link">
+                        <article class="data-card">
+                            <a href="circuit-details.php?key=<?php echo htmlspecialchars($circuit['circuit_key']); ?>" class="data-link">
                                 <div class="race-image-container">
                                     <img src="<?php echo htmlspecialchars($circuit['map_url']); ?>" alt="Circuit <?php echo htmlspecialchars($circuit['grandprix']); ?>" class="circuit-image">
                                 </div>
-                                <div class="race-info">
+                                <div class="info">
                                     <h4><?php echo htmlspecialchars($circuit['grandprix']); ?></h4>
                                     <p><strong>Date:</strong> <?php echo htmlspecialchars($displayDate); ?></p>
                                     <p><strong>Location:</strong> <?php echo htmlspecialchars($circuit['location']); ?></p>

@@ -35,21 +35,6 @@
         }
     }
     ?>
-    <style>
-        :root {
-            --team-main-color: <?php echo isset($allTeams['team_color']) && $allTeams['team_color'] ? htmlspecialchars($teamId['team_color']) : 'rgb(0,0,0)'; ?>;
-            --font-heading: 'Oswald', sans-serif;
-        }
-
-        .team-name {
-            margin: 0;
-            font-size: 2.2em;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-family: var(--font-heading);
-        }
-    </style>
 </head>
 <body>
     <header>
@@ -98,8 +83,8 @@
             </div>
         </section>-->
 
-<section class="race-calendar">
-            <div class="team-grid">
+<section class="f1-section">
+            <div class="grid">
                 <div class="team-row">
                 <?php
                     if (!empty($allTeams)) {

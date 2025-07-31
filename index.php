@@ -82,43 +82,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['news_id'])) {
         </div>
         <div class="page-heading" id="countdown"></div>
     </div>
-
-<section class="page-header-section">
-    <h2 class="page-heading">NEWS</h2>
-    <section class="race-calendar">
-        <h3 class="section-title">Laatste Nieuws</h3>
-        <?php
-
-        if ($news):
-            $displayed_news = array_slice($news, 0, 10);
-        ?>
-            <div class="news-container">
-                <?php foreach ($displayed_news as $item): ?>
-                    <a href="news-detail.php?news_id=<?php echo htmlspecialchars($item['news_id']); ?>" class="news-item-link">
-                        <article class="news-item">
-                            <div class="news-image">
-                                <img src="<?php echo htmlspecialchars($item['image_url']); ?>" alt="<?php echo htmlspecialchars($item['title']); ?>">
-                            </div>
-                            <div class="news-content">
-                                <h4><?php echo htmlspecialchars($item['title']); ?></h4>
-                                <p class="news-date"><?php echo htmlspecialchars($item['date']); ?></p>
-                            </div>
-                        </article>
-                    </a>
-                <?php endforeach; ?>
-            </div>
-
-            <?php if (count($news) > 1): ?>
-                <div class="">
-                    <a href="all-news.php" class="back-button">More News</a>
-                </div>
-            <?php endif; ?>
-
-        <?php else: ?>
-            <p>Er zijn momenteel geen nieuwsartikelen beschikbaar.</p>
-        <?php endif; ?>
-    </section>
-</section>
 </main>
 
     <footer>

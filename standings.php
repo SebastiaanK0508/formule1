@@ -12,11 +12,11 @@
             <h1 class="site-title">FORMULA 1 SEASON 2025</h1>
             <nav class="main-nav">
                 <a href="index.php">Home</a>
-                <a href="kalender.php" class="active">Schedule</a>
+                <a href="kalender.php">Schedule</a>
                 <a href="teams.php">Teams</a>
                 <a href="drivers.php">Drivers</a>
                 <a href="results.php">Results</a>
-                <a href="standings.php">Standings</a>
+                <a href="standings.php" class="active">Standings</a>
             </nav>
         </div>
     </header>
@@ -70,11 +70,11 @@
         let html = '<div class="standings-grid">'; // Start de grid container hier
 
         // Coureursklassement
-        html += '<div class="standings-table-container">'; // Container voor de coureurstabel
+        html += '<div class="data-table-container">'; // Container voor de coureurstabel
         html += '<h4>Coureursklassement</h4>';
         if (drivers.length > 0) {
             html += `
-                <table class="standings-table"> <thead>
+                <table class="data-table"> <thead>
                         <tr>
                             <th>Pos.</th>
                             <th>Driver</th>
@@ -106,11 +106,11 @@
         html += '</div>'; // Sluit standings-table-container voor coureurs
 
         // Constructeursklassement
-        html += '<div class="standings-table-container">'; // Container voor de constructeurstabel
+        html += '<div class="data-table-container">'; // Container voor de constructeurstabel
         html += '<h4>Constructeursklassement</h4>';
         if (constructors.length > 0) {
             html += `
-                <table class="standings-table"> <thead>
+                <table class="data-table"> <thead>
                         <tr>
                             <th>Pos.</th>
                             <th>Team</th>
