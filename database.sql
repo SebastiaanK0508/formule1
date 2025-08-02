@@ -111,8 +111,8 @@ INSERT INTO drivers (first_name, last_name, nationality, date_of_birth, driver_n
 ('Alexander', 'Albon', 'Thai', '1996-03-23', 23, 'Williams', 0, 220.00, 'https://placehold.co/150x150/000000/FFFFFF?text=Alexander+Albon', TRUE),
 ('Esteban', 'Ocon', 'French', '1996-09-17', 31, 'Haas', 0, 420.00, 'https://placehold.co/150x150/000000/FFFFFF?text=Esteban+Ocon', TRUE), 
 ('Pierre', 'Gasly', 'French', '1996-02-07', 10, 'Alpine', 0, 480.00, 'https://placehold.co/150x150/000000/FFFFFF?text=Pierre+Gasly', TRUE),
-('Liam', 'Lawson', 'New Zealander', '2002-02-11', 30, 'RB', 0, 10.00, 'https://placehold.co/150x150/000000/FFFFFF?text=Liam+Lawson', TRUE)
-('Franco', 'Colapinto', 'Argentijn', '2002-02-11', 43, 'Alpine', 0, 10.00, 'https://placehold.co/150x150/000000/FFFFFF?text=Liam+Lawson', TRUE); 
+('Liam', 'Lawson', 'New Zealander', '2002-02-11', 30, 'RB', 0, 10.00, 'https://placehold.co/150x150/000000/FFFFFF?text=Liam+Lawson', TRUE),
+('Franco', 'Colapinto', 'Argentijn', '2002-02-11', 43, 'Alpine', 0, 0.00, 'https://placehold.co/150x150/000000/FFFFFF?text=Liam+Lawson', TRUE); 
 
 INSERT INTO drivers (first_name, last_name, nationality, date_of_birth, driver_number, team_name, championships_won, career_points, image, is_active) VALUES
 ('Andrea Kimi', 'Antonelli', 'Italian', '2006-08-25', 12, 'Mercedes', 0, 0.00, 'https://placehold.co/150x150/000000/FFFFFF?text=Kimi+Antonelli', TRUE),
