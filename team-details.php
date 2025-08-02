@@ -3,30 +3,24 @@
 require_once 'db_config.php';
 /** @var PDO $pdo */
 
-// Get the team slug from the URL
-$teamSlug = isset($_GET['slug']) ? $_GET['slug'] : '';
+// Get the team ID from the URL
+$teamId = isset($_GET['id']) ? (int)$_GET['id'] : 0;
 
-// Validate and sanitize the slug
-if (empty($teamSlug)) {
-    // Redirect or show an error if no slug is provided
+// Validate and sanitize the ID
+if ($teamId === 0) {
+    // Redirect or show an error if no valid ID is provided
     header('Location: teams.php'); // Redirect to the teams overview page
     exit;
 }
 
 // Prepare and execute a database query to get the specific team's details
 try {
-    // Corrected: Use distinct named parameters for each occurrence in the query
     $stmt = $pdo->prepare("
-        SELECT
-            *
-        FROM
-            teams
-        WHERE
-            LOWER(REPLACE(team_name, ' ', '-')) = :slug1 OR LOWER(REPLACE(full_team_name, ' ', '-')) = :slug2
+        SELECT *
+        FROM teams
+        WHERE team_id = :id
     ");
-    // Bind the same value to both distinct named parameters
-    $stmt->bindParam(':slug1', $teamSlug);
-    $stmt->bindParam(':slug2', $teamSlug);
+    $stmt->bindParam(':id', $teamId, PDO::PARAM_INT);
     $stmt->execute();
     $team = $stmt->fetch(PDO::FETCH_ASSOC);
 
@@ -45,7 +39,7 @@ try {
 // Fetch drivers for this team
 $teamDrivers = [];
 if ($team) {
-    $teamId = $team['team_id'];
+    // The teamId is already available, so we can use it directly
     try {
         $stmtDrivers = $pdo->prepare("
             SELECT
@@ -72,161 +66,11 @@ if ($team) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?php echo htmlspecialchars($team['full_team_name']); ?> Details</title>
-    <link rel="stylesheet" href="style.css">
+    <title><?php echo htmlspecialchars($team['full_team_name']); ?></title>
+    <link rel="stylesheet" href="style2.css">
     <style>
         :root {
             --team-main-color: <?php echo isset($team['team_color']) && $team['team_color'] ? htmlspecialchars($team['team_color']) : 'rgb(0,0,0)'; ?>;
-        }
-        .details-container {
-            max-width: 800px;
-            margin: 20px auto;
-            background-color: #343434ff; /* Zorg dat deze kleur overeenkomt met je huisstijl of var */
-            padding: 30px;
-            border-radius: 8px;
-            color: #f8f8f8; /* Lichtgrijze tekst voor leesbaarheid op donkere achtergrond */
-        }
-
-        .team-name-heading {
-            color: #ef4444; /* Rode accentkleur voor de teamnaam */
-            text-align: center;
-            margin-bottom: 20px;
-            font-size: 2.5em; /* Grotere lettergrootte */
-            font-family: 'Oswald', sans-serif; /* Gebruik een van je geïmporteerde fonts */
-            font-weight: 700;
-        }
-
-        .team-logo-details {
-            display: block;
-            max-width: 250px; /* Grootte van het logo */
-            height: auto;
-            margin: 0 auto 20px auto; /* Centreer het logo en voeg onderruimte toe */
-            border-radius: 5px; /* Optioneel: licht afgeronde hoeken */
-        }
-
-        .team-detail-item {
-            margin-bottom: 10px;
-            font-size: 1.1em;
-            display: flex; /* Gebruik flexbox voor betere uitlijning */
-            align-items: center; /* Centreer items verticaal */
-        }
-
-        .team-detail-item strong {
-            margin-right: 8px;
-            color: #ffffff; /* Witte kleur voor labels */
-        }
-
-        .team-detail-item img {
-            height: 25px; /* Grootte voor vlaggen of kleine iconen */
-            vertical-align: middle;
-            margin-right: 8px;
-            border-radius: 3px;
-        }
-
-        /* Styling for the new team drivers section */
-        .team-drivers-section {
-            margin-top: 2rem;
-            padding-top: 1rem;
-            border-top: 1px solid #4a4a4a; /* Lichte lijn om secties te scheiden */
-        }
-
-        .team-drivers-section h2 {
-            color: #ffffff;
-            font-size: 1.8em;
-            margin-bottom: 1rem;
-            text-align: center;
-            font-family: 'Oswald', sans-serif;
-            font-weight: 600;
-        }
-
-        .drivers-grid {
-            display: grid;
-            grid-template-columns: 1fr; /* Standaard 1 kolom op kleine schermen */
-            gap: 1rem; /* Ruimte tussen coureurkaarten */
-        }
-
-        @media (min-width: 640px) { /* 2 kolommen op grotere schermen */
-            .drivers-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-        }
-
-        .driver-card {
-            display: flex;
-            align-items: center;
-            background-color: #2d2d2d; /* Iets lichtere achtergrond voor coureurkaart */
-            padding: 1rem;
-            border-radius: 0.5rem;
-            text-decoration: none;
-            color: inherit;
-            transition: background-color 0.2s ease, transform 0.2s ease;
-        }
-
-        .driver-card:hover {
-            background-color: #3a3a3a;
-            transform: translateY(-3px);
-        }
-
-        .driver-card img {
-            width: 4rem; /* 64px */
-            height: 4rem; /* 64px */
-            border-radius: 9999px; /* Volledig rond */
-            object-fit: cover;
-            margin-right: 1rem;
-            border: 2px solid #ef4444; /* Rode rand om de afbeelding */
-        }
-
-        .driver-card p {
-            margin: 0;
-            line-height: 1.2;
-        }
-
-        .driver-card p:first-child {
-            font-size: 1.25rem; /* Grotere naam */
-            font-weight: 600;
-            color: #ffffff;
-        }
-
-        .driver-card p:last-child {
-            font-size: 1rem;
-            color: #a0a0a0; /* Lichtere kleur voor nummer */
-        }
-
-        .team-name-heading {
-            color: var(--team-main-color); /* Gebruik de dynamische teamkleur */
-            text-align: center;
-            margin-bottom: 20px;
-            font-size: 2.5em; /* Grotere lettergrootte */
-            font-family: 'Oswald', sans-serif; /* Gebruik een van je geïmporteerde fonts */
-            font-weight: 700;
-        }
-
-
-        .back-link {
-            display: block;
-            margin-top: 30px;
-            text-align: center;
-            color: #ef4444; /* Rode accentkleur */
-            text-decoration: none;
-            font-weight: bold;
-            transition: color 0.3s ease;
-        }
-
-        .back-link:hover {
-            color: #dc2626; /* Donkerdere rode bij hover */
-        }
-
-        /* Responsive adjustments for headers and navigation (from your style.css) */
-
-
-        /* Media query for desktop navigation */
-        @media (min-width: 768px) {
-            .header-content.container {
-                flex-direction: row;
-            }
-            .site-title {
-                margin-bottom: 0;
-            }
         }
     </style>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Oswald:wght@400;600;700&display=swap" rel="stylesheet">
@@ -272,7 +116,6 @@ if ($team) {
             <?php endif; ?>
         </div>
 
-        <!-- New section for Team Drivers -->
         <div class="team-drivers-section">
             <h2>Coureurs van dit team:</h2>
             <?php if (!empty($teamDrivers)): ?>
