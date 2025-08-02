@@ -1,32 +1,9 @@
 <?php
-// Database configuratie
-$host = "localhost";
-$db = "formule1";
-$user = "root";
-$pass = "root";
-$charset = "utf8mb4";
+require_once 'db_config.php';
+/** @var PDO $pdo */
 
-$dsn = "mysql:host=$host;dbname=$db;charset=$charset";
-$options = [
-    PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
-    PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-    PDO::ATTR_EMULATE_PREPARES   => false,
-];
-
-$pdo = null;
-$circuitDetails = null; // Voor de details van het circuit
-$message = ''; // Voor foutmeldingen
-
-try {
-    $pdo = new PDO($dsn, $user, $pass, $options);
-} catch (\PDOException $e) {
-    die("Verbindingsfout: " . $e->getMessage());
-}
-
-// Haal de circuit_key op uit de URL (GET parameter)
 $circuitKey = isset($_GET['key']) ? htmlspecialchars($_GET['key']) : null;
 
-// Haal de circuit details op voor weergave
 if ($circuitKey) {
     try {
         $stmt = $pdo->prepare("SELECT * FROM circuits WHERE circuit_key = :circuit_key");
@@ -58,7 +35,7 @@ if (!is_array($circuitDetails)) {
     <title>Details Circuit: <?php echo htmlspecialchars($circuitDetails['grandprix'] ?? 'Onbekend'); ?></title>
     <!-- Google Fonts: Oswald voor koppen, Roboto voor tekst -->
     <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css"> <!-- Behoud je algemene style.css -->
+    <link rel="stylesheet" href="style2.css"> <!-- Behoud je algemene style.css -->
     <style>
         .back-link-container {
             text-align: center;
@@ -108,8 +85,6 @@ if (!is_array($circuitDetails)) {
     </header>
     <main class="container">
         <div class="">
-            <?php echo $message; // Toon foutmeldingen ?>
-
             <?php if ($circuitDetails && $circuitKey): ?>
                 <div class="page-header-section">
                     <h1 class="page-heading"><?php echo htmlspecialchars($circuitDetails['grandprix'] ?? 'Onbekend'); ?></h1>
