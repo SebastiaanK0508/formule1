@@ -340,3 +340,8 @@ ALTER TABLE news
 MODIFY COLUMN image_url TEXT;
 
 --hier alles hierboven gereed in beide databases--
+--voor de chomebook deze SQL nog invoeren eenmalig voor het gebruiken van de extra user--
+
+CREATE USER 'webuser'@'localhost' IDENTIFIED BY 'binck@guus2025';
+GRANT ALL PRIVILEGES ON formule1.* TO 'webuser'@'localhost';
+FLUSH PRIVILEGES;
