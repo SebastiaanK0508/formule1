@@ -16,6 +16,7 @@ try {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Formule 1 Kalender 2025 - Overzicht</title>
     <link rel="stylesheet" href="style2.css">
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
 </head>
 <body>
     <header>

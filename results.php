@@ -38,7 +38,7 @@ require_once 'achterkant/aanpassing/api-koppelingen/result_api.php';
             <?php else: ?>
                 <div class="selection-container">
                     <form action="results.php" method="get">
-                        <label for="year">Selecteer een jaar:</label>
+                        <label for="year">Select a Year</label>
                         <select id="year" name="year" onchange="this.form.submit()">
                             <?php foreach ($available_years as $year): ?>
                                 <option value="<?php echo htmlspecialchars($year); ?>" 
@@ -72,7 +72,6 @@ require_once 'achterkant/aanpassing/api-koppelingen/result_api.php';
                                 <p><strong>Location:</strong> <?php echo htmlspecialchars($race_details['location']); ?>, <?php echo htmlspecialchars($race_details['country']); ?></p>
                                 <p><strong>Date:</strong> <?php echo htmlspecialchars((new DateTime($race_details['date']))->format('d-m-Y')); ?></p>
                             </div>
-
                             <div class="result-table-container">
                                 <table class="data-table">
                                     <thead>
