@@ -1,17 +1,5 @@
 <?php
-$host = 'localhost';    
-$dbname = 'formule1';  
-$username = 'root';    
-$password = 'root';   
-
-try {
-    $dsn = "mysql:host=$host;dbname=$dbname;charset=utf8mb4";
-    $pdo = new PDO($dsn, $username, $password);
-    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-} catch (PDOException $e) {
-
-    die("Databaseverbinding mislukt: " . $e->getMessage());
-}
+require_once 'db_config.php';
 
 $sql_drivers = "
     SELECT

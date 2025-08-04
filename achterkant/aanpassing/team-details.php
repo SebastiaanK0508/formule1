@@ -3,28 +3,7 @@ $response = ['success' => false, 'message' => ''];
 $message = '';
 $teamDetails = [];
 
-$host = "localhost";
-$db = "formule1";
-$user = "root";
-$pass = "root";
-$charset = "utf8mb4";
-
-$dsn = "mysql:host=$host;dbname=$db;charset=$charset";
-$pdoOptions = [
-    PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
-    PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-    PDO::ATTR_EMULATE_PREPARES   => false,
-];
-
-$pdo = null;
-
-try {
-    $pdo = new PDO($dsn, $user, $pass, $pdoOptions);
-} catch (\PDOException $e) {
-    error_log("Database connection error: " . $e->getMessage());
-    $message = "Er was een probleem met de databaseverbinding. Probeer het later opnieuw.";
-    die("Verbindingsfout: " . $e->getMessage());
-}
+require_once 'db_config.php';
 
 $teamId = isset($_GET['id']) && is_numeric($_GET['id']) ? (int)$_GET['id'] : null;
 

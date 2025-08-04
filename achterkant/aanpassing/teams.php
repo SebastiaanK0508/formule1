@@ -1,32 +1,8 @@
 <!DOCTYPE html>
 <html lang="nl">
 <head>
-    <?php
-// Database configuratie
-$host = "localhost";
-$db = "formule1"; // Zorg dat dit overeenkomt met je database naam
-$user = "root"; // Zorg dat dit overeenkomt met je database gebruikersnaam
-$pass = "root"; // Zorg dat dit overeenkomt met je database wachtwoord
-$charset = "utf8mb4";
-
-$dsn = "mysql:host=$host;dbname=$db;charset=$charset";
-$options = [
-    PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
-    PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-    PDO::ATTR_EMULATE_PREPARES   => false,
-];
-
-$pdo = null; // Initialiseer $pdo buiten de try-block
-
-try {
-    // Maak verbinding met de database via PDO
-    $pdo = new PDO($dsn, $user, $pass, $options);
-} catch (\PDOException $e) {
-    // Afhandeling van verbindingsfouten
-    die("Verbindingsfout: " . $e->getMessage());
-}
-
-// Haal alle coureurs op voor de dropdown lijst
+<?php
+require_once 'db_config.php';
 $drivers = [];
 try {
     $stmt = $pdo->query("SELECT team_id, full_team_name, base_location, team_principal FROM teams ORDER BY full_team_name ASC");

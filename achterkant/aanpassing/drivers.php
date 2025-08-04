@@ -2,31 +2,8 @@
 <html lang="nl">
 <head>
     <?php
-// Database configuratie
-$host = "localhost";
-$db = "formule1"; // Zorg dat dit overeenkomt met je database naam
-$user = "root"; // Zorg dat dit overeenkomt met je database gebruikersnaam
-$pass = "root"; // Zorg dat dit overeenkomt met je database wachtwoord
-$charset = "utf8mb4";
+require_once 'db_config.php';
 
-$dsn = "mysql:host=$host;dbname=$db;charset=$charset";
-$options = [
-    PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
-    PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-    PDO::ATTR_EMULATE_PREPARES   => false,
-];
-
-$pdo = null; // Initialiseer $pdo buiten de try-block
-
-try {
-    // Maak verbinding met de database via PDO
-    $pdo = new PDO($dsn, $user, $pass, $options);
-} catch (\PDOException $e) {
-    // Afhandeling van verbindingsfouten
-    die("Verbindingsfout: " . $e->getMessage());
-}
-
-// Haal alle coureurs op voor de dropdown lijst
 $drivers = [];
 try {
     $stmt = $pdo->query("SELECT driver_id, first_name, last_name, driver_number, team_name FROM drivers ORDER BY driver_number ASC");
@@ -35,13 +12,11 @@ try {
     echo "Fout bij het ophalen van coureurs: " . $e->getMessage();
 }
 
-// Verwerk het formulier als het is ingediend
 $selectedDriver = null;
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['driver_id'])) {
     $driverId = $_POST['driver_id'];
 
     try {
-        // Haal de details van de geselecteerde coureur op
         $stmt = $pdo->prepare("SELECT first_name, last_name, driver_number FROM drivers WHERE driver_id = :driver_id");
         $stmt->bindParam(':driver_id', $driverId, PDO::PARAM_INT);
         $stmt->execute();

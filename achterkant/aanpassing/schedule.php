@@ -1,27 +1,5 @@
 <?php
-// Database configuratie
-$host = "localhost";
-$db = "formule1"; // Zorg dat dit overeenkomt met je database naam
-$user = "root"; // Zorg dat dit overeenkomt met je database gebruikersnaam
-$pass = "root"; // Zorg dat dit overeenkomt met je database wachtwoord
-$charset = "utf8mb4";
-
-$dsn = "mysql:host=$host;dbname=$db;charset=$charset";
-$options = [
-    PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
-    PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-    PDO::ATTR_EMULATE_PREPARES   => false,
-];
-
-$pdo = null;
-
-try {
-    // Maak verbinding met de database via PDO
-    $pdo = new PDO($dsn, $user, $pass, $options);
-} catch (\PDOException $e) {
-    // Afhandeling van verbindingsfouten
-    die("Verbindingsfout: " . $e->getMessage());
-}
+require_once 'db_config.php';
 
 $circuitsData = [];
 try {
