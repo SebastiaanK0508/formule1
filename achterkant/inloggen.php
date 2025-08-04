@@ -1,5 +1,16 @@
 <?php
-require_once 'db_config.php';
+session_start();
+$servername = "localhost";
+$username = "webuser";
+$password = "binck@guus2025"; 
+$dbname = "formule1";
+try {
+    $conn = new PDO("mysql:host=$servername;dbname=$dbname;charset=utf8mb4", $username, $password);
+    $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    $conn->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
+} catch (PDOException $e) {
+    die("Verbinding mislukt: " . $e->getMessage());
+}
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if (isset($_POST['username']) && isset($_POST['password_hash'])) {
         $user = $_POST['username'];
