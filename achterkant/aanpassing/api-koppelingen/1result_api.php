@@ -9,18 +9,14 @@ $race_results = [];
 $error_message = '';
 $team_colors_from_db = [];
 
-// Variabelen voor de countdown
 $nextGrandPrix = null;
 $targetDateTime = null;
 
 try {
-    // 1. Teamkleuren ophalen
     $stmt = $pdo->query("SELECT team_name, team_color FROM teams");
     while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
         $team_colors_from_db[$row['team_name']] = $row['team_color'];
     }
-
-    // 2. Kalender ophalen om de ronde-links te vullen
     $stmt = $pdo->prepare("
         SELECT circuit_key, title, grandprix, location, race_datetime, calendar_order
         FROM circuits
@@ -40,8 +36,6 @@ try {
                 'circuit_key' => $race['circuit_key']
             ];
         }
-
-        // Bepaal de standaardronde (laatst gereden race) als er geen ronde is geselecteerd
         if ($selected_round === null) {
             $latest_completed_round = 0;
             $current_date_time = new DateTime();
@@ -56,8 +50,6 @@ try {
     } else {
         $error_message = "Geen kalendergegevens gevonden voor seizoen " . $current_year . ".";
     }
-
-    // 3. De volgende race ophalen voor de countdown
     $stmt = $pdo->prepare("
         SELECT grandprix, race_datetime
         FROM circuits
@@ -82,8 +74,6 @@ try {
         $error_message = "Er is een probleem opgetreden bij het laden van de kalenderdata uit de database.";
     }
 }
-
-// 4. Haal de API-resultaten op voor de geselecteerde ronde
 try {
     if ($selected_round !== null) {
         $current_race_name = null;

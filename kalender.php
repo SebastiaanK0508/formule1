@@ -1,12 +1,40 @@
 <?php
 require_once 'db_config.php';
-/** @var PDO $pdo */ 
+/** @var PDO $pdo */
 $circuitsData = [];
+$availableYears = [];
+$selectedYear = null;
+
+// Haal alle unieke jaren op uit de database
 try {
-    $stmt = $pdo->query("SELECT circuit_key, grandprix, location, map_url, race_datetime, title FROM circuits ORDER BY calendar_order ASC");
-    $circuitsData = $stmt->fetchAll();
+    $stmt = $pdo->query("SELECT DISTINCT YEAR(race_datetime) AS race_year FROM circuits ORDER BY race_year DESC");
+    $availableYears = $stmt->fetchAll(PDO::FETCH_COLUMN);
 } catch (\PDOException $e) {
-    echo "Fout bij het ophalen van circuits: " . $e->getMessage();
+    echo "Fout bij het ophalen van jaren: " . $e->getMessage();
+}
+
+// Bepaal welk jaar geselecteerd is
+if (isset($_GET['year']) && in_array($_GET['year'], $availableYears)) {
+    $selectedYear = $_GET['year'];
+} elseif (!empty($availableYears)) {
+    $selectedYear = $availableYears[0]; // Toon het meest recente jaar als standaard
+}
+
+// Haal de data op voor het geselecteerde jaar
+if ($selectedYear) {
+    try {
+        $stmt = $pdo->prepare("
+            SELECT circuit_key, grandprix, location, map_url, race_datetime, title
+            FROM circuits
+            WHERE YEAR(race_datetime) = :selectedYear
+            ORDER BY calendar_order ASC
+        ");
+        $stmt->bindParam(':selectedYear', $selectedYear, PDO::PARAM_INT);
+        $stmt->execute();
+        $circuitsData = $stmt->fetchAll();
+    } catch (\PDOException $e) {
+        echo "Fout bij het ophalen van circuits: " . $e->getMessage();
+    }
 }
 ?>
 <!DOCTYPE html>
@@ -14,14 +42,14 @@ try {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Formule 1 Kalender 2025 - Overzicht</title>
+    <title>Formula 1 Schedule - <?php echo htmlspecialchars($selectedYear ?? 'N/A'); ?></title>
     <link rel="stylesheet" href="style2.css">
     <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
 </head>
 <body>
     <header>
         <div class="header-content container">
-            <h1 class="site-title">FORMULA 1 SEASON 2025</h1>
+            <h1 class="site-title">FORMULA 1 SEASON <?php echo htmlspecialchars($selectedYear ?? 'N/A'); ?></h1>
             <nav class="main-nav">
                 <a href="index.php">Home</a>
                 <a href="kalender.php" class="active">Schedule</a>
@@ -34,18 +62,28 @@ try {
     </header>
     <main class="container">
         <section class="page-header-section">
-            <h2 class="page-heading">F1 SEASON 2025 SCHEDULE</h2>
+            <h2 class="page-heading">F1 SEASON <?php echo htmlspecialchars($selectedYear ?? 'N/A'); ?> SCHEDULE</h2>
+            <form method="GET" action="kalender.php" class="year-selector">
+                <label for="year-select">Selecteer jaar:</label>
+                <select name="year" id="year-select" onchange="this.form.submit()">
+                    <?php foreach ($availableYears as $year): ?>
+                        <option value="<?php echo htmlspecialchars($year); ?>"
+                                <?php echo ($year == $selectedYear) ? 'selected' : ''; ?>>
+                            <?php echo htmlspecialchars($year); ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
+            </form>
         </section>
         <section class="f1-section">
             <div class="data-card-row">
-                
-                    <?php if (!empty($circuitsData)): ?>
+                <?php if (!empty($circuitsData)): ?>
                     <?php foreach ($circuitsData as $circuit): ?>
                         <?php
                             $raceDateTime = new DateTime($circuit['race_datetime']);
-                            $raceDay = $raceDateTime->format('j'); 
+                            $raceDay = $raceDateTime->format('j');
                             $raceYear = $raceDateTime->format('Y');
-                            $raceMonthEnglish = $raceDateTime->format('F'); 
+                            $raceMonthEnglish = $raceDateTime->format('F');
                             $displayDate = ($raceDay - 2) . ' - ' . $raceDay . ' ' . $raceMonthEnglish . ' ' . $raceYear;
                             if ($circuit['circuit_key'] === 'las_vegas') {
                                 $displayDate = ($raceDay - 1) . ' - ' . $raceDay . ' ' . $raceMonthEnglish . ' ' . $raceYear . ' (Zaterdag)';
@@ -64,18 +102,16 @@ try {
                                 </div>
                             </a>
                         </article>
-                        <?php endforeach; ?>
-                    <?php else: ?>
-                        <p class="text-gray-600">Geen circuits gevonden in de database. Voeg circuits toe via de beheerpagina.</p>
-                    <?php endif; ?>
-                
+                    <?php endforeach; ?>
+                <?php else: ?>
+                    <p class="text-gray-600">Geen circuits gevonden voor het jaar <?php echo htmlspecialchars($selectedYear); ?>.</p>
+                <?php endif; ?>
             </div>
         </section>
     </main>
-
     <footer>
         <div class="footer-content container">
-            <p>&copy; 2025 Webbair. Alle rechten voorbehouden.</p>
+            <p>&copy; <?php echo date('Y'); ?> Webbair. Alle rechten voorbehouden.</p>
             <div class="social-links">
                 <a href="#" aria-label="Facebook">Facebook</a>
                 <a href="#" aria-label="Twitter">Twitter</a>

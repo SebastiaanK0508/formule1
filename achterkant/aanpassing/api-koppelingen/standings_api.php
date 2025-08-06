@@ -7,7 +7,6 @@ function fetchData($url) {
     curl_setopt($ch, CURLOPT_URL, $url);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
     curl_setopt($ch, CURLOPT_TIMEOUT, 10);
-    // Voeg deze optie toe om 301/302 redirects automatisch te volgen
     curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
     $response = curl_exec($ch);
     $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
@@ -31,13 +30,8 @@ function fetchData($url) {
     }
     return $data;
 }
-
-// PAS DEZE REGELS AAN VAN HTTP NAAR HTTPS EN VOEG CURLOPT_FOLLOWLOCATION TOE!
 $drivers_standings_url = "https://api.jolpi.ca/ergast/f1/current/driverStandings.json";
 $constructors_standings_url = "https://api.jolpi.ca/ergast/f1/current/constructorStandings.json";
-
-// ... (rest van je code blijft hetzelfde) ...
-
 $all_standings = [
     'status' => 'success',
     'drivers' => [],
@@ -45,7 +39,6 @@ $all_standings = [
     'message' => ''
 ];
 
-// Haal coureursklassement op
 $drivers_data = fetchData($drivers_standings_url);
 if (isset($drivers_data['error'])) {
     $all_standings['status'] = 'error';

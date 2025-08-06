@@ -631,3 +631,16 @@ footer {
     font-family: 'Roboto', sans-serif;
     border-radius: 8px;
 }
+.country-flag-circuit-position {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 500px;
+  height: 300px;
+}
+.country-flag {
+  border: 3px solid #000000;
+  border-radius: 9px;
+  width: 370px;  
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+}

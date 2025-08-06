@@ -90,9 +90,11 @@ if (!is_array($circuitDetails)) {
                             </div>
                         </div>
                     </div>
-                
-
-                
+                    <div class="f1-section">
+                        <div class="country-flag-circuit-position">
+                            <img class="country-flag" src="<?php echo htmlspecialchars($circuitDetails['country_flag_url'] ?? 'N.v.t.'); ?>" alt="Country_Flag">
+                        </div>
+                    </div>
                     <div class="f1-section">
                         <div class="container">
                             <h3>Circuit Details</h3>
@@ -121,18 +123,22 @@ if (!is_array($circuitDetails)) {
                         <img class="circuit-main-map" src="<?php echo htmlspecialchars($circuitDetails['map_url']); ?>" alt="Kaart van <?php echo htmlspecialchars($circuitDetails['grandprix']); ?>">
                     </div>
                 <?php endif; ?>
-                <?php if (!empty($circuitDetails['description'])): ?>
-                    <div class="info">
-                        <h3>Track Description</h3>
-                        <p><?php echo nl2br(htmlspecialchars($circuitDetails['description'])); ?></p>
-                    </div>
-                <?php endif; ?>
-                <?php if (!empty($circuitDetails['highlights'])): ?>
-                    <div class="info">
-                        <h3>Highlights</h3>
-                        <p><?php echo nl2br(htmlspecialchars($circuitDetails['highlights'])); ?></p>
-                    </div>
-                <?php endif; ?>
+                <div class="f1-section">
+                    <?php if (!empty($circuitDetails['description'])): ?>
+                        <div class="info">
+                            <h3>Track Description</h3>
+                            <p><?php echo nl2br(htmlspecialchars($circuitDetails['description'])); ?></p>
+                        </div>
+                    <?php endif; ?>
+                </div>
+                <div class="f1-section">
+                    <?php if (!empty($circuitDetails['highlights'])): ?>
+                        <div class="info">
+                            <h3>Highlights</h3>
+                            <p><?php echo nl2br(htmlspecialchars($circuitDetails['highlights'])); ?></p>
+                        </div>
+                    <?php endif; ?>
+                </div>
                 <div class="back-link-container">
                     <a href="kalender.php" class="back-link">Back to Schedule</a>
                 </div>
@@ -144,5 +150,20 @@ if (!is_array($circuitDetails)) {
             <?php endif; ?>
         </div>
     </main>
+        <footer>
+        <div class="footer-content container">
+            <p>&copy; 2025 Webbair. Alle rechten voorbehouden.</p>
+            <div class="social-links">
+                <a href="#" aria-label="Facebook">Facebook</a>
+                <a href="#" aria-label="Twitter">X</a>
+                <a href="#" aria-label="Instagram">Instagram</a>
+            </div>
+            <div class="social-links">
+                <a href="privacy.html">Privacy Beleid</a>
+                <a href="algemenevoorwaarden.html">Algemene Voorwaarden</a>
+                <a href="contact.html">Contact</a>
+            </div>
+        </div>
+    </footer>
 </body>
 </html>

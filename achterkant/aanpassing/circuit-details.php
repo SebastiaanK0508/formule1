@@ -21,6 +21,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $circuitKey) {
         $grandprix = $_POST['grandprix'] ?? '';
         $location = $_POST['location'] ?? '';
         $mapUrl = $_POST['map_url'] ?? null;
+        $countryflagUrl = $_POST['country_flag_url']?? null;
         $firstGpYear = $_POST['first_gp_year'] ?? null;
         $lapCount = $_POST['lap_count'] ?? null;
         $circuitLengthKm = $_POST['circuit_length_km'] ?? 0.000;
@@ -35,6 +36,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $circuitKey) {
                     title = :title,
                     grandprix = :grandprix,
                     location = :location,
+                    country_flag_url = :country_flag_url,
                     map_url = :map_url,
                     first_gp_year = :first_gp_year,
                     lap_count = :lap_count,
@@ -51,6 +53,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $circuitKey) {
         $stmt->bindParam(':title', $title);
         $stmt->bindParam(':grandprix', $grandprix);
         $stmt->bindParam(':location', $location);
+        $stmt->bindParam(':country_flag_url', $countryflagUrl);
         $stmt->bindParam(':map_url', $mapUrl);
         $stmt->bindParam(':first_gp_year', $firstGpYear, PDO::PARAM_INT);
         $stmt->bindParam(':lap_count', $lapCount, PDO::PARAM_INT);
@@ -187,6 +190,10 @@ if (!is_array($circuitDetails)) {
                 <div class="form-group">
                     <label for="location">Locatie:</label>
                     <input type="text" id="location" name="location" value="<?php echo htmlspecialchars($circuitDetails['location'] ?? ''); ?>" required readonly>
+                </div>
+                <div>
+                    <label for="country_flag_url">Landvlag:</label>
+                    <input type="text" id="country_flag_url" name="country_flag_url" value="<?php echo htmlspecialchars($circuitDetails['country_flag_url'] ?? ''); ?>" readonly>
                 </div>
 
                 <div class="form-group">

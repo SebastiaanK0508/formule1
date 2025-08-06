@@ -343,7 +343,7 @@ CREATE USER 'webuser'@'localhost' IDENTIFIED BY 'binck@guus2025';
 GRANT ALL PRIVILEGES ON formule1.* TO 'webuser'@'localhost';
 FLUSH PRIVILEGES;
 
--- Voeg de 2024 kalenderdata toe aan de 'circuits' tabel-- nog doen andere databases!--
+-- Voeg de 2024 kalenderdata toe aan de 'circuits' tabel-- nog doen andere laptop server al gereed!--
 ALTER TABLE circuits
 DROP INDEX calendar_order;
 
@@ -475,3 +475,6 @@ INSERT INTO circuits (circuit_key, title, grandprix, location, map_url, first_gp
 ('las_vegas', 'Las Vegas Strip Circuit', 'Las Vegas Grand Prix', 'Paradise, VS', 'https://www.formula1.com/content/dam/fom-website/2023/Las%20Vegas/Las_Vegas_Circuit.png', 2023, 50, 6.201, 309.958, '1:34.876 (Lando Norris, 2024)', 'Een nieuw stratencircuit dat over de beroemde Las Vegas Strip loopt, bekend om zijn hoge snelheden en de spectaculaire nachtelijke setting.', 'Nieuw stratencircuit, Over de Las Vegas Strip, Spectaculaire nachtrace.', 22, 2025, '2025-11-22 06:00:00'),
 ('qatar', 'Lusail International Circuit', 'Qatar Grand Prix', 'Lusail, Qatar', 'https://www.formula1.com/content/dam/fom-website/2023/Qatar/Qatar_Circuit.png', 2021, 57, 5.419, 308.611, '1:22.384 (Lando Norris, 2024)', 'Een modern circuit in de woestijn, bekend om zijn snelle, vloeiende lay-out en de race onder kunstlicht.', 'Modern woestijncircuit, Snelle en vloeiende lay-out, Nachtrace.', 23, 2025, '2025-11-30 14:00:00'),
 ('abu_dhabi', 'Yas Marina Circuit', 'Abu Dhabi Grand Prix', 'Abu Dhabi, VAE', 'https://www.formula1.com/content/dam/fom-website/2018-redesign-assets/Circuit%20maps%2016x9/Abu_Dhabi_Circuit.png', 2009, 58, 5.281, 306.183, '1:26.103 (Max Verstappen, 2021)', 'Een modern circuit met indrukwekkende faciliteiten, bekend om zijn jachthaven en de race die begint bij zonsondergang en eindigt in het donker.', 'Moderne faciliteiten, Jachthaven setting, Zonsondergang naar nachtrace.', 24, 2025, '2025-12-07 13:00:00');
+
+ALTER TABLE circuits
+ADD country_flag_url VARCHAR(1000) NULL;
