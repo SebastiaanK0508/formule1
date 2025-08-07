@@ -8,6 +8,7 @@ require_once 'achterkant/aanpassing/api-koppelingen/1result_api.php';
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Formula 1 Season 2025 - Home</title>
     <link rel="stylesheet" href="style2.css">
+    <link rel="icon" type="image/x-icon" href="/afbeeldingen/logo/logof1.png">
     <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
 </head>
 <body>
@@ -24,80 +25,78 @@ require_once 'achterkant/aanpassing/api-koppelingen/1result_api.php';
             </nav>
         </div>
     </header>
-
-<main class="container">
-    <div class="page-header-section">
-        <div>
-            <h3 class="page-heading">
-                <?php
-                if ($nextGrandPrix) {
-                    echo htmlspecialchars($nextGrandPrix['grandprix']);
-                } else {
-                    echo "Geen aankomende Grand Prix";
-                }
-                ?>
-            </h3>
+    <main class="container">
+        <div class="page-header-section">
+            <div>
+                <h3 class="page-heading">
+                    <?php
+                    if ($nextGrandPrix) {
+                        echo htmlspecialchars($nextGrandPrix['grandprix']);
+                    } else {
+                        echo "Geen aankomende Grand Prix";
+                    }
+                    ?>
+                </h3>
+            </div>
+            <div class="page-heading" id="countdown">
+            </div>
         </div>
-        <div class="page-heading" id="countdown">
-        </div>
-    </div>
-        <?php if ($error_message): ?>
-            <div class="error-message">
-                <?php echo $error_message; ?>
-            </div>
-        <?php else: ?>
-            <div class="selection-link">
-                <?php if (!empty($races_in_season)): ?>
-                <?php else: ?>
-                    <p>Geen races gevonden</p>
-                <?php endif; ?>
-            </div>
-
-        <?php if ($race_details): ?>
-        <section class="f1-section">
-            <div class="race-info-card">
-                <h2 class="page-heading">Result <?php echo htmlspecialchars($race_details['name']); ?></h2>
-                <p><strong>Location:</strong> <?php echo htmlspecialchars($race_details['circuit']); ?>, <?php echo htmlspecialchars($race_details['location']); ?>, <?php echo htmlspecialchars($race_details['country']); ?></p>
-                <p><strong>Date:</strong> <?php echo htmlspecialchars((new DateTime($race_details['date']))->format('d-m-Y')); ?></p>
-            </div>
-            <?php if (!empty($race_results)): ?>
-            <table class="data-table">
-                <thead>
-                    <tr>
-                        <th>Pos</th>
-                        <th>Driver</th>
-                        <th>Team</th>
-                        <th>Time / Status</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php foreach ($race_results as $result): ?>
-                        <tr>
-                            <td style="border-left: 5px solid <?php echo htmlspecialchars($result['team_color']); ?>;">
-                                <?php echo htmlspecialchars($result['position']); ?>
-                            </td>
-                            <td>
-                                <?php echo htmlspecialchars($result['driver_name']); ?>
-                            </td>
-                            <td>
-                                <?php echo htmlspecialchars($result['team_name']); ?>
-                            </td>
-                            <td style="border-right: 5px solid <?php echo htmlspecialchars($result['team_color']); ?>;">
-                                <?php echo htmlspecialchars($result['lap_time_or_status']); ?>
-                            </td>
-                        </tr>
-                    <?php endforeach; ?>
-                </tbody>
-            </table>
+            <?php if ($error_message): ?>
+                <div class="error-message">
+                    <?php echo $error_message; ?>
+                </div>
             <?php else: ?>
-            <p>Er zijn geen resultaten beschikbaar voor deze race.</p>
+                <div class="selection-link">
+                    <?php if (!empty($races_in_season)): ?>
+                    <?php else: ?>
+                        <p>Geen races gevonden</p>
+                    <?php endif; ?>
+                </div>
+            <?php if ($race_details): ?>
+            <section class="f1-section">
+                <div class="race-info-card">
+                    <h2 class="page-heading">Result <?php echo htmlspecialchars($race_details['name']); ?></h2>
+                    <p><strong>Location:</strong> <?php echo htmlspecialchars($race_details['circuit']); ?>, <?php echo htmlspecialchars($race_details['location']); ?>, <?php echo htmlspecialchars($race_details['country']); ?></p>
+                    <p><strong>Date:</strong> <?php echo htmlspecialchars((new DateTime($race_details['date']))->format('d-m-Y')); ?></p>
+                </div>
+                <?php if (!empty($race_results)): ?>
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Pos</th>
+                            <th>Driver</th>
+                            <th>Team</th>
+                            <th>Time / Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php foreach ($race_results as $result): ?>
+                            <tr>
+                                <td style="border-left: 5px solid <?php echo htmlspecialchars($result['team_color']); ?>;">
+                                    <?php echo htmlspecialchars($result['position']); ?>
+                                </td>
+                                <td>
+                                    <?php echo htmlspecialchars($result['driver_name']); ?>
+                                </td>
+                                <td>
+                                    <?php echo htmlspecialchars($result['team_name']); ?>
+                                </td>
+                                <td style="border-right: 5px solid <?php echo htmlspecialchars($result['team_color']); ?>;">
+                                    <?php echo htmlspecialchars($result['lap_time_or_status']); ?>
+                                </td>
+                            </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
+                <?php else: ?>
+                <p>Er zijn geen resultaten beschikbaar voor deze race.</p>
+                <?php endif; ?>
+            </section>
+            <?php else: ?>
+                <p>Selecteer een race om de resultaten te bekijken.</p>
             <?php endif; ?>
-        </section>
-        <?php else: ?>
-            <p>Selecteer een race om de resultaten te bekijken.</p>
         <?php endif; ?>
-    <?php endif; ?>
-</main>
+    </main>
     <footer>
         <div class="footer-content container">
             <p>&copy; 2025 Webbair. Alle rechten voorbehouden.</p>
