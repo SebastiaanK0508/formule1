@@ -104,7 +104,7 @@ require_once 'achterkant/aanpassing/api-koppelingen/1result_api.php';
             <div class="social-links">
                 <a href="#" aria-label="Facebook">Facebook</a>
                 <a href="#" aria-label="Twitter">X</a>
-                <a href="#" aria-label="Instagram">Instagram</a>
+                <a href="www.webbair.online" aria-label="Instagram">Instagram</a>
             </div>
             <div class="social-links">
                 <a href="privacy.html">Privacy Beleid</a>
