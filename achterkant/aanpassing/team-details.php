@@ -16,6 +16,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $teamId) {
         $team_principal = $_POST['team_principal'] ?? null;
         $technical_director = $_POST['technical_director'] ?? null;
         $championships_won = $_POST['championships_won'] ?? 0;
+        $chassis = $_POST['chassis']?? null;
         $first_entry_year = $_POST['first_entry_year'] ?? null;
         $website_url = $_POST['website_url'] ?? null;
         $logo_url = $_POST['logo_url'] ?? null;
@@ -37,6 +38,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $teamId) {
                         team_principal = :team_principal,
                         technical_director = :technical_director,
                         championships_won = :championships_won,
+                        chassis = :chassis,
                         first_entry_year = :first_entry_year,
                         website_url = :website_url,
                         logo_url = :logo_url,
@@ -53,6 +55,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $teamId) {
             $stmt->bindParam(':team_principal', $team_principal);
             $stmt->bindParam(':technical_director', $technical_director);
             $stmt->bindParam(':championships_won', $championships_won, PDO::PARAM_INT);
+            $stmt->bindParam(':chassis', $chassis);
             $stmt->bindParam(':first_entry_year', $first_entry_year, PDO::PARAM_INT);
             $stmt->bindParam(':website_url', $website_url);
             $stmt->bindParam(':logo_url', $logo_url);
@@ -217,6 +220,11 @@ if (!is_array($teamDetails)) {
                 <div class="form-group">
                     <label for="championships_won">Kampioenschappen Gewonnen:</label>
                     <input type="number" id="championships_won" name="championships_won" value="<?php echo htmlspecialchars($teamDetails['championships_won'] ?? 0); ?>" min="0" readonly>
+                </div>
+
+                <div class="form-group">
+                    <label for="chassis">Chassis:</label>
+                    <input type="text" id="chassis" name="chassis" value="<?php echo htmlspecialchars($teamDetails['chassis'] ?? ''); ?>" readonly>
                 </div>
 
                 <div class="form-group">

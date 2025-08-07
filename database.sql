@@ -343,7 +343,7 @@ CREATE USER 'webuser'@'localhost' IDENTIFIED BY 'binck@guus2025';
 GRANT ALL PRIVILEGES ON formule1.* TO 'webuser'@'localhost';
 FLUSH PRIVILEGES;
 
--- Voeg de 2024 kalenderdata toe aan de 'circuits' tabel-- nog doen andere laptop server al gereed!--
+-- Voeg de 2024 kalenderdata toe aan de 'circuits' tabel-- nog doen andere laptop server al gereed!---alles zal ik direct in de server toepassen--
 ALTER TABLE circuits
 DROP INDEX calendar_order;
 
@@ -478,3 +478,5 @@ INSERT INTO circuits (circuit_key, title, grandprix, location, map_url, first_gp
 
 ALTER TABLE circuits
 ADD country_flag_url VARCHAR(1000) NULL;
+
+ALTER TABLE teams ADD chassis VARCHAR(255) NULL;
