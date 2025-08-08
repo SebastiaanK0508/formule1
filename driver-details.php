@@ -2,32 +2,23 @@
 
 require_once 'db_config.php';
 /** @var PDO $pdo */
-
-// Get the driver slug from the URL
 $driverSlug = isset($_GET['slug']) ? $_GET['slug'] : '';
 
-// Validate and sanitize the slug
 if (empty($driverSlug)) {
-    // Redirect or show an error if no slug is provided
-    header('Location: index.php'); // Or a 404 page
+    header('Location: index.php');
     exit;
 }
 
-// Convert slug back to first_name and last_name for querying
-// This assumes your slug format is "firstname-lastname"
 $nameParts = explode('-', $driverSlug);
 $firstName = isset($nameParts[0]) ? ucfirst($nameParts[0]) : '';
 $lastName = isset($nameParts[1]) ? ucfirst($nameParts[1]) : '';
 
-// Prepare and execute a database query to get the specific driver's details
 try {
-    // We gebruiken een JOIN om de team_color en mogelijk andere teamdetails op te halen
     $stmt = $pdo->prepare("
         SELECT
-            d.*, -- Selecteer alle kolommen van de drivers tabel
-            t.team_color, -- Selecteer de team_color van de teams tabel
-            t.team_name -- Zorg ervoor dat team_name ook beschikbaar blijft via de join
-            -- Voeg hier eventueel t.logo_url of andere teamvelden toe als je die wilt tonen
+            d.*,
+            t.team_color,
+            t.team_name
         FROM
             drivers d
         JOIN
@@ -40,7 +31,6 @@ try {
     $driver = $stmt->fetch(PDO::FETCH_ASSOC);
 
     if (!$driver) {
-        // Driver not found
         echo "<h1>Coureur niet gevonden!</h1>";
         echo "<p>De coureur die u zoekt, is helaas niet gevonden.</p>";
         echo "<p><a href='index.php'>Terug naar overzicht</a></p>";
@@ -56,7 +46,7 @@ try {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Driver Details</title>
+    <title><?php echo htmlspecialchars($driver['first_name'] . ' ' . $driver['last_name']); ?> | Driver Details</title>
     <link rel="stylesheet" href="style2.css">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Oswald:wght@400;600;700&display=swap" rel="stylesheet">
 </head>
@@ -74,44 +64,76 @@ try {
             </nav>
         </div>
     </header>
-    <div class="details-container">
-        <h1 class="drivername"><?php echo htmlspecialchars($driver['first_name'] . ' ' . $driver['last_name']); ?></h1>
-
-        <?php if (!empty($driver['image'])): ?>
-            <img src="<?php echo htmlspecialchars($driver['image']); ?>" alt="<?php echo htmlspecialchars($driver['first_name'] . ' ' . $driver['last_name']); ?>" class="driver-image-details">
-        <?php endif; ?>
-
-        <div class="driver-details">
-            <p class="driver-detail-item"><strong>Team:</strong> <?php echo htmlspecialchars($driver['team_name']); ?></p>
-            <p class="driver-detail-item"><strong>Coureur Nummer:</strong> #<?php echo htmlspecialchars($driver['driver_number']); ?></p>
-            <p class="driver-detail-item"><strong>Nationaliteit:</strong>
-                <?php if (!empty($driver['flag_url'])): ?>
-                    <img src="<?php echo htmlspecialchars($driver['flag_url']); ?>" alt="Vlag" style="height: 20px; vertical-align: middle; margin-right: 5px;">
-                <?php endif; ?>
-                <?php echo htmlspecialchars($driver['nationality']); ?>
-            </p>
-            <?php if (!empty($driver['date_of_birth'])): ?>
-                <p class="driver-detail-item"><strong>Geboortedatum:</strong> <?php echo htmlspecialchars(date('d-m-Y', strtotime($driver['date_of_birth']))); ?></p>
-            <?php endif; ?>
-            <?php if (!empty($driver['place_of_birth'])): ?>
-                <p class="driver-detail-item"><strong>Geboorteplaats:</strong> <?php echo htmlspecialchars($driver['place_of_birth']); ?></p>
-            <?php endif; ?>
-
-            <?php if (isset($driver['championships_won'])): ?>
-                <p class="driver-detail-item"><strong>Kampioenschappen gewonnen:</strong> <?php echo htmlspecialchars($driver['championships_won']); ?></p>
-            <?php endif; ?>
-            <?php if (isset($driver['career_points'])): ?>
-                <p class="driver-detail-item"><strong>Carrière Punten:</strong> <?php echo htmlspecialchars(number_format($driver['career_points'], 1)); ?></p>
-            <?php endif; ?>
-            <?php if (isset($driver['is_active'])): ?>
-                <p class="driver-detail-item"><strong>Status:</strong> <?php echo $driver['is_active'] ? 'Actief' : 'Inactief'; ?></p>
-            <?php endif; ?>
-            <?php if (!empty($driver['description'])): ?>
-                <p class="driver-detail-item"><strong>Beschrijving:</strong> <?php echo nl2br(htmlspecialchars($driver['description'])); ?></p>
-            <?php endif; ?>
+    <main class="container">
+        <div class="page-header-section">
+            <h1 class="page-heading"><?php echo htmlspecialchars($driver['first_name'] . ' ' . $driver['last_name']); ?></h1>
         </div>
 
-        <div style="clear: both;"></div> <a href="drivers.php" class="back-link">← Terug naar het coureuroverzicht</a>
-    </div>
+        <div class="driver-details-grid">
+            <div class="driver-image-container">
+                <?php if (!empty($driver['image'])): ?>
+                    <img src="<?php echo htmlspecialchars($driver['image']); ?>" alt="<?php echo htmlspecialchars($driver['first_name'] . ' ' . $driver['last_name']); ?>" class="driver-image-details">
+                <?php endif; ?>
+            </div>
+            
+            <div class="driver-info-container">
+                <dl class="driver-details-list">
+                    <dt>Team:</dt>
+                    <dd><?php echo htmlspecialchars($driver['team_name']); ?></dd>
+
+                    <dt>Coureur Nummer:</dt>
+                    <dd>#<?php echo htmlspecialchars($driver['driver_number']); ?></dd>
+
+                    <dt>Nationaliteit:</dt>
+                    <dd>
+                        <?php if (!empty($driver['flag_url'])): ?>
+                            <img src="<?php echo htmlspecialchars($driver['flag_url']); ?>" alt="Vlag" class="flag-icon">
+                        <?php endif; ?>
+                        <?php echo htmlspecialchars($driver['nationality']); ?>
+                    </dd>
+
+                    <?php if (!empty($driver['date_of_birth'])): ?>
+                        <dt>Geboortedatum:</dt>
+                        <dd><?php echo htmlspecialchars(date('d-m-Y', strtotime($driver['date_of_birth']))); ?></dd>
+                    <?php endif; ?>
+                    
+                    <?php if (isset($driver['career_points'])): ?>
+                        <dt>Carrière Punten:</dt>
+                        <dd><?php echo htmlspecialchars(number_format($driver['career_points'], 1)); ?></dd>
+                    <?php endif; ?>
+                    
+                    <?php if (isset($driver['championships_won'])): ?>
+                        <dt>Kampioenschappen:</dt>
+                        <dd><?php echo htmlspecialchars($driver['championships_won']); ?></dd>
+                    <?php endif; ?>
+                </dl>
+            </div>
+        </div>
+
+        <?php if (!empty($driver['description'])): ?>
+            <div class="driver-description">
+                <h2>Over de coureur</h2>
+                <p><?php echo nl2br(htmlspecialchars($driver['description'])); ?></p>
+            </div>
+        <?php endif; ?>
+
+        <div style="clear: both;"></div>
+        <a href="drivers.php" class="back-link">← Terug naar het coureuroverzicht</a>
+    </main>
+    <footer>
+        <div class="footer-content container">
+            <p>&copy; 2025 Webbair. Alle rechten voorbehouden.</p>
+            <div class="social-links">
+                <a href="#" aria-label="Facebook">Facebook</a>
+                <a href="#" aria-label="Twitter">X</a>
+                <a href="https://webbair.online" aria-label="Instagram">Instagram</a>
+            </div>
+            <div class="social-links">
+                <a href="privacy.html">Privacy Beleid</a>
+                <a href="algemenevoorwaarden.html">Algemene Voorwaarden</a>
+                <a href="contact.html">Contact</a>
+            </div>
+        </div>
+    </footer>
 </body>
 </html>

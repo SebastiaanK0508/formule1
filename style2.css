@@ -749,3 +749,98 @@ footer {
   margin: 5px 0 0;
   color: #000000;
 }
+/* Algemene styling voor de detail sectie */
+.driver-details-container {
+    background-color: #fff;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.detail-section {
+    margin-bottom: 2rem;
+}
+
+.section-title {
+    font-family: 'Oswald', sans-serif;
+    font-size: 1.5rem;
+    color: #333;
+    border-bottom: 2px solid #e0e0e0;
+    padding-bottom: 0.5rem;
+    margin-bottom: 1.5rem;
+}
+
+/* Container voor de afbeelding en details */
+.driver-details-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    margin-bottom: 2rem;
+}
+
+/* Voor grotere schermen: layout in twee kolommen */
+@media (min-width: 768px) {
+    .driver-details-grid {
+        flex-direction: row;
+        align-items: flex-start;
+    }
+
+    .driver-image-container {
+        flex: 0 0 35%; /* Afbeelding neemt 35% van de breedte in */
+        max-width: 35%;
+    }
+
+    .driver-info-container {
+        flex: 1; /* Informatie vult de rest van de ruimte op */
+        padding-left: 2rem;
+    }
+}
+
+.driver-image-details {
+    width: 100%;
+    height: auto;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.driver-details-list {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 1rem;
+    background-color: #f9f9f9;
+    padding: 1.5rem;
+    border-radius: 8px;
+}
+
+.driver-details-list dt {
+    font-weight: bold;
+    color: #333;
+}
+
+.driver-details-list dd {
+    margin: 0;
+    color: #555;
+}
+
+.flag-icon {
+    height: 16px;
+    vertical-align: middle;
+    margin-right: 8px;
+    border: 1px solid #ddd;
+}
+
+/* Styling voor de beschrijving onderaan */
+.driver-description {
+    background-color: #fff;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.driver-description h2 {
+    font-family: 'Oswald', sans-serif;
+    color: #333;
+    border-bottom: 2px solid #e0e0e0;
+    padding-bottom: 0.5rem;
+    margin-bottom: 1rem;
+}
