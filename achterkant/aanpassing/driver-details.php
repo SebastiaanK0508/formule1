@@ -2,30 +2,20 @@
 require_once 'db_config.php';
 
 $pdo = null;
-$driverDetails = null; // Voor de details van de coureur
-$teams = []; // Voor de lijst van teams uit de 'teams' tabel
-$message = ''; // Voor succes- of foutmeldingen
-
+$driverDetails = null; 
+$teams = [];
+$message = '';
 try {
-    $pdo = new PDO($dsn, $user, $pass, $options);
+    $pdo = new PDO($dsn, $user, $pass);
 
-    // --- AANPASSING HIER: Haal teams op uit de 'teams' tabel ---
     $stmt_teams = $pdo->query("SELECT team_id, team_name FROM teams ORDER BY team_name ASC");
     $teams = $stmt_teams->fetchAll(PDO::FETCH_ASSOC);
-
-    // Voeg de "No Team" optie handmatig toe aan de teams array
-    // Zorg voor een unieke ID die niet conflicteert met bestaande team_id's (bijv. 0 of -1)
-    // En zorg dat je drivers tabel NULL toelaat voor team_id, of een team_id 0 heeft voor "Geen team"
-    $teams[] = ['team_id' => 0, 'team_name' => 'N.V.T. (Geen team)']; // Voeg als een associatieve array toe
-    // --- EINDE AANPASSING ---
-
+    $teams[] = ['team_id' => 0, 'team_name' => 'N.V.T. (Geen team)'];
 } catch (\PDOException $e) {
     die("Verbindingsfout: " . $e->getMessage());
 }
-
 $driverId = isset($_GET['id']) && is_numeric($_GET['id']) ? (int)$_GET['id'] : null;
 
-// Als het een POST-verzoek is, probeer dan de gegevens bij te werken
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && $driverId) {
     try {
         $firstName = $_POST['first_name'] ?? '';
@@ -33,39 +23,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $driverId) {
         $nationality = $_POST['nationality'] ?? '';
         $dateOfBirth = $_POST['date_of_birth'] ?? null;
         $driverNumber = $_POST['driver_number'] ?? null;
-        // --- AANPASSING HIER: team_id ophalen i.p.v. team_name ---
         $teamId = $_POST['team_id'] ?? null;
-        // Als team_id 0 is (N.V.T.), sla dan NULL op in de database
         if ($teamId == 0) {
             $teamId = null;
         }
-        // --- EINDE AANPASSING ---
         $championshipsWon = $_POST['championships_won'] ?? 0;
         $careerPoints = $_POST['career_points'] ?? 0.00;
         $imageUrl = $_POST['image'] ?? null;
-        // --- NIEUW: flag_url toevoegen ---
         $flagUrl = $_POST['flag_url'] ?? null;
-        // --- EINDE NIEUW ---
-        // --- NIEUW: place_of_birth en description toevoegen ---
         $placeOfBirth = $_POST['place_of_birth'] ?? null;
         $description = $_POST['description'] ?? null;
-        // --- EINDE NIEUW ---
         $isActive = isset($_POST['is_active']) ? 1 : 0;
-
-        // --- AANPASSING HIER: UPDATE query om team_id, flag_url, place_of_birth, description te gebruiken ---
         $sql = "UPDATE drivers SET
                     first_name = :first_name,
                     last_name = :last_name,
                     nationality = :nationality,
                     date_of_birth = :date_of_birth,
                     driver_number = :driver_number,
-                    team_id = :team_id, -- Aangepast naar team_id
+                    team_id = :team_id, 
                     championships_won = :championships_won,
                     career_points = :career_points,
                     image = :image,
-                    flag_url = :flag_url, -- Toegevoegd
-                    place_of_birth = :place_of_birth, -- Toegevoegd
-                    description = :description, -- Toegevoegd
+                    flag_url = :flag_url, 
+                    place_of_birth = :place_of_birth, 
+                    description = :description, 
                     is_active = :is_active
                 WHERE driver_id = :driver_id";
 
@@ -76,20 +57,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $driverId) {
         $stmt->bindParam(':nationality', $nationality);
         $stmt->bindParam(':date_of_birth', $dateOfBirth);
         $stmt->bindParam(':driver_number', $driverNumber, PDO::PARAM_INT);
-        $stmt->bindParam(':team_id', $teamId, PDO::PARAM_INT); // Aangepast naar team_id
+        $stmt->bindParam(':team_id', $teamId, PDO::PARAM_INT); 
         $stmt->bindParam(':championships_won', $championshipsWon, PDO::PARAM_INT);
         $stmt->bindParam(':career_points', $careerPoints);
         $stmt->bindParam(':image', $imageUrl);
-        $stmt->bindParam(':flag_url', $flagUrl); // Toegevoegd
-        $stmt->bindParam(':place_of_birth', $placeOfBirth); // Toegevoegd
-        $stmt->bindParam(':description', $description); // Toegevoegd
+        $stmt->bindParam(':flag_url', $flagUrl);
+        $stmt->bindParam(':place_of_birth', $placeOfBirth);
+        $stmt->bindParam(':description', $description);
         $stmt->bindParam(':is_active', $isActive, PDO::PARAM_INT);
         $stmt->bindParam(':driver_id', $driverId, PDO::PARAM_INT);
 
         if ($stmt->execute()) {
             $message = "<p class='success-message'>Coureurgegevens succesvol bijgewerkt!</p>";
-            // Herlaad de driverDetails na de update om de nieuwste gegevens te tonen
-            // --- AANPASSING HIER: JOIN om team_name op te halen voor weergave ---
             $stmt = $pdo->prepare("
                 SELECT d.*, t.team_name
                 FROM drivers d
@@ -99,7 +78,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $driverId) {
             $stmt->bindParam(':driver_id', $driverId, PDO::PARAM_INT);
             $stmt->execute();
             $driverDetails = $stmt->fetch();
-            // --- EINDE AANPASSING ---
         } else {
             $message = "<p class='error-message'>Fout bij het bijwerken van coureurgegevens.</p>";
         }
@@ -108,11 +86,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $driverId) {
         $message = "<p class='error-message'>Databasefout bij bijwerken: " . $e->getMessage() . "</p>";
     }
 }
-
-// Haal de driver details op voor weergave (ook na een POST-update)
 if ($driverId && !$driverDetails) {
     try {
-        // --- AANPASSING HIER: JOIN om team_name op te halen voor weergave ---
         $stmt = $pdo->prepare("
             SELECT d.*, t.team_name
             FROM drivers d
@@ -122,12 +97,9 @@ if ($driverId && !$driverDetails) {
         $stmt->bindParam(':driver_id', $driverId, PDO::PARAM_INT);
         $stmt->execute();
         $driverDetails = $stmt->fetch();
-
-        // Als team_id NULL is, zorg dat team_name 'N.V.T. (Geen team)' wordt
         if (empty($driverDetails['team_id']) && !isset($driverDetails['team_name'])) {
             $driverDetails['team_name'] = 'N.V.T. (Geen team)';
         }
-        // --- EINDE AANPASSING ---
 
         if (!$driverDetails) {
             $message = "<p class='error-message'>Coureur met ID " . htmlspecialchars($driverId) . " niet gevonden.</p>";
@@ -159,14 +131,14 @@ if (!is_array($driverDetails)) {
         input[type="text"],
         input[type="number"],
         input[type="date"],
-        textarea, /* Toegevoegd */
+        textarea,
         select {
             width: calc(100% - 22px);
             padding: 10px;
             border: 1px solid #ccc;
             border-radius: 4px;
             box-sizing: border-box;
-            background-color: #e9e9e9; /* Standaard niet bewerkbaar */
+            background-color: #e9e9e9; 
         }
         input[type="checkbox"] {
             margin-right: 10px;
@@ -174,21 +146,18 @@ if (!is_array($driverDetails)) {
         input[type="text"]:focus,
         input[type="number"]:focus,
         input[type="date"]:focus,
-        textarea:focus, /* Toegevoegd */
+        textarea:focus, 
         select:focus {
             outline: none;
             border-color: #007bff;
         }
-
-        /* Styles voor bewerkbare velden */
         input[type="text"]:not([readonly]),
         input[type="number"]:not([readonly]),
         input[type="date"]:not([readonly]),
-        textarea:not([readonly]), /* Toegevoegd */
+        textarea:not([readonly]), 
         select:not([disabled]) {
             background-color: white;
         }
-
         .button-group { margin-top: 20px; text-align: center; }
         .button-group button, .button-group a {
             padding: 10px 20px;
@@ -202,7 +171,7 @@ if (!is_array($driverDetails)) {
         }
         #editButton { background-color: #007bff; color: white; }
         #editButton:hover { background-color: #0056b3; }
-        #saveButton { background-color: #28a745; color: white; display: none; } /* Standaard verborgen */
+        #saveButton { background-color: #28a745; color: white; display: none; }
         #saveButton:hover { background-color: #218838; }
         .back-link { background-color: #6c757d; color: white; }
         .back-link:hover { background-color: #5a6268; }
@@ -216,7 +185,7 @@ if (!is_array($driverDetails)) {
 <body>
 
     <div class="container">
-        <?php echo $message; // Toon succes- of foutmeldingen ?>
+        <?php echo $message;?>
 
         <?php if ($driverDetails && $driverId): ?>
             <h1>Details van Coureur: <?php echo htmlspecialchars($driverDetails['first_name'] . ' ' . $driverDetails['last_name']); ?></h1>
@@ -270,7 +239,6 @@ if (!is_array($driverDetails)) {
                         <?php foreach ($teams as $team): ?>
                             <option value="<?php echo htmlspecialchars($team['team_id']); ?>"
                                 <?php
-                                // Controleer of de huidige team_id overeenkomt met de team_id van de coureur
                                 if (isset($driverDetails['team_id']) && $driverDetails['team_id'] === $team['team_id']) {
                                     echo 'selected';
                                 }
@@ -323,18 +291,15 @@ if (!is_array($driverDetails)) {
             const form = document.querySelector('form');
             const editButton = document.getElementById('editButton');
             const saveButton = document.getElementById('saveButton');
-            // Selecteer alle relevante velden, inclusief de nieuwe textarea
             const inputs = form.querySelectorAll('input:not([type="hidden"]), select, textarea');
-
-            // Functie om velden bewerkbaar te maken
             function setEditable(isEditable) {
                 inputs.forEach(input => {
                     if (input.type === 'checkbox') {
-                        input.disabled = !isEditable; // Checkboxen gebruiken 'disabled'
-                    } else if (input.tagName === 'SELECT' || input.tagName === 'TEXTAREA') { // Ook textarea
-                        input.disabled = !isEditable; // Selects en textareas gebruiken 'disabled'
+                        input.disabled = !isEditable; 
+                    } else if (input.tagName === 'SELECT' || input.tagName === 'TEXTAREA') { 
+                        input.disabled = !isEditable; 
                     } else {
-                        input.readOnly = !isEditable; // Text/number/date inputs gebruiken 'readonly'
+                        input.readOnly = !isEditable;
                     }
                 });
 
@@ -346,20 +311,12 @@ if (!is_array($driverDetails)) {
                     saveButton.style.display = 'none';
                 }
             }
-
-            // Initialiseer alle velden als niet-bewerkbaar bij het laden van de pagina
             setEditable(false);
-
-            // Event listener voor de Bewerk knop
             editButton.addEventListener('click', function() {
                 setEditable(true);
             });
-
-            // Wanneer het formulier wordt ingediend (via de Opslaan knop),
-            // zorgen we ervoor dat de velden niet langer disabled/readonly zijn,
-            // zodat hun waarden worden meegestuurd naar de server.
             form.addEventListener('submit', function() {
-                setEditable(true); // Maak alles bewerkbaar zodat waarden worden gepost
+                setEditable(true); 
             });
         });
     </script>
