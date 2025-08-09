@@ -32,16 +32,21 @@
         <p>Loading...</p>
         </section>
     </main>
-        <footer>
-            <div class="footer-content container">
-                <p>&copy; 2025 Webbair. Alle rechten voorbehouden.</p>
-                <div class="social-links">
-                    <a href="#" aria-label="Facebook">Facebook</a>
-                    <a href="#" aria-label="Twitter">X</a>
-                    <a href="#" aria-label="Instagram">Instagram</a>
-                </div>
+    <footer>
+        <div class="footer-content container">
+            <p>&copy; 2025 Webbair. Alle rechten voorbehouden.</p>
+            <div class="social-links">
+                <a href="#" aria-label="Facebook">Facebook</a>
+                <a href="#" aria-label="Twitter">X</a>
+                <a href="" aria-label="Instagram">Instagram</a>
             </div>
-        </footer>
+            <div class="social-links">
+                <a href="privacy.html">Privacy Beleid</a>
+                <a href="algemenevoorwaarden.html">Algemene Voorwaarden</a>
+                <a href="contact.html">Contact</a>
+            </div>
+        </div>
+    </footer>
 
 <script>
     const standingsContent = document.getElementById('standings-content');

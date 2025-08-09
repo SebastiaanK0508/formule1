@@ -103,11 +103,16 @@ require_once 'achterkant/aanpassing/api-koppelingen/result_api.php';
 
     <footer>
         <div class="footer-content container">
-            <p>&copy; <?php echo htmlspecialchars($selected_year); ?> Webbair. Alle rechten voorbehouden.</p>
+            <p>&copy; 2025 Webbair. Alle rechten voorbehouden.</p>
             <div class="social-links">
                 <a href="#" aria-label="Facebook">Facebook</a>
-                <a href="#" aria-label="Twitter">Twitter</a>
-                <a href="#" aria-label="Instagram">Instagram</a>
+                <a href="#" aria-label="Twitter">X</a>
+                <a href="" aria-label="Instagram">Instagram</a>
+            </div>
+            <div class="social-links">
+                <a href="privacy.html">Privacy Beleid</a>
+                <a href="algemenevoorwaarden.html">Algemene Voorwaarden</a>
+                <a href="contact.html">Contact</a>
             </div>
         </div>
     </footer>
