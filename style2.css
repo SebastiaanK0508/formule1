@@ -458,6 +458,7 @@ footer {
 .data-table tbody tr {
   background-color: #fff;
   transition: background-color 0.2s ease;
+  text-align: center;
 }
 
 .data-table tbody tr:nth-child(even) {
@@ -823,24 +824,33 @@ footer {
 }
 
 .flag-icon {
-    height: 16px;
-    vertical-align: middle;
-    margin-right: 8px;
-    border: 1px solid #ddd;
+  height: 16px;
+  vertical-align: middle;
+  margin-right: 8px;
+  border: 1px solid #ddd;
 }
 
 /* Styling voor de beschrijving onderaan */
 .driver-description {
-    background-color: #fff;
-    padding: 2rem;
-    border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  background-color: #fff;
+  padding: 2rem;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .driver-description h2 {
-    font-family: 'Oswald', sans-serif;
-    color: #333;
-    border-bottom: 2px solid #e0e0e0;
-    padding-bottom: 0.5rem;
-    margin-bottom: 1rem;
+  font-family: 'Oswald', sans-serif;
+  color: #333;
+  border-bottom: 2px solid #e0e0e0;
+  padding-bottom: 0.5rem;
+  margin-bottom: 1rem;
+}
+.standings-grid {
+  display: flex; 
+  justify-content: space-between; 
+  gap: 20px; 
+}
+
+.data-table-container {
+ flex: 1; 
 }

@@ -32,7 +32,6 @@
         <p>Loading...</p>
         </section>
     </main>
-
         <footer>
             <div class="footer-content container">
                 <p>&copy; 2025 Webbair. Alle rechten voorbehouden.</p>
@@ -45,17 +44,11 @@
         </footer>
 
 <script>
-    const standingsContent = document.getElementById('standings-content'); // Naam gewijzigd naar standings-content
-
+    const standingsContent = document.getElementById('standings-content');
     async function fetchChampionshipStandings() {
         try {
-            // Pas de URL aan naar de locatie van je PHP-script
-            // Let op: De URL 'achterkant/aanpassing/api-koppelingen/standings_api.php' is relatief.
-            // Zorg ervoor dat dit pad klopt vanaf de locatie van dit standings.php bestand.
-            // Als standings.php in de root staat en standings_api.php in die submap, is het pad correct.
             const response = await fetch('achterkant/aanpassing/api-koppelingen/standings_api.php');
             const data = await response.json();
-
             if (data.status === 'success') {
                 displayChampionshipStandings(data.drivers, data.constructors);
             } else {
@@ -67,22 +60,19 @@
             console.error('Fetch Error:', error);
         }
     }
-
     function displayChampionshipStandings(drivers, constructors) {
-        let html = '<div class="standings-grid">'; // Start de grid container hier
-
-        // Coureursklassement
-        html += '<div class="data-table-container">'; // Container voor de coureurstabel
+        let html = '<div class="standings-grid">';
+        html += '<div class="data-table-container">'; 
         html += '<h4>Coureursklassement</h4>';
         if (drivers.length > 0) {
             html += `
-                <table class="data-table"> <thead>
+                <table class="data-table"> 
+                    <thead>
                         <tr>
                             <th>Pos.</th>
                             <th>Driver</th>
                             <th>Team</th>
                             <th>Points</th>
-                            <th>Wins</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -94,7 +84,6 @@
                         <td>${driver.given_name} ${driver.family_name}</td>
                         <td>${driver.constructor_name}</td>
                         <td>${driver.points}</td>
-                        <td>${driver.wins}</td>
                     </tr>
                 `;
             });
@@ -105,10 +94,8 @@
         } else {
             html += '<p>Geen coureursklassement beschikbaar op dit moment.</p>';
         }
-        html += '</div>'; // Sluit standings-table-container voor coureurs
-
-        // Constructeursklassement
-        html += '<div class="data-table-container">'; // Container voor de constructeurstabel
+        html += '</div>'; 
+        html += '<div class="data-table-container">';
         html += '<h4>Constructeursklassement</h4>';
         if (constructors.length > 0) {
             html += `
@@ -117,7 +104,6 @@
                             <th>Pos.</th>
                             <th>Team</th>
                             <th>Points</th>
-                            <th>Wins</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -128,7 +114,6 @@
                         <td>${constructor.position}</td>
                         <td>${constructor.name}</td>
                         <td>${constructor.points}</td>
-                        <td>${constructor.wins}</td>
                     </tr>
                 `;
             });
@@ -139,14 +124,12 @@
         } else {
             html += '<p>Geen constructeursklassement beschikbaar op dit moment.</p>';
         }
-        html += '</div>'; // Sluit standings-table-container voor constructeurs
+        html += '</div>'; 
 
-        html += '</div>'; // Sluit de standings-grid container
+        html += '</div>'; 
 
-        standingsContent.innerHTML = html; // Injecteer alle gegenereerde HTML
+        standingsContent.innerHTML = html;
     }
-
-    // Roep de functie aan bij het laden van de pagina
     fetchChampionshipStandings();
 </script>
 </body>
