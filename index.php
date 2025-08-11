@@ -14,7 +14,7 @@ require_once 'achterkant/aanpassing/api-koppelingen/1result_api.php';
 <body>
     <header>
         <div class="header-content container">
-            <h1 class="site-title">FORMULA 1 SEASON 2025</h1>
+            <h1 id="site-title-header" class="site-title">FORMULA 1</h1>
             <nav class="main-nav">
                 <a href="index.php" class="active">Home</a>
                 <a href="kalender.php">Schedule</a>
@@ -138,5 +138,6 @@ require_once 'achterkant/aanpassing/api-koppelingen/1result_api.php';
         console.log("Geen volgende Grand Prix om af te tellen.");
         <?php endif; ?>
     </script>
+    
 </body>
 </html>
