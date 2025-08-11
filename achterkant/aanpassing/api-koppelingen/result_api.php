@@ -2,7 +2,6 @@
 require_once 'db_config.php';
 /** @var PDO $pdo */ 
 
-// Haal het geselecteerde jaar op uit de URL, of gebruik het meest recente jaar als er niets is geselecteerd
 $selected_year = isset($_GET['year']) ? (int)$_GET['year'] : null;
 $selected_round = isset($_GET['round']) ? (int)$_GET['round'] : null;
 

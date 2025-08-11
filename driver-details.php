@@ -8,11 +8,9 @@ if (empty($driverSlug)) {
     header('Location: index.php');
     exit;
 }
-
 $nameParts = explode('-', $driverSlug);
 $firstName = isset($nameParts[0]) ? ucfirst($nameParts[0]) : '';
 $lastName = isset($nameParts[1]) ? ucfirst($nameParts[1]) : '';
-
 try {
     $stmt = $pdo->prepare("
         SELECT
@@ -81,10 +79,10 @@ try {
                     <dt>Team:</dt>
                     <dd><?php echo htmlspecialchars($driver['team_name']); ?></dd>
 
-                    <dt>Coureur Nummer:</dt>
+                    <dt>Driver Number: </dt>
                     <dd>#<?php echo htmlspecialchars($driver['driver_number']); ?></dd>
 
-                    <dt>Nationaliteit:</dt>
+                    <dt>nationality: </dt>
                     <dd>
                         <?php if (!empty($driver['flag_url'])): ?>
                             <img src="<?php echo htmlspecialchars($driver['flag_url']); ?>" alt="Vlag" class="flag-icon">
@@ -93,17 +91,17 @@ try {
                     </dd>
 
                     <?php if (!empty($driver['date_of_birth'])): ?>
-                        <dt>Geboortedatum:</dt>
+                        <dt>Date of Birth: </dt>
                         <dd><?php echo htmlspecialchars(date('d-m-Y', strtotime($driver['date_of_birth']))); ?></dd>
                     <?php endif; ?>
                     
                     <?php if (isset($driver['career_points'])): ?>
-                        <dt>Carrière Punten:</dt>
+                        <dt>Career Points: </dt>
                         <dd><?php echo htmlspecialchars(number_format($driver['career_points'], 1)); ?></dd>
                     <?php endif; ?>
                     
                     <?php if (isset($driver['championships_won'])): ?>
-                        <dt>Kampioenschappen:</dt>
+                        <dt>championships won: </dt>
                         <dd><?php echo htmlspecialchars($driver['championships_won']); ?></dd>
                     <?php endif; ?>
                 </dl>

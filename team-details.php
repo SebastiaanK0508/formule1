@@ -167,22 +167,22 @@ if ($team) {
 
         <section class="f1-section-teams">
             <div class="info">
-                <p class="team-detail-item"><strong>Base Location:</strong> <?php echo htmlspecialchars($team['base_location']); ?></p>
-                <p class="team-detail-item"><strong>Team Principal:</strong> <?php echo htmlspecialchars($team['team_principal']); ?></p>
-                <p class="team-detail-item"><strong>Techical Director:</strong> <?php echo htmlspecialchars($team['technical_director']); ?></p>
-                <p class="team-detail-item"><strong>Chassis:</strong> <?php echo htmlspecialchars($team['chassis']); ?></p>
-                <p class="team-detail-item"><strong>Engine Supplier:</strong> <?php echo htmlspecialchars($team['current_engine_supplier']); ?></p>
+                <p class="team-detail-item"><strong>Base Location: </strong> <?php echo htmlspecialchars($team['base_location']); ?></p>
+                <p class="team-detail-item"><strong>Team Principal: </strong> <?php echo htmlspecialchars($team['team_principal']); ?></p>
+                <p class="team-detail-item"><strong>Techical Director: </strong> <?php echo htmlspecialchars($team['technical_director']); ?></p>
+                <p class="team-detail-item"><strong>Chassis: </strong> <?php echo htmlspecialchars($team['chassis']); ?></p>
+                <p class="team-detail-item"><strong>Engine Supplier: </strong> <?php echo htmlspecialchars($team['current_engine_supplier']); ?></p>
                 <?php if (isset($team['championships_won'])): ?>
-                    <p class="team-detail-item"><strong>Constructor championships won:</strong> <?php echo htmlspecialchars($team['championships_won']); ?></p>
+                    <p class="team-detail-item"><strong>Constructor championships won: </strong> <?php echo htmlspecialchars($team['championships_won']); ?></p>
                 <?php endif; ?>
                 <?php if (isset($team['total_victories'])): ?>
-                    <p class="team-detail-item"><strong>X-Wins:</strong> <?php echo htmlspecialchars($team['total_victories']); ?></p>
+                    <p class="team-detail-item"><strong>X-Wins: </strong> <?php echo htmlspecialchars($team['total_victories']); ?></p>
                 <?php endif; ?>
                 <?php if (isset($team['is_active'])): ?>
-                    <p class="team-detail-item"><strong>Status:</strong> <?php echo $team['is_active'] ? 'Actief' : 'Inactief'; ?></p>
+                    <p class="team-detail-item"><strong>Status: </strong> <?php echo $team['is_active'] ? 'Actief' : 'Inactief'; ?></p>
                 <?php endif; ?>
                 <?php if (!empty($team['description'])): ?>
-                    <p class="team-detail-item"><strong>description:</strong> <?php echo nl2br(htmlspecialchars($team['description'])); ?></p>
+                    <p class="team-detail-item"><strong>description: </strong> <?php echo nl2br(htmlspecialchars($team['description'])); ?></p>
                 <?php endif; ?>
             </div>
             <div class="">
@@ -214,7 +214,6 @@ if ($team) {
                 <p style="color: #a0a0a0; text-align: center;">Geen coureurs gevonden voor dit team.</p>
             <?php endif; ?>
         </div>
-    
     </main>
     <footer>
         <div class="footer-content container">
