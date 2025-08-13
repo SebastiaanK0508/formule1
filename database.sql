@@ -480,3 +480,33 @@ ALTER TABLE circuits
 ADD country_flag_url VARCHAR(1000) NULL;
 
 ALTER TABLE teams ADD chassis VARCHAR(255) NULL;
+--dit nog NIET toevoegen --
+
+
+--   ALTER TABLE `race_results`
+--   DROP FOREIGN KEY `race_results_ibfk_2`;
+
+-- ALTER TABLE `drivers`
+--   DROP FOREIGN KEY `fk_team`;
+
+--   ALTER TABLE `teams`
+--   MODIFY `team_id` VARCHAR(50) NOT NULL,
+--   DROP PRIMARY KEY,
+--   ADD PRIMARY KEY (`team_id`);
+
+-- ALTER TABLE `drivers`
+--   MODIFY `driver_id` VARCHAR(50) NOT NULL,
+--   DROP PRIMARY KEY,
+--   ADD PRIMARY KEY (`driver_id`);
+
+-- ALTER TABLE `drivers`
+--   MODIFY `team_id` VARCHAR(50) DEFAULT NULL;
+
+-- ALTER TABLE `race_results`
+--   MODIFY `driver_id` VARCHAR(50) NOT NULL;
+
+--   ALTER TABLE `drivers`
+--   ADD CONSTRAINT `fk_team` FOREIGN KEY (`team_id`) REFERENCES `teams` (`team_id`);
+
+-- ALTER TABLE `race_results`
+--   ADD CONSTRAINT `race_results_ibfk_2` FOREIGN KEY (`driver_id`) REFERENCES `drivers` (`driver_id`);

@@ -18,3 +18,4 @@ try {
     die("There was a problem connecting to the database. Please try again later."); 
 }
 ?>
+
