@@ -584,6 +584,46 @@ footer {
   margin-bottom: 10px;
   border-bottom: 1px solid var(--border-color-light);
 }
+@media (max-width: 768px) {
+  .data-table-container {
+      border-radius: 0;
+      box-shadow: none;
+  }
+  .data-table {
+      border: none;
+      width: 100%;
+      display: block;
+  }
+  .data-table thead, .data-table tbody, .data-table tr, .data-table th, .data-table td {
+      display: block;
+  }
+  .data-table thead {
+      display: none; 
+  }
+  .data-table tr {
+      margin-bottom: 15px;
+      border: 1px solid var(--border-color-light);
+      border-radius: 8px;
+      padding: 15px;
+      background-color: var(--card-bg);
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  }
+  .data-table td {
+      border-bottom: none;
+      position: relative;
+      padding-left: 50%; 
+      text-align: left;
+  }
+  .data-table td:before {
+      content: attr(data-label);
+      position: absolute;
+      left: 15px;
+      width: calc(50% - 30px);
+      white-space: nowrap;
+      font-weight: bold;
+      color: #333;
+  }
+}
 .selection-container label {
     color: #ff0000;
     font-size: 1.3em;

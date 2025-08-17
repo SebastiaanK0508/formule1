@@ -131,14 +131,6 @@ if (!is_array($circuitDetails)) {
                         </div>
                     <?php endif; ?>
                 </div>
-                <div class="f1-section">
-                    <?php if (!empty($circuitDetails['highlights'])): ?>
-                        <div class="info">
-                            <h3>Highlights</h3>
-                            <p><?php echo nl2br(htmlspecialchars($circuitDetails['highlights'])); ?></p>
-                        </div>
-                    <?php endif; ?>
-                </div>
                 <div class="back-link-container">
                     <a href="kalender.php" class="back-link">Back to Schedule</a>
                 </div>
@@ -152,7 +144,7 @@ if (!is_array($circuitDetails)) {
     </main>
     <footer>
         <div class="footer-content container">
-            <p>&copy; 2025 Webbair. Alle rechten voorbehouden.</p>
+            <p>&copy; 2025 <a style="color: white;" target=_blank href="https://webbair.nl">Webbair</a>. Alle rechten voorbehouden.</p>
             <div class="social-links">
                 <a href="#" aria-label="Facebook">Facebook</a>
                 <a href="#" aria-label="Twitter">X</a>
