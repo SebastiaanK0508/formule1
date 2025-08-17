@@ -76,7 +76,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <body>
     <div class="container">
         <h1>Nieuw Circuit Toevoegen</h1>
-        <?php echo $message;?>
         <form method="POST" action="">
             <div class="form-group">
                 <label for="circuit_key">Circuit Sleutel (uniek, bijv. 'zandvoort'):</label>
