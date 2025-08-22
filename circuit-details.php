@@ -29,6 +29,7 @@ if (!is_array($circuitDetails)) {
     <title>Details Circuit: <?php echo htmlspecialchars($circuitDetails['grandprix'] ?? 'Onbekend'); ?></title>
     <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style2.css">
+    <link rel="icon" type="image/x-icon" href="/afbeeldingen/logo/f1logobgrm.png">
     <style>
         .back-link-container {
             text-align: center;

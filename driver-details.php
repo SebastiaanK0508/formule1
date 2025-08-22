@@ -46,6 +46,7 @@ try {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?php echo htmlspecialchars($driver['first_name'] . ' ' . $driver['last_name']); ?> | Driver Details</title>
     <link rel="stylesheet" href="style2.css">
+    <link rel="icon" type="image/x-icon" href="/afbeeldingen/logo/f1logobgrm.png">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Oswald:wght@400;600;700&display=swap" rel="stylesheet">
 </head>
 <body>

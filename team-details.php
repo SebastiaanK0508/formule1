@@ -59,6 +59,7 @@ if ($team) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?php echo htmlspecialchars($team['full_team_name']); ?></title>
     <link rel="stylesheet" href="style2.css">
+    <link rel="icon" type="image/x-icon" href="/afbeeldingen/logo/f1logobgrm.png">
     <style>
         :root {
             --team-main-color: <?php echo isset($team['team_color']) && $team['team_color'] ? htmlspecialchars($team['team_color']) : 'rgb(0,0,0)'; ?>;
