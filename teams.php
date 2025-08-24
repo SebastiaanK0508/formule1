@@ -1,41 +1,33 @@
+<?php
+    $json_file = 'achterkant/aanpassing/api-koppelingen/json/teams.json';
+    if (file_exists($json_file)) {
+        $json_data = file_get_contents($json_file);
+        $data = json_decode($json_data, true);
+    } else {
+        $data = [];
+        error_log("Fout: JSON-bestand niet gevonden op pad: " . $json_file);
+    }
+?>
 <!DOCTYPE html>
 <html lang="nl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Formula 1 Season 2025 - Teams</title>
-    <link rel="stylesheet" href="style2.css">
+    <link rel="stylesheet" href="teamcss.css">
+    <!-- <link rel="stylesheet" href="style2.css"> -->
     <link rel="icon" type="image/x-icon" href="/afbeeldingen/logo/f1logobgrm.png">
     <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
 
-        <?php
+    <?php
     require_once 'db_config.php';
     /** @var PDO $pdo */
     $allTeams = []; 
     try {
-    $stmt = $pdo->query("SELECT team_id, team_name, base_location, team_principal, team_color, full_team_name FROM teams WHERE is_active = TRUE ORDER BY team_name ASC");
+        $stmt = $pdo->query("SELECT team_id, team_name, base_location, team_principal, team_color, full_team_name FROM teams WHERE is_active = TRUE ORDER BY team_name ASC");
         $allTeams = $stmt->fetchAll();
     } catch (\PDOException $e) {
         error_log("Fout bij het ophalen van alle teams: " . $e->getMessage());
-        echo "<p>Er is een fout opgetreden bij het laden van de teams. Probeer het later opnieuw.</p>";
-    }
-    $selectedTeam = null; 
-    if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['team_id'])) {
-        $teamId = $_POST['team_id'];
-
-        try {
-            $stmt = $pdo->prepare("SELECT team_id, team_name, base_location, team_principal, team_color, full_team_name FROM teams WHERE team_id = :team_id");
-            $stmt->bindParam(':driver_id', $teamId, PDO::PARAM_INT);
-            $stmt->execute();
-            $selectedTeam = $stmt->fetch();
-
-            if (!$selectedTeam) {
-                echo "<p>Coureur niet gevonden met ID: " . htmlspecialchars($teamId) . "</p>";
-            }
-        } catch (\PDOException $e) {
-            error_log("Fout bij het ophalen van geselecteerde teamdetails: " . $e->getMessage());
-            echo "<p>Er is een fout opgetreden bij het ophalen van teamdetails.</p>";
-        }
     }
     ?>
 </head>
@@ -58,33 +50,6 @@
         <section class="page-header-section">
             <h2 class="page-heading">TEAMS FORMULA 1</h1>
         </section>
-<!--
-        <section class="carousel-section">
-            <div class="carousel-container">
-                <div class="carousel">
-                    <img src="https://i.pinimg.com/736x/de/b8/f7/deb8f73797a429fe13741d78f27693f8.jpg" alt="McLaren Logo">
-                    <img src="https://logos-world.net/wp-content/uploads/2020/07/Ferrari-Scuderia-Logo.png" alt="Ferrari Logo">
-                    <img src="https://sportsbase.io/images/gpfans/copy_620x348/e67b41b5f739e3a7050609ed2a488b174476723b.png" alt="Red Bull Logo">
-                    <img src="https://media.formula1.com/image/upload/f_auto,c_limit,q_75,w_1320/content/dam/fom-website/2018-redesign-assets/team%20logos/mercedes" alt="Mercedes Logo">
-                    <img src="https://www.formule1.nl/app/uploads/2024/05/1645620884650-1-1-Cropped-1-419x290.jpg" alt="Alpine Logo">
-                    <img src="https://media.formula1.com/image/upload/f_auto,c_limit,q_auto,w_1320/content/dam/fom-website/2018-redesign-assets/team%20logos/aston%20martin" alt="Aston Martin Logo">
-                    <img src="https://media.formula1.com/image/upload/f_auto,c_limit,q_auto,w_1320/fom-website/2018-redesign-assets/team%20logos/racing%20bulls" alt="Racing Bulls Logo">
-                    <img src="https://media.formula1.com/image/upload/f_auto,c_limit,q_auto,w_1320/content/dam/fom-website/2018-redesign-assets/team%20logos/williams" alt="Williams Logo">
-                    <img src="https://f1madness.co.za/wp-content/uploads/2015/03/Haas-F1-250x180.jpg" alt="Haas Logo">
-                    <img src="https://cdn-3.motorsport.com/images/amp/0L17d5W2/s1000/logo-stakef1team-rgb-pos-1.jpg" alt="Stake Sauber Logo">
-                    <img src="https://i.pinimg.com/736x/de/b8/f7/deb8f73797a429fe13741d78f27693f8.jpg" alt="McLaren Logo">
-                    <img src="https://logos-world.net/wp-content/uploads/2020/07/Ferrari-Scuderia-Logo.png" alt="Ferrari Logo">
-                    <img src="https://sportsbase.io/images/gpfans/copy_620x348/e67b41b5f739e3a7050609ed2a488b174476723b.png" alt="Red Bull Logo">
-                    <img src="https://media.formula1.com/image/upload/f_auto,c_limit,q_75,w_1320/content/dam/fom-website/2018-redesign-assets/team%20logos/mercedes" alt="Mercedes Logo">
-                    <img src="https://www.formule1.nl/app/uploads/2024/05/1645620884650-1-1-Cropped-1-419x290.jpg" alt="Alpine Logo">
-                    <img src="https://media.formula1.com/image/upload/f_auto,c_limit,q_auto,w_1320/content/dam/fom-website/2018-redesign-assets/team%20logos/aston%20martin" alt="Aston Martin Logo">
-                    <img src="https://media.formula1.com/image/upload/f_auto,c_limit,q_auto,w_1320/fom-website/2018-redesign-assets/team%20logos/racing%20bulls" alt="Racing Bulls Logo">
-                    <img src="https://media.formula1.com/image/upload/f_auto,c_limit,q_auto,w_1320/content/dam/fom-website/2018-redesign-assets/team%20logos/williams" alt="Williams Logo">
-                    <img src="https://f1madness.co.za/wp-content/uploads/2015/03/Haas-F1-250x180.jpg" alt="Haas Logo">
-                    <img src="https://cdn-3.motorsport.com/images/amp/0L17d5W2/s1000/logo-stakef1team-rgb-pos-1.jpg" alt="Stake Sauber Logo">
-                </div>
-            </div>
-        </section>-->
 
         <section class="f1-section">
             <div class="data-card-row">
@@ -107,6 +72,35 @@
                 <?php endif; ?>
             </div>
         </section>
+
+        <section class="f1-section">
+            <div class="all-teams-header">
+                <h2>All Teams</h2>
+                <div class="filter-section">
+                    <label for="team-filter">Filter on Name or Country:</label>
+                    <input type="text" id="team-filter">
+                </div>
+            </div>
+            <div class="data-card-row" id="history-team-row"> 
+                <?php if (!empty($data)): ?>
+                    <?php foreach ($data as $f1team): ?>
+                        <article class="data-card filterable-card" 
+                            data-fullname="<?php echo htmlspecialchars(strtolower($f1team['fullName'])); ?>" 
+                            data-country="<?php echo htmlspecialchars(strtolower($f1team['countryId'])); ?>">
+                            <a href="team-details.php?id=<?php echo htmlspecialchars($f1team['id']); ?>" class="team-link">
+                                <div class="info">
+                                    <h3 class="teamname"><strong></strong> <?php echo htmlspecialchars($f1team['fullName']); ?></h3>
+                                    <p><?php echo htmlspecialchars($f1team['countryId']); ?></p>
+                                </div>
+                            </a>
+                        </article>
+                    <?php endforeach; ?>
+                <?php else: ?>
+                    <p id="no-results-message-initial">Geen teams beschikbaar om weer te geven.</p>
+                <?php endif; ?>
+                <p id="no-results-message" style="display: none;">Er zijn geen resultaten gevonden.</p>
+            </div>
+        </section>
     </main>
 
     <footer>
@@ -124,5 +118,54 @@
             </div>
         </div>
     </footer>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // 1. Selecteer de benodigde elementen
+        const filterInput = document.getElementById('team-filter');
+        // JUIST: Selecteer alle kaartjes met de class .filterable-card
+        const cards = document.querySelectorAll('.filterable-card'); 
+        // JUIST: Selecteer de container op basis van zijn unieke ID
+        const dataCardRow = document.getElementById('history-team-row'); 
+        
+        // Selecteer het "geen resultaten" bericht voor na het filteren
+        const noResultsMessage = document.getElementById('no-results-message');
+
+        // Veiligheidscheck: stop als cruciale elementen missen
+        if (!filterInput || cards.length === 0 || !dataCardRow || !noResultsMessage) {
+            console.error('Filter kan niet initialiseren. Controleer of de ID\'s/Classes correct in de HTML staan.');
+            return; 
+        }
+
+        // 2. Voeg de event listener toe aan het invoerveld
+        filterInput.addEventListener('keyup', function() {
+            const filterText = filterInput.value.toLowerCase().trim();
+            let resultsFound = false;
+
+            // 3. Loop door alle kaartjes
+            cards.forEach(card => {
+                const fullName = card.getAttribute('data-fullname'); 
+                const country = card.getAttribute('data-country');
+                
+                // Controleer of de filtertekst voorkomt in een van de attributen
+                if (fullName.includes(filterText) || country.includes(filterText)) {
+                    // Toon de kaart
+                    card.style.display = 'block'; 
+                    resultsFound = true;
+                } else {
+                    // Verberg de kaart
+                    card.style.display = 'none';
+                }
+            });
+
+            // 4. Toon of verberg het "geen resultaten" bericht
+            if (resultsFound) {
+                noResultsMessage.style.display = 'none';
+            } else {
+                noResultsMessage.style.display = 'block';
+            }
+        });
+    });
+    </script>
 </body>
 </html>
