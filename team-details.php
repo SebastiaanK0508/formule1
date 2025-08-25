@@ -17,7 +17,6 @@ try {
     $stmt->bindParam(':id', $teamId, PDO::PARAM_INT);
     $stmt->execute();
     $team = $stmt->fetch(PDO::FETCH_ASSOC);
-
     if (!$team) {
         echo "<h1>Team niet gevonden!</h1>";
         echo "<p>Het team dat u zoekt, is helaas niet gevonden.</p>";
@@ -28,7 +27,6 @@ try {
     echo "Databasefout: " . $e->getMessage();
     exit;
 }
-
 $teamDrivers = [];
 if ($team) {
     try {
@@ -46,11 +44,9 @@ if ($team) {
         $stmtDrivers->execute();
         $teamDrivers = $stmtDrivers->fetchAll(PDO::FETCH_ASSOC);
     } catch (PDOException $e) {
-        error_log("Fout bij het ophalen van coureurs voor team: " . $e->getMessage());
-        // Optionally display a user-friendly message on the page if needed
+        error_log("Error team GET: " . $e->getMessage());
     }
 }
-
 ?>
 <!DOCTYPE html>
 <html lang="nl">
@@ -64,52 +60,33 @@ if ($team) {
         :root {
             --team-main-color: <?php echo isset($team['team_color']) && $team['team_color'] ? htmlspecialchars($team['team_color']) : 'rgb(0,0,0)'; ?>;
         }
-
         .container {
             max-width: 1200px;
             margin: 0 auto;
             padding: 20px;
         }
-
         .page-heading {
             color: var(--team-main-color);
             border-bottom: 2px solid var(--team-main-color);
         }
-
-        /* .f1-section-teams {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            gap: 40px;
-            background-color: #1a1a1a;
-            padding: 30px;
-            border-radius: 8px;
-        } */
-
         .f1-section-teams .info {
             flex-basis: 60%;
         }
-
         .f1-section-teams .team-logo-details {
             flex-basis: 40%;
             max-width: 100%;
             height: auto;
             object-fit: contain;
         }
-
         .team-detail-item {
             margin: 10px 0;
         }
-
         .team-detail-item strong {
-            color: var(--team-main-color); /* Maakt de labels in de teamkleur */
+            color: var(--team-main-color);
         }
-        
-        /* Coureurs sectie */
         .f1-section-drivers-teams {
             margin-top: 40px;
         }
-
         .f1-section-drivers-teams h2 {
             font-family: 'Oswald', sans-serif;
             font-size: 2rem;
@@ -117,14 +94,12 @@ if ($team) {
             text-align: center;
             margin-bottom: 20px;
         }
-        
         .drivers-grid {
-            display: flex; /* Gebruik flexbox voor horizontale uitlijning */
-            justify-content: center; /* Centreer de kaarten in de container */
-            gap: 40px; /* Ruimte tussen de twee kaarten */
-            flex-wrap: wrap; /* Zorgt ervoor dat ze onder elkaar komen op kleine schermen */
+            display: flex; 
+            justify-content: center; 
+            gap: 40px;
+            flex-wrap: wrap;
         }
-
         .back-link {
             display: inline-block;
             margin-top: 40px;
@@ -134,11 +109,9 @@ if ($team) {
             font-weight: bold;
             transition: color 0.3s ease;
         }
-
         .back-link:hover {
             text-decoration: underline;
         }
-
         .main > .back-link {
             display: block;
             text-align: center;

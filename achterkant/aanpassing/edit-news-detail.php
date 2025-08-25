@@ -1,12 +1,9 @@
 <?php
-// edit_news_detail.php - Nieuwsartikel bewerken
 require_once 'db_config.php';
 /** @var PDO $pdo */
 
 $newsItem = null;
 $message = '';
-
-// Stap 1: Nieuwsartikel ophalen via GET-parameter
 if (isset($_GET['news_id'])) {
     $newsId = $_GET['news_id'];
 

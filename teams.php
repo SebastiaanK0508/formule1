@@ -45,12 +45,10 @@
             </nav>
         </div>
     </header>
-
     <main class="container">
         <section class="page-header-section">
             <h2 class="page-heading">TEAMS FORMULA 1</h1>
         </section>
-
         <section class="f1-section">
             <div class="data-card-row">
                 <?php if (!empty($allTeams)): ?>
@@ -72,10 +70,9 @@
                 <?php endif; ?>
             </div>
         </section>
-
         <section class="f1-section">
             <div class="all-teams-header">
-                <h2>All Teams</h2>
+                <h2>All Teams Ever</h2>
                 <div class="filter-section">
                     <label for="team-filter">Filter on Name or Country:</label>
                     <input type="text" id="team-filter">
