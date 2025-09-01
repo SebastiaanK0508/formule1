@@ -12,7 +12,7 @@
     /** @var PDO $pdo */
     $allDrivers = []; 
     try {
-        $stmt = $pdo->query("SELECT d.driver_id, d.first_name, d.last_name, d.driver_number, d.flag_url, t.team_id, t.team_color FROM drivers d LEFT JOIN teams t ON d.team_id = t.team_id WHERE d.is_active = TRUE ORDER BY d.driver_number ASC");        $allDrivers = $stmt->fetchAll();
+        $stmt = $pdo->query("SELECT d.driver_id, d.first_name, d.last_name, d.driver_number, d.flag_url, t.team_name, t.full_team_name, t.team_id, t.team_color FROM drivers d LEFT JOIN teams t ON d.team_id = t.team_id WHERE d.is_active = TRUE ORDER BY d.driver_number ASC");        $allDrivers = $stmt->fetchAll();
     } catch (\PDOException $e) {
         error_log("Fout bij het ophalen van alle coureurs: " . $e->getMessage());
         echo "<p>Er is een fout opgetreden bij het laden van de coureurs. Probeer het later opnieuw.</p>";
@@ -21,7 +21,7 @@
     if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['driver_id'])) {
         $driverId = $_POST['driver_id'];
         try {
-            $stmt = $pdo->query("SELECT driver_id, first_name, last_name, driver_number, team_name, flag_url, driver_color, is_active FROM drivers WHERE is_active = TRUE ORDER BY driver_number ASC");           
+            $stmt = $pdo->query("SELECT driver_id, first_name, last_name, driver_number, team_name, t.full_team_name, flag_url, driver_color, is_active FROM drivers WHERE is_active = TRUE ORDER BY driver_number ASC");           
             $selectedDriver = $stmt->fetch();
             if (!$selectedDriver) {
                 echo "<p>Coureur niet gevonden met ID: " . htmlspecialchars($driverId) . "</p>";
@@ -75,7 +75,7 @@
                                         <?php echo htmlspecialchars($driver['first_name'] . ' ' . $driver['last_name']); ?>
                                     </h3>
                                     <div class="driver-details">
-                                        <p><strong>Team:</strong> <?php echo htmlspecialchars($driver['team_name']); ?></p>
+                                        <p><strong>Team:</strong> <?php echo htmlspecialchars($driver['full_team_name']); ?></p>
                                         <p><strong>Number:</strong> #<?php echo htmlspecialchars($driver['driver_number']); ?></p>
                                     </div>
                                 </div>
