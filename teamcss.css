@@ -142,20 +142,19 @@ header {
   gap: 10px;
 }
 .data-card-row {
-    display: flex;
-    flex-wrap: wrap; 
-    gap: 20px;
-    justify-content: center;
+  display: flex;
+  flex-wrap: wrap; 
+  gap: 20px;
+  justify-content: center;
 }
-
-.data-card {
-    flex-basis: 300px; 
-    flex-grow: 1; 
-    background-color: #2a2a2a;
-    border-radius: 10px;
-    overflow: hidden;
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.5);
-    transition: transform 0.2s ease-in-out, opacity 0.3s ease;
+.filterable-card {
+  flex-basis: 300px; 
+  flex-grow: 1; 
+  background-color: #2a2a2a;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.5);
+  transition: transform 0.2s ease-in-out, opacity 0.3s ease;
 }
 
 .data-card[style*="display: none"] {
@@ -184,7 +183,6 @@ header {
   background-color: var(--card-bg);
   border-radius: 12px;
   overflow: hidden;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
   display: flex;
   flex-direction: column;
@@ -192,6 +190,9 @@ header {
   max-width: 48%; 
   box-sizing: border-box; 
   margin-bottom: 20px; 
+  flex-basis: 300px; 
+  flex-grow: 1; 
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.5);
 }
 
 .data-card-row {

@@ -12,8 +12,7 @@
     /** @var PDO $pdo */
     $allDrivers = []; 
     try {
-    $stmt = $pdo->query("SELECT driver_id, first_name, last_name, driver_number, team_name, flag_url, driver_color, is_active FROM drivers WHERE is_active = TRUE ORDER BY driver_number ASC");
-        $allDrivers = $stmt->fetchAll();
+        $stmt = $pdo->query("SELECT d.driver_id, d.first_name, d.last_name, d.driver_number, d.flag_url, t.team_id, t.team_color FROM drivers d LEFT JOIN teams t ON d.team_id = t.team_id WHERE d.is_active = TRUE ORDER BY d.driver_number ASC");        $allDrivers = $stmt->fetchAll();
     } catch (\PDOException $e) {
         error_log("Fout bij het ophalen van alle coureurs: " . $e->getMessage());
         echo "<p>Er is een fout opgetreden bij het laden van de coureurs. Probeer het later opnieuw.</p>";
@@ -21,13 +20,9 @@
     $selectedDriver = null; 
     if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['driver_id'])) {
         $driverId = $_POST['driver_id'];
-
         try {
-            $stmt = $pdo->prepare("SELECT first_name, last_name, driver_number, team_name, flag_url, driver_color FROM drivers WHERE driver_id = :driver_id");
-            $stmt->bindParam(':driver_id', $driverId, PDO::PARAM_INT);
-            $stmt->execute();
+            $stmt = $pdo->query("SELECT driver_id, first_name, last_name, driver_number, team_name, flag_url, driver_color, is_active FROM drivers WHERE is_active = TRUE ORDER BY driver_number ASC");           
             $selectedDriver = $stmt->fetch();
-
             if (!$selectedDriver) {
                 echo "<p>Coureur niet gevonden met ID: " . htmlspecialchars($driverId) . "</p>";
             }
@@ -38,6 +33,11 @@
     }
     ?>
     <link rel="stylesheet" href="style2.css">
+    <style>    
+    :root {
+        --team-main-color: <?php echo isset($team['team_color']) && $team['team_color'] ? htmlspecialchars($team['team_color']) : 'rgb(0,0,0)'; ?>;
+        }
+    </style>
 </head>
 <body>
     <header>
@@ -66,12 +66,12 @@
                         <?php
                             $driverSlug = strtolower(str_replace(' ', '-', htmlspecialchars($driver['first_name'] . '-' . $driver['last_name'])));
                             $driverPageUrl = 'driver-details.php?slug=' . $driverSlug;
-                            $driverColor = isset($driver['driver_color']) && $driver['driver_color'] ? htmlspecialchars($driver['driver_color']) : '#CCCCCC'; // Standaard grijs
+                            $driverColor = isset($driver['team_color']) && $driver['team_color'] ? htmlspecialchars($driver['team_color']) : '#CCCCCC';
                         ?>
                         <article class="data-card">
                             <a href="<?php echo $driverPageUrl; ?>" class="driver-link">
                                 <div class="info">
-                                    <h3 class="driver-name" style="padding-left: 10px;">
+                                    <h3 class="driver-name" style="padding-left: 10px; color: <?php echo htmlspecialchars($driver['team_color']); ?>;">
                                         <?php echo htmlspecialchars($driver['first_name'] . ' ' . $driver['last_name']); ?>
                                     </h3>
                                     <div class="driver-details">
@@ -85,6 +85,9 @@
                 <?php else: ?>
                     <p>Geen coureurs beschikbaar om weer te geven.</p>
                 <?php endif; ?>
+                <div>
+                    <a href="all_drivers.php"><button>All drivers ever</button></a>
+                </div>
             </div>
         </section>
     </main>

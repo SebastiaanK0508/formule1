@@ -153,7 +153,7 @@ if ($team) {
                     <p class="team-detail-item"><strong>X-Wins: </strong> <?php echo htmlspecialchars($team['total_victories']); ?></p>
                 <?php endif; ?>
                 <?php if (isset($team['is_active'])): ?>
-                    <p class="team-detail-item"><strong>Status: </strong> <?php echo $team['is_active'] ? 'Actief' : 'Inactief'; ?></p>
+                    <p class="team-detail-item"><strong>Status: </strong> <?php echo $team['is_active'] ? 'Active' : 'Inactief'; ?></p>
                 <?php endif; ?>
                 <?php if (!empty($team['description'])): ?>
                     <p class="team-detail-item"><strong>description: </strong> <?php echo nl2br(htmlspecialchars($team['description'])); ?></p>
