@@ -59,7 +59,7 @@
             <h2 class="page-heading">DRIVERS FORMULA 1 2025</h2>
         </section>
 
-<section class="f1-section">
+        <section class="f1-section">
             <div class="data-card-row">
                 <?php if (!empty($allDrivers)): ?>
                     <?php foreach ($allDrivers as $driver): ?>
