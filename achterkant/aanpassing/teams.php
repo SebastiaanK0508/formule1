@@ -3,12 +3,21 @@
 <head>
 <?php
 require_once 'db_config.php';
-$drivers = [];
+$search = $_GET['search'] ?? '';
+$teams = [];
 try {
-    $stmt = $pdo->query("SELECT team_id, full_team_name, base_location, team_principal FROM teams ORDER BY full_team_name ASC");
-    $drivers = $stmt->fetchAll();
+    if (!empty($search)) {
+        $sql = "SELECT team_id, full_team_name, base_location, team_principal FROM teams WHERE full_team_name LIKE :search OR base_location LIKE :search OR team_principal LIKE :search ORDER BY full_team_name ASC";
+        $stmt = $pdo->prepare($sql);
+        $stmt->bindValue(':search', '%' . $search . '%');
+    } else {
+        $sql = "SELECT team_id, full_team_name, base_location, team_principal FROM teams ORDER BY full_team_name ASC";
+        $stmt = $pdo->prepare($sql);
+    }
+    $stmt->execute();
+    $teams = $stmt->fetchAll(PDO::FETCH_ASSOC);
 } catch (\PDOException $e) {
-    echo "Fout bij het ophalen van coureurs: " . $e->getMessage();
+    echo "Fout bij het ophalen van teams: " . $e->getMessage();
 }
 
 // Verwerk het formulier als het is ingediend
@@ -56,7 +65,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['team_id'])) {
         <section class="menu-section">
             <div class="sidebar-menu">
                 <h3 class="menu-kop">Website Beheer</h3>
-                <a class="menu-link" href="../dashboard.html">Dashboard</a>
+                <a class="menu-link" href="../dashboard.php">Dashboard</a>
                 <a class="menu-link" href="home.php">Homepage</a>
                 <a class="menu-link" href="news.php">News</a>
                 <a class="menu-link" href="schedule.php">Schedule</a>
@@ -69,10 +78,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['team_id'])) {
             <div class="headerhoofdpagina">
                 <h2 class="main-title">Teams</h2>
             </div>
-            <div>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
                 <div>
                     <a href="add/add-team.php"><button class="achterkantbutton">Add Team</button></a>
-                    <a href="../dashboard.html"><button class="achterkantbutton">Dashboard</button></a>
+                    <a href="../dashboard.php"><button class="achterkantbutton">Dashboard</button></a>
+                </div>
+                <div>
+                    <form method="GET" action="teams.php" style="display: inline-block;">
+                        <input type="text" name="search" placeholder="Zoek op naam, locatie..." value="<?php echo htmlspecialchars($search); ?>" style="padding: 8px; border-radius: 6px; border: 1px solid #ccc;">
+                        <button type="submit" class="achterkantbutton">Zoek</button>
+                        <a href="teams.php" class="achterkantbutton" style="text-decoration: none;">Reset</a>
+                    </form>
                 </div>
             </div>
             <div>
@@ -86,12 +102,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['team_id'])) {
                         </tr>
                     </thead>
                         <tbody>
-                            <?php if (!empty($drivers)): ?>
-                                <?php foreach ($drivers as $driver): ?>
-                                    <tr data-driver-id="<?php echo htmlspecialchars($driver['team_id']); ?>">
-                                        <td><?php echo htmlspecialchars($driver['full_team_name']); ?></td>
-                                        <td><?php echo htmlspecialchars($driver['base_location']); ?></td>
-                                        <td><?php echo htmlspecialchars($driver['team_principal']); ?></td>
+                            <?php if (!empty($teams)): ?>
+                                <?php foreach ($teams as $team): ?>
+                                    <tr data-team-id="<?php echo htmlspecialchars($team['team_id']); ?>">
+                                        <td><?php echo htmlspecialchars($team['full_team_name']); ?></td>
+                                        <td><?php echo htmlspecialchars($team['base_location']); ?></td>
+                                        <td><?php echo htmlspecialchars($team['team_principal']); ?></td>
                                     </tr>
                                 <?php endforeach; ?>
                                 <?php else: ?>
@@ -109,10 +125,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['team_id'])) {
 
             tableRows.forEach(row => {
                 row.addEventListener('dblclick', function() {
-                    const driverId = this.dataset.driverId;
-                    if (driverId) {
+                    const teamId = this.dataset.teamId;
+                    if (teamId) {
                         // Stuur de gebruiker door naar de detailpagina met de driver_id
-                        window.location.href = 'team-details.php?id=' + driverId;
+                        window.location.href = 'team-details.php?id=' + teamId;
                     }
                 });
             });

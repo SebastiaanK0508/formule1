@@ -1,51 +1,62 @@
 <?php
 require_once 'db_config.php';
 
-$sql_drivers = "
-    SELECT
-        d.driver_id,
-        d.first_name,
-        d.last_name,
-        t.team_name,
-        SUM(ps.points) AS total_points
-    FROM
-        drivers d
-    JOIN
-        teams t ON d.team_name = t.team_name
-    JOIN
-        race_results rr ON d.driver_id = rr.driver_id
-    JOIN
-        points_system ps ON rr.position = ps.position
-    GROUP BY
-        d.driver_id, d.first_name, d.last_name, t.team_name
-    ORDER BY
-        total_points DESC, d.last_name ASC;
-";
+$driver_standings = [];
+$team_standings = [];
+$availableYears = [];
+$selectedYear = null;
 
-$stmt_drivers = $pdo->query($sql_drivers);
-$driver_standings = $stmt_drivers->fetchAll(PDO::FETCH_ASSOC);
+// Haal alle unieke jaren op uit de race_results tabel
+try {
+    $stmt = $pdo->query("SELECT DISTINCT race_year FROM race_results ORDER BY race_year DESC");
+    $availableYears = $stmt->fetchAll(PDO::FETCH_COLUMN);
+} catch (\PDOException $e) {
+    echo "Fout bij het ophalen van jaren: " . $e->getMessage();
+}
 
-$sql_teams = "
-    SELECT
-        t.team_id,
-        t.team_name,
-        SUM(ps.points) AS total_points
-    FROM
-        teams t
-    JOIN
-        drivers d ON t.team_name = d.team_name -- Weer de join via team_name
-    JOIN
-        race_results rr ON d.driver_id = rr.driver_id
-    JOIN
-        points_system ps ON rr.position = ps.position
-    GROUP BY
-        t.team_id, t.team_name
-    ORDER BY
-        total_points DESC, t.team_name ASC;
-";
+// Bepaal welk jaar geselecteerd is
+if (isset($_GET['year']) && in_array($_GET['year'], $availableYears)) {
+    $selectedYear = $_GET['year'];
+} elseif (!empty($availableYears)) {
+    $selectedYear = $availableYears[0]; // Toon het meest recente jaar als standaard
+}
 
-$stmt_teams = $pdo->query($sql_teams);
-$team_standings = $stmt_teams->fetchAll(PDO::FETCH_ASSOC);
+if ($selectedYear) {
+    try {
+        // Query voor coureursstanden per jaar
+        $sql_drivers = "
+            SELECT d.driver_id, d.first_name, d.last_name, t.team_name, SUM(rr.points) AS total_points
+            FROM race_results rr
+            JOIN drivers d ON rr.driver_id = d.driver_id
+            LEFT JOIN teams t ON d.team_id = t.team_id
+            WHERE rr.race_year = :year
+            GROUP BY d.driver_id, d.first_name, d.last_name, t.team_name
+            ORDER BY total_points DESC, d.last_name ASC;
+        ";
+        $stmt_drivers = $pdo->prepare($sql_drivers);
+        $stmt_drivers->bindParam(':year', $selectedYear, PDO::PARAM_INT);
+        $stmt_drivers->execute();
+        $driver_standings = $stmt_drivers->fetchAll(PDO::FETCH_ASSOC);
+
+        // Query voor teamstanden per jaar
+        $sql_teams = "
+            SELECT t.team_id, t.team_name, SUM(rr.points) AS total_points
+            FROM race_results rr
+            JOIN drivers d ON rr.driver_id = d.driver_id
+            JOIN teams t ON d.team_id = t.team_id
+            WHERE rr.race_year = :year
+            GROUP BY t.team_id, t.team_name
+            ORDER BY total_points DESC, t.team_name ASC;
+        ";
+        $stmt_teams = $pdo->prepare($sql_teams);
+        $stmt_teams->bindParam(':year', $selectedYear, PDO::PARAM_INT);
+        $stmt_teams->execute();
+        $team_standings = $stmt_teams->fetchAll(PDO::FETCH_ASSOC);
+
+    } catch (\PDOException $e) {
+        echo "Fout bij het ophalen van standen: " . $e->getMessage();
+    }
+}
 
 ?>
 <!DOCTYPE html>
@@ -76,7 +87,7 @@ $team_standings = $stmt_teams->fetchAll(PDO::FETCH_ASSOC);
         <section class="menu-section">
             <div class="sidebar-menu">
                 <h3 class="menu-kop">Website Beheer</h3>
-                <a class="menu-link" href="../dashboard.html">Dashboard</a>
+                <a class="menu-link" href="../dashboard.php">Dashboard</a>
                 <a class="menu-link" href="home.php">Homepage</a>
                 <a class="menu-link" href="news.php">News</a>
                 <a class="menu-link" href="schedule.php">Schedule</a>
@@ -86,10 +97,26 @@ $team_standings = $stmt_teams->fetchAll(PDO::FETCH_ASSOC);
             </div>
         </section>
         <section class="main-content-panel">
-           <div>
+           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
                 <div>
                     <a href="add/add-result.php"><button class="achterkantbutton">Add Result</button></a>
                     <a href="../dashboard.html"><button class="achterkantbutton">Dashboard</button></a>
+                </div>
+                <div>
+                    <form method="GET" action="standings.php" class="year-selector">
+                        <label for="year-select">Selecteer jaar:</label>
+                        <select name="year" id="year-select" onchange="this.form.submit()" style="padding: 8px; border-radius: 6px; border: 1px solid #ccc;">
+                            <?php if (empty($availableYears)): ?>
+                                <option>Geen data</option>
+                            <?php else: ?>
+                                <?php foreach ($availableYears as $year): ?>
+                                    <option value="<?php echo htmlspecialchars($year); ?>" <?php echo ($year == $selectedYear) ? 'selected' : ''; ?>>
+                                        <?php echo htmlspecialchars($year); ?>
+                                    </option>
+                                <?php endforeach; ?>
+                            <?php endif; ?>
+                        </select>
+                    </form>
                 </div>
             </div>
 

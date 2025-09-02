@@ -3,11 +3,23 @@
 <head>
     <?php
 require_once 'db_config.php';
-
+$search = $_GET['search'] ?? '';
 $drivers = [];
 try {
-    $stmt = $pdo->query("SELECT driver_id, first_name, last_name, driver_number, team_name FROM drivers ORDER BY driver_number ASC");
-    $drivers = $stmt->fetchAll();
+    if (!empty($search)) {
+        $sql = "SELECT d.driver_id, d.first_name, d.last_name, d.driver_number, t.team_name 
+                FROM drivers d 
+                LEFT JOIN teams t ON d.team_id = t.team_id 
+                WHERE d.first_name LIKE :search OR d.last_name LIKE :search OR t.team_name LIKE :search
+                ORDER BY d.driver_number ASC";
+        $stmt = $pdo->prepare($sql);
+        $stmt->bindValue(':search', '%' . $search . '%');
+    } else {
+        $sql = "SELECT d.driver_id, d.first_name, d.last_name, d.driver_number, t.team_name FROM drivers d LEFT JOIN teams t ON d.team_id = t.team_id ORDER BY d.driver_number ASC";
+        $stmt = $pdo->prepare($sql);
+    }
+    $stmt->execute();
+    $drivers = $stmt->fetchAll(PDO::FETCH_ASSOC);
 } catch (\PDOException $e) {
     echo "Fout bij het ophalen van coureurs: " . $e->getMessage();
 }
@@ -55,7 +67,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['driver_id'])) {
         <section class="menu-section">
             <div class="sidebar-menu">
                 <h3 class="menu-kop">Website Beheer</h3>
-                <a class="menu-link" href="../dashboard.html">Dashboard</a>
+                <a class="menu-link" href="../dashboard.php">Dashboard</a>
                 <a class="menu-link" href="home.php">Homepage</a>
                 <a class="menu-link" href="news.php">News</a>
                 <a class="menu-link" href="schedule.php">Schedule</a>
@@ -68,10 +80,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['driver_id'])) {
             <div class="headerhoofdpagina">
                 <h2 class="main-title">Drivers</h2>
             </div>
-            <div>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
                 <div>
                     <a href="add/add-drivers.php"><button class="achterkantbutton">Add Driver</button></a>
-                    <a href="../dashboard.html"><button class="achterkantbutton">Dashboard</button></a>
+                    <a href="../dashboard.php"><button class="achterkantbutton">Dashboard</button></a>
+                </div>
+                <div>
+                    <form method="GET" action="drivers.php" style="display: inline-block;">
+                        <input type="text" name="search" placeholder="Zoek op naam of team..." value="<?php echo htmlspecialchars($search); ?>" style="padding: 8px; border-radius: 6px; border: 1px solid #ccc;">
+                        <button type="submit" class="achterkantbutton">Zoek</button>
+                        <a href="drivers.php" class="achterkantbutton" style="text-decoration: none;">Reset</a>
+                    </form>
                 </div>
             </div>
             <div>
@@ -92,7 +111,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['driver_id'])) {
                                         <td><?php echo htmlspecialchars($driver['first_name']); ?></td>
                                         <td><?php echo htmlspecialchars($driver['last_name']); ?></td>
                                         <td><?php echo htmlspecialchars($driver['driver_number']); ?></td>
-                                        <td><?php echo htmlspecialchars($driver['team_name']); ?></td>
+                                        <td><?php echo htmlspecialchars($driver['team_name'] ?? 'N/A'); ?></td>
                                     </tr>
                                 <?php endforeach; ?>
                                 <?php else: ?>

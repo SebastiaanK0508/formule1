@@ -29,7 +29,7 @@
         <section class="menu-section">
             <div class="sidebar-menu">
                 <h3 class="menu-kop">Website Beheer</h3>
-                <a class="menu-link" href="../dashboard.html">Dashboard</a>
+                <a class="menu-link" href="../dashboard.php">Dashboard</a>
                 <a class="menu-link" href="home.php">Homepage</a>
                 <a class="menu-link" href="news.php">News</a>
                 <a class="menu-link" href="schedule.php">Schedule</a>

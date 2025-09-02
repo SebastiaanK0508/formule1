@@ -1,11 +1,20 @@
 <?php
-// news.php - Overzicht van nieuwsartikelen
 require_once 'db_config.php';
 /** @var PDO $pdo */
 
+$search = $_GET['search'] ?? '';
+
 $news = [];
 try {
-    $stmt = $pdo->query("SELECT news_id, title, source, date FROM news ORDER BY date DESC");
+    if (!empty($search)) {
+        $sql = "SELECT news_id, title, source, date FROM news WHERE title LIKE :search OR source LIKE :search ORDER BY date DESC";
+        $stmt = $pdo->prepare($sql);
+        $stmt->bindValue(':search', '%' . $search . '%');
+    } else {
+        $sql = "SELECT news_id, title, source, date FROM news ORDER BY date DESC";
+        $stmt = $pdo->prepare($sql);
+    }
+    $stmt->execute();
     $news = $stmt->fetchAll(PDO::FETCH_ASSOC);
 } catch (\PDOException $e) {
     error_log("Fout bij het ophalen van nieuwsartikelen op news.php: " . $e->getMessage());
@@ -41,7 +50,7 @@ try {
         <section class="menu-section">
             <div class="sidebar-menu">
                 <h3 class="menu-kop">Website Beheer</h3>
-                <a class="menu-link" href="../dashboard.html">Dashboard</a>
+                <a class="menu-link" href="../dashboard.php">Dashboard</a>
                 <a class="menu-link" href="home.php">Homepage</a>
                 <a class="menu-link" href="news.php">News</a>
                 <a class="menu-link" href="schedule.php">Schedule</a>
@@ -58,6 +67,11 @@ try {
                 <div class="news-actions">
                     <a href="../dashboard.html" class="button achterkantbutton">Dashboard</a>
                     <a href="add/add-news.php" class="button achterkantbutton">Nieuws Toevoegen</a>
+                    <form method="GET" action="news.php" style="display: inline-block; margin-left: 1rem;">
+                        <input type="text" name="search" placeholder="Zoek op titel of bron..." value="<?php echo htmlspecialchars($search); ?>" style="padding: 8px; border-radius: 6px; border: 1px solid #ccc;">
+                        <button type="submit" class="achterkantbutton">Zoek</button>
+                        <a href="news.php" class="achterkantbutton" style="text-decoration: none;">Reset</a>
+                    </form>
                 </div>
                 <div>
                     <?php if (!empty($news)): ?>

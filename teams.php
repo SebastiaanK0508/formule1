@@ -1,13 +1,3 @@
-<?php
-    $json_file = 'achterkant/aanpassing/api-koppelingen/json/teams.json';
-    if (file_exists($json_file)) {
-        $json_data = file_get_contents($json_file);
-        $data = json_decode($json_data, true);
-    } else {
-        $data = [];
-        error_log("Fout: JSON-bestand niet gevonden op pad: " . $json_file);
-    }
-?>
 <!DOCTYPE html>
 <html lang="nl">
 <head>
@@ -21,11 +11,18 @@
 
     <?php
     require_once 'db_config.php';
-    /** @var PDO $pdo */
-    $allTeams = []; 
+    /** @var PDO $pdo */ 
+    $activeTeams = [];
+    $allHistoricalTeams = [];
     try {
+        // Haal alleen actieve teams op voor de bovenste sectie
         $stmt = $pdo->query("SELECT team_id, team_name, base_location, team_principal, team_color, full_team_name FROM teams WHERE is_active = TRUE ORDER BY team_name ASC");
-        $allTeams = $stmt->fetchAll();
+        $activeTeams = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        // Haal ALLE teams (actief en inactief) op voor de "All Teams Ever" sectie
+        $stmt_all = $pdo->query("SELECT team_id, full_team_name, base_location FROM teams ORDER BY full_team_name ASC");
+        $allHistoricalTeams = $stmt_all->fetchAll(PDO::FETCH_ASSOC);
+
     } catch (\PDOException $e) {
         error_log("Fout bij het ophalen van alle teams: " . $e->getMessage());
     }
@@ -51,15 +48,15 @@
         </section>
         <section class="f1-section">
             <div class="data-card-row">
-                <?php if (!empty($allTeams)): ?>
-                    <?php foreach ($allTeams as $team): ?>
+                <?php if (!empty($activeTeams)): ?>
+                    <?php foreach ($activeTeams as $team): ?>
                         <article class="data-card">
                             <a href="team-details.php?id=<?php echo htmlspecialchars($team['team_id']); ?>" class="team-link">
                                 <div class="info">
                                     <h3 class="team-name" style="color: <?php echo htmlspecialchars($team['team_color']); ?>; padding-left: 10px;">
                                         <?php echo htmlspecialchars($team['full_team_name']); ?>
                                     </h3>
-                                    <p><strong>Base:</strong> <?php echo htmlspecialchars($team['base_location']); ?></p>
+                                    <p><strong>Base:</strong> <?php echo htmlspecialchars($team['base_location'] ?? 'N/A'); ?></p>
                                     <p><strong>Team Principal:</strong> <?php echo htmlspecialchars($team['team_principal']); ?></p>
                                 </div>
                             </a>
@@ -79,15 +76,15 @@
                 </div>
             </div>
             <div class="data-card-row" id="history-team-row"> 
-                <?php if (!empty($data)): ?>
-                    <?php foreach ($data as $f1team): ?>
+                <?php if (!empty($allHistoricalTeams)): ?>
+                    <?php foreach ($allHistoricalTeams as $f1team): ?>
                         <article class="data-card filterable-card" 
-                            data-fullname="<?php echo htmlspecialchars(strtolower($f1team['fullName'])); ?>" 
-                            data-country="<?php echo htmlspecialchars(strtolower($f1team['countryId'])); ?>">
-                            <a href="team-details.php?id=<?php echo htmlspecialchars($f1team['id']); ?>" class="team-link">
+                            data-fullname="<?php echo htmlspecialchars(strtolower($f1team['full_team_name'])); ?>" 
+                            data-country="<?php echo htmlspecialchars(strtolower($f1team['base_location'] ?? '')); ?>">
+                            <a href="team-details.php?id=<?php echo htmlspecialchars($f1team['team_id']); ?>" class="team-link">
                                 <div class="info">
-                                    <h3 class="teamname"><strong></strong> <?php echo htmlspecialchars($f1team['fullName']); ?></h3>
-                                    <p><?php echo htmlspecialchars($f1team['countryId']); ?></p>
+                                    <h3 class="teamname"><strong></strong> <?php echo htmlspecialchars($f1team['full_team_name']); ?></h3>
+                                    <p><?php echo htmlspecialchars($f1team['base_location'] ?? 'N/A'); ?></p>
                                 </div>
                             </a>
                         </article>
