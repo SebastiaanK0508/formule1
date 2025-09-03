@@ -5,24 +5,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Formula 1 Season 2025 - Teams</title>
     <link rel="stylesheet" href="teamcss.css">
-    <!-- <link rel="stylesheet" href="style2.css"> -->
     <link rel="icon" type="image/x-icon" href="/afbeeldingen/logo/f1logobgrm.png">
     <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
-
     <?php
     require_once 'db_config.php';
     /** @var PDO $pdo */ 
     $activeTeams = [];
     $allHistoricalTeams = [];
     try {
-        // Haal alleen actieve teams op voor de bovenste sectie
         $stmt = $pdo->query("SELECT team_id, team_name, base_location, team_principal, team_color, full_team_name FROM teams WHERE is_active = TRUE ORDER BY team_name ASC");
         $activeTeams = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-        // Haal ALLE teams (actief en inactief) op voor de "All Teams Ever" sectie
         $stmt_all = $pdo->query("SELECT team_id, full_team_name, base_location FROM teams ORDER BY full_team_name ASC");
         $allHistoricalTeams = $stmt_all->fetchAll(PDO::FETCH_ASSOC);
-
     } catch (\PDOException $e) {
         error_log("Fout bij het ophalen van alle teams: " . $e->getMessage());
     }
@@ -31,7 +25,7 @@
 <body>
     <header>
         <div class="header-content container">
-            <h1 class="site-title">FORMULA 1 SEASON 2025</h1>
+            <h1 class="site-title">FORMULA 1</h1>
             <nav class="main-nav">
                 <a href="index.php">Home</a>
                 <a href="kalender.php">Schedule</a>
@@ -96,7 +90,6 @@
             </div>
         </section>
     </main>
-
     <footer>
         <div class="footer-content container">
             <p>&copy; 2025 Webbair. Alle rechten voorbehouden.</p>
@@ -115,44 +108,27 @@
 
     <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // 1. Selecteer de benodigde elementen
         const filterInput = document.getElementById('team-filter');
-        // JUIST: Selecteer alle kaartjes met de class .filterable-card
         const cards = document.querySelectorAll('.filterable-card'); 
-        // JUIST: Selecteer de container op basis van zijn unieke ID
         const dataCardRow = document.getElementById('history-team-row'); 
-        
-        // Selecteer het "geen resultaten" bericht voor na het filteren
         const noResultsMessage = document.getElementById('no-results-message');
-
-        // Veiligheidscheck: stop als cruciale elementen missen
         if (!filterInput || cards.length === 0 || !dataCardRow || !noResultsMessage) {
             console.error('Filter kan niet initialiseren. Controleer of de ID\'s/Classes correct in de HTML staan.');
             return; 
         }
-
-        // 2. Voeg de event listener toe aan het invoerveld
         filterInput.addEventListener('keyup', function() {
             const filterText = filterInput.value.toLowerCase().trim();
             let resultsFound = false;
-
-            // 3. Loop door alle kaartjes
             cards.forEach(card => {
                 const fullName = card.getAttribute('data-fullname'); 
                 const country = card.getAttribute('data-country');
-                
-                // Controleer of de filtertekst voorkomt in een van de attributen
                 if (fullName.includes(filterText) || country.includes(filterText)) {
-                    // Toon de kaart
                     card.style.display = 'block'; 
                     resultsFound = true;
                 } else {
-                    // Verberg de kaart
                     card.style.display = 'none';
                 }
             });
-
-            // 4. Toon of verberg het "geen resultaten" bericht
             if (resultsFound) {
                 noResultsMessage.style.display = 'none';
             } else {
