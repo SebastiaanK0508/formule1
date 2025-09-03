@@ -34,7 +34,7 @@ a {
   padding: 20px 0;
 }
 header {
-  background-color: var(--dark-bg);
+  background-color: black;
   color: #fff;
   padding: 10px 0;
   border-bottom: 5px solid var(--f1-red);

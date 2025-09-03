@@ -123,7 +123,7 @@ if ($team) {
 <body>
     <header>
         <div class="header-content container">
-            <h1 class="site-title">FORMULA 1 SEASON 2025</h1>
+            <h1 class="site-title">FORMULA 1</h1>
             <nav class="main-nav">
                 <a href="index.php">Home</a>
                 <a href="kalender.php">Schedule</a>
