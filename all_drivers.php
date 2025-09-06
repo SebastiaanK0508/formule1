@@ -54,7 +54,6 @@ if (file_exists($jsonFile)) {
                     <option value="youngest">Geboortedatum (Jongst eerst)</option>
                 </select>
             </div>
-            
             <ul class="driver-list" id="driverList">
                 <?php if (!empty($allDrivers)): ?>
                     <?php foreach ($allDrivers as $driver): ?>

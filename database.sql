@@ -510,3 +510,13 @@ ALTER TABLE teams ADD chassis VARCHAR(255) NULL;
 
 -- ALTER TABLE `race_results`
 --   ADD CONSTRAINT `race_results_ibfk_2` FOREIGN KEY (`driver_id`) REFERENCES `drivers` (`driver_id`);
+
+--NOG TOEVOEGEN HIERONDER
+
+CREATE TABLE contact (
+     ID INT PRIMARY KEY,
+     contact_name VARCHAR(255),
+     contact_email VARCHAR(255),
+     contact_subject VARCHAR(255),
+     contact_message TEXT
+     );
