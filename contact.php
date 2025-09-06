@@ -17,8 +17,6 @@ try {
     $stmt->bindParam(':contact_email', $contact_email);
     $stmt->bindParam(':contact_subject', $contact_subject);
     $stmt->bindParam(':contact_message', $contact_message);
-    var_dump($stmt);
-    die('123');
     $stmt->execute();
     $response['success'] = true;
     $response['message'] = 'Message succesvol verzonden!';
