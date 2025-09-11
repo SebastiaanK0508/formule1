@@ -124,14 +124,6 @@ if (!is_array($circuitDetails)) {
                         <img class="circuit-main-map" src="<?php echo htmlspecialchars($circuitDetails['map_url']); ?>" alt="Kaart van <?php echo htmlspecialchars($circuitDetails['grandprix']); ?>">
                     </div>
                 <?php endif; ?>
-                <div class="f1-section">
-                    <?php if (!empty($circuitDetails['description'])): ?>
-                        <div class="info">
-                            <h3>Track Description</h3>
-                            <p><?php echo nl2br(htmlspecialchars($circuitDetails['description'])); ?></p>
-                        </div>
-                    <?php endif; ?>
-                </div>
                 <div class="back-link-container">
                     <a href="kalender.php" class="back-link">Back to Schedule</a>
                 </div>
