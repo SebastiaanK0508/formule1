@@ -1,5 +1,5 @@
 <?php
-// delete_news.php - Nieuwsartikel verwijderen
+
 require_once 'db_config.php';
 /** @var PDO $pdo */
 
@@ -9,7 +9,6 @@ if (isset($_GET['news_id'])) {
     $newsIdToDelete = $_GET['news_id'];
 
     try {
-        // Controleer eerst of het nieuwsartikel bestaat om onnodige query's te voorkomen
         $stmtCheck = $pdo->prepare("SELECT news_id FROM news WHERE news_id = :news_id");
         $stmtCheck->bindParam(':news_id', $newsIdToDelete, PDO::PARAM_INT);
         $stmtCheck->execute();

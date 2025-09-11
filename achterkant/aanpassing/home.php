@@ -1,4 +1,11 @@
 <!DOCTYPE html>
+<?php
+session_start();
+if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
+    header('Location: ../index.html');
+    exit;
+}
+?>
 <html lang="nl">
 <head>
     <meta charset="UTF-8">

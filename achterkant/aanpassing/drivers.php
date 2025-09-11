@@ -2,6 +2,11 @@
 <html lang="nl">
 <head>
     <?php
+    session_start();
+if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
+    header('Location: ../index.html');
+    exit;
+}
 require_once 'db_config.php';
 $search = $_GET['search'] ?? '';
 $drivers = [];

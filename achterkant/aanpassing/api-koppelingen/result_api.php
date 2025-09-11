@@ -1,4 +1,5 @@
 <?php
+
 require_once 'db_config.php';
 /** @var PDO $pdo */ 
 
