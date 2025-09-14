@@ -7,19 +7,16 @@ if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
 require_once 'db_config.php';
 
 $pdo = null;
-$circuitDetails = null; // Voor de details van het circuit
-$message = ''; // Voor succes- of foutmeldingen
+$circuitDetails = null;
+$message = '';
 
 try {
     $pdo = new PDO($dsn, $user, $pass, $options);
 } catch (\PDOException $e) {
     die("Verbindingsfout: " . $e->getMessage());
 }
-
-// Haal de circuit_key op uit de URL (GET parameter)
 $circuitKey = isset($_GET['key']) ? htmlspecialchars($_GET['key']) : null;
 
-// Als het een POST-verzoek is, probeer dan de gegevens bij te werken
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && $circuitKey) {
     try {
         $title = $_POST['title'] ?? '';
@@ -36,7 +33,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $circuitKey) {
         $highlights = $_POST['highlights'] ?? null;
         $calendarOrder = $_POST['calendar_order'] ?? null; // Nieuwe kolom
 
-        // --- UPDATE query voor circuits tabel ---
         $sql = "UPDATE circuits SET
                     title = :title,
                     grandprix = :grandprix,
@@ -50,7 +46,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $circuitKey) {
                     lap_record = :lap_record,
                     description = :description,
                     highlights = :highlights,
-                    calendar_order = :calendar_order -- Nieuwe kolom
+                    calendar_order = :calendar_order
                 WHERE circuit_key = :circuit_key";
 
         $stmt = $pdo->prepare($sql);
@@ -67,12 +63,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $circuitKey) {
         $stmt->bindParam(':lap_record', $lapRecord);
         $stmt->bindParam(':description', $description);
         $stmt->bindParam(':highlights', $highlights);
-        $stmt->bindParam(':calendar_order', $calendarOrder, PDO::PARAM_INT); // Nieuwe kolom
-        $stmt->bindParam(':circuit_key', $circuitKey); // Gebruik de oorspronkelijke key voor de WHERE clausule
+        $stmt->bindParam(':calendar_order', $calendarOrder, PDO::PARAM_INT);
+        $stmt->bindParam(':circuit_key', $circuitKey);
 
         if ($stmt->execute()) {
             $message = "<p class='success-message'>Circuitgegevens succesvol bijgewerkt!</p>";
-            // Herlaad de circuitDetails na de update om de nieuwste gegevens te tonen
             $stmt = $pdo->prepare("SELECT * FROM circuits WHERE circuit_key = :circuit_key");
             $stmt->bindParam(':circuit_key', $circuitKey);
             $stmt->execute();
@@ -86,7 +81,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $circuitKey) {
     }
 }
 
-// Haal de circuit details op voor weergave (ook na een POST-update)
 if ($circuitKey && !$circuitDetails) {
     try {
         $stmt = $pdo->prepare("SELECT * FROM circuits WHERE circuit_key = :circuit_key");
@@ -104,7 +98,6 @@ if ($circuitKey && !$circuitDetails) {
     $message = "<p class='error-message'>Geen geldige circuit-sleutel opgegeven.</p>";
 }
 
-// Zorg ervoor dat $circuitDetails een array is, zelfs als er geen data is
 if (!is_array($circuitDetails)) {
     $circuitDetails = [];
 }
