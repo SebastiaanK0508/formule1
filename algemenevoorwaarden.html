@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Algemene Voorwaarden - Webbair Formule 1 Site</title>
+    <title>Algemene Voorwaarden - Formula 1 Site</title>
     <link rel="stylesheet" href="style2.css">
     <link rel="icon" type="image/x-icon" href="/afbeeldingen/logo/f1logobgrm.png">
     <style>
 
         h1 {
-            color: #d10000; /* Typische F1-kleur */
+            color: #d10000;
             text-align: center;
         }
         h2 {
@@ -31,12 +31,26 @@
         strong {
             color: #000;
         }
+        .language-switcher a {
+            text-decoration: none;
+            margin: 0 5px;
+            font-size: 24px;
+            filter: grayscale(100%);
+            transition: filter 0.2s ease;
+        }
+        .language-switcher a:hover {
+            filter: grayscale(0%);
+        }
+        .language-switcher .active-lang {
+            font-size: 24px;
+            margin: 0 5px;
+        }
     </style>
 </head>
 <body>
     <header>
         <div class="header-content container">
-            <h1 class="site-title">FORMULA 1 SEASON 2025</h1>
+            <h1 class="site-title">FORMULA 1</h1>
             <nav class="main-nav">
                 <a href="index.php">Home</a>
                 <a href="kalender.php">Schedule</a>
@@ -110,6 +124,10 @@
                 <a href="privacy.html">Privacy Beleid</a>
                 <a href="algemenevoorwaarden.html">Algemene Voorwaarden</a>
                 <a href="contact.html">Contact</a>
+            </div>
+            <div class="language-switcher">
+                <span class="active-lang" aria-label="Nederlandse taal">🇳🇱</span>
+                <a href="algemenevoorwaarden-en.html" aria-label="English language">🇬🇧</a>
             </div>
         </div>
     </footer>
