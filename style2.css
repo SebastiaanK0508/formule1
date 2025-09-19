@@ -973,3 +973,20 @@ footer {
   background-color: var(--f1-red);
   color: white;
 }
+.all_drivers_button {
+  background-color: var(--f1-red);
+  color: white;
+  display: flex;
+  justify-content: center;
+  padding: 10px;
+  width: 100%;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.all_drivers_button:hover {
+  transform: translateY(-5px); 
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}

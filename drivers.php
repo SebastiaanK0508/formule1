@@ -86,7 +86,7 @@
                     <p>Geen coureurs beschikbaar om weer te geven.</p>
                 <?php endif; ?>
                 <div>
-                    <a href="all_drivers.php"><button>All drivers ever</button></a>
+                    <a href="all_drivers.php"><button class="all_drivers_button">All drivers ever</button></a>
                 </div>
             </div>
         </section>
