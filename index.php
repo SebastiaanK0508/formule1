@@ -15,7 +15,8 @@
     <header>
         <div class="header-content container">
             <h1 id="site-title-header" class="site-title">FORMULA 1</h1>
-            <nav class="main-nav">
+            <button class="menu-toggle" aria-controls="main-nav-links" aria-expanded="false" aria-label="Toggle navigation">&#9776; </button>
+            <nav class="main-nav" id="main-nav-links" data-visible="false">
                 <a href="index.php" class="active">Home</a>
                 <a href="kalender.php">Schedule</a>
                 <a href="teams.php">Teams</a>
@@ -72,16 +73,16 @@
                     <tbody>
                         <?php foreach ($race_results as $result): ?>
                             <tr>
-                                <td style="border-left: 5px solid <?php echo htmlspecialchars($result['team_color']); ?>;">
+                                <td>
                                     <?php echo htmlspecialchars($result['position']); ?>
                                 </td>
                                 <td>
                                     <?php echo htmlspecialchars($result['driver_name']); ?>
                                 </td>
-                                <td>
+                                <td style="color: <?php echo htmlspecialchars($result['team_color']); ?>;">
                                     <?php echo htmlspecialchars($result['team_name']); ?>
                                 </td>
-                                <td style="border-right: 5px solid <?php echo htmlspecialchars($result['team_color']); ?>;">
+                                <td>
                                     <?php echo htmlspecialchars($result['lap_time_or_status']); ?>
                                 </td>
                             </tr>
@@ -112,8 +113,9 @@
             </div>
         </div>
     </footer>
+    <script src="mobiel_nav.js" defer></script> 
 
-    <script>
+        <script>
         <?php if ($nextGrandPrix): ?>
         const targetDateTime = new Date('<?php echo $targetDateTime; ?>');
         const countdownElement = document.getElementById('countdown');

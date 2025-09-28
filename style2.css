@@ -467,7 +467,7 @@ footer {
   color: #333;
   padding: 12px 20px;
   border-bottom: 1px solid var(--border-color-light);
-  font-size: 0.95em;
+  font-size: 1.55em;
   font-family: var(--font-heading);
 }
 
@@ -476,6 +476,7 @@ footer {
 }
 
 .data-table td:first-child {
+  font-size: 1.55em;
   font-weight: 700;
   color: #dc0000;
   text-align: center;
@@ -574,7 +575,6 @@ footer {
   background-color: #fff;
   border: 1px solid var(--border-color-light);
 }
-
 .result-table-container h4 {
   color: #333;
   font-family: 'Oswald', sans-serif;
@@ -584,46 +584,174 @@ footer {
   margin-bottom: 10px;
   border-bottom: 1px solid var(--border-color-light);
 }
+.menu-toggle {
+    display: none; 
+}
 @media (max-width: 768px) {
+    .container {
+        padding: 0 10px; 
+    }
   .data-table-container {
-      border-radius: 0;
-      box-shadow: none;
+    margin-left: -10px; 
+    margin-right: -10px;
+    width: calc(100% + 20px); 
+    border-radius: 0;
+    box-shadow: none;
+    padding: 0 10px;
+    overflow-x: auto; 
+    overflow-y: hidden; 
   }
   .data-table {
-      border: none;
-      width: 100%;
-      display: block;
-  }
-  .data-table thead, .data-table tbody, .data-table tr, .data-table th, .data-table td {
-      display: block;
+      width: 600px;
+      min-width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 20px;
+      display: table;
   }
   .data-table thead {
-      display: none; 
+      display: none; /* Herstel de desktop header */
   }
   .data-table tr {
-      margin-bottom: 15px;
-      border: 1px solid var(--border-color-light);
-      border-radius: 8px;
-      padding: 15px;
-      background-color: var(--card-bg);
-      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      display: table-row;
+      margin-bottom: 0;
+      border: none; 
+      border-radius: 0;
+      padding: 0;
+      box-shadow: none;
+      width: auto;
+      flex-direction: initial;
   }
-  .data-table td {
-      border-bottom: none;
-      position: relative;
-      padding-left: 50%; 
+  .data-table tbody {
+      display: flex;
+      width: 100%;
+      flex-direction: column;
+      align-items: center;
+  }
+  .data-table td, .data-table th {
+      display: table-cell;
+      padding: 12px 15px;
+      position: static;
       text-align: left;
+      padding-left: 15px !important;
+      width: auto;
   }
   .data-table td:before {
-      content: attr(data-label);
-      position: absolute;
-      left: 15px;
-      width: calc(50% - 30px);
-      white-space: nowrap;
-      font-weight: bold;
-      color: #333;
+      content: none; 
   }
+  /* .data-table tr td:last-child {
+      border-bottom: 1px solid var(--border-color-light, #eee);
+  } */
+  .menu-toggle {
+      display: block;
+      background: none;
+      border: none;
+      font-size: 2em;
+      color: var(--primary-color, #ff1e00); 
+      cursor: pointer;
+      z-index: 1001; 
+      padding: 5px;
+  }
+  .main-nav {
+      position: absolute;
+      top: 60px;
+      left: 0;
+      right: 0;
+      display: none;
+      flex-direction: column;
+      background-color: var(--header-bg, #1a1a1a);
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+      z-index: 1000;
+      padding: 10px 0;
+      min-height: calc(100vh - 60px); 
+  }
+  .main-nav[data-visible="true"] {
+      display: flex;
+  }
+  .main-nav a {
+      padding: 15px 20px;
+      text-align: left;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      width: 100%;
+      box-sizing: border-box;
+  }
+  .main-nav a:last-child {
+      border-bottom: none;
+  }
+  .page-header-section {
+      flex-direction: column; 
+      align-items: flex-start;
+      gap: 5px;
+      margin-bottom: 20px;
+  }
+  .result-row {
+    width: 100%;
+  }
+  .race-info-card {
+      padding: 15px;
+      border-radius: 8px;
+      background-color: var(--card-bg, #ffffff);
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      margin-bottom: 20px;
+  }
+  .footer-content {
+      flex-direction: column;
+      text-align: center;
+      gap: 10px;
+      padding: 15px 10px;
+  }
+  .footer-content .social-links {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+  }
+    .data-table-container {
+        margin-left: -10px; 
+        margin-right: -10px;
+        width: calc(100% + 20px); 
+        border-radius: 0;
+        box-shadow: none;
+        padding: 0; 
+    }
+    .data-table {
+        border: none;
+        width: 100%; 
+        display: block;
+        margin-bottom: 20px;
+    }
+    
+    .data-table tr {
+        width: 100%;
+        padding: 15px 10px;
+        box-sizing: border-box; 
+        margin-bottom: 15px;
+        background-color: var(--card-bg, #ffffff);
+        display: flex; 
+        flex-direction: column;
+    }
+    .data-table td {
+        position: relative;
+        padding: 10px 5px 10px 50%; 
+        text-align: center;
+        width: 100%;
+        box-sizing: border-box;
+    }
+  .data-table tr td:last-child {
+      border-bottom: none;
+      margin-bottom: 0;
+  }
+    .data-table td:before {
+        content: attr(data-label);
+        position: absolute;
+        left: 5px; 
+        width: 35%; 
+        font-weight: bold;
+        color: var(--label-color, #555);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis; 
+    }
 }
+
 .selection-container label {
     color: #ff0000;
     font-size: 1.3em;
@@ -784,18 +912,15 @@ footer {
   margin: 5px 0 0;
   color: #000000;
 }
-/* Algemene styling voor de detail sectie */
 .driver-details-container {
     background-color: #fff;
     padding: 2rem;
     border-radius: 8px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
-
 .detail-section {
     margin-bottom: 2rem;
 }
-
 .section-title {
     font-family: 'Oswald', sans-serif;
     font-size: 1.5rem;

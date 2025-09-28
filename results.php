@@ -16,7 +16,8 @@ require_once 'achterkant/aanpassing/api-koppelingen/result_api.php';
     <header>
         <div class="header-content container">
             <h1 class="site-title">FORMULA 1</h1>
-            <nav class="main-nav">
+            <button class="menu-toggle" aria-controls="main-nav-links" aria-expanded="false" aria-label="Toggle navigation">&#9776; </button>
+            <nav class="main-nav" id="main-nav-links" data-visible="false">
                 <a href="index.php">Home</a>
                 <a href="kalender.php">Schedule</a>
                 <a href="teams.php">Teams</a>
@@ -117,5 +118,6 @@ require_once 'achterkant/aanpassing/api-koppelingen/result_api.php';
             </div>
         </div>
     </footer>
+    <script src="mobiel_nav.js" defer></script> 
 </body>
 </html>

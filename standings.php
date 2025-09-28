@@ -2,18 +2,140 @@
 <html lang="nl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial=" initial-scale.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Formula 1 - Standings</title>
     <link rel="stylesheet" href="style2.css">
     <link rel="icon" type="image/x-icon" href="/afbeeldingen/logo/f1logobgrm.png">
     <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+
+    <style>
+        /* Variabelen for opmaak (indien nog niet in style2.css) */
+        :root {
+            --f1-red: #E10600;
+            --f1-dark-bg: #15151E;
+            --card-bg: #FFFFFF;
+            --text-color: #333333;
+        }
+
+        /* CRUCIALE FIX: Voorkom dat de gehele pagina horizontaal scrollt door de 100vw containers */
+        html, body {
+            overflow-x: hidden; 
+            width: 100%;
+        }
+
+        /* ==================================================== */
+        /* Desktop Stijlen */
+        /* ==================================================== */
+        .standings-grid {
+            display: flex;
+            gap: 20px; 
+            margin-top: 20px;
+        }
+
+        .standings-grid h4 {
+            /* Zorgt dat de koppen boven de tabel gecentreerd zijn op desktop */
+            text-align: center;
+            margin-bottom: 15px;
+        }
+
+        .standings-grid > .standings-table-container {
+            flex: 1; 
+            min-width: 0; 
+        }
+        
+        /* Scroll-functionaliteit en algemene styling */
+        .standings-grid .standings-table-container {
+            overflow-x: auto; /* Zorgt voor scrollen BINNEN de container */
+            border-radius: 12px; 
+            background-color: var(--card-bg, #FFFFFF);
+            padding: 20px; 
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+
+        .standings-grid .standings-table {
+            min-width: 500px; 
+            width: 100%;
+            border-collapse: collapse;
+            table-layout: fixed;
+            color: var(--text-color);
+            text-align: left; 
+        }
+
+        .standings-grid .standings-table th {
+            background-color: #f0f0f0;
+            color: var(--text-color);
+            text-transform: uppercase;
+        }
+        
+        /* ==================================================== */
+        /* Mobiele Weergave (@media max-width: 768px) */
+        /* ==================================================== */
+        @media (max-width: 768px) {
+            
+            /* De hoofdcontainer behoudt zijn padding */
+            .container {
+                padding: 0 10px; 
+            }
+            
+            /* De main tag hoeft nu geen overflow: hidden meer, want html/body fixeert dit al, 
+               maar we laten hem voor de zekerheid staan */
+            main {
+                overflow-x: hidden;
+            }
+            
+            main.container {
+                margin-top: 10px;
+            }
+            
+            /* Tekst centreren op mobiel (buiten de scrollende tabel) */
+            .page-heading, .standings-grid h4 {
+                text-align: center;
+            }
+
+            /* 1. LAYOUT: Stuur de Flexbox naar de kolomrichting */
+            .standings-grid {
+                flex-direction: column; 
+                gap: 15px;
+                width: 100%; 
+                margin-top: 10px;
+            }
+
+            /* 2. Containers forceren naar volledige schermbreedte (Breedte FIX) */
+            .standings-grid > .standings-table-container {
+                flex: none; 
+                
+                /* FIX: Gebruik viewport width om de breedte te forceren */
+                position: relative;
+                left: 50%;
+                right: 50%;
+                margin-left: -50vw;
+                margin-right: -50vw;
+                width: 100vw; 
+                
+                /* De interne padding voor de scroll-view en content. Belangrijk! */
+                padding: 15px 10px; 
+                
+                box-sizing: border-box; 
+                border-radius: 0; 
+                margin-bottom: 0 !important; 
+            }
+            
+            /* 3. TABEL: Zorg dat de tabel scrollbaar blijft binnen de container */
+            .standings-grid .standings-table {
+                min-width: 450px;
+                width: auto; 
+                table-layout: auto;
+            }
+        }
+    </style>
 
 </head>
 <body>
     <header>
         <div class="header-content container">
             <h1 class="site-title">FORMULA 1</h1>
-            <nav class="main-nav">
+            <button class="menu-toggle" aria-controls="main-nav-links" aria-expanded="false" aria-label="Toggle navigation">&#9776; </button>
+            <nav class="main-nav" id="main-nav-links" data-visible="false">
                 <a href="index.php">Home</a>
                 <a href="kalender.php">Schedule</a>
                 <a href="teams.php">Teams</a>
@@ -68,11 +190,13 @@
     }
     function displayChampionshipStandings(drivers, constructors) {
         let html = '<div class="standings-grid">';
-        html += '<div class="data-table-container">'; 
+        
+        // Coureursklassement
+        html += '<div class="standings-table-container">'; 
         html += '<h4>Coureursklassement</h4>';
         if (drivers.length > 0) {
             html += `
-                <table class="data-table"> 
+                <table class="standings-table"> 
                     <thead>
                         <tr>
                             <th>Pos.</th>
@@ -101,11 +225,13 @@
             html += '<p>Geen coureursklassement beschikbaar op dit moment.</p>';
         }
         html += '</div>'; 
-        html += '<div class="data-table-container">';
+        
+        // Constructeursklassement
+        html += '<div class="standings-table-container">';
         html += '<h4>Constructeursklassement</h4>';
         if (constructors.length > 0) {
             html += `
-                <table class="data-table"> <thead>
+                <table class="standings-table"> <thead>
                         <tr>
                             <th>Pos.</th>
                             <th>Team</th>
@@ -138,5 +264,6 @@
     }
     fetchChampionshipStandings();
 </script>
+<script src="mobiel_nav.js" defer></script>
 </body>
 </html>
