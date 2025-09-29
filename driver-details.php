@@ -25,7 +25,7 @@ try {
             LOWER(REPLACE(CONCAT(d.first_name, '-', d.last_name), ' ', '')) = :slug
     ");
     $stmt->bindParam(':slug', $driverSlug);
-    $stmt->execute();
+    $stmt->execute();//ddddd
     $driver = $stmt->fetch(PDO::FETCH_ASSOC);
 
     if (!$driver) {
