@@ -52,7 +52,7 @@
         .standings-table .team-name-mobile-driver {
              display: table-cell; 
         }
-        @media (max-width: 768px) {
+        @media (max-width: 500px) {
             .standings-grid {
                 flex-direction: column; 
                 gap: 15px;

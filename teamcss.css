@@ -598,41 +598,198 @@ footer {
 .menu-toggle {
     display: none;
 }
-@media (max-width: 768px) {
-.menu-toggle {
-      display: block;
-      background: none;
-      border: none;
-      font-size: 2em;
-      color: var(--primary-color, #ff1e00); 
-      cursor: pointer;
-      z-index: 1001; 
-      padding: 5px;
+@media (max-width: 500px) {
+  .container {
+    padding: 0 10px; 
+  }
+  .data-table-container {
+    margin-left: -10px; 
+    margin-right: -10px;
+    width: calc(100% + 20px); 
+    border-radius: 0;
+    box-shadow: none;
+    padding: 0 10px;
+    overflow-x: auto; 
+    overflow-y: hidden; 
+  }
+  .data-table {
+    width: 600px;
+    min-width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+    display: table;
+  }
+  .data-table thead {
+    display: none;
+  }
+  .data-table tr {
+    display: table-row;
+    margin-bottom: 0;
+    border: none; 
+    border-radius: 0;
+    padding: 0;
+    box-shadow: none;
+    width: auto;
+    flex-direction: initial;
+  }
+  .data-table tbody {
+    display: flex;
+    width: 100%;
+    flex-direction: column;
+    align-items: center;
+  }
+  .data-table td, .data-table th {
+    display: table-cell;
+    padding: 12px 15px;
+    position: static;
+    text-align: left;
+    padding-left: 15px !important;
+    width: auto;
+  }
+  .data-table td:before {
+    content: none; 
+  }
+  .menu-toggle {
+    display: block;
+    background: none;
+    border: none;
+    font-size: 2em;
+    color: var(--primary-color, #ff1e00); 
+    cursor: pointer;
+    z-index: 1001; 
+    padding: 5px;
   }
   .main-nav {
-      position: absolute;
-      top: 60px;
-      left: 0;
-      right: 0;
-      display: none;
-      flex-direction: column;
-      background-color: var(--header-bg, #1a1a1a);
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
-      z-index: 1000;
-      padding: 10px 0;
-      min-height: calc(100vh - 60px); 
+    position: absolute;
+    top: 60px;
+    left: 0;
+    right: 0;
+    display: none;
+    flex-direction: column;
+    background-color: var(--header-bg, #1a1a1a);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+    z-index: 1000;
+    padding: 10px 0;
+    min-height: calc(100vh - 60px); 
   }
   .main-nav[data-visible="true"] {
-      display: flex;
+    display: flex;
   }
   .main-nav a {
-      padding: 15px 20px;
-      text-align: left;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-      width: 100%;
-      box-sizing: border-box;
+    padding: 15px 20px;
+    text-align: left;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    width: 100%;
+    box-sizing: border-box;
   }
   .main-nav a:last-child {
-      border-bottom: none;
+    border-bottom: none;
+  }
+  .page-header-section {
+    flex-direction: column; 
+    align-items: flex-start;
+    gap: 5px;
+    margin-bottom: 20px;
+  }
+  .result-row {
+    width: 100%;
+  }
+  .race-info-card {
+    padding: 15px;
+    border-radius: 8px;
+    background-color: var(--card-bg, #ffffff);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    margin-bottom: 20px;
+  }
+  .footer-content {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+  .footer-content p {
+    order: 3;
+    margin-top: 15px;
+  }
+  .social-links {
+    display: flex;
+    justify-content: center;
+    order: 1; 
+    width: 100%;
+  }
+  .footer-content .social-links:nth-of-type(2) {
+    order: 2;
+    margin-top: 10px;
+  }
+  .social-links a {
+    margin: 0 10px;
+  }
+  .data-table-container {
+    margin-left: -10px; 
+    margin-right: -10px;
+    width: calc(100% + 20px); 
+    border-radius: 0;
+    box-shadow: none;
+    padding: 0; 
+  }
+  .data-table {
+    border: none;
+    width: 100%; 
+    display: block;
+    margin-bottom: 20px;
+  }
+  .data-table tr {
+    width: 100%;
+    padding: 15px 10px;
+    box-sizing: border-box;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    background-color: var(--card-bg, #ffffff);
+    display: flex; 
+    flex-direction: column;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  }
+  .data-table td {
+    position: relative;
+    padding: 10px 5px 10px 50%; 
+    text-align: center;
+    width: 100%;
+    box-sizing: border-box;
+    border: none;
+  }
+  .data-table tr td:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+  }
+  .data-table td:before {
+    content: attr(data-label);
+    position: absolute;
+    left: 5px; 
+    width: 35%; 
+    font-weight: bold;
+    color: var(--label-color, #555);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis; 
+  }
+  .header-content {
+    flex-direction: row;
+    align-items: center;
+  }
+  .data-card-row {
+    display: flex;
+    flex-direction: row;
+    gap: 15px;
+    padding: 1px;
+    width: 100%;
+    height: 30%;
+  }
+  .data-card {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    width: 50%;
+  }
+  .info p {
+    display: none;
   }
 }
