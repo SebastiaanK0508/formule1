@@ -76,22 +76,23 @@
                 display: none;
             }
             .standings-table tr {
-                display: block;
+                display: flex;
+                flex-wrap: wrap; 
                 margin-bottom: 15px;
                 border: 1px solid var(--border-color-light);
                 border-left: 5px solid var(--f1-red);
                 border-radius: 6px;
                 padding: 10px;
                 box-shadow: 0 1px 3px rgba(0,0,0,0.5);
+                position: relative;
             }
             .standings-table td {
-                display: block;
                 border: none;
                 padding: 5px 0;
                 text-align: left;
             }
             .standings-table .team-name-mobile-driver {
-                 display: none; 
+                    display: none; 
             }
             .standings-table tr td:first-child {
                 font-weight: 700;
@@ -99,27 +100,23 @@
                 margin-bottom: 5px;
                 padding-bottom: 5px;
                 border-bottom: 1px dashed var(--border-color-light);
-                display: inline-block;
                 width: 30px;
             }
-            .standings-table tr td:nth-child(2),
-            .standings-table tr td:nth-child(3) {
+            .standings-table tr td:nth-child(2) {
                 font-size: 1em;
                 font-weight: 500;
-                display: inline-block;
                 margin-left: 10px;
+                flex-grow: 1; 
+                width: auto; 
             }
             .standings-table tr td:last-child {
-                float: right;
                 font-weight: 700;
                 color: var(--f1-red);
                 font-size: 1.1em;
-                margin-top: -1.5em;
+                position: absolute; 
+                top: 10px;
+                right: 10px;
             }
-            .standings-table tr:has(td:nth-child(2):not(:last-child)) td:nth-child(2) {
-                width: calc(100% - 100px);
-            }
-
         }
     </style>
 
