@@ -31,14 +31,19 @@ require_once 'achterkant/aanpassing/api-koppelingen/result_api.php';
         <section class="page-header-section">
             <h2 class="page-heading">Results</h2>
         </section>
-    
+        <a href="selection.php?year=<?php echo htmlspecialchars($selected_year); ?>" class="mobile-selection-button" aria-label="Selecteer Race of Jaar">
+            Selecteer Race / Jaar
+        </a>
         <section class="result-container">
             <?php if ($error_message): ?>
             <div class="error-message">
                 <?php echo $error_message; ?>
             </div>
             <?php else: ?>
-                <div class="selection-container">
+                
+
+
+                <div class="selection-container desktop-selection">
                     <form action="results.php" method="get">
                         <label for="year">Select a Year</label>
                         <select id="year" name="year" onchange="this.form.submit()">
@@ -62,7 +67,6 @@ require_once 'achterkant/aanpassing/api-koppelingen/result_api.php';
                         <p>Geen races gevonden</p>
                     <?php endif; ?>
                 </div>
-
                 <section class="results-container">
                     <div class="results-grid">
                             <?php if (empty($race_results)): ?>
@@ -74,28 +78,26 @@ require_once 'achterkant/aanpassing/api-koppelingen/result_api.php';
                                 <p><strong>Location:</strong> <?php echo htmlspecialchars($race_details['location']); ?>, <?php echo htmlspecialchars($race_details['country']); ?></p>
                                 <p><strong>Date:</strong> <?php echo htmlspecialchars((new DateTime($race_details['date']))->format('d-m-Y')); ?></p>
                             </div>
-                            <div class="result-table-container">
-                                <table class="data-table">
-                                    <thead>
-                                        <tr>
-                                            <th>Pos</th>
-                                            <th>Driver</th>
-                                            <th>Team</th>
-                                            <th>Time / Status</th>
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Pos</th>
+                                        <th>Driver</th>
+                                        <th>Team</th>
+                                        <th>Time / Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <?php foreach ($race_results as $result): ?>
+                                        <tr style="border-left: 5px solid <?php echo htmlspecialchars($result['team_color'] ?? '#CCCCCC'); ?>;">
+                                            <td class="position"><?php echo htmlspecialchars($result['position']); ?></td>
+                                            <td class="driver-name"><?php echo htmlspecialchars($result['driver_name']); ?></td>
+                                            <td style="color: <?php echo htmlspecialchars($result['team_color'] ?? '#CCCCCC'); ?>;" class="team-name"><?php echo htmlspecialchars($result['team_name']); ?></td>
+                                            <td class="lap-time-status"><?php echo htmlspecialchars($result['lap_time_or_status']); ?></td>
                                         </tr>
-                                    </thead>
-                                    <tbody>
-                                        <?php foreach ($race_results as $result): ?>
-                                            <tr style="border-left: 5px solid <?php echo htmlspecialchars($result['team_color'] ?? '#CCCCCC'); ?>;">
-                                                <td class="position"><?php echo htmlspecialchars($result['position']); ?></td>
-                                                <td class="driver-name"><?php echo htmlspecialchars($result['driver_name']); ?></td>
-                                                <td style="color: <?php echo htmlspecialchars($result['team_color'] ?? '#CCCCCC'); ?>;" class="team-name"><?php echo htmlspecialchars($result['team_name']); ?></td>
-                                                <td class="lap-time-status"><?php echo htmlspecialchars($result['lap_time_or_status']); ?></td>
-                                            </tr>
-                                        <?php endforeach; ?>
-                                    </tbody>
-                                </table>
-                            </div>
+                                    <?php endforeach; ?>
+                                </tbody>
+                            </table>
                             <?php endif; ?>
                         <?php endif; ?>
                     </div>

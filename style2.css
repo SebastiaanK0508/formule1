@@ -386,6 +386,9 @@ footer {
   .social-links a {
     margin: 0 8px;
   }
+  .results-container {
+    max-width: 90%;
+  }
 }
 
 @media (max-width: 480px) {
@@ -1153,4 +1156,67 @@ footer {
 .all_drivers_button:hover {
   transform: translateY(-5px); 
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+.selection-container.desktop-selection {
+  display: none; 
+}
+.mobile-selection-button {
+  display: block; 
+  text-align: center;
+  padding: 15px 20px;
+  margin: 20px 0;
+  background-color: var(--border-color-light);
+  color: rgb(0, 0, 0);
+  text-decoration: none;
+  font-weight: 700;
+  text-transform: uppercase;
+  border-radius: 8px;
+  transition: background-color 0.3s;
+  font-family: 'Oswald', sans-serif;
+  letter-spacing: 1px;
+  font-size: 1.1em;
+  border: none;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+.mobile-selection-button:hover {
+  background-color: #ff1e18;
+}
+.selection-page-main .selection-container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 15px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+}
+.selection-page-main .race-link-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.selection-page-main .race-link-list a {
+  display: block;
+  padding: 12px;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  text-align: left;
+  text-decoration: none;
+  color: #333;
+  font-weight: 500;
+  transition: background-color 0.2s, border-color 0.2s;
+}
+
+.selection-page-main .race-link-list a:hover {
+    background-color: hsl(2, 100%, 44%);
+    color: white;
+    border-color: var(--f1-red);
+}
+@media (min-width: 769px) {
+    .mobile-selection-button {
+        display: none;
+    }
+    .selection-container.desktop-selection {
+        display: flex; 
+    }
 }
