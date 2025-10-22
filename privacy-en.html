@@ -4,152 +4,193 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Privacy Policy - Webbair Formula 1 Site</title>
-    <link rel="stylesheet" href="style2.css">
     <link rel="icon" type="image/x-icon" href="/afbeeldingen/logo/f1logobgrm.png">
     <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'sans': ['Roboto', 'sans-serif'],
+                        'oswald': ['Oswald', 'sans-serif'],
+                    },
+                    colors: {
+                        'f1-red': '#E10600', 
+                        'f1-black': '#15151E', 
+                        'f1-gray': '#3A3A40',
+                        'f1-dark-table': '#21212B',
+                    }
+                }
+            }
+        }
+    </script>
     <style>
-        h1 {
-            color: #d10000;
-            text-align: center;
+        /* Mobile menu styles */
+        @media (max-width: 767px) {
+            .main-nav[data-visible="false"] {
+                display: none;
+            }
+            .main-nav {
+                position: absolute;
+                top: 100%;
+                left: 0;
+                right: 0;
+                background-color: #15151E;
+                box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+                padding: 1rem;
+                display: flex;
+                flex-direction: column;
+                z-index: 40;
+                border-top: 1px solid #E10600;
+            }
+            .main-nav a {
+                padding: 0.5rem 0;
+            }
         }
-        h2 {
-            color: #555;
-            border-bottom: 2px solid #d10000;
-            padding-bottom: 5px;
-            margin-top: 30px;
-        }
-        p {
-            margin-bottom: 15px;
-        }
-        ul {
-            list-style-type: disc;
-            margin-left: 20px;
-        }
-        li {
-            margin-bottom: 10px;
-        }
-        strong {
-            color: #000;
-        }
-        /* Nieuwe CSS voor de taal-icoontjes in de footer */
-        .language-switcher a {
-            text-decoration: none;
-            margin: 0 5px;
-            font-size: 24px;
-            filter: grayscale(100%);
+        
+        /* Language Switcher Styling */
+        .language-switcher a, .language-switcher .active-lang {
             transition: filter 0.2s ease;
+        }
+        .language-switcher a {
+            filter: grayscale(100%);
         }
         .language-switcher a:hover {
             filter: grayscale(0%);
         }
-        .language-switcher .active-lang {
-            font-size: 24px;
-            margin: 0 5px;
-        }
     </style>
 </head>
-<body>
-    <header>
-        <div class="header-content container">
-            <h1 class="site-title">FORMULA 1</h1>
-            <button class="menu-toggle" aria-controls="main-nav-links" aria-expanded="false" aria-label="Toggle navigation">&#9776; </button>
-            <nav class="main-nav" id="main-nav-links" data-visible="false">
-                <a href="index.php">Home</a>
-                <a href="kalender.php">Schedule</a>
-                <a href="teams.php">Teams</a>
-                <a href="drivers.php">Drivers</a>
-                <a href="results.php">Results</a>
-                <a href="standings.php">Standings</a>
+<body class="bg-f1-black text-gray-100 font-sans min-h-screen flex flex-col">
+    
+    <header class="bg-black shadow-lg sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center header-content container">
+            <h1 class="text-3xl font-oswald font-extrabold text-f1-red tracking-widest site-title">
+                FORMULA 1
+            </h1>
+            <button class="md:hidden text-2xl text-f1-red hover:text-white menu-toggle" 
+                    aria-controls="main-nav-links" aria-expanded="false" aria-label="Toggle navigation">&#9776; </button>
+            <nav class="main-nav md:flex md:space-x-8 text-sm font-semibold uppercase tracking-wider" id="main-nav-links" data-visible="false">
+                <a href="index.php" class="block py-2 px-3 md:p-0 hover:text-f1-red transition duration-150">Home</a>
+                <a href="kalender.php" class="block py-2 px-3 md:p-0 hover:text-f1-red transition duration-150">Schedule</a>
+                <a href="teams.php" class="block py-2 px-3 md:p-0 hover:text-f1-red transition duration-150">Teams</a>
+                <a href="drivers.php" class="block py-2 px-3 md:p-0 hover:text-f1-red transition duration-150">Drivers</a>
+                <a href="results.php" class="block py-2 px-3 md:p-0 hover:text-f1-red transition duration-150">Results</a>
+                <a href="standings.php" class="block py-2 px-3 md:p-0 hover:text-f1-red transition duration-150">Standings</a>
             </nav>
         </div>
     </header>
-    <main class="container">
-        <div class="page-header-section">
-            <h1 class="page-heading">Privacy Policy</h1>
-        </div>
-        <h2>Privacybeleid</h2>
-        <p>
-            This privacy policy describes how your personal data is collected, used, and shared when you visit or use the <strong>Webbair</strong> Formula 1 website. We value your privacy and ensure that the personal data you share with us is handled carefully and confidentially.
-        </p>
+    
+    <main class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 mt-8 flex-grow container">
         
-        <h2>1. Data Collected</h2>
-        <p>
-            We collect two types of data:
-        </p>
-        <ul>
-            <li><strong>Automatically Collected Data:</strong> When you visit the Website, we automatically collect certain information about your device, such as your IP address, browser type, internet provider, and the pages you view. This information is collected via cookies and log files and is used for the administration and security of the Website and for analytical purposes to improve the user experience.</li>
-            <li><strong>Data You Provide:</strong> This is data you voluntarily provide to us, for example, through contact forms or other interactions on the site. This includes your name and email address.</li>
-        </ul>
+        <div class="page-header-section bg-f1-gray p-6 rounded-lg shadow-xl mb-8">
+            <h1 class="text-4xl font-oswald font-extrabold text-f1-red uppercase page-heading text-center">
+                Privacy Policy
+            </h1>
+        </div>
 
-        <h2>2. Use of Your Data</h2>
-        <p>
-            The collected data is used for the following purposes:
-        </p>
-        <ul>
-            <li>To maintain and improve the Website.</li>
-            <li>For analyzing website usage and behavior, so we can optimize our content.</li>
-            <li>To respond to your questions and requests via contact forms.</li>
-            <li>For security and fraud prevention.</li>
-        </ul>
+        <section class="bg-f1-gray p-6 rounded-lg shadow-xl text-gray-300 space-y-4">
+            <h2 class="text-2xl font-oswald font-bold text-white mt-0 pt-0 border-b-2 border-f1-red pb-2 mb-4">Privacy Policy</h2>
+            <p>
+                This privacy policy describes how your personal data is collected, used, and shared when you visit or use the **Webbair** Formula 1 website. We value your privacy and ensure that the personal data you share with us is handled carefully and confidentially.
+            </p>
+            
+            <h2 class="text-2xl font-oswald font-bold text-white border-b-2 border-f1-red pb-2 mt-8 mb-4">1. Data Collected</h2>
+            <p>
+                We collect two types of data:
+            </p>
+            <ul class="list-disc ml-5 space-y-3">
+                <li><strong class="text-f1-red font-semibold">Automatically Collected Data:</strong> When you visit the Website, we automatically collect certain information about your device, such as your IP address, browser type, internet provider, and the pages you view. This information is collected via cookies and log files and is used for the administration and security of the Website and for analytical purposes to improve the user experience.</li>
+                <li><strong class="text-f1-red font-semibold">Data You Provide:</strong> This is data you voluntarily provide to us, for example, through contact forms or other interactions on the site. This includes your name and email address.</li>
+            </ul>
 
-        <h2>3. Sharing Your Data</h2>
-        <p>
-            We will not sell, rent, or otherwise disclose your personal data to third parties unless:
-        </p>
-        <ul>
-            <li>You have given us explicit permission to do so.</li>
-            <li>It is necessary for the provision of our services (for example, to hosting providers).</li>
-            <li>We are legally required to do so.</li>
-        </ul>
+            <h2 class="text-2xl font-oswald font-bold text-white border-b-2 border-f1-red pb-2 mt-8 mb-4">2. Use of Your Data</h2>
+            <p>
+                The collected data is used for the following purposes:
+            </p>
+            <ul class="list-disc ml-5 space-y-3">
+                <li>To maintain and improve the Website.</li>
+                <li>For analyzing website usage and behavior, so we can optimize our content.</li>
+                <li>To respond to your questions and requests via contact forms.</li>
+                <li>For security and fraud prevention.</li>
+            </ul>
 
-        <h2>4. Cookies</h2>
-        <p>
-            The Website uses cookies to improve the user experience. Cookies are small text files placed on your computer or mobile device. For example, they help us to make the website function better and to collect anonymized statistics about website visits. You can adjust your browser settings to refuse cookies, but this may affect the functionality of the Website.
-        </p>
+            <h2 class="text-2xl font-oswald font-bold text-white border-b-2 border-f1-red pb-2 mt-8 mb-4">3. Sharing Your Data</h2>
+            <p>
+                We will not sell, rent, or otherwise disclose your personal data to third parties unless:
+            </p>
+            <ul class="list-disc ml-5 space-y-3">
+                <li>You have given us explicit permission to do so.</li>
+                <li>It is necessary for the provision of our services (for example, to hosting providers).</li>
+                <li>We are legally required to do so.</li>
+            </ul>
 
-        <h2>5. Your Rights</h2>
-        <p>
-            In accordance with the General Data Protection Regulation (GDPR), you have several rights regarding your personal data:
-        </p>
-        <ul>
-            <li><strong>Right to access:</strong> You can submit a request to see what personal data we hold about you.</li>
-            <li><strong>Right to rectification:</strong> You can ask us to correct incorrect or incomplete data.</li>
-            <li><strong>Right to erasure:</strong> You have the right to have your data erased unless there is a legal basis to retain it.</li>
-            <li><strong>Right to object:</strong> You can object to the processing of your data.</li>
-        </ul>
-        <p>
-            To exercise any of these rights, you can contact us using the contact details provided at the bottom of this policy.
-        </p>
+            <h2 class="text-2xl font-oswald font-bold text-white border-b-2 border-f1-red pb-2 mt-8 mb-4">4. Cookies</h2>
+            <p>
+                The Website uses cookies to improve the user experience. Cookies are small text files placed on your computer or mobile device. For example, they help us to make the website function better and to collect anonymized statistics about website visits. You can adjust your browser settings to refuse cookies, but this may affect the functionality of the Website.
+            </p>
 
-        <h2>6. Changes to This Policy</h2>
-        <p>
-            This privacy policy may be changed from time to time. We recommend that you visit this page regularly to stay informed of any changes. Changes will take effect as soon as they are posted on the Website.
-        </p>
+            <h2 class="text-2xl font-oswald font-bold text-white border-b-2 border-f1-red pb-2 mt-8 mb-4">5. Your Rights</h2>
+            <p>
+                In accordance with the General Data Protection Regulation (GDPR), you have several rights regarding your personal data:
+            </p>
+            <ul class="list-disc ml-5 space-y-3">
+                <li><strong class="text-f1-red font-semibold">Right to access:</strong> You can submit a request to see what personal data we hold about you.</li>
+                <li><strong class="text-f1-red font-semibold">Right to rectification:</strong> You can ask us to correct incorrect or incomplete data.</li>
+                <li><strong class="text-f1-red font-semibold">Right to erasure:</strong> You have the right to have your data erased unless there is a legal basis to retain it.</li>
+                <li><strong class="text-f1-red font-semibold">Right to object:</strong> You can object to the processing of your data.</li>
+            </ul>
+            <p>
+                To exercise any of these rights, you can contact us using the contact details provided at the bottom of this policy.
+            </p>
 
-        <h2>7. Contact</h2>
-        <p>
-            For questions about this privacy policy or your personal data, you can contact Webbair via the contact form on our website.
-        </p>
+            <h2 class="text-2xl font-oswald font-bold text-white border-b-2 border-f1-red pb-2 mt-8 mb-4">6. Changes to This Policy</h2>
+            <p>
+                This privacy policy may be changed from time to time. We recommend that you visit this page regularly to stay informed of any changes. Changes will take effect as soon as they are posted on the Website.
+            </p>
+
+            <h2 class="text-2xl font-oswald font-bold text-white border-b-2 border-f1-red pb-2 mt-8 mb-4">7. Contact</h2>
+            <p>
+                For questions about this privacy policy or your personal data, you can contact Webbair via the contact form on our website.
+            </p>
+        </section>
+        
     </main>
-    <footer>
-        <div class="footer-content container">
-            <p>&copy; 2025 Webbair. All rights reserved.</p>
-            <div class="social-links">
-                <a href="#" aria-label="Facebook">Facebook</a>
-                <a href="#" aria-label="Twitter">X</a>
-                <a href="" aria-label="Instagram">Instagram</a>
+
+    <footer class="bg-black mt-12 py-6 border-t border-f1-red">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center footer-content container">
+            <p class="text-gray-400 text-sm mb-4">&copy; 2025 Webbair. All rights reserved.</p>
+            <div class="flex flex-wrap justify-center space-x-4 mb-4 social-links">
+                <a href="#" class="text-gray-400 hover:text-f1-red transition duration-150" aria-label="Facebook">Facebook</a>
+                <a href="#" class="text-gray-400 hover:text-f1-red transition duration-150" aria-label="Twitter">X</a>
+                <a href="" class="text-gray-400 hover:text-f1-red transition duration-150" aria-label="Instagram">Instagram</a>
             </div>
-            <div class="social-links">
-                <a href="privacy-en.html">Privacy Policy</a>
-                <a href="algemenevoorwaarden.html">Terms and Conditions</a>
-                <a href="contact.html">Contact</a>
+            <div class="flex flex-wrap justify-center space-x-4 text-xs social-links">
+                <a href="privacy-en.html" class="text-gray-500 hover:text-white transition duration-150">Privacy Policy</a>
+                <a href="algemenevoorwaarden.html" class="text-gray-500 hover:text-white transition duration-150">Terms and Conditions</a>
+                <a href="contact.html" class="text-gray-500 hover:text-white transition duration-150">Contact</a>
             </div>
-            <div class="language-switcher">
-                <a href="privacy.html" aria-label="Nederlandse taal">🇳🇱</a>
-                <span class="active-lang" aria-label="English language">🇬🇧</span>
+            <div class="language-switcher mt-4 text-white text-2xl">
+                <a href="privacy.html" class="hover:text-f1-red" aria-label="Nederlandse taal">🇳🇱</a>
+                <span class="active-lang text-f1-red font-bold" aria-label="English language">🇬🇧</span>
             </div>
         </div>
     </footer>
-    <script src="mobiel_nav.js" defer></script> 
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const nav = document.getElementById('main-nav-links');
+            const toggle = document.querySelector('.menu-toggle');
+
+            if (nav && toggle) {
+                toggle.addEventListener('click', () => {
+                    const isVisible = nav.getAttribute('data-visible') === 'true';
+                    nav.setAttribute('data-visible', String(!isVisible));
+                    toggle.setAttribute('aria-expanded', String(!isVisible));
+                });
+            }
+        });
+    </script> 
 </body>
 </html>

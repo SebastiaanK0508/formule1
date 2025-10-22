@@ -1,22 +1,23 @@
 <?php
-
 require_once 'db_config.php';
 /** @var PDO $pdo */
 $driverSlug = isset($_GET['slug']) ? $_GET['slug'] : '';
 
+// Redirect als er geen slug is
 if (empty($driverSlug)) {
     header('Location: index.php');
     exit;
 }
-$nameParts = explode('-', $driverSlug);
-$firstName = isset($nameParts[0]) ? ucfirst($nameParts[0]) : '';
-$lastName = isset($nameParts[1]) ? ucfirst($nameParts[1]) : '';
+
+$driver = null;
 try {
+    // Zoek de coureur op basis van de slug
     $stmt = $pdo->prepare("
         SELECT
             d.*,
             t.team_color,
-            t.team_name
+            t.team_name,
+            t.full_team_name
         FROM
             drivers d
         JOIN
@@ -25,116 +26,247 @@ try {
             LOWER(REPLACE(CONCAT(d.first_name, '-', d.last_name), ' ', '')) = :slug
     ");
     $stmt->bindParam(':slug', $driverSlug);
-    $stmt->execute();//ddddd
+    $stmt->execute();
     $driver = $stmt->fetch(PDO::FETCH_ASSOC);
 
+    // Als de coureur niet gevonden is
     if (!$driver) {
-        echo "<h1>Coureur niet gevonden!</h1>";
-        echo "<p>De coureur die u zoekt, is helaas niet gevonden.</p>";
-        echo "<p><a href='index.php'>Terug naar overzicht</a></p>";
+        // Gebruik de F1-styling voor de foutpagina
+        http_response_code(404);
+        ?>
+        <!DOCTYPE html>
+        <html lang="nl">
+        <head>
+            <meta charset="UTF-8">
+            <title>Coureur niet gevonden | F1</title>
+            <script src="https://cdn.tailwindcss.com"></script>
+            </head>
+        <body class="bg-f1-black text-gray-100 p-8">
+            <div class="max-w-xl mx-auto bg-f1-gray p-8 rounded-lg shadow-xl text-center">
+                <h1 class="text-3xl font-oswald text-f1-red mb-4">404 - Coureur niet gevonden!</h1>
+                <p class="text-gray-300 mb-6">De coureur die u zoekt, is helaas niet gevonden in onze database.</p>
+                <a href='drivers.php' class="text-white bg-f1-red py-2 px-4 rounded hover:bg-red-700 transition">Terug naar coureuroverzicht</a>
+            </div>
+        </body>
+        </html>
+        <?php
         exit;
     }
 } catch (PDOException $e) {
-    echo "Databasefout: " . $e->getMessage();
+    // Databasefout (gebruik F1-styling voor de foutpagina)
+    http_response_code(500);
+    ?>
+    <!DOCTYPE html>
+    <html lang="nl">
+    <head>
+        <meta charset="UTF-8">
+        <title>Databasefout | F1</title>
+        <script src="https://cdn.tailwindcss.com"></script>
+    </head>
+    <body class="bg-f1-black text-gray-100 p-8">
+        <div class="max-w-xl mx-auto bg-f1-gray p-8 rounded-lg shadow-xl text-center">
+            <h1 class="text-3xl font-oswald text-f1-red mb-4">Databasefout</h1>
+            <p class="text-gray-300 mb-6">Er is een fout opgetreden bij het laden van de gegevens.</p>
+            <p class="text-xs text-red-400">Details: <?php echo htmlspecialchars($e->getMessage()); ?></p>
+            <a href='drivers.php' class="text-white bg-f1-red py-2 px-4 rounded hover:bg-red-700 transition mt-4 inline-block">Terug naar coureuroverzicht</a>
+        </div>
+    </body>
+    </html>
+    <?php
     exit;
 }
+
+// Haal de teamkleur op of gebruik een fallback
+$teamColor = htmlspecialchars($driver['team_color'] ?? '#CCCCCC');
+
+// Hulpvariabelen voor leesbaarheid in de HTML
+$driverFirstName = htmlspecialchars($driver['first_name']);
+$driverLastName = htmlspecialchars($driver['last_name']);
 ?>
 <!DOCTYPE html>
 <html lang="nl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?php echo htmlspecialchars($driver['first_name'] . ' ' . $driver['last_name']); ?> | Driver Details</title>
-    <link rel="stylesheet" href="style2.css">
+    <title><?php echo $driverFirstName . ' ' . $driverLastName; ?> | Driver Details</title>
     <link rel="icon" type="image/x-icon" href="/afbeeldingen/logo/f1logobgrm.png">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Oswald:wght@400;600;700&display=swap" rel="stylesheet">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'sans': ['Roboto', 'sans-serif'],
+                        'oswald': ['Oswald', 'sans-serif'],
+                    },
+                    colors: {
+                        'f1-red': '#E10600', 
+                        'f1-black': '#15151E', 
+                        'f1-gray': '#3A3A40',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Mobile menu styles */
+        @media (max-width: 767px) {
+            .main-nav[data-visible="false"] {
+                display: none;
+            }
+            .main-nav {
+                position: absolute;
+                top: 100%;
+                left: 0;
+                right: 0;
+                background-color: #15151E;
+                box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+                padding: 1rem;
+                display: flex;
+                flex-direction: column;
+                z-index: 40;
+                border-top: 1px solid #E10600;
+            }
+            .main-nav a {
+                padding: 0.5rem 0;
+            }
+        }
+    </style>
 </head>
-<body>
-    <header>
-        <div class="header-content container">
-            <h1 class="site-title">FORMULA 1</h1>
-            <button class="menu-toggle" aria-controls="main-nav-links" aria-expanded="false" aria-label="Toggle navigation">&#9776; </button>
-            <nav class="main-nav" id="main-nav-links" data-visible="false">
-                <a href="index.php">Home</a>
-                <a href="kalender.php">Schedule</a>
-                <a href="teams.php">Teams</a>
-                <a href="drivers.php" class="active">Drivers</a>
-                <a href="results.php">Results</a>
-                <a href="standings.php">Standings</a>
+<body class="bg-f1-black text-gray-100 font-sans min-h-screen flex flex-col">
+    
+    <header class="bg-black shadow-lg sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center header-content container">
+            <h1 class="text-3xl font-oswald font-extrabold text-f1-red tracking-widest site-title">
+                FORMULA 1
+            </h1>
+            <button class="md:hidden text-2xl text-f1-red hover:text-white menu-toggle" 
+                    aria-controls="main-nav-links" aria-expanded="false" aria-label="Toggle navigation">
+                &#9776; 
+            </button>
+            <nav class="main-nav md:flex md:space-x-8 text-sm font-semibold uppercase tracking-wider" 
+                 id="main-nav-links" data-visible="false">
+                <a href="index.php" class="block py-2 px-3 md:p-0 hover:text-f1-red transition duration-150">Home</a>
+                <a href="kalender.php" class="block py-2 px-3 md:p-0 hover:text-f1-red transition duration-150">Schedule</a>
+                <a href="teams.php" class="block py-2 px-3 md:p-0 hover:text-f1-red transition duration-150">Teams</a>
+                <a href="drivers.php" class="block py-2 px-3 md:p-0 text-f1-red border-b-2 border-f1-red md:border-none active transition duration-150">Drivers</a>
+                <a href="results.php" class="block py-2 px-3 md:p-0 hover:text-f1-red transition duration-150">Results</a>
+                <a href="standings.php" class="block py-2 px-3 md:p-0 hover:text-f1-red transition duration-150">Standings</a>
             </nav>
         </div>
     </header>
-    <main class="container">
-        <div class="page-header-section">
-            <h1 class="page-heading"><?php echo htmlspecialchars($driver['first_name'] . ' ' . $driver['last_name']); ?></h1>
+    
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-8 flex-grow container">
+        
+        <div class="bg-f1-gray p-6 rounded-lg shadow-xl mb-8 page-header-section">
+            <h1 class="text-3xl md:text-5xl font-oswald font-extrabold uppercase text-white page-heading text-center">
+                <span style="color: <?php echo $teamColor; ?>;">#<?php echo htmlspecialchars($driver['driver_number']); ?></span> 
+                <?php echo $driverFirstName . ' ' . $driverLastName; ?>
+            </h1>
+            <p class="text-center text-xl text-gray-400 font-semibold mt-1"><?php echo htmlspecialchars($driver['full_team_name']); ?></p>
         </div>
 
-        <div class="driver-details-grid">
-            <div class="driver-image-container">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 driver-details-grid bg-f1-gray p-6 rounded-lg shadow-xl">
+            
+            <div class="md:col-span-2 driver-image-container">
                 <?php if (!empty($driver['image'])): ?>
-                    <img src="<?php echo htmlspecialchars($driver['image']); ?>" alt="<?php echo htmlspecialchars($driver['first_name'] . ' ' . $driver['last_name']); ?>" class="driver-image-details">
+                    <img src="<?php echo htmlspecialchars($driver['image']); ?>" 
+                         alt="<?php echo $driverFirstName . ' ' . $driverLastName; ?>" 
+                         class="w-full h-auto object-cover rounded-lg shadow-2xl driver-image-details">
+                <?php else: ?>
+                    <div class="w-full h-64 bg-gray-700 flex items-center justify-center rounded-lg text-gray-400">Geen afbeelding beschikbaar</div>
                 <?php endif; ?>
             </div>
             
-            <div class="driver-info-container">
-                <dl class="driver-details-list">
-                    <dt>Team:</dt>
-                    <dd><?php echo htmlspecialchars($driver['team_name']); ?></dd>
+            <div class="md:col-span-1 border-l-4 pl-4 driver-info-container" style="border-left-color: <?php echo $teamColor; ?>;">
+                <dl class="driver-details-list space-y-3">
+                    <div class="flex justify-between items-center">
+                        <dt class="font-bold text-gray-300">Team:</dt>
+                        <dd class="text-white font-semibold" style="color: <?php echo $teamColor; ?>;"><?php echo htmlspecialchars($driver['team_name']); ?></dd>
+                    </div>
 
-                    <dt>Driver Number: </dt>
-                    <dd>#<?php echo htmlspecialchars($driver['driver_number']); ?></dd>
+                    <div class="flex justify-between items-center border-t border-gray-700 pt-3">
+                        <dt class="font-bold text-gray-300">Driver Number:</dt>
+                        <dd class="text-white font-bold text-2xl">#<?php echo htmlspecialchars($driver['driver_number']); ?></dd>
+                    </div>
 
-                    <dt>nationality: </dt>
-                    <dd>
-                        <?php if (!empty($driver['flag_url'])): ?>
-                            <img src="<?php echo htmlspecialchars($driver['flag_url']); ?>" alt="Vlag" class="flag-icon">
-                        <?php endif; ?>
-                        <?php echo htmlspecialchars($driver['nationality']); ?>
-                    </dd>
+                    <div class="flex justify-between items-center border-t border-gray-700 pt-3">
+                        <dt class="font-bold text-gray-300">Nationaliteit:</dt>
+                        <dd class="text-white flex items-center">
+                            <?php if (!empty($driver['flag_url'])): ?>
+                                <img src="<?php echo htmlspecialchars($driver['flag_url']); ?>" alt="Vlag" class="flag-icon w-6 h-auto mr-2 rounded shadow-md">
+                            <?php endif; ?>
+                            <?php echo htmlspecialchars($driver['nationality']); ?>
+                        </dd>
+                    </div>
 
                     <?php if (!empty($driver['date_of_birth'])): ?>
-                        <dt>Date of Birth: </dt>
-                        <dd><?php echo htmlspecialchars(date('d-m-Y', strtotime($driver['date_of_birth']))); ?></dd>
+                        <div class="flex justify-between items-center border-t border-gray-700 pt-3">
+                            <dt class="font-bold text-gray-300">Geboortedatum:</dt>
+                            <dd class="text-white"><?php echo htmlspecialchars(date('d-m-Y', strtotime($driver['date_of_birth']))); ?></dd>
+                        </div>
                     <?php endif; ?>
                     
                     <?php if (isset($driver['career_points'])): ?>
-                        <dt>Career Points: </dt>
-                        <dd><?php echo htmlspecialchars(number_format($driver['career_points'], 1)); ?></dd>
+                        <div class="flex justify-between items-center border-t border-gray-700 pt-3">
+                            <dt class="font-bold text-gray-300">Carrièrepunten:</dt>
+                            <dd class="text-f1-red font-bold text-xl"><?php echo htmlspecialchars(number_format($driver['career_points'], 1, ',', '.')); ?></dd>
+                        </div>
                     <?php endif; ?>
                     
                     <?php if (isset($driver['championships_won'])): ?>
-                        <dt>championships won: </dt>
-                        <dd><?php echo htmlspecialchars($driver['championships_won']); ?></dd>
+                        <div class="flex justify-between items-center border-t border-gray-700 pt-3">
+                            <dt class="font-bold text-gray-300">Kampioenschappen:</dt>
+                            <dd class="text-white font-bold text-xl"><?php echo htmlspecialchars($driver['championships_won']); ?></dd>
+                        </div>
                     <?php endif; ?>
                 </dl>
             </div>
         </div>
 
         <?php if (!empty($driver['description'])): ?>
-            <div class="driver-description">
-                <h2>Over de coureur</h2>
-                <p><?php echo nl2br(htmlspecialchars($driver['description'])); ?></p>
+            <div class="bg-f1-gray p-6 rounded-lg shadow-xl mt-8 driver-description">
+                <h2 class="text-2xl font-oswald text-f1-red mb-4 border-b border-gray-700 pb-2">Over de coureur</h2>
+                <p class="text-gray-300 leading-relaxed"><?php echo nl2br(htmlspecialchars($driver['description'])); ?></p>
             </div>
         <?php endif; ?>
 
-        <div style="clear: both;"></div>
-        <a href="drivers.php" class="back-link">← Terug naar het coureuroverzicht</a>
+        <div class="mt-8 text-center">
+            <a href="drivers.php" class="bg-f1-red text-white py-3 px-6 rounded-lg font-bold uppercase tracking-wider hover:bg-red-700 transition back-link">
+                &larr; Terug naar het coureuroverzicht
+            </a>
+        </div>
     </main>
-    <footer>
-        <div class="footer-content container">
-            <p>&copy; 2025 Webbair. Alle rechten voorbehouden.</p>
-            <div class="social-links">
-                <a href="#" aria-label="Facebook">Facebook</a>
-                <a href="#" aria-label="Twitter">X</a>
-                <a href="" aria-label="Instagram">Instagram</a>
+    
+    <footer class="bg-black mt-12 py-6 border-t border-f1-red">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center footer-content container">
+            <p class="text-gray-400 text-sm mb-4">&copy; 2025 Webbair. Alle rechten voorbehouden.</p>
+            <div class="flex flex-wrap justify-center space-x-4 mb-4 social-links">
+                <a href="#" class="text-gray-400 hover:text-f1-red transition duration-150" aria-label="Facebook">Facebook</a>
+                <a href="#" class="text-gray-400 hover:text-f1-red transition duration-150" aria-label="Twitter">X</a>
+                <a href="" class="text-gray-400 hover:text-f1-red transition duration-150" aria-label="Instagram">Instagram</a>
             </div>
-            <div class="social-links">
-                <a href="privacy.html">Privacy Beleid</a>
-                <a href="algemenevoorwaarden.html">Algemene Voorwaarden</a>
-                <a href="contact.html">Contact</a>
+            <div class="flex flex-wrap justify-center space-x-4 text-xs social-links">
+                <a href="privacy.html" class="text-gray-500 hover:text-white transition duration-150">Privacy Beleid</a>
+                <a href="algemenevoorwaarden.html" class="text-gray-500 hover:text-white transition duration-150">Algemene Voorwaarden</a>
+                <a href="contact.html" class="text-gray-500 hover:text-white transition duration-150">Contact</a>
             </div>
         </div>
     </footer>
-<script src="mobiel_nav.js" defer></script>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const nav = document.getElementById('main-nav-links');
+            const toggle = document.querySelector('.menu-toggle');
+
+            toggle.addEventListener('click', () => {
+                const isVisible = nav.getAttribute('data-visible') === 'true';
+                nav.setAttribute('data-visible', String(!isVisible));
+                toggle.setAttribute('aria-expanded', String(!isVisible));
+            });
+        });
+    </script>
 </body>
 </html>

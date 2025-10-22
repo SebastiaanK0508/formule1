@@ -2,21 +2,26 @@
 require_once 'db_config.php';
 /** @var PDO $pdo */
 $circuitKey = isset($_GET['key']) ? htmlspecialchars($_GET['key']) : null;
+$circuitDetails = [];
+$message = '';
+
 if ($circuitKey) {
     try {
         $stmt = $pdo->prepare("SELECT * FROM circuits WHERE circuit_key = :circuit_key");
         $stmt->bindParam(':circuit_key', $circuitKey);
         $stmt->execute();
-        $circuitDetails = $stmt->fetch();
+        $circuitDetails = $stmt->fetch(PDO::FETCH_ASSOC);
+
         if (!$circuitDetails) {
-            $message = "<p class='error-message'>Circuit met sleutel " . htmlspecialchars($circuitKey) . " niet gevonden.</p>";
+            $message = "<p class='text-red-500'>Circuit met sleutel " . htmlspecialchars($circuitKey) . " niet gevonden.</p>";
         }
     } catch (\PDOException $e) {
-        $message = "<p class='error-message'>Fout bij het ophalen van circuitdetails: " . $e->getMessage() . "</p>";
+        $message = "<p class='text-red-500'>Fout bij het ophalen van circuitdetails: " . $e->getMessage() . "</p>";
     }
 } else {
-    $message = "<p class='error-message'>Geen geldige circuit-sleutel opgegeven.</p>";
+    $message = "<p class='text-red-500'>Geen geldige circuit-sleutel opgegeven.</p>";
 }
+
 if (!is_array($circuitDetails)) {
     $circuitDetails = [];
 }
@@ -27,130 +32,194 @@ if (!is_array($circuitDetails)) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Details Circuit: <?php echo htmlspecialchars($circuitDetails['grandprix'] ?? 'Onbekend'); ?></title>
-    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style2.css">
     <link rel="icon" type="image/x-icon" href="/afbeeldingen/logo/f1logobgrm.png">
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'sans': ['Roboto', 'sans-serif'],
+                        'oswald': ['Oswald', 'sans-serif'],
+                    },
+                    colors: {
+                        'f1-red': '#E10600', 
+                        'f1-black': '#15151E', 
+                        'f1-gray': '#3A3A40',
+                        'f1-dark-table': '#21212B',
+                    }
+                }
+            }
+        }
+    </script>
     <style>
-        .back-link-container {
-            text-align: center;
-            margin-top: 40px;
-        }
-        .back-link {
-            display: inline-block;
-            padding: 12px 25px;
-            background-color: #ff0000ff;
-            color: white;
-            text-decoration: none;
-            border-radius: 5px;
-            font-size: 1.1em;
-            transition: background-color 0.3s ease, transform 0.2s ease;
-        }
-        .back-link:hover {
-            background-color: #a10000ff;
-            transform: translateY(-2px);
+        /* Mobile menu styles */
+        @media (max-width: 767px) {
+            .main-nav[data-visible="false"] {
+                display: none;
+            }
+            .main-nav {
+                position: absolute;
+                top: 100%;
+                left: 0;
+                right: 0;
+                background-color: #15151E;
+                box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+                padding: 1rem;
+                display: flex;
+                flex-direction: column;
+                z-index: 40;
+                border-top: 1px solid #E10600;
+            }
+            .main-nav a {
+                padding: 0.5rem 0;
+            }
         }
     </style>
 </head>
-<body>
-    <header>
-        <div class="header-content container">
-            <h1 class="site-title">FORMULA 1</h1>
-            <button class="menu-toggle" aria-controls="main-nav-links" aria-expanded="false" aria-label="Toggle navigation">&#9776; </button>
-            <nav class="main-nav" id="main-nav-links" data-visible="false">
-                <a href="index.php">Home</a>
-                <a href="kalender.php" class="active">Schedule</a>
-                <a href="teams.php">Teams</a>
-                <a href="drivers.php">Drivers</a>
-                <a href="results.php">Results</a>
-                <a href="standings.php">Standings</a>
+<body class="bg-f1-black text-gray-100 font-sans min-h-screen flex flex-col">
+    
+    <header class="bg-black shadow-lg sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center header-content container">
+            <h1 class="text-3xl font-oswald font-extrabold text-f1-red tracking-widest site-title">
+                FORMULA 1
+            </h1>
+            <button class="md:hidden text-2xl text-f1-red hover:text-white menu-toggle" 
+                    aria-controls="main-nav-links" aria-expanded="false" aria-label="Toggle navigation">&#9776; </button>
+            <nav class="main-nav md:flex md:space-x-8 text-sm font-semibold uppercase tracking-wider" id="main-nav-links" data-visible="false">
+                <a href="index.php" class="block py-2 px-3 md:p-0 hover:text-f1-red transition duration-150">Home</a>
+                <a href="kalender.php" class="block py-2 px-3 md:p-0 text-f1-red border-b-2 border-f1-red md:border-none active transition duration-150">Schedule</a>
+                <a href="teams.php" class="block py-2 px-3 md:p-0 hover:text-f1-red transition duration-150">Teams</a>
+                <a href="drivers.php" class="block py-2 px-3 md:p-0 hover:text-f1-red transition duration-150">Drivers</a>
+                <a href="results.php" class="block py-2 px-3 md:p-0 hover:text-f1-red transition duration-150">Results</a>
+                <a href="standings.php" class="block py-2 px-3 md:p-0 hover:text-f1-red transition duration-150">Standings</a>
             </nav>
         </div>
     </header>
-    <main class="container">
-        <div class="">
-            <?php if ($circuitDetails && $circuitKey): ?>
-                <div class="page-header-section">
-                    <h1 class="page-heading"><?php echo htmlspecialchars($circuitDetails['grandprix'] ?? 'Onbekend'); ?></h1>
-                    <p><?php echo htmlspecialchars($circuitDetails['location'] ?? 'Locatie onbekend'); ?></p>
-                </div>
-                <section class="f1-section-pos">
-                    <div class="f1-section">
-                        <div class="container">
-                            <h3>Algemene Informatie</h3>
-                            <div class="detail-item">
-                                <strong>Circuit Name:</strong>
+    
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-8 flex-grow container">
+        
+        <?php if ($circuitDetails && $circuitKey): ?>
+            
+            <div class="page-header-section bg-f1-gray p-6 rounded-lg shadow-xl mb-8">
+                <h1 class="text-4xl md:text-5xl font-oswald font-extrabold text-f1-red uppercase page-heading">
+                    <?php echo htmlspecialchars($circuitDetails['grandprix'] ?? 'Onbekend'); ?>
+                </h1>
+                <p class="text-xl text-gray-300 mt-1"><?php echo htmlspecialchars($circuitDetails['location'] ?? 'Locatie onbekend'); ?></p>
+            </div>
+
+            <section class="bg-f1-gray p-6 rounded-lg shadow-xl mb-8 f1-section-pos">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    
+                    <div class="f1-section border-l-4 border-f1-red pl-4">
+                        <h3 class="text-2xl font-oswald font-bold text-white mb-4">Algemene Informatie</h3>
+                        <div class="space-y-3 text-gray-300">
+                            <div class="detail-item flex justify-between">
+                                <strong class="text-f1-red font-semibold">Circuit Naam:</strong>
                                 <span><?php echo htmlspecialchars($circuitDetails['title'] ?? 'N.v.t.'); ?></span>
                             </div>
-                            <div class="detail-item">
-                                <strong>First Year GP:</strong>
+                            <div class="detail-item flex justify-between">
+                                <strong class="text-f1-red font-semibold">Eerste GP Jaar:</strong>
                                 <span><?php echo htmlspecialchars($circuitDetails['first_gp_year'] ?? 'N.v.t.'); ?></span>
                             </div>
-
-                            <div class="detail-item">
-                                <strong>Race Date & Time:</strong>
+                            <div class="detail-item flex justify-between">
+                                <strong class="text-f1-red font-semibold">Datum & Tijd:</strong>
                                 <span><?php echo htmlspecialchars($circuitDetails['race_datetime'] ? date('d-m-Y H:i', strtotime($circuitDetails['race_datetime'])) : 'N.v.t.'); ?></span>
                             </div>
                         </div>
                     </div>
-                    <div class="f1-section">
-                        <div class="country-flag-circuit-position">
-                            <img class="country-flag" src="<?php echo htmlspecialchars($circuitDetails['country_flag_url'] ?? 'N.v.t.'); ?>" alt="Country_Flag">
-                        </div>
+                    
+                    <div class="country-flag-circuit-position flex items-center justify-center">
+                        <?php if (!empty($circuitDetails['country_flag_url'])): ?>
+                            <img class="country-flag max-h-40 w-full object-contain shadow-lg rounded-lg" 
+                                 src="<?php echo htmlspecialchars($circuitDetails['country_flag_url']); ?>" alt="Vlag van Land">
+                        <?php else: ?>
+                            <p class="text-gray-400">Vlag niet beschikbaar</p>
+                        <?php endif; ?>
                     </div>
-                    <div class="f1-section">
-                        <div class="container">
-                            <h3>Circuit Details</h3>
-                            <div class="detail-item">
-                                <strong>Laps:</strong>
+
+                    <div class="f1-section border-l-4 border-f1-red pl-4">
+                        <h3 class="text-2xl font-oswald font-bold text-white mb-4">Circuit Details</h3>
+                        <div class="space-y-3 text-gray-300">
+                            <div class="detail-item flex justify-between">
+                                <strong class="text-f1-red font-semibold">Ronden:</strong>
                                 <span><?php echo htmlspecialchars($circuitDetails['lap_count'] ?? 'N.v.t.'); ?></span>
                             </div>
-                            <div class="detail-item">
-                                <strong>Circuit Lenght:</strong>
+                            <div class="detail-item flex justify-between">
+                                <strong class="text-f1-red font-semibold">Circuit Lengte:</strong>
                                 <span><?php echo htmlspecialchars(number_format($circuitDetails['circuit_length_km'] ?? 0, 3, ',', '.')) . ' km'; ?></span>
                             </div>
-                            <div class="detail-item">
-                                <strong>Race Distance:</strong>
+                            <div class="detail-item flex justify-between">
+                                <strong class="text-f1-red font-semibold">Race Afstand:</strong>
                                 <span><?php echo htmlspecialchars(number_format($circuitDetails['race_distance_km'] ?? 0, 3, ',', '.')) . ' km'; ?></span>
                             </div>
-                            <div class="detail-item">
-                                <strong>Lap Record:</strong>
+                            <div class="detail-item flex justify-between">
+                                <strong class="text-f1-red font-semibold">Ronderecord:</strong>
                                 <span><?php echo htmlspecialchars($circuitDetails['lap_record'] ?? 'N.v.t.'); ?></span>
                             </div>
                         </div>
                     </div>
-                    
-                </section>
-                <?php if (!empty($circuitDetails['map_url'])): ?>
-                    <div class="circuit-image-display">
-                        <img class="circuit-main-map" src="<?php echo htmlspecialchars($circuitDetails['map_url']); ?>" alt="Kaart van <?php echo htmlspecialchars($circuitDetails['grandprix']); ?>">
-                    </div>
-                <?php endif; ?>
-                <div class="back-link-container">
-                    <a href="kalender.php" class="back-link">Back to Schedule</a>
                 </div>
-                <?php else: ?>
-                    <p class="message error-message">De details van dit circuit konden niet worden geladen of het circuit bestaat niet.</p>
-                    <div class="back-link-container">
-                        <a href="kalender.php" class="back-link">Terug naar Kalender</a>
-                    </div>
+            </section>
+            
+            <?php if (!empty($circuitDetails['map_url'])): ?>
+                <div class="circuit-image-display bg-f1-dark-table p-4 rounded-lg shadow-xl mb-8">
+                    <img class="circuit-main-map w-full h-auto object-contain rounded-lg" 
+                         src="<?php echo htmlspecialchars($circuitDetails['map_url']); ?>" 
+                         alt="Kaart van <?php echo htmlspecialchars($circuitDetails['grandprix']); ?>">
+                </div>
             <?php endif; ?>
-        </div>
-    </main>
-    <footer>
-        <div class="footer-content container">
-            <p>&copy; 2025 <a style="color: white;" target=_blank href="https://webbair.nl">Webbair</a>. Alle rechten voorbehouden.</p>
-            <div class="social-links">
-                <a href="#" aria-label="Facebook">Facebook</a>
-                <a href="#" aria-label="Twitter">X</a>
-                <a href="" aria-label="Instagram">Instagram</a>
+
+            <div class="back-link-container text-center mt-8 mb-4">
+                <a href="kalender.php" class="bg-f1-red text-white py-3 px-6 rounded-lg font-bold uppercase tracking-wider hover:bg-red-700 transition back-link">
+                    &larr; Terug naar Kalender
+                </a>
             </div>
-            <div class="social-links">
-                <a href="privacy.html">Privacy Beleid</a>
-                <a href="algemenevoorwaarden.html">Algemene Voorwaarden</a>
-                <a href="contact.html">Contact</a>
+
+        <?php else: ?>
+            <div class="bg-f1-gray p-6 rounded-lg shadow-xl text-center">
+                <p class="text-red-500 mb-6 message error-message"><?php echo $message; ?></p>
+                <div class="back-link-container">
+                    <a href="kalender.php" class="bg-f1-red text-white py-3 px-6 rounded-lg font-bold uppercase tracking-wider hover:bg-red-700 transition back-link">
+                        &larr; Terug naar Kalender
+                    </a>
+                </div>
+            </div>
+        <?php endif; ?>
+        
+    </main>
+
+    <footer class="bg-black mt-12 py-6 border-t border-f1-red">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center footer-content container">
+            <p class="text-gray-400 text-sm mb-4">&copy; 2025 <a class="text-white hover:text-f1-red transition" target=_blank href="https://webbair.nl">Webbair</a>. Alle rechten voorbehouden.</p>
+            <div class="flex flex-wrap justify-center space-x-4 mb-4 social-links">
+                <a href="#" class="text-gray-400 hover:text-f1-red transition duration-150" aria-label="Facebook">Facebook</a>
+                <a href="#" class="text-gray-400 hover:text-f1-red transition duration-150" aria-label="Twitter">X</a>
+                <a href="" class="text-gray-400 hover:text-f1-red transition duration-150" aria-label="Instagram">Instagram</a>
+            </div>
+            <div class="flex flex-wrap justify-center space-x-4 text-xs social-links">
+                <a href="privacy.html" class="text-gray-500 hover:text-white transition duration-150">Privacy Beleid</a>
+                <a href="algemenevoorwaarden.html" class="text-gray-500 hover:text-white transition duration-150">Algemene Voorwaarden</a>
+                <a href="contact.html" class="text-gray-500 hover:text-white transition duration-150">Contact</a>
             </div>
         </div>
     </footer>
-<script src="mobiel_nav.js" defer></script>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const nav = document.getElementById('main-nav-links');
+            const toggle = document.querySelector('.menu-toggle');
+
+            if (nav && toggle) {
+                toggle.addEventListener('click', () => {
+                    const isVisible = nav.getAttribute('data-visible') === 'true';
+                    nav.setAttribute('data-visible', String(!isVisible));
+                    toggle.setAttribute('aria-expanded', String(!isVisible));
+                });
+            }
+        });
+    </script>
 </body>
 </html>
