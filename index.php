@@ -1,17 +1,7 @@
 <?php
-    // LET OP: Deze logica blijft ongewijzigd, maar zorg ervoor dat
-    // $nextGrandPrix, $targetDateTime, $race_details, $race_results,
-    // en $error_message correct worden gedefinieerd in 'achterkant/aanpassing/api-koppelingen/1result_api.php'.
     require_once 'achterkant/aanpassing/api-koppelingen/1result_api.php';
-
-    // Mock-data toevoegen voor $targetDateTime als deze niet in de API zit
-    // Dit is nodig voor de JavaScript countdown
     if (isset($nextGrandPrix) && $nextGrandPrix && !isset($targetDateTime)) {
-        // Zorg ervoor dat de API-koppeling de variabele $targetDateTime zet. 
-        // Bijvoorbeeld:
-        // $targetDateTime = $nextGrandPrix['date'] . ' ' . $nextGrandPrix['time'];
-        // Of gebruik de datum/tijd van de API.
-        $targetDateTime = '2025-11-20T14:00:00+01:00'; // Voorbeeldwaarde als placeholder
+        $targetDateTime = '2025-11-20T14:00:00+01:00'; 
     }
 ?>
 <!DOCTYPE html>
@@ -33,19 +23,34 @@
                         'oswald': ['Oswald', 'sans-serif'],
                     },
                     colors: {
-                        'f1-red': '#E10600', // Officiële F1 Rood
-                        'f1-black': '#15151E', // Diep Zwart
-                        'f1-gray': '#3A3A40', // Donkergrijs
+                        'f1-red': '#E10600',
+                        'f1-black': '#15151E', 
+                        'f1-gray': '#3A3A40',
                     }
                 }
             }
         }
     </script>
     <style>
-        /* Dit is nodig voor de mobile menu toggle */
-        @media (max-width: 767px) {
+                @media (max-width: 767px) {
             .main-nav[data-visible="false"] {
                 display: none;
+            }
+            .main-nav {
+                position: absolute;
+                top: 100%;
+                left: 0;
+                right: 0;
+                background-color: #15151E;
+                box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+                padding: 1rem;
+                display: flex;
+                flex-direction: column;
+                z-index: 40;
+                border-top: 1px solid #E10600;
+            }
+            .main-nav a {
+                padding: 0.5rem 0;
             }
         }
     </style>
@@ -64,8 +69,8 @@
             </button>
             
             <nav class="main-nav md:flex md:space-x-8 text-sm font-semibold uppercase tracking-wider" 
-                 id="main-nav-links">
-                <a href="index.php" class="block py-2 px-3 md:p-0 text-f1-red hover:text-white transition duration-150 active">Home</a>
+                 id="main-nav-links" data-visible="false">
+                <a href="index.php" class="block py-2 px-3 md:p-0 text-f1-red border-b-2 border-f1-red md:border-none active transition duration-150">Home</a>
                 <a href="kalender.php" class="block py-2 px-3 md:p-0 hover:text-f1-red transition duration-150">Schedule</a>
                 <a href="teams.php" class="block py-2 px-3 md:p-0 hover:text-f1-red transition duration-150">Teams</a>
                 <a href="drivers.php" class="block py-2 px-3 md:p-0 hover:text-f1-red transition duration-150">Drivers</a>
@@ -180,9 +185,7 @@
             </div>
         </div>
     </footer>
-    
     <script>
-        // De functionaliteit van mobiel_nav.js nagebootst in dit script
         document.addEventListener('DOMContentLoaded', () => {
             const nav = document.getElementById('main-nav-links');
             const toggle = document.querySelector('.menu-toggle');
@@ -191,31 +194,9 @@
                 const isVisible = nav.getAttribute('data-visible') === 'true';
                 nav.setAttribute('data-visible', String(!isVisible));
                 toggle.setAttribute('aria-expanded', String(!isVisible));
-                
-                // Tailwind class voor mobiele weergave
-                if (!isVisible) {
-                    nav.classList.add('absolute', 'top-full', 'left-0', 'right-0', 'bg-black', 'shadow-xl', 'p-4', 'flex', 'flex-col', 'space-y-2', 'md:relative', 'md:flex-row', 'md:space-y-0');
-                } else {
-                    // Verwijder mobiele klassen als menu dicht gaat
-                    nav.classList.remove('absolute', 'top-full', 'left-0', 'right-0', 'bg-black', 'shadow-xl', 'p-4', 'flex', 'flex-col', 'space-y-2');
-                }
-            });
-            
-            // Verberg het menu bij grotere schermen
-            window.addEventListener('resize', () => {
-                if (window.innerWidth >= 768) {
-                    nav.setAttribute('data-visible', 'true'); // Show on desktop
-                    nav.classList.remove('absolute', 'top-full', 'left-0', 'right-0', 'bg-black', 'shadow-xl', 'p-4', 'flex', 'flex-col', 'space-y-2');
-                } else {
-                    // Reset visibility op mobiel om de toggle te laten werken
-                    if (nav.getAttribute('data-visible') === 'true') {
-                         nav.setAttribute('data-visible', 'false');
-                    }
-                }
             });
         });
-    </script>
-    
+    </script> 
     <script>
         <?php if ($nextGrandPrix && isset($targetDateTime)): ?>
         const targetDateTime = new Date('<?php echo $targetDateTime; ?>').getTime(); // Gebruik .getTime()

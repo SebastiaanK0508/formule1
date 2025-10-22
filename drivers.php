@@ -18,14 +18,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['driver_id'])) {
         $stmt->execute();
         $selectedDriver = $stmt->fetch();
         if (!$selectedDriver) {
-             // Foutmelding weggelaten uit HTML voor nu
         }
     } catch (\PDOException $e) {
         error_log("Fout bij het ophalen van geselecteerde coureurdetails: " . $e->getMessage());
-        // Foutmelding weggelaten uit HTML voor nu
     }
 }
-// De $team variabele is niet gedefinieerd in de PHP-code, de inline style is vervangen door Tailwind.
 ?>
 <!DOCTYPE html>
 <html lang="nl">
@@ -55,7 +52,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['driver_id'])) {
         }
     </script>
     <style>
-        /* Dit is nodig voor de mobile menu toggle */
         @media (max-width: 767px) {
             .main-nav[data-visible="false"] {
                 display: none;
