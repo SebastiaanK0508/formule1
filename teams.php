@@ -154,90 +154,98 @@ try {
         </div>
     </footer>
 
-    <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const filterInput = document.getElementById('team-filter');
-        const dataCardRow = document.getElementById('history-team-row');
-        const noResultsMessage = document.getElementById('no-results-message');
-        const loadingMessage = document.getElementById('loading-message');
-        let allHistoricalTeams = [];
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const filterInput = document.getElementById('team-filter');
+    const dataCardRow = document.getElementById('history-team-row');
+    const noResultsMessage = document.getElementById('no-results-message');
+    const loadingMessage = document.getElementById('loading-message');
+    let allHistoricalTeams = [];
 
-        // Function to render team cards with Tailwind styling
-        const renderTeamCards = (teams) => {
-            dataCardRow.innerHTML = '';
-            if (teams && Array.isArray(teams) && teams.length > 0) {
-                teams.forEach(team => {
-                    // **TAILWIND STYLING APPLIED HERE**
-                    const teamColor = team.team_color || '#CCCCCC';
-                    const cardHtml = `
-                        <article class="bg-f1-gray rounded-lg shadow-md transition-all duration-300 hover:shadow-xl hover:scale-[1.03] data-card filterable-card"
-                            data-fullname="${(team.full_team_name || '').toLowerCase()}"
-                            data-country="${(team.base_location || '').toLowerCase()}">
-                            <a href="team-details.php?id=${team.team_id || ''}" class="team-link block">
-                                <div class="p-4 border-l-4 h-full" style="border-left-color: ${teamColor};">
-                                    <div class="info">
-                                        <h3 class="team-name text-lg font-semibold text-white mb-1">
-                                            ${team.full_team_name || 'N/A'}
-                                        </h3>
-                                        <p class="text-sm text-gray-400">${team.base_location || 'N/A'}</p>
-                                    </div>
+    const renderTeamCards = (teams) => {
+        dataCardRow.innerHTML = '';
+        if (teams && Array.isArray(teams) && teams.length > 0) {
+            teams.forEach(team => {
+                // Gebruik de nieuwe veldnamen die uit de JSON komen
+                const teamId = team.id || '';
+                const fullName = team.fullName || 'Onbekend Team';
+                const baseLocation = team.countryId || 'N/A'; // Ga uit van countryId voor locatie
+                const teamColor = team.team_color || '#CCCCCC';
+                
+                const cardHtml = `
+                    <article class="bg-f1-gray rounded-lg shadow-md transition-all duration-300 hover:shadow-xl hover:scale-[1.03] data-card filterable-card"
+                        data-fullname="${(fullName).toLowerCase()}"
+                        data-country="${(baseLocation).toLowerCase()}">
+                        <a href="team-details.php?id=${teamId}" class="team-link block">
+                            <div class="p-4 border-l-4 h-full" style="border-left-color: ${teamColor};">
+                                <div class="info">
+                                    <h3 class="team-name text-lg font-semibold text-white mb-1">
+                                        ${fullName}
+                                    </h3>
+                                    <p class="text-sm text-gray-400">${baseLocation}</p>
                                 </div>
-                            </a>
-                        </article>
-                    `;
-                    dataCardRow.insertAdjacentHTML('beforeend', cardHtml);
-                });
-                noResultsMessage.style.display = 'none';
-            } else {
-                noResultsMessage.style.display = 'block';
-            }
-        };
-
-        const handleFilter = () => {
-            const filterText = filterInput.value.toLowerCase().trim();
-            const filteredTeams = allHistoricalTeams.filter(team => {
-                const fullName = (team.full_team_name || '').toLowerCase();
-                const country = (team.base_location || '').toLowerCase();
-                return fullName.includes(filterText) || country.includes(filterText);
+                            </div>
+                        </a>
+                    </article>
+                `;
+                dataCardRow.insertAdjacentHTML('beforeend', cardHtml);
             });
-            renderTeamCards(filteredTeams);
-        };
+            noResultsMessage.style.display = 'none';
+        } else {
+            noResultsMessage.style.display = 'block';
+        }
+    };
 
-        // Fetch data
-        fetch('/achterkant/aanpassing/api-koppelingen/json/teams.json')
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error(`HTTP error! Status: ${response.status}`);
-                }
-                return response.json();
-            })
-            .then(data => {
-                if (!Array.isArray(data)) {
-                    throw new Error('Fetched data is not an array.');
-                }
-                allHistoricalTeams = data;
-                loadingMessage.style.display = 'none';
-                renderTeamCards(allHistoricalTeams);
-                if (filterInput) {
-                    filterInput.addEventListener('keyup', handleFilter);
-                }
-            })
-            .catch(error => {
-                console.error('Error loading historical teams:', error);
-                loadingMessage.textContent = 'Kon de gegevens niet laden. Controleer of de JSON-structuur correct is.';
-                loadingMessage.style.color = '#E10600'; // f1-red
-            });
-            
-        // Mobile Nav Toggle (copied from other files)
-        const nav = document.getElementById('main-nav-links');
-        const toggle = document.querySelector('.menu-toggle');
-
-        toggle.addEventListener('click', () => {
-            const isVisible = nav.getAttribute('data-visible') === 'true';
-            nav.setAttribute('data-visible', String(!isVisible));
-            toggle.setAttribute('aria-expanded', String(!isVisible));
+    const handleFilter = () => {
+        const filterText = filterInput.value.toLowerCase().trim();
+        
+        // *** HIER IS DE CORRECTIE ***
+        // Gebruik nu 'fullName' en 'countryId' voor de filterlogica.
+        const filteredTeams = allHistoricalTeams.filter(team => {
+            const fullName = (team.fullName || '').toLowerCase();
+            const country = (team.countryId || '').toLowerCase();
+            return fullName.includes(filterText) || country.includes(filterText);
         });
+        
+        renderTeamCards(filteredTeams);
+    };
+
+    // Data Fetching
+    fetch('achterkant/aanpassing/api-koppelingen/json/teams.json')
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (!Array.isArray(data)) {
+                throw new Error('Fetched data is not an array.');
+            }
+            allHistoricalTeams = data;
+            loadingMessage.style.display = 'none';
+            renderTeamCards(allHistoricalTeams);
+            
+            // Filter event listener toevoegen NA het laden van de data
+            if (filterInput) {
+                filterInput.addEventListener('keyup', handleFilter);
+            }
+        })
+        .catch(error => {
+            console.error('Error loading historical teams:', error);
+            loadingMessage.textContent = 'Kon de gegevens niet laden. Controleer of de JSON-structuur en het pad correct zijn.';
+            loadingMessage.style.color = '#E10600'; 
+        });
+
+    // Mobile Nav Toggle
+    const nav = document.getElementById('main-nav-links');
+    const toggle = document.querySelector('.menu-toggle');
+    toggle.addEventListener('click', () => {
+        const isVisible = nav.getAttribute('data-visible') === 'true';
+        nav.setAttribute('data-visible', String(!isVisible));
+        toggle.setAttribute('aria-expanded', String(!isVisible));
     });
-    </script>
+});
+</script>
 </body>
 </html>

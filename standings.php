@@ -20,14 +20,17 @@
                         'f1-red': '#E10600', 
                         'f1-black': '#15151E', 
                         'f1-gray': '#3A3A40',
-                        'f1-table-header': '#21212B', // Iets lichter dan de achtergrond voor de kop
+                        'f1-table-header': '#21212B', 
                     }
                 }
             }
+            // De 'safelist' is verwijderd om de crash te voorkomen.
         }
     </script>
     <style>
-        /* Mobile Nav Toggle */
+        /* MINIMALE CUSTOM CSS VOOR STABILITEIT EN LAYOUT */
+        
+        /* Navigatie Toggle (blijft nodig i.c.m. data-attribute) */
         @media (max-width: 767px) {
             .main-nav[data-visible="false"] {
                 display: none;
@@ -48,114 +51,57 @@
             .main-nav a {
                 padding: 0.5rem 0;
             }
+            
+            /* Dwingt de mobiele kaart (tr) een padding aan de rechterkant om de absolute 'Punten' te huisvesten */
+            .standings-table tr {
+                padding-right: 5rem !important; /* Voldoende ruimte voor de punten */
+            }
+            
+            /* Toont de Teamnaam op een nieuwe regel onder de Coureursnaam (alleen op mobiel) */
+            .team-name-mobile-driver {
+                display: block !important; 
+                width: 100%; /* Forceert nieuwe regel */
+                order: 1; /* Zorgt dat het na de Coureursnaam komt */
+                margin-left: 48px; /* Lijn uit met Coureursnaam (40px pos + 8px margin/padding) */
+                font-size: 0.875rem; 
+                color: #B0B0B0;
+                padding-left: 0 !important; /* Reset padding van de td */
+            }
+
+            /* Verberg de desktop header op kleinere schermen (optioneel, kan ook lg:hidden) */
+            .standings-table thead {
+                display: none;
+            }
         }
 
-        /* CUSTOM CSS voor de Responsieve Tabellen (Tailwind Media Queries werken niet in de JS string) */
-        
-        /* Basis Table Styling voor Desktop */
+        /* Basis Desktop/Table Stijlen */
         .standings-table-container {
-            /* Vervangt de basis .standings-table-container CSS */
-            background-color: #3A3A40; /* f1-gray */
+            background-color: #3A3A40; 
             border-radius: 0.75rem;
             padding: 1.25rem;
             box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
         }
         .standings-table {
-            /* Vervangt de basis .standings-table CSS */
             width: 100%;
             border-collapse: collapse;
             table-layout: fixed;
-            color: #D1D5DB; /* gray-300 */
+            color: #D1D5DB;
             text-align: left;
         }
         .standings-table th {
-            /* Vervangt de basis .standings-table th CSS */
-            background-color: #21212B; /* f1-table-header */
+            background-color: #21212B;
             color: white;
             padding: 0.75rem 0.5rem;
             text-transform: uppercase;
-            font-size: 0.875rem; /* text-sm */
+            font-size: 0.875rem;
             font-family: 'Oswald', sans-serif;
         }
         .standings-table td {
-            /* Standaard cel styling */
             padding: 0.75rem 0.5rem;
-            border-bottom: 1px solid #3A3A40; /* f1-gray */
+            border-bottom: 1px solid #3A3A40;
         }
         .standings-table tbody tr:hover {
-            background-color: rgba(225, 6, 0, 0.1); /* f1-red met transparantie */
-        }
-
-        /* Responsive aanpassing voor Mobile (max-width: 768px, equivalent aan Tailwind's md breakpoint) */
-        @media (max-width: 767px) {
-            .standings-grid {
-                flex-direction: column; 
-                gap: 1rem;
-                width: 100%; 
-            }
-            .standings-table-container {
-                /* Verwijder padding en marges voor full width */
-                padding: 0;
-                box-shadow: none;
-            }
-            .standings-table {
-                /* Zorgt dat de container niet te ver uitloopt */
-                margin-left: -1rem;
-                margin-right: -1rem;
-                width: calc(100% + 2rem);
-            }
-            .standings-table thead {
-                /* Verberg de desktop header */
-                display: none;
-            }
-            .standings-table tr {
-                /* Maak er een card van */
-                display: flex;
-                flex-wrap: wrap; 
-                margin-bottom: 1rem;
-                background-color: #3A3A40; /* f1-gray */
-                border-left: 5px solid var(--f1-red); /* Dynamische F1-rode streep */
-                border-radius: 0.5rem;
-                padding: 0.75rem;
-                box-shadow: 0 2px 4px rgba(0,0,0,0.5);
-                position: relative;
-                width: 100%;
-            }
-            .standings-table td {
-                border: none;
-                padding: 0.25rem 0;
-                text-align: left;
-            }
-            
-            /* Positie */
-            .standings-table tr td:first-child {
-                font-weight: 700;
-                font-size: 1.5rem;
-                margin-bottom: 0.25rem;
-                width: 40px;
-                color: white;
-            }
-            /* Naam (Coureur/Team) */
-            .standings-table tr td:nth-child(2) {
-                font-size: 1rem;
-                font-weight: 500;
-                margin-left: 0.5rem;
-                flex-grow: 1; 
-                color: #E1E1E1;
-            }
-            /* Punten */
-            .standings-table tr td:last-child {
-                font-weight: 700;
-                color: #E10600; /* f1-red */
-                font-size: 1.25rem;
-                position: absolute; 
-                top: 0.75rem;
-                right: 0.75rem;
-            }
-            /* Team Name (alleen voor Coureurs, maar verbergen we sowieso) */
-            .team-name-mobile-driver {
-                display: none; 
-            }
+            background-color: rgba(225, 6, 0, 0.1);
         }
     </style>
 
@@ -217,7 +163,8 @@
     
     async function fetchChampionshipStandings() {
         try {
-            const response = await fetch('achterkant/aanpassing/api-koppelingen/standings_api.php');
+            // Dit moet verwijzen naar uw API endpoint
+            const response = await fetch('achterkant/aanpassing/api-koppelingen/standings_api.php'); 
             const data = await response.json();
             
             if (data.status === 'success') {
@@ -233,7 +180,6 @@
     }
 
     function displayChampionshipStandings(drivers, constructors) {
-        // Gebruik Tailwind classes direct in de HTML string
         let html = '<div class="flex flex-col lg:flex-row gap-6 standings-grid">';
         
         // DRIVERS STANDINGS CONTAINER
@@ -246,7 +192,7 @@
                         <tr>
                             <th class="rounded-tl-lg">Pos.</th>
                             <th>Driver</th>
-                            <th class="team-name-mobile-driver hidden lg:table-cell">Team</th>
+                            <th class="hidden lg:table-cell">Team</th>
                             <th class="rounded-tr-lg text-right">Points</th>
                         </tr>
                     </thead>
@@ -254,11 +200,23 @@
             `;
             drivers.forEach(driver => {
                 html += `
-                    <tr>
-                        <td class="font-oswald font-bold">${driver.position}</td>
-                        <td class="font-medium">${driver.given_name} ${driver.family_name}</td>
-                        <td class="team-name-mobile-driver hidden lg:table-cell text-gray-400 text-sm">${driver.constructor_name}</td>
-                        <td class="font-bold text-f1-red text-right">${driver.points}</td>
+                    <tr class="flex flex-wrap relative mb-4 bg-f1-gray border-l-4 border-f1-red rounded lg:table-row lg:mb-0 lg:border-l-0">
+                        
+                        <td class="font-oswald font-bold text-2xl w-[40px] flex-shrink-0 text-white p-2 lg:p-3 lg:w-auto lg:text-base">
+                            ${driver.position}
+                        </td>
+                        
+                        <td class="font-medium flex-1 ml-2 text-base text-[#E1E1E1] p-2 lg:p-3">
+                            ${driver.given_name} ${driver.family_name}
+                        </td>
+                        
+                        <td class="team-name-mobile-driver lg:table-cell text-gray-400 text-sm p-3">
+                            ${driver.constructor_name}
+                        </td>
+                        
+                        <td class="font-bold text-f1-red text-xl absolute top-3 right-3 lg:static lg:p-3 lg:text-right lg:text-base">
+                            ${driver.points}
+                        </td>
                     </tr>
                 `;
             });
@@ -288,10 +246,19 @@
             `;
             constructors.forEach(constructor => {
                 html += `
-                    <tr>
-                        <td class="font-oswald font-bold">${constructor.position}</td>
-                        <td class="font-medium">${constructor.name}</td>
-                        <td class="font-bold text-f1-red text-right">${constructor.points}</td>
+                    <tr class="flex flex-wrap relative mb-4 bg-f1-gray border-l-4 border-f1-red rounded lg:table-row lg:mb-0 lg:border-l-0">
+                        
+                        <td class="font-oswald font-bold text-2xl w-[40px] flex-shrink-0 text-white p-2 lg:p-3 lg:w-auto lg:text-base">
+                            ${constructor.position}
+                        </td>
+                        
+                        <td class="font-medium flex-1 ml-2 text-base text-[#E1E1E1] p-2 lg:p-3">
+                            ${constructor.name}
+                        </td>
+                        
+                        <td class="font-bold text-f1-red text-xl absolute top-3 right-3 lg:static lg:p-3 lg:text-right lg:text-base">
+                            ${constructor.points}
+                        </td>
                     </tr>
                 `;
             });
@@ -311,7 +278,7 @@
     
     fetchChampionshipStandings();
 
-    // Mobile Nav Toggle (voor volledigheid)
+    // Mobile Nav Toggle
     document.addEventListener('DOMContentLoaded', () => {
         const nav = document.getElementById('main-nav-links');
         const toggle = document.querySelector('.menu-toggle');
