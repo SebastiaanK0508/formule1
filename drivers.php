@@ -118,11 +118,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['driver_id'])) {
                             // Gebruik de teamkleur of een standaard kleur als deze niet beschikbaar is
                             $driverColor = isset($driver['team_color']) && $driver['team_color'] ? htmlspecialchars($driver['team_color']) : '#CCCCCC';
                         ?>
-                        <article class="bg-f1-gray rounded-xl shadow-lg overflow-hidden transition-all duration-300 hover:shadow-2xl hover:scale-[1.02] data-card">
-                            <a href="<?php echo $driverPageUrl; ?>" class="driver-link block">
-                                
-                                <div class="flex items-center p-4 border-l-4 h-full" style="border-left-color: <?php echo $driverColor; ?>;">
-                                    
+                        <article class="bg-f1-gray rounded-xl shadow-lg overflow-hidden transition-all duration-300 hover:shadow-2xl hover:scale-[1.02] data-card min-h-40">
+                            <a href="<?php echo $driverPageUrl; ?>" class="driver-link block flex items-center p-4 border-l-4 h-full"  style="border-left-color: <?php echo $driverColor; ?>;">                                    
                                     <div class="w-1/4 text-center">
                                         <p class="text-4xl font-oswald font-extrabold text-f1-red leading-none">
                                             #<?php echo htmlspecialchars($driver['driver_number']); ?>
@@ -139,7 +136,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['driver_id'])) {
                                             <p><span class="font-semibold">Team:</span> <?php echo htmlspecialchars($driver['full_team_name']); ?></p>
                                             </div>
                                     </div>
-                                </div>
                             </a>
                         </article>
                     <?php endforeach; ?>
