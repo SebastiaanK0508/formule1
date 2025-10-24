@@ -37,7 +37,6 @@ try {
         }
     </script>
     <style>
-        /* Mobile menu styles */
         @media (max-width: 767px) {
             .main-nav[data-visible="false"] {
                 display: none;
@@ -62,7 +61,6 @@ try {
     </style>
 </head>
 <body class="bg-f1-black text-gray-100 font-sans min-h-screen flex flex-col">
-    
     <header class="bg-black shadow-lg sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center header-content container">
             <h1 class="text-3xl font-oswald font-extrabold text-f1-red tracking-widest site-title">
@@ -97,20 +95,18 @@ try {
                 <?php if (!empty($activeTeams)): ?>
                     <?php foreach ($activeTeams as $team): ?>
                         <?php $teamColor = htmlspecialchars($team['team_color'] ?? '#CCCCCC'); ?>
-                        <article class="bg-f1-gray rounded-xl shadow-lg overflow-hidden transition-all duration-300 hover:shadow-2xl hover:scale-[1.02] data-card">
-                            <a href="team-details.php?id=<?php echo htmlspecialchars($team['team_id']); ?>" class="team-link block">
-                                <div class="p-4 border-l-4 h-full" style="border-left-color: <?php echo $teamColor; ?>;">
-                                    <div class="info">
-                                        <h3 class="team-name text-2xl font-oswald font-bold uppercase mb-2 transition duration-150" style="color: <?php echo $teamColor; ?>;">
-                                            <?php echo htmlspecialchars($team['full_team_name']); ?>
-                                        </h3>
-                                        <p class="text-sm text-gray-300">
-                                            <span class="font-semibold">Basis:</span> <?php echo htmlspecialchars($team['base_location'] ?? 'N/A'); ?>
-                                        </p>
-                                        <p class="text-sm text-gray-300">
-                                            <span class="font-semibold">Team Principal:</span> <?php echo htmlspecialchars($team['team_principal']); ?>
-                                        </p>
-                                    </div>
+                        <article class="bg-f1-gray rounded-xl shadow-lg overflow-hidden transition-all duration-300 hover:shadow-2xl hover:scale-[1.02] data-card min-h-40">
+                            <a href="team-details.php?id=<?php echo htmlspecialchars($team['team_id']); ?>" class="team-link block p-4 border-l-4 h-full" style="border-left-color: <?php echo $teamColor; ?>;">
+                                <div class="info">
+                                    <h3 class="team-name text-2xl font-oswald font-bold uppercase mb-2 transition duration-150" style="color: <?php echo $teamColor; ?>;">
+                                        <?php echo htmlspecialchars($team['full_team_name']); ?>    
+                                    </h3>
+                                    <p class="text-sm text-gray-300">
+                                        <span class="font-semibold">Basis:</span> <?php echo htmlspecialchars($team['base_location'] ?? 'N/A'); ?>
+                                    </p>
+                                    <p class="text-sm text-gray-300">
+                                        <span class="font-semibold">Team Principal:</span> <?php echo htmlspecialchars($team['team_principal']); ?>
+                                    </p>
                                 </div>
                             </a>
                         </article>
@@ -126,11 +122,9 @@ try {
                 <h2 class="text-2xl font-oswald font-bold text-white">Alle Teams Ooit</h2>
                 <div class="filter-section mt-4 md:mt-0 flex items-center space-x-2">
                     <label for="team-filter" class="text-gray-300 text-sm font-semibold">Filter:</label>
-                    <input type="text" id="team-filter" placeholder="Naam of Land..."
-                           class="bg-f1-black border border-gray-600 text-white p-2 rounded-md focus:ring-f1-red focus:border-f1-red text-sm w-48">
+                    <input type="text" id="team-filter" placeholder="Naam of Land..." class="bg-f1-black border border-gray-600 text-white p-2 rounded-md focus:ring-f1-red focus:border-f1-red text-sm w-48">
                 </div>
             </div>
-            
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 data-card-row" id="history-team-row">
                 <p id="loading-message" class="text-gray-400 col-span-4 p-4 text-center">Loading historical teams...</p>
                 <p id="no-results-message" class="text-f1-red col-span-4 p-4 text-center" style="display: none;">Er zijn geen resultaten gevonden.</p>
@@ -161,17 +155,14 @@ document.addEventListener('DOMContentLoaded', function() {
     const noResultsMessage = document.getElementById('no-results-message');
     const loadingMessage = document.getElementById('loading-message');
     let allHistoricalTeams = [];
-
     const renderTeamCards = (teams) => {
         dataCardRow.innerHTML = '';
         if (teams && Array.isArray(teams) && teams.length > 0) {
             teams.forEach(team => {
-                // Gebruik de nieuwe veldnamen die uit de JSON komen
                 const teamId = team.id || '';
                 const fullName = team.fullName || 'Onbekend Team';
-                const baseLocation = team.countryId || 'N/A'; // Ga uit van countryId voor locatie
+                const baseLocation = team.countryId || 'N/A';
                 const teamColor = team.team_color || '#CCCCCC';
-                
                 const cardHtml = `
                     <article class="bg-f1-gray rounded-lg shadow-md transition-all duration-300 hover:shadow-xl hover:scale-[1.03] data-card filterable-card"
                         data-fullname="${(fullName).toLowerCase()}"
@@ -195,22 +186,15 @@ document.addEventListener('DOMContentLoaded', function() {
             noResultsMessage.style.display = 'block';
         }
     };
-
     const handleFilter = () => {
         const filterText = filterInput.value.toLowerCase().trim();
-        
-        // *** HIER IS DE CORRECTIE ***
-        // Gebruik nu 'fullName' en 'countryId' voor de filterlogica.
         const filteredTeams = allHistoricalTeams.filter(team => {
             const fullName = (team.fullName || '').toLowerCase();
             const country = (team.countryId || '').toLowerCase();
             return fullName.includes(filterText) || country.includes(filterText);
         });
-        
         renderTeamCards(filteredTeams);
     };
-
-    // Data Fetching
     fetch('achterkant/aanpassing/api-koppelingen/json/teams.json')
         .then(response => {
             if (!response.ok) {
@@ -225,8 +209,6 @@ document.addEventListener('DOMContentLoaded', function() {
             allHistoricalTeams = data;
             loadingMessage.style.display = 'none';
             renderTeamCards(allHistoricalTeams);
-            
-            // Filter event listener toevoegen NA het laden van de data
             if (filterInput) {
                 filterInput.addEventListener('keyup', handleFilter);
             }
@@ -236,8 +218,6 @@ document.addEventListener('DOMContentLoaded', function() {
             loadingMessage.textContent = 'Kon de gegevens niet laden. Controleer of de JSON-structuur en het pad correct zijn.';
             loadingMessage.style.color = '#E10600'; 
         });
-
-    // Mobile Nav Toggle
     const nav = document.getElementById('main-nav-links');
     const toggle = document.querySelector('.menu-toggle');
     toggle.addEventListener('click', () => {
