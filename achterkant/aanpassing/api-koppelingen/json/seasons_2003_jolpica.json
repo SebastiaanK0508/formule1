@@ -1,0 +1,19 @@
+{
+    "MRData": {
+        "xmlns": "",
+        "series": "f1",
+        "url": "https:\/\/api.jolpi.ca\/ergast\/f1\/2003\/seasons.json",
+        "limit": "30",
+        "offset": "0",
+        "total": "1",
+        "SeasonTable": {
+            "season": "2003",
+            "Seasons": [
+                {
+                    "season": "2003",
+                    "url": "https:\/\/en.wikipedia.org\/wiki\/2003_Formula_One_World_Championship"
+                }
+            ]
+        }
+    }
+}

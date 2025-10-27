@@ -256,7 +256,7 @@ if ($team) {
 
         <div class="mt-8 text-center">
             <a href="teams.php" class="bg-f1-red text-white py-3 px-6 rounded-lg font-bold uppercase tracking-wider hover:bg-red-700 transition back-link">
-                &larr; Terug naar het teamoverzicht
+                &larr; Back to team list
             </a>
         </div>
     </main>

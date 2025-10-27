@@ -175,7 +175,7 @@ if (!is_array($circuitDetails)) {
 
             <div class="back-link-container text-center mt-8 mb-4">
                 <a href="kalender.php" class="bg-f1-red text-white py-3 px-6 rounded-lg font-bold uppercase tracking-wider hover:bg-red-700 transition back-link">
-                    &larr; Terug naar Kalender
+                    &larr; Back to shedule 
                 </a>
             </div>
 
@@ -184,7 +184,7 @@ if (!is_array($circuitDetails)) {
                 <p class="text-red-500 mb-6 message error-message"><?php echo $message; ?></p>
                 <div class="back-link-container">
                     <a href="kalender.php" class="bg-f1-red text-white py-3 px-6 rounded-lg font-bold uppercase tracking-wider hover:bg-red-700 transition back-link">
-                        &larr; Terug naar Kalender
+                        &larr; Back to shedule
                     </a>
                 </div>
             </div>

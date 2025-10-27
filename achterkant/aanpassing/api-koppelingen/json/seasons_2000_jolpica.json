@@ -1,0 +1,19 @@
+{
+    "MRData": {
+        "xmlns": "",
+        "series": "f1",
+        "url": "https:\/\/api.jolpi.ca\/ergast\/f1\/2000\/seasons.json",
+        "limit": "30",
+        "offset": "0",
+        "total": "1",
+        "SeasonTable": {
+            "season": "2000",
+            "Seasons": [
+                {
+                    "season": "2000",
+                    "url": "https:\/\/en.wikipedia.org\/wiki\/2000_Formula_One_World_Championship"
+                }
+            ]
+        }
+    }
+}

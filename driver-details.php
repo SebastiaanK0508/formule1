@@ -232,7 +232,7 @@ $driverLastName = htmlspecialchars($driver['last_name']);
 
         <div class="mt-8 text-center">
             <a href="drivers.php" class="bg-f1-red text-white py-3 px-6 rounded-lg font-bold uppercase tracking-wider hover:bg-red-700 transition back-link">
-                &larr; Terug naar het coureuroverzicht
+                &larr; Back to Drivers list
             </a>
         </div>
     </main>

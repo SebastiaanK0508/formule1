@@ -50,33 +50,31 @@ if ($selectedYear) {
                         'oswald': ['Oswald', 'sans-serif'],
                     },
                     colors: {
-                        'f1-red': '#E10600', // Officiële F1 Rood
-                        'f1-black': '#15151E', // Diep Zwart
-                        'f1-gray': '#3A3A40', // Donkergrijs
+                        'f1-red': '#E10600',
+                        'f1-black': '#15151E', 
+                        'f1-gray': '#3A3A40', 
                     }
                 }
             }
         }
     </script>
     <style>
-        /* Dit is nodig voor de mobile menu toggle */
         @media (max-width: 767px) {
             .main-nav[data-visible="false"] {
                 display: none;
             }
             .main-nav {
-                /* Stijlen voor mobiel menu */
                 position: absolute;
-                top: 100%; /* Onder de header */
+                top: 100%; 
                 left: 0;
                 right: 0;
-                background-color: #15151E; /* f1-black */
+                background-color: #15151E; 
                 box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
                 padding: 1rem;
                 display: flex;
                 flex-direction: column;
                 z-index: 40;
-                border-top: 1px solid #E10600; /* f1-red */
+                border-top: 1px solid #E10600; 
             }
             .main-nav a {
                 padding: 0.5rem 0;
@@ -91,12 +89,10 @@ if ($selectedYear) {
             <h1 class="text-3xl font-oswald font-extrabold text-f1-red tracking-widest site-title">
                 FORMULA 1
             </h1>
-            
             <button class="md:hidden text-2xl text-f1-red hover:text-white menu-toggle" 
                     aria-controls="main-nav-links" aria-expanded="false" aria-label="Toggle navigation">
                 &#9776; 
             </button>
-            
             <nav class="main-nav md:flex md:space-x-8 text-sm font-semibold uppercase tracking-wider" 
                  id="main-nav-links" data-visible="false">
                 <a href="index.php" class="block py-2 px-3 md:p-0 hover:text-f1-red transition duration-150">Home</a>
@@ -108,7 +104,7 @@ if ($selectedYear) {
             </nav>
         </div>
     </header>
-    
+
     <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-8 flex-grow container">
         
         <section class="bg-f1-gray p-6 rounded-lg shadow-xl mb-8 flex flex-col md:flex-row justify-between items-center page-header-section">
@@ -138,11 +134,11 @@ if ($selectedYear) {
                             $raceDay = $raceDateTime->format('j');
                             $raceYear = $raceDateTime->format('Y');
                             // Gebruik de Nederlandse maandnamen
-                            $raceMonthDutch = strftime('%B', $raceDateTime->getTimestamp());
+                            $raceMonth = strftime('%B', $raceDateTime->getTimestamp());
                             // Pas de datumberekening aan
-                            $displayDate = ($raceDay - 2) . ' - ' . $raceDay . ' ' . $raceMonthDutch . ' ' . $raceYear;
+                            $displayDate = ($raceDay - 2) . ' - ' . $raceDay . ' ' . $raceMonth . ' ' . $raceYear;
                             if ($circuit['circuit_key'] === 'las_vegas') {
-                                $displayDate = ($raceDay - 1) . ' - ' . $raceDay . ' ' . $raceMonthDutch . ' ' . $raceYear . ' (Zaterdag)';
+                                $displayDate = ($raceDay - 1) . ' - ' . $raceDay . ' ' . $raceMonth . ' ' . $raceYear . ' (Zaterdag)';
                             }
                         ?>
                         <article class="bg-f1-gray rounded-xl shadow-lg overflow-hidden transition-all duration-300 hover:shadow-2xl hover:scale-[1.02] data-card">
@@ -156,10 +152,10 @@ if ($selectedYear) {
                                         <?php echo htmlspecialchars($circuit['grandprix']); ?>
                                     </h4>
                                     <p class="text-sm text-gray-300">
-                                        <span class="font-semibold">Datum:</span> <?php echo htmlspecialchars($displayDate); ?>
+                                        <span class="font-semibold">Date:</span> <?php echo htmlspecialchars($displayDate); ?>
                                     </p>
                                     <p class="text-sm text-gray-300">
-                                        <span class="font-semibold">Locatie:</span> <?php echo htmlspecialchars($circuit['location']); ?>
+                                        <span class="font-semibold">Location:</span> <?php echo htmlspecialchars($circuit['location']); ?>
                                     </p>
                                     <p class="text-sm text-gray-300">
                                         <span class="font-semibold">Circuit:</span> <?php echo htmlspecialchars($circuit['title']); ?>
@@ -170,7 +166,7 @@ if ($selectedYear) {
                     <?php endforeach; ?>
                 <?php else: ?>
                     <p class="text-gray-400 lg:col-span-4 p-6 bg-f1-gray rounded-lg">
-                        Geen circuits gevonden voor het jaar <?php echo htmlspecialchars($selectedYear); ?>.
+                        No race found for the selected year<?php echo htmlspecialchars($selectedYear); ?>.
                     </p>
                 <?php endif; ?>
             </div>
