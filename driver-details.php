@@ -75,17 +75,14 @@ try {
     <?php
     exit;
 }
-
-// Haal de teamkleur op of gebruik een fallback
 $teamColor = htmlspecialchars($driver['team_color'] ?? '#CCCCCC');
-
-// Hulpvariabelen voor leesbaarheid in de HTML
 $driverFirstName = htmlspecialchars($driver['first_name']);
 $driverLastName = htmlspecialchars($driver['last_name']);
 ?>
 <!DOCTYPE html>
 <html lang="nl">
 <head>
+    <script src="https://t.contentsquare.net/uxa/688c1fe6f0f7c.js"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?php echo $driverFirstName . ' ' . $driverLastName; ?> | Driver Details</title>

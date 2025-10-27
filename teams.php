@@ -12,6 +12,7 @@ try {
 <!DOCTYPE html>
 <html lang="nl">
 <head>
+    <script src="https://t.contentsquare.net/uxa/688c1fe6f0f7c.js"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Formula 1 Season 2025 - Teams</title>

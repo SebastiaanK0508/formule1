@@ -9,7 +9,7 @@ require_once 'achterkant/aanpassing/api-koppelingen/result_api.php';
     <title>Formula 1 - Select Race / Year</title>
     <link rel="icon" type="image/x-icon" href="/afbeeldingen/logo/f1logobgrm.png">
     <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
-    
+    <script src="https://t.contentsquare.net/uxa/688c1fe6f0f7c.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {

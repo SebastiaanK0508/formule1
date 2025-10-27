@@ -1,14 +1,12 @@
 <?php
-// Let op: De inhoud van 'achterkant/aanpassing/api-koppelingen/result_api.php' is vereist om deze pagina te laten werken.
 require_once 'achterkant/aanpassing/api-koppelingen/result_api.php';
-// De variabelen $selected_year, $available_years, $selected_round, 
-// $races_in_season, $race_results, $race_details, $error_message worden verondersteld 
-// gezet te zijn in de bovenstaande require.
+
 ?>
 
 <!DOCTYPE html>
 <html lang="nl">
 <head>
+    <script src="https://t.contentsquare.net/uxa/688c1fe6f0f7c.js"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Formula 1 Results</title>

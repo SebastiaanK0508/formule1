@@ -49,6 +49,7 @@ try {
     <!DOCTYPE html>
     <html lang="nl">
     <head>
+        <script src="https://t.contentsquare.net/uxa/688c1fe6f0f7c.js"></script>
         <meta charset="UTF-8">
         <title>Databasefout | F1</title>
         <script src="https://cdn.tailwindcss.com"></script>

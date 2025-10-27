@@ -6,12 +6,9 @@ $availableYears = [];
 $selectedYear = null;
 
 try {
-    // Verondersteld dat db_config.php $pdo definieert
     $stmt = $pdo->query("SELECT DISTINCT YEAR(race_datetime) AS race_year FROM circuits ORDER BY race_year DESC");
     $availableYears = $stmt->fetchAll(PDO::FETCH_COLUMN);
 } catch (\PDOException $e) {
-    // Foutafhandeling
-    // echo "Fout bij het ophalen van jaren: " . $e->getMessage();
 }
 if (isset($_GET['year']) && in_array($_GET['year'], $availableYears)) {
     $selectedYear = $_GET['year'];
@@ -30,14 +27,13 @@ if ($selectedYear) {
         $stmt->execute();
         $circuitsData = $stmt->fetchAll();
     } catch (\PDOException $e) {
-        // Foutafhandeling
-        // echo "Fout bij het ophalen van circuits: " . $e->getMessage();
     }
 }
 ?>
 <!DOCTYPE html>
 <html lang="nl">
 <head>
+    <script src="https://t.contentsquare.net/uxa/688c1fe6f0f7c.js"></script>
     <meta charset="UTF-8">
     <link rel="icon" type="image/x-icon" href="/afbeeldingen/logo/f1logobgrm.png">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">

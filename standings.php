@@ -6,7 +6,7 @@
     <title>Formula 1 - Standings</title>
     <link rel="icon" type="image/x-icon" href="/afbeeldingen/logo/f1logobgrm.png">
     <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
-    
+    <script src="https://t.contentsquare.net/uxa/688c1fe6f0f7c.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -24,13 +24,9 @@
                     }
                 }
             }
-            // De 'safelist' is verwijderd om de crash te voorkomen.
         }
     </script>
     <style>
-        /* MINIMALE CUSTOM CSS VOOR STABILITEIT EN LAYOUT */
-        
-        /* Navigatie Toggle (blijft nodig i.c.m. data-attribute) */
         @media (max-width: 767px) {
             .main-nav[data-visible="false"] {
                 display: none;
@@ -52,12 +48,9 @@
                 padding: 0.5rem 0;
             }
             
-            /* Dwingt de mobiele kaart (tr) een padding aan de rechterkant om de absolute 'Punten' te huisvesten */
             .standings-table tr {
                 padding-right: 5rem !important; /* Voldoende ruimte voor de punten */
             }
-            
-            /* Toont de Teamnaam op een nieuwe regel onder de Coureursnaam (alleen op mobiel) */
             .team-name-mobile-driver {
                 display: block !important; 
                 width: 100%; /* Forceert nieuwe regel */
@@ -73,8 +66,6 @@
                 display: none;
             }
         }
-
-        /* Basis Desktop/Table Stijlen */
         .standings-table-container {
             background-color: #3A3A40; 
             border-radius: 0.75rem;
@@ -277,8 +268,6 @@
     }
     
     fetchChampionshipStandings();
-
-    // Mobile Nav Toggle
     document.addEventListener('DOMContentLoaded', () => {
         const nav = document.getElementById('main-nav-links');
         const toggle = document.querySelector('.menu-toggle');
