@@ -2,12 +2,12 @@
     "MRData": {
         "xmlns": "",
         "series": "f1",
-        "url": "https:\/\/api.jolpi.ca\/ergast\/f1\/2021\/drivers.json",
+        "url": "https:\/\/api.jolpi.ca\/ergast\/f1\/2018\/drivers.json",
         "limit": "100",
         "offset": "0",
-        "total": "21",
+        "total": "20",
         "DriverTable": {
-            "season": "2021",
+            "season": "2018",
             "Drivers": [
                 {
                     "driverId": "alonso",
@@ -30,6 +30,16 @@
                     "nationality": "Finnish"
                 },
                 {
+                    "driverId": "ericsson",
+                    "permanentNumber": "9",
+                    "code": "ERI",
+                    "url": "http:\/\/en.wikipedia.org\/wiki\/Marcus_Ericsson",
+                    "givenName": "Marcus",
+                    "familyName": "Ericsson",
+                    "dateOfBirth": "1990-09-02",
+                    "nationality": "Swedish"
+                },
+                {
                     "driverId": "gasly",
                     "permanentNumber": "10",
                     "code": "GAS",
@@ -40,14 +50,14 @@
                     "nationality": "French"
                 },
                 {
-                    "driverId": "giovinazzi",
-                    "permanentNumber": "99",
-                    "code": "GIO",
-                    "url": "http:\/\/en.wikipedia.org\/wiki\/Antonio_Giovinazzi",
-                    "givenName": "Antonio",
-                    "familyName": "Giovinazzi",
-                    "dateOfBirth": "1993-12-14",
-                    "nationality": "Italian"
+                    "driverId": "grosjean",
+                    "permanentNumber": "8",
+                    "code": "GRO",
+                    "url": "http:\/\/en.wikipedia.org\/wiki\/Romain_Grosjean",
+                    "givenName": "Romain",
+                    "familyName": "Grosjean",
+                    "dateOfBirth": "1986-04-17",
+                    "nationality": "French"
                 },
                 {
                     "driverId": "hamilton",
@@ -60,24 +70,24 @@
                     "nationality": "British"
                 },
                 {
-                    "driverId": "kubica",
-                    "permanentNumber": "88",
-                    "code": "KUB",
-                    "url": "http:\/\/en.wikipedia.org\/wiki\/Robert_Kubica",
-                    "givenName": "Robert",
-                    "familyName": "Kubica",
-                    "dateOfBirth": "1984-12-07",
-                    "nationality": "Polish"
+                    "driverId": "brendon_hartley",
+                    "permanentNumber": "28",
+                    "code": "HAR",
+                    "url": "http:\/\/en.wikipedia.org\/wiki\/Brendon_Hartley",
+                    "givenName": "Brendon",
+                    "familyName": "Hartley",
+                    "dateOfBirth": "1989-11-10",
+                    "nationality": "New Zealander"
                 },
                 {
-                    "driverId": "latifi",
-                    "permanentNumber": "6",
-                    "code": "LAT",
-                    "url": "http:\/\/en.wikipedia.org\/wiki\/Nicholas_Latifi",
-                    "givenName": "Nicholas",
-                    "familyName": "Latifi",
-                    "dateOfBirth": "1995-06-29",
-                    "nationality": "Canadian"
+                    "driverId": "hulkenberg",
+                    "permanentNumber": "27",
+                    "code": "HUL",
+                    "url": "http:\/\/en.wikipedia.org\/wiki\/Nico_H%C3%BClkenberg",
+                    "givenName": "Nico",
+                    "familyName": "H\u00fclkenberg",
+                    "dateOfBirth": "1987-08-19",
+                    "nationality": "German"
                 },
                 {
                     "driverId": "leclerc",
@@ -90,24 +100,14 @@
                     "nationality": "Monegasque"
                 },
                 {
-                    "driverId": "mazepin",
-                    "permanentNumber": "9",
-                    "code": "MAZ",
-                    "url": "http:\/\/en.wikipedia.org\/wiki\/Nikita_Mazepin",
-                    "givenName": "Nikita",
-                    "familyName": "Mazepin",
-                    "dateOfBirth": "1999-03-02",
-                    "nationality": "Russian"
-                },
-                {
-                    "driverId": "norris",
-                    "permanentNumber": "4",
-                    "code": "NOR",
-                    "url": "http:\/\/en.wikipedia.org\/wiki\/Lando_Norris",
-                    "givenName": "Lando",
-                    "familyName": "Norris",
-                    "dateOfBirth": "1999-11-13",
-                    "nationality": "British"
+                    "driverId": "kevin_magnussen",
+                    "permanentNumber": "20",
+                    "code": "MAG",
+                    "url": "http:\/\/en.wikipedia.org\/wiki\/Kevin_Magnussen",
+                    "givenName": "Kevin",
+                    "familyName": "Magnussen",
+                    "dateOfBirth": "1992-10-05",
+                    "nationality": "Danish"
                 },
                 {
                     "driverId": "ocon",
@@ -150,16 +150,6 @@
                     "nationality": "Australian"
                 },
                 {
-                    "driverId": "russell",
-                    "permanentNumber": "63",
-                    "code": "RUS",
-                    "url": "http:\/\/en.wikipedia.org\/wiki\/George_Russell_(racing_driver)",
-                    "givenName": "George",
-                    "familyName": "Russell",
-                    "dateOfBirth": "1998-02-15",
-                    "nationality": "British"
-                },
-                {
                     "driverId": "sainz",
                     "permanentNumber": "55",
                     "code": "SAI",
@@ -170,14 +160,14 @@
                     "nationality": "Spanish"
                 },
                 {
-                    "driverId": "mick_schumacher",
-                    "permanentNumber": "47",
-                    "code": "MSC",
-                    "url": "http:\/\/en.wikipedia.org\/wiki\/Mick_Schumacher",
-                    "givenName": "Mick",
-                    "familyName": "Schumacher",
-                    "dateOfBirth": "1999-03-22",
-                    "nationality": "German"
+                    "driverId": "sirotkin",
+                    "permanentNumber": "35",
+                    "code": "SIR",
+                    "url": "http:\/\/en.wikipedia.org\/wiki\/Sergey_Sirotkin_(racing_driver)",
+                    "givenName": "Sergey",
+                    "familyName": "Sirotkin",
+                    "dateOfBirth": "1995-08-27",
+                    "nationality": "Russian"
                 },
                 {
                     "driverId": "stroll",
@@ -190,14 +180,14 @@
                     "nationality": "Canadian"
                 },
                 {
-                    "driverId": "tsunoda",
-                    "permanentNumber": "22",
-                    "code": "TSU",
-                    "url": "http:\/\/en.wikipedia.org\/wiki\/Yuki_Tsunoda",
-                    "givenName": "Yuki",
-                    "familyName": "Tsunoda",
-                    "dateOfBirth": "2000-05-11",
-                    "nationality": "Japanese"
+                    "driverId": "vandoorne",
+                    "permanentNumber": "2",
+                    "code": "VAN",
+                    "url": "http:\/\/en.wikipedia.org\/wiki\/Stoffel_Vandoorne",
+                    "givenName": "Stoffel",
+                    "familyName": "Vandoorne",
+                    "dateOfBirth": "1992-03-26",
+                    "nationality": "Belgian"
                 },
                 {
                     "driverId": "max_verstappen",

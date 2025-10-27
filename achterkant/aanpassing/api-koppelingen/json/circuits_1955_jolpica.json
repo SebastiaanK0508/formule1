@@ -1,0 +1,92 @@
+{
+    "MRData": {
+        "xmlns": "",
+        "series": "f1",
+        "url": "https:\/\/api.jolpi.ca\/ergast\/f1\/1955\/circuits.json",
+        "limit": "30",
+        "offset": "0",
+        "total": "7",
+        "CircuitTable": {
+            "season": "1955",
+            "Circuits": [
+                {
+                    "circuitId": "aintree",
+                    "url": "https:\/\/en.wikipedia.org\/wiki\/Aintree_Motor_Racing_Circuit",
+                    "circuitName": "Aintree",
+                    "Location": {
+                        "lat": "53.4769",
+                        "long": "-2.94056",
+                        "locality": "Liverpool",
+                        "country": "UK"
+                    }
+                },
+                {
+                    "circuitId": "galvez",
+                    "url": "https:\/\/en.wikipedia.org\/wiki\/Aut\u00f3dromo_Oscar_y_Juan_G\u00e1lvez",
+                    "circuitName": "Aut\u00f3dromo Juan y Oscar G\u00e1lvez",
+                    "Location": {
+                        "lat": "-34.6943",
+                        "long": "-58.4593",
+                        "locality": "Buenos Aires",
+                        "country": "Argentina"
+                    }
+                },
+                {
+                    "circuitId": "indianapolis",
+                    "url": "https:\/\/en.wikipedia.org\/wiki\/Indianapolis_Motor_Speedway",
+                    "circuitName": "Indianapolis Motor Speedway",
+                    "Location": {
+                        "lat": "39.795",
+                        "long": "-86.2347",
+                        "locality": "Indianapolis",
+                        "country": "USA"
+                    }
+                },
+                {
+                    "circuitId": "monaco",
+                    "url": "https:\/\/en.wikipedia.org\/wiki\/Circuit_de_Monaco",
+                    "circuitName": "Circuit de Monaco",
+                    "Location": {
+                        "lat": "43.7347",
+                        "long": "7.42056",
+                        "locality": "Monte-Carlo",
+                        "country": "Monaco"
+                    }
+                },
+                {
+                    "circuitId": "monza",
+                    "url": "https:\/\/en.wikipedia.org\/wiki\/Monza_Circuit",
+                    "circuitName": "Autodromo Nazionale di Monza",
+                    "Location": {
+                        "lat": "45.6156",
+                        "long": "9.28111",
+                        "locality": "Monza",
+                        "country": "Italy"
+                    }
+                },
+                {
+                    "circuitId": "spa",
+                    "url": "https:\/\/en.wikipedia.org\/wiki\/Circuit_de_Spa-Francorchamps",
+                    "circuitName": "Circuit de Spa-Francorchamps",
+                    "Location": {
+                        "lat": "50.4372",
+                        "long": "5.97139",
+                        "locality": "Spa",
+                        "country": "Belgium"
+                    }
+                },
+                {
+                    "circuitId": "zandvoort",
+                    "url": "https:\/\/en.wikipedia.org\/wiki\/Circuit_Zandvoort",
+                    "circuitName": "Circuit Park Zandvoort",
+                    "Location": {
+                        "lat": "52.3888",
+                        "long": "4.54092",
+                        "locality": "Zandvoort",
+                        "country": "Netherlands"
+                    }
+                }
+            ]
+        }
+    }
+}
