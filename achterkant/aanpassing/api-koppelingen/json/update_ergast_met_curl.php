@@ -14,10 +14,10 @@ $base_url = "http://api.jolpi.ca/ergast/f1/";
 $suffix = 'jolpica'; 
 
 // Haal data op vanaf 2020 tot het huidige jaar (of pas dit aan als je andere jaren wilt testen)
-// $start_year = 2000; 
-// $current_year = date('Y');
-$start_year = 1950; 
-$current_year = 1960; 
+$start_year = 2000; 
+$current_year = date('Y');
+// $start_year = 1950; 
+// $current_year = 1960; 
 $seasons_to_fetch = range($start_year, $current_year); 
 $endpoints = [
     'DriverStandings'      => 'driverStandings.json',
