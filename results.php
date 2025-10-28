@@ -92,7 +92,7 @@ require_once 'achterkant/aanpassing/api-koppelingen/result_api.php';
         <a href="selection.php?year=<?php echo htmlspecialchars($selected_year); ?>" 
            class="md:hidden bg-f1-red text-white py-3 px-6 rounded-lg font-bold uppercase tracking-wider hover:bg-red-700 transition w-full text-center block mb-6 mobile-selection-button" 
            aria-label="Selecteer Race of Jaar">
-            Selecteer Race / Jaar
+            Select Race / Year
         </a>
 
         <section class="result-container grid grid-cols-1 md:grid-cols-4 gap-6">
@@ -105,7 +105,7 @@ require_once 'achterkant/aanpassing/api-koppelingen/result_api.php';
                 
                 <div class="hidden md:block md:col-span-1 bg-f1-gray p-4 rounded-lg shadow-md h-fit selection-container desktop-selection">
                     <form action="results.php" method="get" class="mb-4">
-                        <label for="year" class="block text-sm font-oswald uppercase text-f1-red mb-2">Selecteer Jaar</label>
+                        <label for="year" class="block text-sm font-oswald uppercase text-f1-red mb-2">Select year</label>
                         <select id="year" name="year" onchange="this.form.submit()"
                                 class="w-full bg-f1-black border border-gray-700 text-white p-2 rounded-md focus:ring-f1-red focus:border-f1-red text-sm">
                             <?php foreach ($available_years as $year): ?>
@@ -179,18 +179,44 @@ require_once 'achterkant/aanpassing/api-koppelingen/result_api.php';
         </section>
     </main>
 
-    <footer class="bg-black mt-12 py-6 border-t border-f1-red">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center footer-content container">
-            <p class="text-gray-400 text-sm mb-4">&copy; 2025 Webbair. Alle rechten voorbehouden.</p>
-            <div class="flex flex-wrap justify-center space-x-4 mb-4 social-links">
-                <a href="#" class="text-gray-400 hover:text-f1-red transition duration-150" aria-label="Facebook">Facebook</a>
-                <a href="#" class="text-gray-400 hover:text-f1-red transition duration-150" aria-label="Twitter">X</a>
-                <a href="" class="text-gray-400 hover:text-f1-red transition duration-150" aria-label="Instagram">Instagram</a>
+    <footer class="bg-black mt-12 py-8 border-t border-red-700">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">\
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-left pb-6 border-b border-gray-800">
+                <div class="md:col-span-1 text-center md:text-left">
+                    <h3 class="text-xl font-bold text-white mb-2 tracking-wider">F1SITE.NL</h3>
+                    <p class="text-gray-500 text-sm mb-2">
+                        De snelste bron voor F1 nieuws en data.
+                    </p>
+                </div>
+                <div class="md:col-span-1 text-center md:text-left">
+                    <h4 class="text-lg font-semibold text-red-500 mb-3 uppercase">Externe Sites</h4>
+                    <ul class="space-y-2">
+                        <li>
+                            <a href="https://www.f1site.online" target="_blank" 
+                            class="text-gray-400 text-sm hover:text-red-500 transition duration-150 block">
+                            Voetbalsite (Zustersite)
+                            </a>
+                        </li>
+                        <li>
+                            <a href="https://www.webbair.nl" target="_blank" 
+                            class="text-gray-400 text-sm hover:text-red-500 transition duration-150 block">
+                            Webbair (Ontwikkelaar)
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="md:col-span-1 text-center md:text-left">
+                    <h4 class="text-lg font-semibold text-red-500 mb-3 uppercase">Navigatie & Info</h4>
+                    <ul class="space-y-2">
+                        <li><a href="sitemap.html" class="text-gray-400 text-sm hover:text-red-500 transition duration-150 block">Sitemap</a></li>
+                        <li><a href="privacy-en.html" class="text-gray-400 text-sm hover:text-red-500 transition duration-150 block">Privacy Policy (EN)</a></li>
+                        <li><a href="algemenevoorwaarden-en.html" class="text-gray-400 text-sm hover:text-red-500 transition duration-150 block">Terms and Conditions (EN)</a></li>
+                        <li><a href="contact.html" class="text-gray-400 text-sm hover:text-red-500 transition duration-150 block">Contact</a></li>
+                    </ul>
+                </div>
             </div>
-            <div class="flex flex-wrap justify-center space-x-4 text-xs social-links">
-                <a href="privacy.html" class="text-gray-500 hover:text-white transition duration-150">Privacy Beleid</a>
-                <a href="algemenevoorwaarden.html" class="text-gray-500 hover:text-white transition duration-150">Algemene Voorwaarden</a>
-                <a href="contact.html" class="text-gray-500 hover:text-white transition duration-150">Contact</a>
+            <div class="md:col-span-1 text-center md:text-left">
+                <p class="text-gray-500 text-xs mt-4">&copy; 2025 Webbair. Alle rechten voorbehouden.</p>
             </div>
         </div>
     </footer>

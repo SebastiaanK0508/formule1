@@ -48,16 +48,7 @@
                 padding: 0.5rem 0;
             }
             .standings-table tr {
-                padding-right: 3rem !important; /* Voldoende ruimte voor de punten */
-            }
-            .team-name-mobile-driver {
-                display: flex;
-                flex-direction: row;
-                order: 1; /* Zorgt dat het na de Coureursnaam komt */
-                margin-left: 48px; /* Lijn uit met Coureursnaam (40px pos + 8px margin/padding) */
-                font-size: 0.600rem; 
-                color: #B0B0B0;
-                padding-left: 0 !important; /* Reset padding van de td */
+                padding-right: 3rem !important;
             }
             .standings-table thead {
                 display: none;
@@ -130,19 +121,44 @@
         <p class="text-center text-gray-400 p-4">Loading...</p>
     </section>
 </main>
-
-    <footer class="bg-black mt-12 py-6 border-t border-f1-red">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center footer-content container">
-            <p class="text-gray-400 text-sm mb-4">&copy; 2025 Webbair. Alle rechten voorbehouden.</p>
-            <div class="flex flex-wrap justify-center space-x-4 mb-4 social-links">
-                <a href="#" class="text-gray-400 hover:text-f1-red transition duration-150" aria-label="Facebook">Facebook</a>
-                <a href="#" class="text-gray-400 hover:text-f1-red transition duration-150" aria-label="Twitter">X</a>
-                <a href="" class="text-gray-400 hover:text-f1-red transition duration-150" aria-label="Instagram">Instagram</a>
+    <footer class="bg-black mt-12 py-8 border-t border-red-700">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">\
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-left pb-6 border-b border-gray-800">
+                <div class="md:col-span-1 text-center md:text-left">
+                    <h3 class="text-xl font-bold text-white mb-2 tracking-wider">F1SITE.NL</h3>
+                    <p class="text-gray-500 text-sm mb-2">
+                        De snelste bron voor F1 nieuws en data.
+                    </p>
+                </div>
+                <div class="md:col-span-1 text-center md:text-left">
+                    <h4 class="text-lg font-semibold text-red-500 mb-3 uppercase">Externe Sites</h4>
+                    <ul class="space-y-2">
+                        <li>
+                            <a href="https://www.f1site.online" target="_blank" 
+                            class="text-gray-400 text-sm hover:text-red-500 transition duration-150 block">
+                            Voetbalsite (Zustersite)
+                            </a>
+                        </li>
+                        <li>
+                            <a href="https://www.webbair.nl" target="_blank" 
+                            class="text-gray-400 text-sm hover:text-red-500 transition duration-150 block">
+                            Webbair (Ontwikkelaar)
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="md:col-span-1 text-center md:text-left">
+                    <h4 class="text-lg font-semibold text-red-500 mb-3 uppercase">Navigatie & Info</h4>
+                    <ul class="space-y-2">
+                        <li><a href="sitemap.html" class="text-gray-400 text-sm hover:text-red-500 transition duration-150 block">Sitemap</a></li>
+                        <li><a href="privacy-en.html" class="text-gray-400 text-sm hover:text-red-500 transition duration-150 block">Privacy Policy (EN)</a></li>
+                        <li><a href="algemenevoorwaarden-en.html" class="text-gray-400 text-sm hover:text-red-500 transition duration-150 block">Terms and Conditions (EN)</a></li>
+                        <li><a href="contact.html" class="text-gray-400 text-sm hover:text-red-500 transition duration-150 block">Contact</a></li>
+                    </ul>
+                </div>
             </div>
-            <div class="flex flex-wrap justify-center space-x-4 text-xs social-links">
-                <a href="privacy.html" class="text-gray-500 hover:text-white transition duration-150">Privacy Beleid</a>
-                <a href="algemenevoorwaarden.html" class="text-gray-500 hover:text-white transition duration-150">Algemene Voorwaarden</a>
-                <a href="contact.html" class="text-gray-500 hover:text-white transition duration-150">Contact</a>
+            <div class="md:col-span-1 text-center md:text-left">
+                <p class="text-gray-500 text-xs mt-4">&copy; 2025 Webbair. Alle rechten voorbehouden.</p>
             </div>
         </div>
     </footer>
@@ -152,10 +168,8 @@
     
     async function fetchChampionshipStandings() {
         try {
-            // Dit moet verwijzen naar uw API endpoint
             const response = await fetch('achterkant/aanpassing/api-koppelingen/standings_api.php'); 
             const data = await response.json();
-            
             if (data.status === 'success') {
                 displayChampionshipStandings(data.drivers, data.constructors);
             } else {
@@ -179,7 +193,6 @@
                         <tr>
                             <th class="rounded-tl-lg">Pos.</th>
                             <th>Driver</th>
-                            <th class="hidden lg:table-cell">Team</th>
                             <th class="rounded-tr-lg text-right">Points</th>
                         </tr>
                     </thead>
@@ -187,21 +200,22 @@
             `;
             drivers.forEach(driver => {
                 html += `
-                    <tr class="flex flex-wrap relative mb-4 bg-f1-gray border-l-4 border-f1-red rounded lg:table-row lg:mb-0 lg:border-l-0">
-                        
-                        <td class="font-oswald font-bold text-2xl w-[40px] flex-shrink-0 text-white p-2 lg:p-3 lg:w-auto lg:text-base">
-                            ${driver.position}
-                        </td>
-                        <td class="font-medium flex-1 ml-2 text-base text-[#E1E1E1] p-2 lg:p-3">
-                            ${driver.given_name} ${driver.family_name}
-                        </td>
-                        <td class="team-name-mobile-driver lg:table-cell text-gray-400 text-sm p-3">
-                            ${driver.constructor_name}
-                        </td>
-                        <td class="font-bold text-f1-red text-xl absolute top-3 right-3 lg:static lg:p-3 lg:text-right lg:text-base">
-                            ${driver.points}
-                        </td>
-                    </tr>
+            <tr class="flex flex-wrap relative mb-4 bg-f1-gray border-l-4 border-f1-red rounded lg:table-row lg:mb-0 lg:border-l-0">                
+                <td class="font-oswald font-bold text-2xl w-[40px] flex-shrink-0 text-white p-2 lg:p-3 lg:w-auto lg:text-base">
+                    ${driver.position}
+                </td>
+                <td class="flex flex-col flex-1 ml-2 p-2 lg:p-3 lg:table-cell lg:flex-initial lg:ml-0">
+                    <div class="font-medium text-base text-[#E1E1E1]">
+                        ${driver.given_name} ${driver.family_name}
+                    </div>
+                    <div class="text-gray-400 text-sm">
+                        ${driver.constructor_name}
+                    </div>
+                </td>
+                <td class="font-bold text-f1-red text-xl absolute top-3 right-3 lg:static lg:p-3 lg:text-right lg:text-base">
+                    ${driver.points}
+                </td>
+            </tr>
                 `;
             });
             html += `
@@ -211,9 +225,7 @@
         } else {
             html += '<p class="text-gray-400 p-4">Geen coureursklassement beschikbaar op dit moment.</p>';
         }
-        html += '</div>'; // end standings-table-container (Drivers)
-        
-        // CONSTRUCTORS STANDINGS CONTAINER
+        html += '</div>';
         html += '<div class="flex-1 min-w-0 data-table-container">';
         html += '<h4 class="text-xl font-oswald font-semibold text-white text-center mb-4">Constructors Championship</h4>';
         if (constructors.length > 0) {
@@ -252,13 +264,10 @@
         } else {
             html += '<p class="text-gray-400 p-4">Geen constructeursklassement beschikbaar op dit moment.</p>';
         }
-        html += '</div>'; // end standings-table-container (Constructors)
-        
-        html += '</div>'; // end standings-grid
-        
+        html += '</div>';
+        html += '</div>';
         standingsContent.innerHTML = html;
     }
-    
     fetchChampionshipStandings();
     document.addEventListener('DOMContentLoaded', () => {
         const nav = document.getElementById('main-nav-links');
