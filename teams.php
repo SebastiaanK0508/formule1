@@ -12,6 +12,7 @@ try {
 <!DOCTYPE html>
 <html lang="nl">
 <head>
+    <meta name="description" content="Het meest complete F1 archief & statistieken sinds 1950. Vind uitslagen, records en alle coureursdata. Duik in de F1 historie!" />
     <script src="https://t.contentsquare.net/uxa/688c1fe6f0f7c.js"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
