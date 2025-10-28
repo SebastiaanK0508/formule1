@@ -33,7 +33,6 @@ require_once 'achterkant/aanpassing/api-koppelingen/result_api.php';
         }
     </script>
     <style>
-        /* Mobile menu styles */
         @media (max-width: 767px) {
             .main-nav[data-visible="false"] {
                 display: none;
@@ -55,67 +54,9 @@ require_once 'achterkant/aanpassing/api-koppelingen/result_api.php';
                 padding: 0.5rem 0;
             }
         }
-        /* Custom table styling voor de resultaten */
-        .data-table th, .data-table td {
-            padding: 0.75rem 0.5rem;
-            text-align: left;
-        }
-        .data-table th {
-            font-family: 'Oswald', sans-serif;
-        }
-        .data-table tbody tr:nth-child(even) {
-            background-color: #21212B; /* f1-dark-table */
-        }
-        .data-table tbody tr:hover {
-            background-color: rgba(225, 6, 0, 0.2); /* f1-red met transparantie */
-        }
-        .data-table tbody tr {
-            transition: background-color 0.15s ease-in-out;
-            border-left-width: 5px; /* Belangrijk voor de teamkleur-streep */
-            border-left-style: solid;
-        }
-
-        /* Mobile specific adjustments (simuleert de oude CSS-aanpassing) */
-        @media (max-width: 640px) {
-            .data-table thead {
-                display: none;
-            }
-            .data-table tr {
-                display: grid;
-                grid-template-columns: 40px 1fr; /* Pos en de rest */
-                grid-template-rows: auto auto;
-                gap: 0 10px;
-                padding: 10px;
-                margin-bottom: 10px;
-                border-radius: 6px;
-                box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
-            }
-            .data-table td {
-                padding: 0;
-                border: none;
-                display: block;
-            }
-            .data-table .position {
-                grid-area: 1 / 1 / 3 / 2;
-                font-size: 2rem;
-                font-weight: 700;
-                color: #E10600; /* f1-red */
-                align-self: center;
-            }
-            .data-table .driver-name {
-                font-weight: 700;
-                font-size: 1.1rem;
-            }
-            .data-table .team-name {
-                font-size: 0.9rem;
-            }
-            .data-table .lap-time-status {
-                grid-column: 2 / 3;
-                text-align: right;
-                font-weight: 500;
-            }
-        }
+        
     </style>
+    <link rel="stylesheet" href="table.css">
 </head>
 <body class="bg-f1-black text-gray-100 font-sans min-h-screen flex flex-col">
     

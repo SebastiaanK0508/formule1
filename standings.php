@@ -47,21 +47,18 @@
             .main-nav a {
                 padding: 0.5rem 0;
             }
-            
             .standings-table tr {
-                padding-right: 5rem !important; /* Voldoende ruimte voor de punten */
+                padding-right: 3rem !important; /* Voldoende ruimte voor de punten */
             }
             .team-name-mobile-driver {
-                display: block !important; 
-                width: 100%; /* Forceert nieuwe regel */
+                display: flex;
+                flex-direction: row;
                 order: 1; /* Zorgt dat het na de Coureursnaam komt */
                 margin-left: 48px; /* Lijn uit met Coureursnaam (40px pos + 8px margin/padding) */
-                font-size: 0.875rem; 
+                font-size: 0.600rem; 
                 color: #B0B0B0;
                 padding-left: 0 !important; /* Reset padding van de td */
             }
-
-            /* Verberg de desktop header op kleinere schermen (optioneel, kan ook lg:hidden) */
             .standings-table thead {
                 display: none;
             }
@@ -97,6 +94,7 @@
     </style>
 
 </head>
+<link rel="stylesheet" href="table.css">
 <body class="bg-f1-black text-gray-100 font-sans min-h-screen flex flex-col">
     
     <header class="bg-black shadow-lg sticky top-0 z-50">
@@ -172,13 +170,11 @@
 
     function displayChampionshipStandings(drivers, constructors) {
         let html = '<div class="flex flex-col lg:flex-row gap-6 standings-grid">';
-        
-        // DRIVERS STANDINGS CONTAINER
-        html += '<div class="flex-1 min-w-0 standings-table-container">'; 
+        html += '<div class="flex-1 min-w-0 data-table-container">'; 
         html += '<h4 class="text-xl font-oswald font-semibold text-white text-center mb-4">Drivers Championship</h4>';
         if (drivers.length > 0) {
             html += `
-                <table class="standings-table"> 
+                <table class="data-table w-full border-collapse rounded-lg overflow-hidden"> 
                     <thead>
                         <tr>
                             <th class="rounded-tl-lg">Pos.</th>
@@ -196,15 +192,12 @@
                         <td class="font-oswald font-bold text-2xl w-[40px] flex-shrink-0 text-white p-2 lg:p-3 lg:w-auto lg:text-base">
                             ${driver.position}
                         </td>
-                        
                         <td class="font-medium flex-1 ml-2 text-base text-[#E1E1E1] p-2 lg:p-3">
                             ${driver.given_name} ${driver.family_name}
                         </td>
-                        
                         <td class="team-name-mobile-driver lg:table-cell text-gray-400 text-sm p-3">
                             ${driver.constructor_name}
                         </td>
-                        
                         <td class="font-bold text-f1-red text-xl absolute top-3 right-3 lg:static lg:p-3 lg:text-right lg:text-base">
                             ${driver.points}
                         </td>
@@ -221,11 +214,11 @@
         html += '</div>'; // end standings-table-container (Drivers)
         
         // CONSTRUCTORS STANDINGS CONTAINER
-        html += '<div class="flex-1 min-w-0 standings-table-container">';
+        html += '<div class="flex-1 min-w-0 data-table-container">';
         html += '<h4 class="text-xl font-oswald font-semibold text-white text-center mb-4">Constructors Championship</h4>';
         if (constructors.length > 0) {
             html += `
-                <table class="standings-table"> 
+                <table class="data-table w-full border-collapse rounded-lg overflow-hidden"> 
                     <thead>
                         <tr>
                             <th class="rounded-tl-lg">Pos.</th>
@@ -238,7 +231,6 @@
             constructors.forEach(constructor => {
                 html += `
                     <tr class="flex flex-wrap relative mb-4 bg-f1-gray border-l-4 border-f1-red rounded lg:table-row lg:mb-0 lg:border-l-0">
-                        
                         <td class="font-oswald font-bold text-2xl w-[40px] flex-shrink-0 text-white p-2 lg:p-3 lg:w-auto lg:text-base">
                             ${constructor.position}
                         </td>

@@ -13,7 +13,7 @@
     <script src="https://t.contentsquare.net/uxa/688c1fe6f0f7c.js"></script>
     <link rel="icon" type="image/x-icon" href="/afbeeldingen/logo/f1logobgrm.png">
     <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
-    
+    <link rel="stylesheet" href="table.css">
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -131,9 +131,9 @@
                 
                 <?php if (!empty($race_results)): ?>
                 <div class="overflow-x-auto">
-                    <table class="min-w-full bg-f1-black rounded-lg data-table">
-                        <thead class="bg-f1-red text-white uppercase text-xs tracking-wider">
-                            <tr>
+                    <table class="data-table w-full border-collapse rounded-lg overflow-hidden">
+                        <thead class="bg-f1-red text-white uppercase text-sm">
+                            <tr class="bg-f1-red text-white uppercase text-sm" >
                                 <th class="py-3 px-4 text-left font-bold rounded-tl-lg">Pos</th>
                                 <th class="py-3 px-4 text-left font-bold">Driver</th>
                                 <th class="py-3 px-4 text-left font-bold">Team</th>
@@ -142,7 +142,7 @@
                         </thead>
                         <tbody>
                             <?php foreach ($race_results as $result): ?>
-                                <tr class="border-b border-gray-700 hover:bg-gray-800 transition duration-150">
+                                <tr style="border-left-color: <?php echo htmlspecialchars($result['team_color'] ?? '#CCCCCC'); ?>;">
                                     <td class="py-3 px-4 font-oswald font-bold text-lg text-f1-red">
                                         <?php echo htmlspecialchars($result['position']); ?>
                                     </td>
@@ -150,7 +150,7 @@
                                         <?php echo htmlspecialchars($result['driver_name']); ?>
                                     </td>
                                     <td class="py-3 px-4 font-medium" 
-                                        style="border-left: 5px solid <?php echo htmlspecialchars($result['team_color']); ?>; padding-left: 10px;">
+                                        style="color: <?php echo htmlspecialchars($result['team_color']); ?>; padding-left: 10px;">
                                         <?php echo htmlspecialchars($result['team_name']); ?>
                                     </td>
                                     <td class="py-3 px-4 text-sm text-gray-300">
