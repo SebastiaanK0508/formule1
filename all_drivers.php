@@ -109,10 +109,10 @@ if (file_exists($jsonFile)) {
                 
                 <select id="sortSelect"
                         class="p-3 bg-f1-black border border-gray-700 text-white rounded-md focus:ring-f1-red focus:border-f1-red sm:w-auto">
-                    <option value="az">Naam (A-Z)</option>
-                    <option value="za">Naam (Z-A)</option>
-                    <option value="oldest">Geboortedatum (Oudst eerst)</option>
-                    <option value="youngest">Geboortedatum (Jongst eerst)</option>
+                    <option value="az">Name (A-Z)</option>
+                    <option value="za">Name (Z-A)</option>
+                    <option value="oldest">Date of birth (Oldest first)</option>
+                    <option value="youngest">Date of birth (youngest first)</option>
                 </select>
             </div>
             
@@ -135,15 +135,15 @@ if (file_exists($jsonFile)) {
                             
                             <div class="driver-details-list text-sm text-gray-300 space-y-1 sm:space-y-0 sm:space-x-4 sm:flex">
                                 <span class="driver-info">
-                                    <strong class="driver-info-strong font-semibold text-f1-red">Geboortedatum:</strong> <?php echo htmlspecialchars($driver['dateOfBirth']); ?>
+                                    <strong class="driver-info-strong font-semibold text-f1-red">Date of birth:</strong> <?php echo htmlspecialchars($driver['dateOfBirth']); ?>
                                 </span>
                                 <span class="driver-info hidden md:inline">|</span>
                                 <span class="driver-info">
-                                    <strong class="driver-info-strong font-semibold text-f1-red">Geboorteplaats:</strong> <?php echo htmlspecialchars($driver['placeOfBirth']),', ', htmlspecialchars($driver['countryOfBirthCountryId']); ?>
+                                    <strong class="driver-info-strong font-semibold text-f1-red">Place of birth:</strong> <?php echo htmlspecialchars($driver['placeOfBirth']),', ', htmlspecialchars($driver['countryOfBirthCountryId']); ?>
                                 </span>
                                 <span class="driver-info hidden md:inline">|</span>
                                 <span class="driver-info">
-                                    <strong class="driver-info-strong font-semibold text-f1-red">Nationaliteit:</strong> <?php echo htmlspecialchars($driver['nationalityCountryId']); ?>
+                                    <strong class="driver-info-strong font-semibold text-f1-red">Nationality:</strong> <?php echo htmlspecialchars($driver['nationalityCountryId']); ?>
                                 </span>
                             </div>
                         </div>

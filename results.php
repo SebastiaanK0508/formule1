@@ -1,6 +1,59 @@
 <?php
 require_once 'achterkant/aanpassing/api-koppelingen/result_api.php';
 
+// --- Schema.org Data Preparatie ---
+$schemaData = [];
+
+// 1. SportsEvent met SportsResult Schema voor de getoonde race
+if (!empty($race_results) && $race_details) {
+    
+    $results = [];
+    foreach ($race_results as $result) {
+        // Maak een 'Person' object van elke coureur
+        $results[] = [
+            '@type' => 'Person',
+            'name' => htmlspecialchars($result['driver_name']),
+            'alumniOf' => [
+                '@type' => 'SportsTeam',
+                'name' => htmlspecialchars($result['team_name']),
+            ],
+            'sport' => 'Formula 1',
+        ];
+    }
+
+    $raceDate = (new DateTime($race_details['date']))->format('Y-m-d');
+    
+    $raceSchema = [
+        '@context' => 'https://schema.org',
+        '@type' => 'SportsEvent',
+        'name' => 'Grand Prix van ' . htmlspecialchars($race_details['name']) . ' ' . htmlspecialchars($race_details['year']),
+        'startDate' => $raceDate,
+        'location' => [
+            '@type' => 'Place',
+            'name' => htmlspecialchars($race_details['circuit']),
+            'address' => [
+                '@type' => 'PostalAddress',
+                ''
+            ],
+        ],
+        'result' => [
+            '@type' => 'SportsResults',
+            'winningTeam' => $race_results[0]['team_name'] ?? 'Niet beschikbaar',
+            // De winnaar (eerste coureur)
+            'winningTies' => [
+                '@type' => 'Win',
+                'winner' => [
+                    '@type' => 'Person',
+                    'name' => $race_results[0]['driver_name'] ?? 'Niet beschikbaar'
+                ]
+            ],
+            'performer' => $results, // Alle coureurs in de uitslag
+        ],
+        'sport' => 'Formula 1'
+    ];
+    $schemaData = $raceSchema;
+}
+
 ?>
 
 <!DOCTYPE html>
@@ -9,7 +62,7 @@ require_once 'achterkant/aanpassing/api-koppelingen/result_api.php';
     <script src="https://t.contentsquare.net/uxa/688c1fe6f0f7c.js"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Formula 1 Results</title>
+    <title>Formula 1 Results - <?php echo $race_details['name'] ?? 'Overzicht'; ?> <?php echo $race_details['year'] ?? ''; ?></title>
     <link rel="icon" type="image/x-icon" href="/afbeeldingen/logo/f1logobgrm.png">
     <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
     
@@ -57,6 +110,13 @@ require_once 'achterkant/aanpassing/api-koppelingen/result_api.php';
         
     </style>
     <link rel="stylesheet" href="table.css">
+    
+    <?php if (!empty($schemaData)): ?>
+    <script type="application/ld+json">
+    <?php echo json_encode($schemaData, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE); ?>
+    </script>
+    <?php endif; ?>
+    
 </head>
 <body class="bg-f1-black text-gray-100 font-sans min-h-screen flex flex-col">
     
@@ -118,7 +178,7 @@ require_once 'achterkant/aanpassing/api-koppelingen/result_api.php';
                         <noscript><input type="submit" value="Selecteer" class="mt-2 bg-f1-red hover:bg-red-700 text-white p-2 rounded w-full"></noscript>
                     </form>
                     
-                    <h4 class="text-sm font-oswald uppercase text-gray-300 border-t border-gray-700 pt-4 mb-2">Races in <?php echo htmlspecialchars($selected_year); ?></h4>
+                    <h4 class="text-sm font-oswald uppercase text-gray-300 border-t border-gray-700 pt-4 mb-2">Season <?php echo htmlspecialchars($selected_year); ?></h4>
                     <?php if (!empty($races_in_season)): ?>
                         <nav class="space-y-1">
                         <?php foreach ($races_in_season as $race): ?>
@@ -148,8 +208,8 @@ require_once 'achterkant/aanpassing/api-koppelingen/result_api.php';
                                     <span class="text-f1-red"><?php echo htmlspecialchars($race_details['year']); ?></span>
                                 </h3>
                                 <p class="text-gray-300"><strong class="text-white">Circuit:</strong> <?php echo htmlspecialchars($race_details['circuit']); ?></p>
-                                <p class="text-gray-300"><strong class="text-white">Locatie:</strong> <?php echo htmlspecialchars($race_details['location']); ?>, <?php echo htmlspecialchars($race_details['country']); ?></p>
-                                <p class="text-gray-300"><strong class="text-white">Datum:</strong> <?php echo htmlspecialchars((new DateTime($race_details['date']))->format('d-m-Y')); ?></p>
+                                <p class="text-gray-300"><strong class="text-white">Location:</strong> <?php echo htmlspecialchars($race_details['location']); ?>, <?php echo htmlspecialchars($race_details['country']); ?></p>
+                                <p class="text-gray-300"><strong class="text-white">Date:</strong> <?php echo htmlspecialchars((new DateTime($race_details['date']))->format('d-m-Y')); ?></p>
                             </div>
                             
                             <table class="data-table w-full border-collapse rounded-lg overflow-hidden">

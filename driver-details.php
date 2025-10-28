@@ -190,7 +190,7 @@ $driverLastName = htmlspecialchars($driver['last_name']);
                     </div>
 
                     <div class="flex justify-between items-center border-t border-gray-700 pt-3">
-                        <dt class="font-bold text-gray-300">Nationaliteit:</dt>
+                        <dt class="font-bold text-gray-300">Nationality:</dt>
                         <dd class="text-white flex items-center">
                             <?php if (!empty($driver['flag_url'])): ?>
                                 <img src="<?php echo htmlspecialchars($driver['flag_url']); ?>" alt="Vlag" class="flag-icon w-6 h-auto mr-2 rounded shadow-md">
@@ -201,21 +201,21 @@ $driverLastName = htmlspecialchars($driver['last_name']);
 
                     <?php if (!empty($driver['date_of_birth'])): ?>
                         <div class="flex justify-between items-center border-t border-gray-700 pt-3">
-                            <dt class="font-bold text-gray-300">Geboortedatum:</dt>
+                            <dt class="font-bold text-gray-300">Date of birth:</dt>
                             <dd class="text-white"><?php echo htmlspecialchars(date('d-m-Y', strtotime($driver['date_of_birth']))); ?></dd>
                         </div>
                     <?php endif; ?>
                     
                     <?php if (isset($driver['career_points'])): ?>
                         <div class="flex justify-between items-center border-t border-gray-700 pt-3">
-                            <dt class="font-bold text-gray-300">Carrièrepunten:</dt>
+                            <dt class="font-bold text-gray-300">Career points:</dt>
                             <dd class="text-f1-red font-bold text-xl"><?php echo htmlspecialchars(number_format($driver['career_points'], 1, ',', '.')); ?></dd>
                         </div>
                     <?php endif; ?>
                     
                     <?php if (isset($driver['championships_won'])): ?>
                         <div class="flex justify-between items-center border-t border-gray-700 pt-3">
-                            <dt class="font-bold text-gray-300">Kampioenschappen:</dt>
+                            <dt class="font-bold text-gray-300">Championsships won:</dt>
                             <dd class="text-white font-bold text-xl"><?php echo htmlspecialchars($driver['championships_won']); ?></dd>
                         </div>
                     <?php endif; ?>
@@ -225,7 +225,7 @@ $driverLastName = htmlspecialchars($driver['last_name']);
 
         <?php if (!empty($driver['description'])): ?>
             <div class="bg-f1-gray p-6 rounded-lg shadow-xl mt-8 driver-description">
-                <h2 class="text-2xl font-oswald text-f1-red mb-4 border-b border-gray-700 pb-2">Over de coureur</h2>
+                <h2 class="text-2xl font-oswald text-f1-red mb-4 border-b border-gray-700 pb-2">About the Driver</h2>
                 <p class="text-gray-300 leading-relaxed"><?php echo nl2br(htmlspecialchars($driver['description'])); ?></p>
             </div>
         <?php endif; ?>

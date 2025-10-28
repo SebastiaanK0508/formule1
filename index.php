@@ -3,6 +3,78 @@
     if (isset($nextGrandPrix) && $nextGrandPrix && !isset($targetDateTime)) {
         $targetDateTime = '2025-11-20T14:00:00+01:00'; 
     }
+    $schemaData = [
+        '@context' => 'https://schema.org',
+        '@graph' => [
+            [
+                '@type' => 'WebSite',
+                'url' => 'https://f1site.online/',
+                'name' => 'Formula 1 - F1SITE.NL',
+                'description' => 'De snelste bron voor Formule 1 nieuws, uitslagen, kalender en coureurs.',
+            ]
+        ]
+    ];
+    if (isset($nextGrandPrix) && $nextGrandPrix) {
+        $raceDate = (new DateTime($targetDateTime))->format(DateTime::ISO8601);
+        $schemaData['@graph'][] = [
+            '@type' => 'SportsEvent',
+            'name' => htmlspecialchars($nextGrandPrix['grandprix']),
+            'startDate' => $raceDate,
+            'location' => [
+                '@type' => 'Place',
+                'name' => htmlspecialchars($nextGrandPrix['grandprix']),
+                'address' => [
+                    '@type' => 'PostalAddress',
+                    'name' => 'Circuit van ' . htmlspecialchars($nextGrandPrix['circuit']),
+                ],
+            ],
+            'sport' => 'Formula 1',
+            'competitor' => [
+                '@type' => 'Organization',
+                'name' => 'F1 Teams',
+            ]
+        ];
+    }
+    if ($race_details && !empty($race_results)) {
+        
+        $results = [];
+        foreach ($race_results as $result) {
+            $results[] = [
+                '@type' => 'Person',
+                'name' => htmlspecialchars($result['driver_name']),
+                'alumniOf' => [
+                    '@type' => 'SportsTeam',
+                    'name' => htmlspecialchars($result['team_name']),
+                ],
+                'sport' => 'Formula 1',
+            ];
+        }
+
+        $raceSchema = [
+            '@type' => 'SportsEvent',
+            'name' => 'Grand Prix van ' . htmlspecialchars($race_details['name']),
+            'startDate' => htmlspecialchars((new DateTime($race_details['date']))->format('Y-m-d')),
+            'location' => [
+                '@type' => 'Place',
+                'name' => htmlspecialchars($race_details['circuit']) . ', ' . htmlspecialchars($race_details['country']),
+            ],
+            'result' => [
+                '@type' => 'SportsResults',
+                'winningTeam' => $race_results[0]['team_name'] ?? 'Niet beschikbaar',
+                'winningTies' => [
+                    '@type' => 'Win',
+                    'winner' => [
+                        '@type' => 'Person',
+                        'name' => $race_results[0]['driver_name'] ?? 'Niet beschikbaar'
+                    ]
+                ],
+                'performer' => $results,
+                'position' => $race_results[0]['position'] ?? null,
+            ],
+            'sport' => 'Formula 1'
+        ];
+        $schemaData['@graph'][] = $raceSchema;
+    }
 ?>
 <!DOCTYPE html>
 <html lang="nl">
@@ -55,6 +127,13 @@
             }
         }
     </style>
+    
+    <?php if (!empty($schemaData)): ?>
+    <script type="application/ld+json">
+    <?php echo json_encode($schemaData, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE); ?>
+    </script>
+    <?php endif; ?>
+    
 </head>
 <body class="bg-f1-black text-gray-100 font-sans">
     
@@ -133,7 +212,7 @@
                 <div class="overflow-x-auto">
                     <table class="data-table w-full border-collapse rounded-lg overflow-hidden">
                         <thead class="bg-f1-red text-white uppercase text-sm">
-                            <tr class="bg-f1-red text-white uppercase text-sm" >
+                            <tr>
                                 <th class="py-3 px-4 text-left font-bold rounded-tl-lg">Pos</th>
                                 <th class="py-3 px-4 text-left font-bold">Driver</th>
                                 <th class="py-3 px-4 text-left font-bold">Team</th>
@@ -243,6 +322,5 @@
         console.log("Geen volgende Grand Prix om af te tellen of $targetDateTime is niet gezet.");
         <?php endif; ?>
     </script>
-    
 </body>
 </html>

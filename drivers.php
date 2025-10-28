@@ -7,7 +7,6 @@ try {
     $allDrivers = $stmt->fetchAll();
 } catch (\PDOException $e) {
     error_log("Fout bij het ophalen van alle coureurs: " . $e->getMessage());
-    // Foutmelding weggelaten uit HTML voor nu
 }
 $selectedDriver = null; 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['driver_id'])) {
@@ -22,6 +21,60 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['driver_id'])) {
     } catch (\PDOException $e) {
         error_log("Fout bij het ophalen van geselecteerde coureurdetails: " . $e->getMessage());
     }
+}
+
+// --- Schema.org Data Preparatie ---
+$schemaData = [
+    '@context' => 'https://schema.org',
+    '@graph' => [
+        // 1. CollectionPage Schema
+        [
+            '@type' => 'CollectionPage',
+            'url' => 'https://f1site.online/drivers.php', 
+            'name' => 'Formula 1 Drivers 2025',
+            'about' => 'Huidige coureurs, teams en nummers voor het Formule 1-seizoen 2025.',
+        ]
+    ]
+];
+
+$driverListItems = [];
+$baseUrl = 'https://f1site.online/'; // Basis-URL van je site
+
+foreach ($allDrivers as $index => $driver) {
+    $driverSlug = strtolower(str_replace(' ', '-', htmlspecialchars($driver['first_name'] . '-' . $driver['last_name'])));
+    $driverUrl = $baseUrl . 'driver-details.php?slug=' . $driverSlug;
+    
+    // 2. Person Schema voor elke coureur
+    $driverListItems[] = [
+        '@type' => 'ListItem',
+        'position' => $index + 1,
+        'item' => [
+            '@type' => 'Person',
+            'name' => htmlspecialchars($driver['first_name']) . ' ' . htmlspecialchars($driver['last_name']),
+            'url' => $driverUrl,
+            'jobTitle' => 'Formula 1 Driver',
+            'hasOccupation' => [
+                '@type' => 'Occupation',
+                'name' => 'Racing Driver',
+                'description' => 'Professionele Formule 1-coureur voor het ' . htmlspecialchars($driver['full_team_name']) . '.',
+            ],
+            'alumniOf' => [
+                '@type' => 'SportsTeam',
+                'name' => htmlspecialchars($driver['full_team_name']),
+                'sport' => 'Formula 1',
+            ],
+        ]
+    ];
+}
+
+// Voeg de lijst van coureurs toe aan de CollectionPage
+if (!empty($driverListItems)) {
+    $schemaData['@graph'][] = [
+        '@type' => 'ItemList',
+        'itemListOrder' => 'http://schema.org/ItemListOrderAscending',
+        'numberOfItems' => count($driverListItems),
+        'itemListElement' => $driverListItems
+    ];
 }
 ?>
 <!DOCTYPE html>
@@ -74,6 +127,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['driver_id'])) {
             }
         }
     </style>
+    
+    <?php if (!empty($schemaData)): ?>
+    <script type="application/ld+json">
+    <?php echo json_encode($schemaData, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE); ?>
+    </script>
+    <?php endif; ?>
+    
 </head>
 <body class="bg-f1-black text-gray-100 font-sans min-h-screen flex flex-col">
     
@@ -145,7 +205,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['driver_id'])) {
                 <div class="lg:col-span-4 text-center mt-4">
                     <a href="all_drivers.php">
                         <button class="bg-f1-red text-white py-3 px-8 rounded-lg font-bold uppercase tracking-wider hover:bg-red-700 transition all_drivers_button">
-                            Alle Coureurs Ooit Bekijken
+                            All drivers ever
                         </button>
                     </a>
                 </div>
@@ -194,7 +254,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['driver_id'])) {
             </div>
         </div>
     </footer>
-    
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const nav = document.getElementById('main-nav-links');

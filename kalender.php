@@ -112,7 +112,7 @@ if ($selectedYear) {
                 F1 SEASON <?php echo htmlspecialchars($selectedYear ?? 'N/A'); ?> SCHEDULE
             </h2>
             <form method="GET" action="kalender.php" class="year-selector flex items-center space-x-2">
-                <label for="year-select" class="text-gray-300 text-sm font-semibold">Selecteer jaar:</label>
+                <label for="year-select" class="text-gray-300 text-sm font-semibold">Select year:</label>
                 <select name="year" id="year-select" onchange="this.form.submit()"
                         class="bg-f1-black border border-gray-600 text-white p-2 rounded-md focus:ring-f1-red focus:border-f1-red text-sm cursor-pointer">
                     <?php foreach ($availableYears as $year): ?>
@@ -133,9 +133,7 @@ if ($selectedYear) {
                             $raceDateTime = new DateTime($circuit['race_datetime']);
                             $raceDay = $raceDateTime->format('j');
                             $raceYear = $raceDateTime->format('Y');
-                            // Gebruik de Nederlandse maandnamen
                             $raceMonth = strftime('%B', $raceDateTime->getTimestamp());
-                            // Pas de datumberekening aan
                             $displayDate = ($raceDay - 2) . ' - ' . $raceDay . ' ' . $raceMonth . ' ' . $raceYear;
                             if ($circuit['circuit_key'] === 'las_vegas') {
                                 $displayDate = ($raceDay - 1) . ' - ' . $raceDay . ' ' . $raceMonth . ' ' . $raceYear . ' (Zaterdag)';
