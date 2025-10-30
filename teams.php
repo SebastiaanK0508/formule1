@@ -104,7 +104,7 @@ try {
                                         <?php echo htmlspecialchars($team['full_team_name']); ?>    
                                     </h3>
                                     <p class="text-sm text-gray-300">
-                                        <span class="font-semibold">Basis:</span> <?php echo htmlspecialchars($team['base_location'] ?? 'N/A'); ?>
+                                        <span class="font-semibold">Base:</span> <?php echo htmlspecialchars($team['base_location'] ?? 'N/A'); ?>
                                     </p>
                                     <p class="text-sm text-gray-300">
                                         <span class="font-semibold">Team Principal:</span> <?php echo htmlspecialchars($team['team_principal']); ?>
@@ -121,15 +121,15 @@ try {
         
         <section class="f1-section mt-12 bg-f1-gray p-6 rounded-lg shadow-xl">
             <div class="flex flex-col md:flex-row justify-between items-center mb-6 all-teams-header">
-                <h2 class="text-2xl font-oswald font-bold text-white">Alle Teams Ooit</h2>
+                <h2 class="text-2xl font-oswald font-bold text-white">All Teams ever</h2>
                 <div class="filter-section mt-4 md:mt-0 flex items-center space-x-2">
                     <label for="team-filter" class="text-gray-300 text-sm font-semibold">Filter:</label>
-                    <input type="text" id="team-filter" placeholder="Naam of Land..." class="bg-f1-black border border-gray-600 text-white p-2 rounded-md focus:ring-f1-red focus:border-f1-red text-sm w-48">
+                    <input type="text" id="team-filter" placeholder="Name or Country..." class="bg-f1-black border border-gray-600 text-white p-2 rounded-md focus:ring-f1-red focus:border-f1-red text-sm w-48">
                 </div>
             </div>
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 data-card-row" id="history-team-row">
                 <p id="loading-message" class="text-gray-400 col-span-4 p-4 text-center">Loading historical teams...</p>
-                <p id="no-results-message" class="text-f1-red col-span-4 p-4 text-center" style="display: none;">Er zijn geen resultaten gevonden.</p>
+                <p id="no-results-message" class="text-f1-red col-span-4 p-4 text-center" style="display: none;">No results found.</p>
             </div>
         </section>
     </main>

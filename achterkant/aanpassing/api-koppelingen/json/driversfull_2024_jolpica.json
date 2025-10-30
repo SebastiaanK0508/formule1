@@ -3,7 +3,7 @@
         "xmlns": "",
         "series": "f1",
         "url": "https:\/\/api.jolpi.ca\/ergast\/f1\/2024\/drivers.json",
-        "limit": "100",
+        "limit": "30",
         "offset": "0",
         "total": "25",
         "DriverTable": {

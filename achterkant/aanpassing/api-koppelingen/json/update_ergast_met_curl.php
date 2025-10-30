@@ -3,13 +3,13 @@
 $base_url = "http://api.jolpi.ca/ergast/f1/"; 
 $suffix = 'jolpica'; 
 
-$start_year = 2007; 
+$start_year = 2024; 
 $current_year = date('Y');
 $seasons_to_fetch = range($start_year, $current_year); 
 $endpoints = [
     'DriverStandings'      => 'driverStandings.json',
     'ConstructorStandings' => 'constructorStandings.json',
-    'DriversFull'          => 'drivers.json?', 
+    'DriversFull'          => 'drivers.json', 
     'Circuits'             => 'circuits.json',          
     'AllRaceResults'       => 'results.json',
     'race'                 => 'races.json',
@@ -19,8 +19,8 @@ $endpoints = [
 ];
 
 /**
- * Controleert snel of een verbinding met de lokale proxy (8080) tot stand kan komen.
- * @return bool True als de lokale proxy nodig is, anders False.
+ * 
+ * @return bool 
  */
 function check_if_proxy_needed() {
     $fp = @fsockopen('localhost', 8080, $errno, $errstr, 0.5); // 0.5 seconde timeout

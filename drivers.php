@@ -22,12 +22,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['driver_id'])) {
         error_log("Fout bij het ophalen van geselecteerde coureurdetails: " . $e->getMessage());
     }
 }
-
-// --- Schema.org Data Preparatie ---
 $schemaData = [
     '@context' => 'https://schema.org',
     '@graph' => [
-        // 1. CollectionPage Schema
         [
             '@type' => 'CollectionPage',
             'url' => 'https://f1site.online/drivers.php', 
@@ -38,13 +35,11 @@ $schemaData = [
 ];
 
 $driverListItems = [];
-$baseUrl = 'https://f1site.online/'; // Basis-URL van je site
+$baseUrl = 'https://f1site.online/';
 
 foreach ($allDrivers as $index => $driver) {
     $driverSlug = strtolower(str_replace(' ', '-', htmlspecialchars($driver['first_name'] . '-' . $driver['last_name'])));
     $driverUrl = $baseUrl . 'driver-details.php?slug=' . $driverSlug;
-    
-    // 2. Person Schema voor elke coureur
     $driverListItems[] = [
         '@type' => 'ListItem',
         'position' => $index + 1,
@@ -66,8 +61,6 @@ foreach ($allDrivers as $index => $driver) {
         ]
     ];
 }
-
-// Voeg de lijst van coureurs toe aan de CollectionPage
 if (!empty($driverListItems)) {
     $schemaData['@graph'][] = [
         '@type' => 'ItemList',

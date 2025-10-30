@@ -57,7 +57,6 @@ if (!is_array($circuitDetails)) {
         }
     </script>
     <style>
-        /* Mobile menu styles */
         @media (max-width: 767px) {
             .main-nav[data-visible="false"] {
                 display: none;
@@ -116,18 +115,18 @@ if (!is_array($circuitDetails)) {
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
                     
                     <div class="f1-section border-l-4 border-f1-red pl-4">
-                        <h3 class="text-2xl font-oswald font-bold text-white mb-4">Algemene Informatie</h3>
+                        <h3 class="text-2xl font-oswald font-bold text-white mb-4">General Information</h3>
                         <div class="space-y-3 text-gray-300">
                             <div class="detail-item flex justify-between">
-                                <strong class="text-f1-red font-semibold">Circuit Naam:</strong>
+                                <strong class="text-f1-red font-semibold">Circuit Name:</strong>
                                 <span><?php echo htmlspecialchars($circuitDetails['title'] ?? 'N.v.t.'); ?></span>
                             </div>
                             <div class="detail-item flex justify-between">
-                                <strong class="text-f1-red font-semibold">Eerste GP Jaar:</strong>
+                                <strong class="text-f1-red font-semibold">First GP Year:</strong>
                                 <span><?php echo htmlspecialchars($circuitDetails['first_gp_year'] ?? 'N.v.t.'); ?></span>
                             </div>
                             <div class="detail-item flex justify-between">
-                                <strong class="text-f1-red font-semibold">Datum & Tijd:</strong>
+                                <strong class="text-f1-red font-semibold">Date & Time:</strong>
                                 <span><?php echo htmlspecialchars($circuitDetails['race_datetime'] ? date('d-m-Y H:i', strtotime($circuitDetails['race_datetime'])) : 'N.v.t.'); ?></span>
                             </div>
                         </div>
@@ -138,27 +137,27 @@ if (!is_array($circuitDetails)) {
                             <img class="country-flag max-h-40 w-full object-contain shadow-lg rounded-lg" 
                                  src="<?php echo htmlspecialchars($circuitDetails['country_flag_url']); ?>" alt="Vlag van Land">
                         <?php else: ?>
-                            <p class="text-gray-400">Vlag niet beschikbaar</p>
+                            <p class="text-gray-400">Vlag not available</p>
                         <?php endif; ?>
                     </div>
 
                     <div class="f1-section border-l-4 border-f1-red pl-4">
-                        <h3 class="text-2xl font-oswald font-bold text-white mb-4">Circuit Details</h3>
+                        <h3 class="text-2xl font-oswald font-bold text-white mb-4">Circuit details</h3>
                         <div class="space-y-3 text-gray-300">
                             <div class="detail-item flex justify-between">
-                                <strong class="text-f1-red font-semibold">Ronden:</strong>
+                                <strong class="text-f1-red font-semibold">Laps:</strong>
                                 <span><?php echo htmlspecialchars($circuitDetails['lap_count'] ?? 'N.v.t.'); ?></span>
                             </div>
                             <div class="detail-item flex justify-between">
-                                <strong class="text-f1-red font-semibold">Circuit Lengte:</strong>
+                                <strong class="text-f1-red font-semibold">Circuit length:</strong>
                                 <span><?php echo htmlspecialchars(number_format($circuitDetails['circuit_length_km'] ?? 0, 3, ',', '.')) . ' km'; ?></span>
                             </div>
                             <div class="detail-item flex justify-between">
-                                <strong class="text-f1-red font-semibold">Race Afstand:</strong>
+                                <strong class="text-f1-red font-semibold">Race distance:</strong>
                                 <span><?php echo htmlspecialchars(number_format($circuitDetails['race_distance_km'] ?? 0, 3, ',', '.')) . ' km'; ?></span>
                             </div>
                             <div class="detail-item flex justify-between">
-                                <strong class="text-f1-red font-semibold">Ronderecord:</strong>
+                                <strong class="text-f1-red font-semibold">Lap record:</strong>
                                 <span><?php echo htmlspecialchars($circuitDetails['lap_record'] ?? 'N.v.t.'); ?></span>
                             </div>
                         </div>
