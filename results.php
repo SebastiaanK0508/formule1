@@ -253,12 +253,6 @@ if (!empty($race_results) && $race_details) {
                     <h4 class="text-lg font-semibold text-red-500 mb-3 uppercase">Externe Sites</h4>
                     <ul class="space-y-2">
                         <li>
-                            <a href="https://www.f1site.online" target="_blank" 
-                            class="text-gray-400 text-sm hover:text-red-500 transition duration-150 block">
-                            Voetbalsite (Zustersite)
-                            </a>
-                        </li>
-                        <li>
                             <a href="https://www.webbair.nl" target="_blank" 
                             class="text-gray-400 text-sm hover:text-red-500 transition duration-150 block">
                             Webbair (Ontwikkelaar)
