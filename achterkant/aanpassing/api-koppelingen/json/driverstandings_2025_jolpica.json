@@ -8,17 +8,17 @@
         "total": "21",
         "StandingsTable": {
             "season": "2025",
-            "round": "20",
+            "round": "21",
             "StandingsLists": [
                 {
                     "season": "2025",
-                    "round": "20",
+                    "round": "21",
                     "DriverStandings": [
                         {
                             "position": "1",
                             "positionText": "1",
-                            "points": "357",
-                            "wins": "6",
+                            "points": "390",
+                            "wins": "7",
                             "Driver": {
                                 "driverId": "norris",
                                 "permanentNumber": "4",
@@ -41,7 +41,7 @@
                         {
                             "position": "2",
                             "positionText": "2",
-                            "points": "356",
+                            "points": "366",
                             "wins": "7",
                             "Driver": {
                                 "driverId": "piastri",
@@ -65,7 +65,7 @@
                         {
                             "position": "3",
                             "positionText": "3",
-                            "points": "321",
+                            "points": "341",
                             "wins": "5",
                             "Driver": {
                                 "driverId": "max_verstappen",
@@ -89,7 +89,7 @@
                         {
                             "position": "4",
                             "positionText": "4",
-                            "points": "258",
+                            "points": "276",
                             "wins": "2",
                             "Driver": {
                                 "driverId": "russell",
@@ -113,7 +113,7 @@
                         {
                             "position": "5",
                             "positionText": "5",
-                            "points": "210",
+                            "points": "214",
                             "wins": "0",
                             "Driver": {
                                 "driverId": "leclerc",
@@ -137,7 +137,7 @@
                         {
                             "position": "6",
                             "positionText": "6",
-                            "points": "146",
+                            "points": "148",
                             "wins": "0",
                             "Driver": {
                                 "driverId": "hamilton",
@@ -161,7 +161,7 @@
                         {
                             "position": "7",
                             "positionText": "7",
-                            "points": "97",
+                            "points": "122",
                             "wins": "0",
                             "Driver": {
                                 "driverId": "antonelli",
@@ -209,7 +209,7 @@
                         {
                             "position": "9",
                             "positionText": "9",
-                            "points": "41",
+                            "points": "43",
                             "wins": "0",
                             "Driver": {
                                 "driverId": "hulkenberg",
@@ -233,7 +233,7 @@
                         {
                             "position": "10",
                             "positionText": "10",
-                            "points": "39",
+                            "points": "43",
                             "wins": "0",
                             "Driver": {
                                 "driverId": "hadjar",
@@ -257,31 +257,31 @@
                         {
                             "position": "11",
                             "positionText": "11",
-                            "points": "38",
+                            "points": "40",
                             "wins": "0",
                             "Driver": {
-                                "driverId": "sainz",
-                                "permanentNumber": "55",
-                                "code": "SAI",
-                                "url": "http:\/\/en.wikipedia.org\/wiki\/Carlos_Sainz_Jr.",
-                                "givenName": "Carlos",
-                                "familyName": "Sainz",
-                                "dateOfBirth": "1994-09-01",
-                                "nationality": "Spanish"
+                                "driverId": "bearman",
+                                "permanentNumber": "87",
+                                "code": "BEA",
+                                "url": "http:\/\/en.wikipedia.org\/wiki\/Oliver_Bearman",
+                                "givenName": "Oliver",
+                                "familyName": "Bearman",
+                                "dateOfBirth": "2005-05-08",
+                                "nationality": "British"
                             },
                             "Constructors": [
                                 {
-                                    "constructorId": "williams",
-                                    "url": "http:\/\/en.wikipedia.org\/wiki\/Williams_Grand_Prix_Engineering",
-                                    "name": "Williams",
-                                    "nationality": "British"
+                                    "constructorId": "haas",
+                                    "url": "http:\/\/en.wikipedia.org\/wiki\/Haas_F1_Team",
+                                    "name": "Haas F1 Team",
+                                    "nationality": "American"
                                 }
                             ]
                         },
                         {
                             "position": "12",
                             "positionText": "12",
-                            "points": "37",
+                            "points": "40",
                             "wins": "0",
                             "Driver": {
                                 "driverId": "alonso",
@@ -305,55 +305,31 @@
                         {
                             "position": "13",
                             "positionText": "13",
-                            "points": "32",
+                            "points": "38",
                             "wins": "0",
                             "Driver": {
-                                "driverId": "bearman",
-                                "permanentNumber": "87",
-                                "code": "BEA",
-                                "url": "http:\/\/en.wikipedia.org\/wiki\/Oliver_Bearman",
-                                "givenName": "Oliver",
-                                "familyName": "Bearman",
-                                "dateOfBirth": "2005-05-08",
-                                "nationality": "British"
+                                "driverId": "sainz",
+                                "permanentNumber": "55",
+                                "code": "SAI",
+                                "url": "http:\/\/en.wikipedia.org\/wiki\/Carlos_Sainz_Jr.",
+                                "givenName": "Carlos",
+                                "familyName": "Sainz",
+                                "dateOfBirth": "1994-09-01",
+                                "nationality": "Spanish"
                             },
                             "Constructors": [
                                 {
-                                    "constructorId": "haas",
-                                    "url": "http:\/\/en.wikipedia.org\/wiki\/Haas_F1_Team",
-                                    "name": "Haas F1 Team",
-                                    "nationality": "American"
+                                    "constructorId": "williams",
+                                    "url": "http:\/\/en.wikipedia.org\/wiki\/Williams_Grand_Prix_Engineering",
+                                    "name": "Williams",
+                                    "nationality": "British"
                                 }
                             ]
                         },
                         {
                             "position": "14",
                             "positionText": "14",
-                            "points": "32",
-                            "wins": "0",
-                            "Driver": {
-                                "driverId": "stroll",
-                                "permanentNumber": "18",
-                                "code": "STR",
-                                "url": "http:\/\/en.wikipedia.org\/wiki\/Lance_Stroll",
-                                "givenName": "Lance",
-                                "familyName": "Stroll",
-                                "dateOfBirth": "1998-10-29",
-                                "nationality": "Canadian"
-                            },
-                            "Constructors": [
-                                {
-                                    "constructorId": "aston_martin",
-                                    "url": "http:\/\/en.wikipedia.org\/wiki\/Aston_Martin_in_Formula_One",
-                                    "name": "Aston Martin",
-                                    "nationality": "British"
-                                }
-                            ]
-                        },
-                        {
-                            "position": "15",
-                            "positionText": "15",
-                            "points": "30",
+                            "points": "36",
                             "wins": "0",
                             "Driver": {
                                 "driverId": "lawson",
@@ -377,6 +353,30 @@
                                     "url": "http:\/\/en.wikipedia.org\/wiki\/RB_Formula_One_Team",
                                     "name": "RB F1 Team",
                                     "nationality": "Italian"
+                                }
+                            ]
+                        },
+                        {
+                            "position": "15",
+                            "positionText": "15",
+                            "points": "32",
+                            "wins": "0",
+                            "Driver": {
+                                "driverId": "stroll",
+                                "permanentNumber": "18",
+                                "code": "STR",
+                                "url": "http:\/\/en.wikipedia.org\/wiki\/Lance_Stroll",
+                                "givenName": "Lance",
+                                "familyName": "Stroll",
+                                "dateOfBirth": "1998-10-29",
+                                "nationality": "Canadian"
+                            },
+                            "Constructors": [
+                                {
+                                    "constructorId": "aston_martin",
+                                    "url": "http:\/\/en.wikipedia.org\/wiki\/Aston_Martin_in_Formula_One",
+                                    "name": "Aston Martin",
+                                    "nationality": "British"
                                 }
                             ]
                         },
@@ -437,7 +437,7 @@
                         {
                             "position": "18",
                             "positionText": "18",
-                            "points": "20",
+                            "points": "22",
                             "wins": "0",
                             "Driver": {
                                 "driverId": "gasly",
