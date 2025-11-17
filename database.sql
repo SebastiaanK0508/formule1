@@ -520,3 +520,12 @@ CREATE TABLE contact (
      contact_subject VARCHAR(255),
      contact_message TEXT
      );
+
+CREATE TABLE f1_nieuws (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    titel VARCHAR(255) NOT NULL,
+    artikel_url VARCHAR(512) NOT NULL UNIQUE,
+    publicatie_datum DATETIME,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+ALTER TABLE f1_nieuws ADD COLUMN afbeelding_url VARCHAR(512);

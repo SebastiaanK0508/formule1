@@ -260,6 +260,12 @@
                             Webbair (Ontwikkelaar)
                             </a>
                         </li>
+                        <li>
+                            <a href="https://www.urenheld.webbair.nl" target="_blank" 
+                            class="text-gray-400 text-sm hover:text-red-500 transition duration-150 block">
+                            Urenheld
+                            </a>
+                        </li>
                     </ul>
                 </div>
                 <div class="md:col-span-1 text-center md:text-left">
