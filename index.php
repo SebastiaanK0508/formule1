@@ -226,7 +226,7 @@ if (isset($race_details) && !empty($race_results)) {
         
         <section class="mb-12 f1-section">
             <h2 class="text-3xl font-oswald font-bold text-white uppercase mb-6 border-b border-f1-red pb-2 news-heading">
-                Laatste F1 Nieuws
+                 F1 News
             </h2>
             
             <?php if (!empty($news_articles)): ?>
@@ -269,7 +269,7 @@ if (isset($race_details) && !empty($race_results)) {
             <div class="selection-link">
                 <?php if (isset($races_in_season) && !empty($races_in_season)): ?>
                     <?php else: ?>
-                    <p class="text-gray-400">Geen races gevonden</p>
+                    <p class="text-gray-400">No races found</p>
                 <?php endif; ?>
             </div>
             
@@ -314,11 +314,11 @@ if (isset($race_details) && !empty($race_results)) {
                     </table>
                 </div>
                 <?php else: ?>
-                <p class="text-gray-400">Er zijn geen resultaten beschikbaar voor deze race.</p>
+                <p class="text-gray-400">no results available.</p>
                 <?php endif; ?>
             </section>
             <?php else: ?>
-                <p class="text-gray-400">Selecteer een race om de resultaten te bekijken.</p>
+                <p class="text-gray-400">select race for the results.</p>
             <?php endif; ?>
         <?php endif; ?>
     </main>
