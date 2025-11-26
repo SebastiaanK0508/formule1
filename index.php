@@ -1,80 +1,104 @@
 <?php
-    require_once 'achterkant/aanpassing/api-koppelingen/1result_api.php';
-    if (isset($nextGrandPrix) && $nextGrandPrix && !isset($targetDateTime)) {
-        $targetDateTime = '2025-11-20T14:00:00+01:00'; 
-    }
-    $schemaData = [
-        '@context' => 'https://schema.org',
-        '@graph' => [
-            [
-                '@type' => 'WebSite',
-                'url' => 'https://f1site.online/',
-                'name' => 'Formula 1 - F1SITE.NL',
-                'description' => 'De snelste bron voor Formule 1 nieuws, uitslagen, kalender en coureurs.',
-            ]
+// ====================================================================
+// NIEUWS OPHALEN VIA DATABASE (VEREIST db_config.php)
+// ====================================================================
+require_once 'db_config.php'; 
+
+$news_articles = [];
+try {
+    // Haal de meest recente 10 artikelen op. Sorteer op publicatie datum (DESC) of ID als fallback.
+    $stmt = $pdo->query("SELECT titel, artikel_url, publicatie_datum, afbeelding_url FROM f1_nieuws ORDER BY publicatie_datum DESC, id DESC LIMIT 10");
+    $news_articles = $stmt->fetchAll(PDO::FETCH_ASSOC);
+} catch (PDOException $e) {
+    error_log("Fout bij ophalen nieuwsartikelen: " . $e->getMessage());
+    // Optioneel: zet een foutmelding voor de gebruiker: $error_message_news = "Nieuws kon niet geladen worden.";
+}
+
+// ====================================================================
+// BESTAANDE PHP LOGICA VOOR GRAND PRIX & SCHEMA
+// ====================================================================
+require_once 'achterkant/aanpassing/api-koppelingen/1result_api.php';
+if (isset($nextGrandPrix) && $nextGrandPrix && !isset($targetDateTime)) {
+    // Handmatige fallback datum voor de 2025 Qatar GP
+    $targetDateTime = '2025-11-20T14:00:00+01:00'; 
+}
+
+$schemaData = [
+    '@context' => 'https://schema.org',
+    '@graph' => [
+        [
+            '@type' => 'WebSite',
+            'url' => 'https://f1site.online/',
+            'name' => 'Formula 1 - F1SITE.NL',
+            'description' => 'De snelste bron voor Formule 1 nieuws, uitslagen, kalender en coureurs.',
+        ]
+    ]
+];
+
+// Schema data voor volgende Grand Prix
+if (isset($nextGrandPrix) && $nextGrandPrix) {
+    $raceDate = (new DateTime($targetDateTime))->format(DateTime::ISO8601);
+    $schemaData['@graph'][] = [
+        '@type' => 'SportsEvent',
+        'name' => htmlspecialchars($nextGrandPrix['grandprix']),
+        'startDate' => $raceDate,
+        'location' => [
+            '@type' => 'Place',
+            'name' => htmlspecialchars($nextGrandPrix['grandprix']),
+            'address' => [
+                '@type' => 'PostalAddress',
+                'name' => 'Circuit van ' . htmlspecialchars($nextGrandPrix['circuit']),
+            ],
+        ],
+        'sport' => 'Formula 1',
+        'competitor' => [
+            '@type' => 'Organization',
+            'name' => 'F1 Teams',
         ]
     ];
-    if (isset($nextGrandPrix) && $nextGrandPrix) {
-        $raceDate = (new DateTime($targetDateTime))->format(DateTime::ISO8601);
-        $schemaData['@graph'][] = [
-            '@type' => 'SportsEvent',
-            'name' => htmlspecialchars($nextGrandPrix['grandprix']),
-            'startDate' => $raceDate,
-            'location' => [
-                '@type' => 'Place',
-                'name' => htmlspecialchars($nextGrandPrix['grandprix']),
-                'address' => [
-                    '@type' => 'PostalAddress',
-                    'name' => 'Circuit van ' . htmlspecialchars($nextGrandPrix['circuit']),
-                ],
+}
+
+// Schema data voor recente race resultaten
+if (isset($race_details) && !empty($race_results)) {
+    
+    $results = [];
+    foreach ($race_results as $result) {
+        $results[] = [
+            '@type' => 'Person',
+            'name' => htmlspecialchars($result['driver_name']),
+            'alumniOf' => [
+                '@type' => 'SportsTeam',
+                'name' => htmlspecialchars($result['team_name']),
             ],
             'sport' => 'Formula 1',
-            'competitor' => [
-                '@type' => 'Organization',
-                'name' => 'F1 Teams',
-            ]
         ];
     }
-    if ($race_details && !empty($race_results)) {
-        
-        $results = [];
-        foreach ($race_results as $result) {
-            $results[] = [
-                '@type' => 'Person',
-                'name' => htmlspecialchars($result['driver_name']),
-                'alumniOf' => [
-                    '@type' => 'SportsTeam',
-                    'name' => htmlspecialchars($result['team_name']),
-                ],
-                'sport' => 'Formula 1',
-            ];
-        }
 
-        $raceSchema = [
-            '@type' => 'SportsEvent',
-            'name' => 'Grand Prix van ' . htmlspecialchars($race_details['name']),
-            'startDate' => htmlspecialchars((new DateTime($race_details['date']))->format('Y-m-d')),
-            'location' => [
-                '@type' => 'Place',
-                'name' => htmlspecialchars($race_details['circuit']) . ', ' . htmlspecialchars($race_details['country']),
+    $raceSchema = [
+        '@type' => 'SportsEvent',
+        'name' => 'Grand Prix van ' . htmlspecialchars($race_details['name']),
+        'startDate' => htmlspecialchars((new DateTime($race_details['date']))->format('Y-m-d')),
+        'location' => [
+            '@type' => 'Place',
+            'name' => htmlspecialchars($race_details['circuit']) . ', ' . htmlspecialchars($race_details['country']),
+        ],
+        'result' => [
+            '@type' => 'SportsResults',
+            'winningTeam' => $race_results[0]['team_name'] ?? 'Niet beschikbaar',
+            'winningTies' => [
+                '@type' => 'Win',
+                'winner' => [
+                    '@type' => 'Person',
+                    'name' => $race_results[0]['driver_name'] ?? 'Niet beschikbaar'
+                ]
             ],
-            'result' => [
-                '@type' => 'SportsResults',
-                'winningTeam' => $race_results[0]['team_name'] ?? 'Niet beschikbaar',
-                'winningTies' => [
-                    '@type' => 'Win',
-                    'winner' => [
-                        '@type' => 'Person',
-                        'name' => $race_results[0]['driver_name'] ?? 'Niet beschikbaar'
-                    ]
-                ],
-                'performer' => $results,
-                'position' => $race_results[0]['position'] ?? null,
-            ],
-            'sport' => 'Formula 1'
-        ];
-        $schemaData['@graph'][] = $raceSchema;
-    }
+            'performer' => $results,
+            'position' => $race_results[0]['position'] ?? null,
+        ],
+        'sport' => 'Formula 1'
+    ];
+    $schemaData['@graph'][] = $raceSchema;
+}
 ?>
 <!DOCTYPE html>
 <html lang="nl">
@@ -106,7 +130,8 @@
         }
     </script>
     <style>
-                @media (max-width: 767px) {
+        /* Responsive navigation styling */
+        @media (max-width: 767px) {
             .main-nav[data-visible="false"] {
                 display: none;
             }
@@ -126,6 +151,25 @@
             .main-nav a {
                 padding: 0.5rem 0;
             }
+        }
+
+        /* Nieuwe stijl voor de nieuws sectie */
+        .news-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem; /* Tailwind gap-6 */
+        }
+        .news-card {
+            transition: transform 0.2s, box-shadow 0.2s;
+            border-left: 5px solid transparent; /* Standaard zonder kleur */
+        }
+        .news-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 15px rgba(225, 6, 0, 0.2); /* Rode schaduw bij hover */
+            border-left-color: #E10600; /* F1-red */
+        }
+        .news-card h3 a:hover {
+            color: #E10600;
         }
     </style>
     
@@ -167,7 +211,7 @@
             <div class="text-center md:text-left mb-4 md:mb-0">
                 <h3 class="text-xl md:text-2xl font-oswald font-bold text-white uppercase page-heading">
                     <?php
-                    if ($nextGrandPrix) {
+                    if (isset($nextGrandPrix) && $nextGrandPrix) {
                         echo htmlspecialchars($nextGrandPrix['grandprix']);
                     } else {
                         echo "Geen aankomende Grand Prix";
@@ -180,19 +224,56 @@
                 </div>
         </div>
         
-        <?php if ($error_message): ?>
+        <section class="mb-12 f1-section">
+            <h2 class="text-3xl font-oswald font-bold text-white uppercase mb-6 border-b border-f1-red pb-2 news-heading">
+                Laatste F1 Nieuws
+            </h2>
+            
+            <?php if (!empty($news_articles)): ?>
+                <div class="news-grid">
+                    <?php foreach ($news_articles as $article): ?>
+                        <div class="bg-f1-gray p-5 rounded-lg shadow-xl news-card">
+                            <?php if ($article['afbeelding_url']): ?>
+                                <img src="<?php echo htmlspecialchars($article['afbeelding_url']); ?>" alt="Afbeelding bij nieuwsartikel" class="w-full h-40 object-cover rounded-md mb-4 news-image">
+                            <?php endif; ?>
+                            <h3 class="text-xl font-oswald font-semibold mb-2 news-title">
+                                <a href="<?php echo htmlspecialchars($article['artikel_url']); ?>" target="_blank" 
+                                   class="text-gray-100 hover:text-f1-red transition duration-150">
+                                    <?php echo htmlspecialchars($article['titel']); ?>
+                                </a>
+                            </h3>
+                            <?php if ($article['publicatie_datum']): ?>
+                                <p class="text-xs text-gray-400 news-date">
+                                    <?php 
+                                        try {
+                                            $date = new DateTime($article['publicatie_datum']);
+                                            echo 'Gepubliceerd op: ' . $date->format('d-m-Y H:i');
+                                        } catch (Exception $e) {
+                                            echo 'Datum onbekend';
+                                        }
+                                    ?>
+                                </p>
+                            <?php endif; ?>
+                        </div>
+                    <?php endforeach; ?>
+                </div>
+            <?php else: ?>
+                <p class="text-gray-400">Er zijn momenteel geen nieuwsartikelen beschikbaar. Zorg ervoor dat de scraper draait en de database vult.</p>
+            <?php endif; ?>
+        </section>
+        <?php if (isset($error_message) && $error_message): ?>
             <div class="bg-red-900 text-white p-4 rounded-lg mb-8 error-message">
                 <?php echo $error_message; ?>
             </div>
         <?php else: ?>
             <div class="selection-link">
-                <?php if (!empty($races_in_season)): ?>
+                <?php if (isset($races_in_season) && !empty($races_in_season)): ?>
                     <?php else: ?>
                     <p class="text-gray-400">Geen races gevonden</p>
                 <?php endif; ?>
             </div>
             
-            <?php if ($race_details): ?>
+            <?php if (isset($race_details) && $race_details): ?>
             <section class="bg-f1-gray p-6 rounded-lg shadow-xl f1-section">
                 
                 <div class="border-b border-gray-600 pb-4 mb-6 race-info-card">
@@ -296,8 +377,8 @@
         });
     </script> 
     <script>
-        <?php if ($nextGrandPrix && isset($targetDateTime)): ?>
-        const targetDateTime = new Date('<?php echo $targetDateTime; ?>').getTime(); // Gebruik .getTime()
+        <?php if (isset($nextGrandPrix) && $nextGrandPrix && isset($targetDateTime)): ?>
+        const targetDateTime = new Date('<?php echo $targetDateTime; ?>').getTime(); 
         const countdownElement = document.getElementById('countdown');
         function updateCountdown() {
             const now = new Date().getTime();
