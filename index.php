@@ -1,8 +1,13 @@
 <?php
 require_once 'db_config.php'; 
+// Alleen de 12 meest recente artikelen voor de hoofdpagina
+$limit_home = 12; 
 $news_articles = [];
 try {
-    $stmt = $pdo->query("SELECT titel, artikel_url, publicatie_datum, afbeelding_url FROM f1_nieuws ORDER BY publicatie_datum DESC, id DESC LIMIT 12");
+    // AANPASSING 1: Voeg 'bron' toe aan de SELECT statement
+    $stmt = $pdo->prepare("SELECT titel, artikel_url, publicatie_datum, afbeelding_url, source FROM f1_nieuws ORDER BY publicatie_datum DESC, id DESC LIMIT :limit");
+    $stmt->bindParam(':limit', $limit_home, PDO::PARAM_INT);
+    $stmt->execute();
     $news_articles = $stmt->fetchAll(PDO::FETCH_ASSOC);
 } catch (PDOException $e) {
     error_log("Fout bij ophalen nieuwsartikelen: " . $e->getMessage());
@@ -137,6 +142,7 @@ if (isset($race_details) && !empty($race_results)) {
             }
         }
         .news-grid {
+            /* Gebruik een flexibeler grid voor de homepage */
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
             gap: 1.5rem;
@@ -144,15 +150,20 @@ if (isset($race_details) && !empty($race_results)) {
         .news-card {
             transition: transform 0.2s, box-shadow 0.2s;
             border-left: 5px solid transparent;
+            /* Flexbox to push date to bottom and give equal card height */
+            display: flex; 
+            flex-direction: column;
+            height: 100%;
         }
         .news-card:hover {
             transform: translateY(-3px);
             box-shadow: 0 10px 15px rgba(225, 6, 0, 0.2);
             border-left-color: #E10600;
         }
-        /* .news-card h3 a:hover {
-            color: #E10600;
-        } */
+        .news-image {
+            /* Zorgt dat alle beelden dezelfde hoogte hebben */
+            height: 180px; 
+        }
     </style>
     
     <?php if (!empty($schemaData)): ?>
@@ -176,7 +187,7 @@ if (isset($race_details) && !empty($race_results)) {
             <nav class="main-nav md:flex md:space-x-8 text-sm font-semibold uppercase tracking-wider" 
                  id="main-nav-links" data-visible="false">
                 <a href="index.php" class="block py-2 px-3 md:p-0 text-f1-red border-b-2 border-f1-red md:border-none active transition duration-150">Home</a>
-                <a href="kalender.php" class="block py-2 px-3 md:p-0 hover:text-f1-red transition duration-150">Schedule</a>
+                <a href="nieuws.php" class="block py-2 px-3 md:p-0 hover:text-f1-red transition duration-150">News Archive</a> <a href="kalender.php" class="block py-2 px-3 md:p-0 hover:text-f1-red transition duration-150">Schedule</a>
                 <a href="teams.php" class="block py-2 px-3 md:p-0 hover:text-f1-red transition duration-150">Teams</a>
                 <a href="drivers.php" class="block py-2 px-3 md:p-0 hover:text-f1-red transition duration-150">Drivers</a>
                 <a href="results.php" class="block py-2 px-3 md:p-0 hover:text-f1-red transition duration-150">Results</a>
@@ -204,36 +215,54 @@ if (isset($race_details) && !empty($race_results)) {
         </div>
         <section class="mb-12 f1-section">
             <h2 class="text-3xl font-oswald font-bold text-white uppercase mb-6 border-b border-f1-red pb-2 news-heading">
-                 F1 News
+                 Recent F1 News
             </h2>
             <?php if (!empty($news_articles)): ?>
                 <div class="news-grid">
                     <?php foreach ($news_articles as $article): ?>
                         <div class="bg-f1-gray p-5 rounded-lg shadow-xl news-card">
                             <?php if ($article['afbeelding_url']): ?>
-                                <img src="<?php echo htmlspecialchars($article['afbeelding_url']); ?>" alt="Afbeelding bij nieuwsartikel" class="w-full h-40 object-cover rounded-md mb-4 news-image">
+                                <img src="<?php echo htmlspecialchars($article['afbeelding_url']); ?>" alt="Afbeelding bij nieuwsartikel" class="w-full news-image object-cover rounded-md mb-4">
                             <?php endif; ?>
-                            <h3 class="text-xl font-oswald font-semibold mb-2 news-title">
-                                <a href="<?php echo htmlspecialchars($article['artikel_url']); ?>" target="_blank" 
-                                   class="text-gray-100">
-                                    <?php echo htmlspecialchars($article['titel']); ?>
-                                </a>
-                            </h3>
-                            <?php if ($article['publicatie_datum']): ?>
-                                <p class="text-xs text-gray-400 news-date">
-                                    <?php 
-                                        try {
-                                            $date = new DateTime($article['publicatie_datum']);
-                                            echo 'Gepubliceerd op: ' . $date->format('d-m-Y H:i');
-                                        } catch (Exception $e) {
-                                            echo 'Datum onbekend';
-                                        }
-                                    ?>
-                                </p>
-                            <?php endif; ?>
+                            <div class="flex flex-col flex-grow">
+                                <h3 class="text-xl font-oswald font-semibold mb-2 news-title flex-grow">
+                                    <a href="<?php echo htmlspecialchars($article['artikel_url']); ?>" target="_blank" 
+                                       class="text-gray-100 hover:text-f1-red transition duration-150 block">
+                                        <?php echo htmlspecialchars($article['titel']); ?>
+                                    </a>
+                                </h3>
+                                
+                                <div class="mt-auto">
+                                    <?php if (!empty($article['source'])): ?>
+                                        <span class="text-f1-red font-bold uppercase text-xs mb-1 block">
+                                            Source: <?php echo htmlspecialchars($article['source']); ?>
+                                        </span>
+                                    <?php endif; ?>
+
+                                    <?php if ($article['publicatie_datum']): ?>
+                                        <p class="text-xs text-gray-400 news-date">
+                                            <?php 
+                                                try {
+                                                    $date = new DateTime($article['publicatie_datum']);
+                                                    echo $date->format('d-m-Y H:i');
+                                                } catch (Exception $e) {
+                                                    echo 'Datum onbekend';
+                                                }
+                                            ?>
+                                        </p>
+                                    <?php endif; ?>
+                                </div>
+                            </div>
                         </div>
                     <?php endforeach; ?>
                 </div>
+                
+                <div class="mt-8 text-center">
+                    <a href="nieuws.php" class="inline-block px-8 py-3 bg-f1-red text-white font-oswald font-bold uppercase rounded-lg shadow-lg hover:bg-red-700 transition duration-300 transform hover:scale-105">
+                        Bekijk het volledige nieuwsarchief &rarr;
+                    </a>
+                </div>
+
             <?php else: ?>
                 <p class="text-gray-400">Er zijn momenteel geen nieuwsartikelen beschikbaar. Zorg ervoor dat de scraper draait en de database vult.</p>
             <?php endif; ?>

@@ -3,9 +3,9 @@ function log_message($message) {
     echo "[" . date('Y-m-d H:i:s') . "] " . $message . "\n";
 }
 require_once 'db_config.php'; 
-log_message("--- START F1 Nieuws Scraper ---");
+log_message("--- START F1 Nieuws Scraper (met Strikte Validatie) ---");
 
-$new_api_url = "https://f1newsapi.onrender.com/news/f1"; 
+$new_api_url = "https://f1newsapi.onrender.com/news"; 
 log_message("API-Endpoint: " . $new_api_url);
 $ch = curl_init();
 curl_setopt($ch, CURLOPT_URL, $new_api_url);
@@ -38,7 +38,6 @@ if (!is_array($articles)) {
     log_message("⚠️ PARSE WAARSCHUWING: Respons is geen array. Aantal artikelen: 0");
     $articles = [];
 }
-
 $total_articles = count($articles);
 log_message("✅ Data succesvol opgehaald. Totaal aantal artikelen om te verwerken: " . $total_articles);
 
@@ -47,19 +46,27 @@ $count_skipped_duplicate = 0;
 $count_skipped_missing_data = 0;
 
 if ($total_articles > 0) {
-    $stmt = $pdo->prepare("INSERT INTO f1_nieuws (titel, artikel_url, publicatie_datum, afbeelding_url) VALUES (?, ?, ?, ?)");
+    $stmt = $pdo->prepare("INSERT INTO f1_nieuws (titel, artikel_url, publicatie_datum, afbeelding_url, source) VALUES (?, ?, ?, ?, ?)");
 
     foreach ($articles as $index => $article) {
         $titel = $article['title'] ?? null;
         $url = $article['url'] ?? null;
         $published_date_api = $article['publishedAt'] ?? null;
         $image_url = $article['urlToImage'] ?? null;
-        if (!$titel || !$url) {
-            log_message("⚠️ ARTIKEL " . ($index + 1) . " OVERGESLAGEN: Ontbrekende Tite/URL. JSON Index: " . $index);
+        $source = $article['source'] ?? null; 
+        
+        if (empty($titel) || empty($url) || empty($source)) {
+            $missing = [];
+            if (empty($titel)) $missing[] = 'Title';
+            if (empty($url)) $missing[] = 'URL';
+            if (empty($source)) $missing[] = 'Source';
+            
+            log_message("⚠️ ARTIKEL " . ($index + 1) . " OVERGESLAGEN: Essentiële data ontbreekt: " . implode(', ', $missing) . ". JSON Index: " . $index);
             $count_skipped_missing_data++;
-            continue;
+            continue; 
         }
-                $published_date_mysql = null;
+        
+        $published_date_mysql = null;
         if ($published_date_api) {
             try {
                 $dt = new DateTime($published_date_api);
@@ -73,7 +80,8 @@ if ($total_articles > 0) {
                 $titel, 
                 $url, 
                 $published_date_mysql, 
-                $image_url             
+                $image_url,
+                $source             
             ]);
             log_message("   -> Artikel opgeslagen: " . substr($titel, 0, 50) . "...");
             $count_saved++;
@@ -95,4 +103,3 @@ log_message("Artikelen succesvol opgeslagen: " . $count_saved);
 log_message("Duplicaten overgeslagen: " . $count_skipped_duplicate);
 log_message("Overgeslagen (data ontbreekt): " . $count_skipped_missing_data);
 log_message("--- EINDE F1 Nieuws Scraper ---");
-?>
