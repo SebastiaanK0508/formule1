@@ -1,25 +1,14 @@
 <?php
-// ====================================================================
-// NIEUWS OPHALEN VIA DATABASE (VEREIST db_config.php)
-// ====================================================================
 require_once 'db_config.php'; 
-
 $news_articles = [];
 try {
-    // Haal de meest recente 10 artikelen op. Sorteer op publicatie datum (DESC) of ID als fallback.
-    $stmt = $pdo->query("SELECT titel, artikel_url, publicatie_datum, afbeelding_url FROM f1_nieuws ORDER BY publicatie_datum DESC, id DESC LIMIT 10");
+    $stmt = $pdo->query("SELECT titel, artikel_url, publicatie_datum, afbeelding_url FROM f1_nieuws ORDER BY publicatie_datum DESC, id DESC LIMIT 12");
     $news_articles = $stmt->fetchAll(PDO::FETCH_ASSOC);
 } catch (PDOException $e) {
     error_log("Fout bij ophalen nieuwsartikelen: " . $e->getMessage());
-    // Optioneel: zet een foutmelding voor de gebruiker: $error_message_news = "Nieuws kon niet geladen worden.";
 }
-
-// ====================================================================
-// BESTAANDE PHP LOGICA VOOR GRAND PRIX & SCHEMA
-// ====================================================================
 require_once 'achterkant/aanpassing/api-koppelingen/1result_api.php';
 if (isset($nextGrandPrix) && $nextGrandPrix && !isset($targetDateTime)) {
-    // Handmatige fallback datum voor de 2025 Qatar GP
     $targetDateTime = '2025-11-20T14:00:00+01:00'; 
 }
 
@@ -34,8 +23,6 @@ $schemaData = [
         ]
     ]
 ];
-
-// Schema data voor volgende Grand Prix
 if (isset($nextGrandPrix) && $nextGrandPrix) {
     $raceDate = (new DateTime($targetDateTime))->format(DateTime::ISO8601);
     $schemaData['@graph'][] = [
@@ -57,8 +44,6 @@ if (isset($nextGrandPrix) && $nextGrandPrix) {
         ]
     ];
 }
-
-// Schema data voor recente race resultaten
 if (isset($race_details) && !empty($race_results)) {
     
     $results = [];
@@ -130,7 +115,6 @@ if (isset($race_details) && !empty($race_results)) {
         }
     </script>
     <style>
-        /* Responsive navigation styling */
         @media (max-width: 767px) {
             .main-nav[data-visible="false"] {
                 display: none;
@@ -152,25 +136,23 @@ if (isset($race_details) && !empty($race_results)) {
                 padding: 0.5rem 0;
             }
         }
-
-        /* Nieuwe stijl voor de nieuws sectie */
         .news-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 1.5rem; /* Tailwind gap-6 */
+            gap: 1.5rem;
         }
         .news-card {
             transition: transform 0.2s, box-shadow 0.2s;
-            border-left: 5px solid transparent; /* Standaard zonder kleur */
+            border-left: 5px solid transparent;
         }
         .news-card:hover {
             transform: translateY(-3px);
-            box-shadow: 0 10px 15px rgba(225, 6, 0, 0.2); /* Rode schaduw bij hover */
-            border-left-color: #E10600; /* F1-red */
+            box-shadow: 0 10px 15px rgba(225, 6, 0, 0.2);
+            border-left-color: #E10600;
         }
-        .news-card h3 a:hover {
+        /* .news-card h3 a:hover {
             color: #E10600;
-        }
+        } */
     </style>
     
     <?php if (!empty($schemaData)): ?>
@@ -187,12 +169,10 @@ if (isset($race_details) && !empty($race_results)) {
             <h1 id="site-title-header" class="text-3xl font-oswald font-extrabold text-f1-red tracking-widest site-title">
                 FORMULA 1
             </h1>
-            
             <button class="md:hidden text-2xl text-f1-red hover:text-white menu-toggle" 
                     aria-controls="main-nav-links" aria-expanded="false" aria-label="Toggle navigation">
                 &#9776; 
             </button>
-            
             <nav class="main-nav md:flex md:space-x-8 text-sm font-semibold uppercase tracking-wider" 
                  id="main-nav-links" data-visible="false">
                 <a href="index.php" class="block py-2 px-3 md:p-0 text-f1-red border-b-2 border-f1-red md:border-none active transition duration-150">Home</a>
@@ -206,7 +186,6 @@ if (isset($race_details) && !empty($race_results)) {
     </header>
     
     <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-8 container">
-        
         <div class="bg-f1-gray p-6 rounded-lg shadow-xl mb-8 flex flex-col md:flex-row justify-between items-center page-header-section">
             <div class="text-center md:text-left mb-4 md:mb-0">
                 <h3 class="text-xl md:text-2xl font-oswald font-bold text-white uppercase page-heading">
@@ -221,14 +200,12 @@ if (isset($race_details) && !empty($race_results)) {
                 <p class="text-sm text-gray-400">Next Race</p>
             </div>
             <div class="text-center text-3xl md:text-4xl font-oswald font-extrabold text-f1-red page-heading" id="countdown">
-                </div>
+            </div>
         </div>
-        
         <section class="mb-12 f1-section">
             <h2 class="text-3xl font-oswald font-bold text-white uppercase mb-6 border-b border-f1-red pb-2 news-heading">
                  F1 News
             </h2>
-            
             <?php if (!empty($news_articles)): ?>
                 <div class="news-grid">
                     <?php foreach ($news_articles as $article): ?>
@@ -238,7 +215,7 @@ if (isset($race_details) && !empty($race_results)) {
                             <?php endif; ?>
                             <h3 class="text-xl font-oswald font-semibold mb-2 news-title">
                                 <a href="<?php echo htmlspecialchars($article['artikel_url']); ?>" target="_blank" 
-                                   class="text-gray-100 hover:text-f1-red transition duration-150">
+                                   class="text-gray-100">
                                     <?php echo htmlspecialchars($article['titel']); ?>
                                 </a>
                             </h3>
@@ -342,7 +319,7 @@ if (isset($race_details) && !empty($race_results)) {
                             </a>
                         </li>
                         <li>
-                            <a href="https://www.urenheld.webbair.nl" target="_blank" 
+                            <a href="https://urenheld.webbair.nl" target="_blank" 
                             class="text-gray-400 text-sm hover:text-red-500 transition duration-150 block">
                             Urenheld
                             </a>
