@@ -1,10 +1,8 @@
 <?php
 require_once 'db_config.php'; 
-// Alleen de 12 meest recente artikelen voor de hoofdpagina
 $limit_home = 12; 
 $news_articles = [];
 try {
-    // AANPASSING 1: Voeg 'bron' toe aan de SELECT statement
     $stmt = $pdo->prepare("SELECT titel, artikel_url, publicatie_datum, afbeelding_url, source FROM f1_nieuws ORDER BY publicatie_datum DESC, id DESC LIMIT :limit");
     $stmt->bindParam(':limit', $limit_home, PDO::PARAM_INT);
     $stmt->execute();

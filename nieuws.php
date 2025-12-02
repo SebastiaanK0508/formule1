@@ -1,20 +1,10 @@
 <?php
-// Bestand: nieuws.php
-
-// ----------------------------------------------------
-// I. DATABASE CONFIGURATIE EN VEILIGHEID
-// ----------------------------------------------------
 require_once 'db_config.php'; 
-
-// Hulpbestand voor race data (blijft nodig voor header)
 require_once 'achterkant/aanpassing/api-koppelingen/1result_api.php';
-
-// --- Paginering Instellingen ---
 $limit = 12; // Artikelen per pagina
 $page = isset($_GET['page']) && is_numeric($_GET['page']) ? (int)$_GET['page'] : 1;
 $offset = ($page - 1) * $limit;
 
-// --- Totaal aantal artikelen bepalen ---
 $total_articles = 0;
 try {
     $count_stmt = $pdo->query("SELECT COUNT(*) FROM f1_nieuws");
@@ -24,10 +14,8 @@ try {
 }
 $total_pages = ceil($total_articles / $limit);
 
-// --- Nieuwsartikelen ophalen (met LIMIT en OFFSET) ---
 $news_articles = [];
 try {
-    // AANPASSING 1: Voeg 'source' toe aan de SELECT statement
     $stmt = $pdo->prepare("SELECT titel, artikel_url, publicatie_datum, afbeelding_url, source 
                            FROM f1_nieuws 
                            ORDER BY publicatie_datum DESC, id DESC 
@@ -40,11 +28,6 @@ try {
     error_log("Fout bij ophalen nieuwsartikelen voor paginering: " . $e->getMessage());
 }
 
-// ----------------------------------------------------
-// II. SCHEMA & HEADER DATA (voor consistentie)
-// ----------------------------------------------------
-
-// Zorgt ervoor dat de countdown header werkt, indien van toepassing
 if (isset($nextGrandPrix) && $nextGrandPrix && !isset($targetDateTime)) {
     $targetDateTime = '2025-11-20T14:00:00+01:00'; 
 }
