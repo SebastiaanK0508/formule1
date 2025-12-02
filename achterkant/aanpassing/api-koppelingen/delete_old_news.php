@@ -8,10 +8,10 @@ log_message("--- START Oude Nieuws Opschoning ---");
 $cutoff_datetime = date('Y-m-d H:i:s', strtotime('-2 days'));
 
 log_message("Cutoff Datum/Tijd ingesteld op: " . $cutoff_datetime);
-log_message("Artikelen met publicatie_datum OUDER dan dit worden verwijderd.");
+log_message("Artikelen met created_at OUDER dan dit worden verwijderd.");
 
 try {
-    $stmt = $pdo->prepare("DELETE FROM f1_nieuws WHERE publicatie_datum < ?");
+    $stmt = $pdo->prepare("DELETE FROM f1_nieuws WHERE created_at < ?");
     $stmt->execute([$cutoff_datetime]);
 
     $rows_deleted = $stmt->rowCount();
