@@ -140,7 +140,6 @@ if (isset($race_details) && !empty($race_results)) {
             }
         }
         .news-grid {
-            /* Gebruik een flexibeler grid voor de homepage */
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
             gap: 1.5rem;
@@ -148,7 +147,6 @@ if (isset($race_details) && !empty($race_results)) {
         .news-card {
             transition: transform 0.2s, box-shadow 0.2s;
             border-left: 5px solid transparent;
-            /* Flexbox to push date to bottom and give equal card height */
             display: flex; 
             flex-direction: column;
             height: 100%;
@@ -159,7 +157,6 @@ if (isset($race_details) && !empty($race_results)) {
             border-left-color: #E10600;
         }
         .news-image {
-            /* Zorgt dat alle beelden dezelfde hoogte hebben */
             height: 180px; 
         }
     </style>
@@ -185,7 +182,7 @@ if (isset($race_details) && !empty($race_results)) {
             <nav class="main-nav md:flex md:space-x-8 text-sm font-semibold uppercase tracking-wider" 
                  id="main-nav-links" data-visible="false">
                 <a href="index.php" class="block py-2 px-3 md:p-0 text-f1-red border-b-2 border-f1-red md:border-none active transition duration-150">Home</a>
-                <a href="nieuws.php" class="block py-2 px-3 md:p-0 hover:text-f1-red transition duration-150">News Archive</a> <a href="kalender.php" class="block py-2 px-3 md:p-0 hover:text-f1-red transition duration-150">Schedule</a>
+                <a href="kalender.php" class="block py-2 px-3 md:p-0 hover:text-f1-red transition duration-150">Schedule</a>
                 <a href="teams.php" class="block py-2 px-3 md:p-0 hover:text-f1-red transition duration-150">Teams</a>
                 <a href="drivers.php" class="block py-2 px-3 md:p-0 hover:text-f1-red transition duration-150">Drivers</a>
                 <a href="results.php" class="block py-2 px-3 md:p-0 hover:text-f1-red transition duration-150">Results</a>
@@ -257,7 +254,7 @@ if (isset($race_details) && !empty($race_results)) {
                 
                 <div class="mt-8 text-center">
                     <a href="nieuws.php" class="inline-block px-8 py-3 bg-f1-red text-white font-oswald font-bold uppercase rounded-lg shadow-lg hover:bg-red-700 transition duration-300 transform hover:scale-105">
-                        Bekijk het volledige nieuwsarchief &rarr;
+                        More news &rarr;
                     </a>
                 </div>
 

@@ -35,9 +35,9 @@ if (isset($nextGrandPrix) && $nextGrandPrix && !isset($targetDateTime)) {
 $schemaData = [
     '@context' => 'https://schema.org',
     '@type' => 'WebPage',
-    'name' => 'F1 Nieuws Archief',
+    'name' => 'F1 News',
     'url' => 'https://f1site.online/nieuws.php',
-    'description' => 'Volledig archief van Formule 1 nieuwsberichten.',
+    'description' => 'Complete archive of Formula 1 news items.'
 ];
 ?>
 <!DOCTYPE html>
@@ -46,7 +46,7 @@ $schemaData = [
     <meta name="description" content="Volledig archief van alle Formule 1 nieuwsberichten van F1SITE.NL." />
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>F1 Nieuws Archief - F1SITE.NL</title>
+    <title>F1site - NEWS</title>
     <script src="https://t.contentsquare.net/uxa/688c1fe6f0f7c.js"></script>
     <link rel="icon" type="image/x-icon" href="/afbeeldingen/logo/f1logobgrm.png">
     <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
@@ -145,8 +145,7 @@ $schemaData = [
             </button>
             <nav class="main-nav md:flex md:space-x-8 text-sm font-semibold uppercase tracking-wider" 
                  id="main-nav-links" data-visible="false">
-                <a href="index.php" class="block py-2 px-3 md:p-0 hover:text-f1-red transition duration-150">Home</a>
-                <a href="nieuws.php" class="block py-2 px-3 md:p-0 text-f1-red border-b-2 border-f1-red md:border-none active transition duration-150">News Archive</a>
+                <a href="index.php" class="block py-2 px-3 md:p-0 text-f1-red border-b-2 border-f1-red md:border-none active transition duration-150">Home</a>
                 <a href="kalender.php" class="block py-2 px-3 md:p-0 hover:text-f1-red transition duration-150">Schedule</a>
                 <a href="teams.php" class="block py-2 px-3 md:p-0 hover:text-f1-red transition duration-150">Teams</a>
                 <a href="drivers.php" class="block py-2 px-3 md:p-0 hover:text-f1-red transition duration-150">Drivers</a>
@@ -176,7 +175,7 @@ $schemaData = [
 
         <section class="mb-12 f1-section">
             <h2 class="text-4xl font-oswald font-bold text-white uppercase mb-8 border-b border-f1-red pb-3 news-heading">
-                 Volledig Nieuws Archief
+                News Archive
             </h2>
             <?php if (!empty($news_articles)): ?>
                 <div class="news-grid mb-10">
