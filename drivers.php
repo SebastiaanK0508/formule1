@@ -186,7 +186,7 @@ if (!empty($driverListItems)) {
                                         </h3>
                                         
                                         <div class="driver-details mt-1 text-sm text-gray-400">
-                                            <p><span class="font-semibold">Team:</span> <?php echo htmlspecialchars($driver['full_team_name']); ?></p>
+                                            <p><?php echo htmlspecialchars($driver['full_team_name']); ?></p>
                                             </div>
                                     </div>
                             </a>
