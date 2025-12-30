@@ -157,7 +157,7 @@ require_once 'achterkant/aanpassing/api-koppelingen/result_api.php';
                 </div>
             </div>
             <div class="md:col-span-1 text-center md:text-left">
-                <p class="text-gray-500 text-xs mt-4">&copy; 2025 Webbair. Alle rechten voorbehouden.</p>
+                <p class="text-gray-500 text-xs mt-4">&copy; <?php echo (date('Y')); ?> Webbair. Alle rechten voorbehouden.</p>
             </div>
         </div>
     </footer>

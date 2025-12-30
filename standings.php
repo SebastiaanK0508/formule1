@@ -29,77 +29,20 @@
     </script>
     <style>
         @media (max-width: 767px) {
-            .main-nav[data-visible="false"] {
-                display: none;
-            }
-            .main-nav {
-                position: absolute;
-                top: 100%;
-                left: 0;
-                right: 0;
-                background-color: #15151E;
-                box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-                padding: 1rem;
-                display: flex;
-                flex-direction: column;
-                z-index: 40;
-                border-top: 1px solid #E10600;
-            }
-            .main-nav a {
-                padding: 0.5rem 0;
-            }
-            .standings-table tr {
-                padding-right: 3rem !important;
-            }
-            .standings-table thead {
-                display: none;
-            }
-        }
-        .standings-table-container {
-            background-color: #3A3A40; 
-            border-radius: 0.75rem;
-            padding: 1.25rem;
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
-        }
-        .standings-table {
-            width: 100%;
-            border-collapse: collapse;
-            table-layout: fixed;
-            color: #D1D5DB;
-            text-align: left;
-        }
-        .standings-table th {
-            background-color: #21212B;
-            color: white;
-            padding: 0.75rem 0.5rem;
-            text-transform: uppercase;
-            font-size: 0.875rem;
-            font-family: 'Oswald', sans-serif;
-        }
-        .standings-table td {
-            padding: 0.75rem 0.5rem;
-            border-bottom: 1px solid #3A3A40;
-        }
-        .standings-table tbody tr:hover {
-            background-color: rgba(225, 6, 0, 0.1);
+            .main-nav[data-visible="false"] { display: none; }
+            .main-nav { position: absolute; top: 100%; left: 0; right: 0; background-color: #15151E; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); padding: 1rem; display: flex; flex-direction: column; z-index: 40; border-top: 1px solid #E10600; }
+            .main-nav a { padding: 0.5rem 0; }
         }
     </style>
-
+    <link rel="stylesheet" href="table.css">
 </head>
-<link rel="stylesheet" href="table.css">
 <body class="bg-f1-black text-gray-100 font-sans min-h-screen flex flex-col">
     
     <header class="bg-black shadow-lg sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center header-content container">
-            <h1 class="text-3xl font-oswald font-extrabold text-f1-red tracking-widest site-title">
-                FORMULA 1
-            </h1>
-            <button class="md:hidden text-2xl text-f1-red hover:text-white menu-toggle" 
-                    aria-controls="main-nav-links" aria-expanded="false" aria-label="Toggle navigation">
-                &#9776; 
-            </button>
-            <nav class="main-nav md:flex md:space-x-8 text-sm font-semibold uppercase tracking-wider" 
-                 id="main-nav-links" data-visible="false">
+            <h1 class="text-3xl font-oswald font-extrabold text-f1-red tracking-widest site-title">FORMULA 1</h1>
+            <button class="md:hidden text-2xl text-f1-red hover:text-white menu-toggle" aria-controls="main-nav-links" aria-expanded="false" aria-label="Toggle navigation">&#9776;</button>
+            <nav class="main-nav md:flex md:space-x-8 text-sm font-semibold uppercase tracking-wider" id="main-nav-links" data-visible="false">
                 <a href="index.php" class="block py-2 px-3 md:p-0 hover:text-f1-red transition duration-150">Home</a>
                 <a href="kalender.php" class="block py-2 px-3 md:p-0 hover:text-f1-red transition duration-150">Schedule</a>
                 <a href="teams.php" class="block py-2 px-3 md:p-0 hover:text-f1-red transition duration-150">Teams</a>
@@ -110,36 +53,31 @@
         </div>
     </header>
 
-<main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-8 flex-grow container">
-    
-    <section class="bg-f1-gray p-6 rounded-lg shadow-xl mb-8 page-header-section">
-        <h2 class="text-xl md:text-3xl font-oswald font-bold text-white uppercase page-heading text-center">
-            Standings 2025
-        </h2>
-    </section>
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-8 flex-grow container">
+        <section class="bg-f1-gray p-6 rounded-lg shadow-xl mb-8 page-header-section">
+            <h2 class="text-xl md:text-3xl font-oswald font-bold text-white uppercase page-heading text-center">
+                Standings <?php echo (date('Y')); ?>
+            </h2>
+        </section>
 
-    <section id="standings-content">
-        <p class="text-center text-gray-400 p-4">Loading...</p>
-    </section>
-</main>
+        <section id="standings-content">
+            <div class="flex justify-center p-12">
+                <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-f1-red"></div>
+            </div>
+        </section>
+    </main>
+
     <footer class="bg-black mt-12 py-8 border-t border-red-700">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-left pb-6 border-b border-gray-800">
                 <div class="md:col-span-1 text-center md:text-left">
                     <h3 class="text-xl font-bold text-white mb-2 tracking-wider">F1SITE.NL</h3>
-                    <p class="text-gray-500 text-sm mb-2">
-                        De snelste bron voor F1 nieuws en data.
-                    </p>
+                    <p class="text-gray-500 text-sm mb-2">De snelste bron voor F1 nieuws en data.</p>
                 </div>
                 <div class="md:col-span-1 text-center md:text-left">
                     <h4 class="text-lg font-semibold text-red-500 mb-3 uppercase">Externe Sites</h4>
                     <ul class="space-y-2">
-                        <li>
-                            <a href="https://www.webbair.nl" target="_blank" 
-                            class="text-gray-400 text-sm hover:text-red-500 transition duration-150 block">
-                            Webbair (Ontwikkelaar)
-                            </a>
-                        </li>
+                        <li><a href="https://www.webbair.nl" target="_blank" class="text-gray-400 text-sm hover:text-red-500 transition duration-150 block">Webbair (Ontwikkelaar)</a></li>
                     </ul>
                 </div>
                 <div class="md:col-span-1 text-center md:text-left">
@@ -152,128 +90,90 @@
                     </ul>
                 </div>
             </div>
-            <div class="md:col-span-1 text-center md:text-left">
-                <p class="text-gray-500 text-xs mt-4">&copy; 2025 Webbair. Alle rechten voorbehouden.</p>
+            <div class="text-center md:text-left">
+                <p class="text-gray-500 text-xs mt-4">&copy; <?php echo date('Y'); ?> Webbair. Alle rechten voorbehouden.</p>
             </div>
         </div>
     </footer>
 
-<script>
-    const standingsContent = document.getElementById('standings-content');
-    
-    async function fetchChampionshipStandings() {
-        try {
-            const response = await fetch('achterkant/aanpassing/api-koppelingen/standings_api.php'); 
-            const data = await response.json();
-            if (data.status === 'success') {
-                displayChampionshipStandings(data.drivers, data.constructors);
-            } else {
-                standingsContent.innerHTML = `<p class="text-red-500 text-center p-4">Fout bij het laden van klassementen: ${data.message}</p>`;
-                console.error('API Error:', data.message);
+    <script>
+        const standingsContent = document.getElementById('standings-content');
+        
+        async function fetchChampionshipStandings() {
+            try {
+                const response = await fetch('achterkant/aanpassing/api-koppelingen/standings_api.php'); 
+                const data = await response.json();
+                
+                if (data.status === 'success' && (data.drivers.length > 0 || data.constructors.length > 0)) {
+                    displayChampionshipStandings(data.drivers, data.constructors);
+                } else {
+                    standingsContent.innerHTML = `
+                        <div class="bg-f1-gray rounded-lg p-8 text-center shadow-inner border border-gray-700">
+                            <div class="text-f1-red text-6xl mb-4">🏁</div>
+                            <h3 class="text-2xl font-oswald font-bold text-white mb-2 uppercase tracking-tight">Het seizoen is nog niet begonnen</h3>
+                            <p class="text-gray-400 max-w-md mx-auto">Er zijn op dit moment nog geen punten verdiend. Zodra de eerste Grand Prix van 2026 is verreden, verschijnen hier de actuele standen.</p>
+                            <a href="kalender.php" class="inline-block mt-6 text-f1-red hover:text-white font-bold uppercase text-sm border-b border-f1-red pb-1">Bekijk de race kalender &rarr;</a>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                standingsContent.innerHTML = `<p class="text-red-500 text-center p-4 font-bold">Netwerkfout: Klassement kon niet worden geladen.</p>`;
             }
-        } catch (error) {
-            standingsContent.innerHTML = `<p class="text-red-500 text-center p-4">Netwerkfout bij het laden van klassementen.</p>`;
-            console.error('Fetch Error:', error);
         }
-    }
 
-    function displayChampionshipStandings(drivers, constructors) {
-        let html = '<div class="flex flex-col lg:flex-row gap-6 standings-grid">';
-        html += '<div class="flex-1 min-w-0 data-table-container">'; 
-        html += '<h4 class="text-xl font-oswald font-semibold text-white text-center mb-4">Drivers Championship</h4>';
-        if (drivers.length > 0) {
-            html += `
-                <table class="data-table w-full border-collapse rounded-lg overflow-hidden"> 
-                    <thead>
-                        <tr>
-                            <th class="rounded-tl-lg">Pos.</th>
-                            <th>Driver</th>
-                            <th class="rounded-tr-lg text-right">Points</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-            `;
-            drivers.forEach(driver => {
-                html += `
-            <tr class="flex flex-wrap relative mb-4 bg-f1-gray border-l-4 border-f1-red rounded lg:table-row lg:mb-0 lg:border-l-0">                
-                <td class="font-oswald font-bold text-2xl w-[40px] flex-shrink-0 text-white p-2 lg:p-3 lg:w-auto lg:text-base">
-                    ${driver.position}
-                </td>
-                <td class="flex flex-col flex-1 ml-2 p-2 lg:p-3 lg:table-cell lg:flex-initial lg:ml-0">
-                    <div class="font-medium text-base text-[#E1E1E1]">
-                        ${driver.given_name} ${driver.family_name}
-                    </div>
-                    <div class="text-gray-400 text-sm">
-                        ${driver.constructor_name}
-                    </div>
-                </td>
-                <td class="font-bold text-f1-red text-xl absolute top-3 right-3 lg:static lg:p-3 lg:text-right lg:text-base">
-                    ${driver.points}
-                </td>
-            </tr>
-                `;
-            });
-            html += `
-                    </tbody>
-                </table>
-            `;
-        } else {
-            html += '<p class="text-gray-400 p-4">Geen coureursklassement beschikbaar op dit moment.</p>';
-        }
-        html += '</div>';
-        html += '<div class="flex-1 min-w-0 data-table-container">';
-        html += '<h4 class="text-xl font-oswald font-semibold text-white text-center mb-4">Constructors Championship</h4>';
-        if (constructors.length > 0) {
-            html += `
-                <table class="data-table w-full border-collapse rounded-lg overflow-hidden"> 
-                    <thead>
-                        <tr>
-                            <th class="rounded-tl-lg">Pos.</th>
-                            <th>Team</th>
-                            <th class="rounded-tr-lg text-right">Points</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-            `;
-            constructors.forEach(constructor => {
-                html += `
-                    <tr class="flex flex-wrap relative mb-4 bg-f1-gray border-l-4 border-f1-red rounded lg:table-row lg:mb-0 lg:border-l-0">
-                        <td class="font-oswald font-bold text-2xl w-[40px] flex-shrink-0 text-white p-2 lg:p-3 lg:w-auto lg:text-base">
-                            ${constructor.position}
-                        </td>
-                        
-                        <td class="font-medium flex-1 ml-2 text-base text-[#E1E1E1] p-2 lg:p-3">
-                            ${constructor.name}
-                        </td>
-                        
-                        <td class="font-bold text-f1-red text-xl absolute top-3 right-3 lg:static lg:p-3 lg:text-right lg:text-base">
-                            ${constructor.points}
-                        </td>
-                    </tr>
-                `;
-            });
-            html += `
-                    </tbody>
-                </table>
-            `;
-        } else {
-            html += '<p class="text-gray-400 p-4">Geen constructeursklassement beschikbaar op dit moment.</p>';
-        }
-        html += '</div>';
-        html += '</div>';
-        standingsContent.innerHTML = html;
-    }
-    fetchChampionshipStandings();
-    document.addEventListener('DOMContentLoaded', () => {
-        const nav = document.getElementById('main-nav-links');
-        const toggle = document.querySelector('.menu-toggle');
+        function displayChampionshipStandings(drivers, constructors) {
+            let html = '<div class="flex flex-col lg:flex-row gap-6 standings-grid">';
+            
+            // DRIVERS
+            html += '<div class="flex-1 min-w-0 data-table-container">'; 
+            html += '<h4 class="text-xl font-oswald font-semibold text-white text-center mb-4">Drivers Championship</h4>';
+            if (drivers.length > 0) {
+                html += '<table class="data-table w-full border-collapse rounded-lg overflow-hidden"><thead><tr><th class="rounded-tl-lg">Pos.</th><th>Driver</th><th class="rounded-tr-lg text-right">Points</th></tr></thead><tbody>';
+                drivers.forEach(driver => {
+                    html += `
+                        <tr class="flex flex-wrap relative mb-4 bg-f1-gray border-l-4 border-f1-red rounded lg:table-row lg:mb-0 lg:border-l-0">                
+                            <td class="font-oswald font-bold text-2xl w-[40px] flex-shrink-0 text-white p-2 lg:p-3 lg:w-auto lg:text-base">${driver.position}</td>
+                            <td class="flex flex-col flex-1 ml-2 p-2 lg:p-3 lg:table-cell lg:flex-initial lg:ml-0">
+                                <div class="font-medium text-base text-[#E1E1E1]">${driver.given_name} ${driver.family_name}</div>
+                                <div class="text-gray-400 text-sm">${driver.constructor_name}</div>
+                            </td>
+                            <td class="font-bold text-f1-red text-xl absolute top-3 right-3 lg:static lg:p-3 lg:text-right lg:text-base">${driver.points}</td>
+                        </tr>`;
+                });
+                html += '</tbody></table>';
+            }
+            html += '</div>';
 
-        toggle.addEventListener('click', () => {
-            const isVisible = nav.getAttribute('data-visible') === 'true';
-            nav.setAttribute('data-visible', String(!isVisible));
-            toggle.setAttribute('aria-expanded', String(!isVisible));
+            // CONSTRUCTORS
+            html += '<div class="flex-1 min-w-0 data-table-container">';
+            html += '<h4 class="text-xl font-oswald font-semibold text-white text-center mb-4">Constructors Championship</h4>';
+            if (constructors.length > 0) {
+                html += '<table class="data-table w-full border-collapse rounded-lg overflow-hidden"><thead><tr><th class="rounded-tl-lg">Pos.</th><th>Team</th><th class="rounded-tr-lg text-right">Points</th></tr></thead><tbody>';
+                constructors.forEach(constructor => {
+                    html += `
+                        <tr class="flex flex-wrap relative mb-4 bg-f1-gray border-l-4 border-f1-red rounded lg:table-row lg:mb-0 lg:border-l-0">
+                            <td class="font-oswald font-bold text-2xl w-[40px] flex-shrink-0 text-white p-2 lg:p-3 lg:w-auto lg:text-base">${constructor.position}</td>
+                            <td class="font-medium flex-1 ml-2 text-base text-[#E1E1E1] p-2 lg:p-3">${constructor.name}</td>
+                            <td class="font-bold text-f1-red text-xl absolute top-3 right-3 lg:static lg:p-3 lg:text-right lg:text-base">${constructor.points}</td>
+                        </tr>`;
+                });
+                html += '</tbody></table>';
+            }
+            html += '</div></div>';
+            standingsContent.innerHTML = html;
+        }
+
+        fetchChampionshipStandings();
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const nav = document.getElementById('main-nav-links');
+            const toggle = document.querySelector('.menu-toggle');
+            toggle.addEventListener('click', () => {
+                const isVisible = nav.getAttribute('data-visible') === 'true';
+                nav.setAttribute('data-visible', String(!isVisible));
+                toggle.setAttribute('aria-expanded', String(!isVisible));
+            });
         });
-    });
-</script>
+    </script>
 </body>
 </html>

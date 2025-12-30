@@ -1,15 +1,10 @@
 <?php
 require_once 'achterkant/aanpassing/api-koppelingen/result_api.php';
-
-// --- Schema.org Data Preparatie ---
 $schemaData = [];
-
-// 1. SportsEvent met SportsResult Schema voor de getoonde race
 if (!empty($race_results) && $race_details) {
     
     $results = [];
     foreach ($race_results as $result) {
-        // Maak een 'Person' object van elke coureur
         $results[] = [
             '@type' => 'Person',
             'name' => htmlspecialchars($result['driver_name']),
@@ -39,7 +34,6 @@ if (!empty($race_results) && $race_details) {
         'result' => [
             '@type' => 'SportsResults',
             'winningTeam' => $race_results[0]['team_name'] ?? 'Niet beschikbaar',
-            // De winnaar (eerste coureur)
             'winningTies' => [
                 '@type' => 'Win',
                 'winner' => [
@@ -47,7 +41,7 @@ if (!empty($race_results) && $race_details) {
                     'name' => $race_results[0]['driver_name'] ?? 'Niet beschikbaar'
                 ]
             ],
-            'performer' => $results, // Alle coureurs in de uitslag
+            'performer' => $results,
         ],
         'sport' => 'Formula 1'
     ];

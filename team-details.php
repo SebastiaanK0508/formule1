@@ -21,7 +21,6 @@ try {
     $team = $stmt->fetch(PDO::FETCH_ASSOC);
 
     if (!$team) {
-        // Gebruik de F1-styling voor de foutpagina
         http_response_code(404);
         ?>
         <!DOCTYPE html>
@@ -43,7 +42,6 @@ try {
         exit;
     }
 } catch (PDOException $e) {
-    // Databasefout
     http_response_code(500);
     ?>
     <!DOCTYPE html>
@@ -293,7 +291,7 @@ if ($team) {
                 </div>
             </div>
             <div class="md:col-span-1 text-center md:text-left">
-                <p class="text-gray-500 text-xs mt-4">&copy; 2025 Webbair. Alle rechten voorbehouden.</p>
+                <p class="text-gray-500 text-xs mt-4">&copy; <?php echo (date('Y')); ?> Webbair. Alle rechten voorbehouden.</p>
             </div>
         </div>
     </footer>

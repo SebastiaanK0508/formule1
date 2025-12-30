@@ -2,8 +2,6 @@
 require_once 'db_config.php';
 /** @var PDO $pdo */
 $driverSlug = isset($_GET['slug']) ? $_GET['slug'] : '';
-
-// Redirect als er geen slug is
 if (empty($driverSlug)) {
     header('Location: index.php');
     exit;
@@ -11,7 +9,6 @@ if (empty($driverSlug)) {
 
 $driver = null;
 try {
-    // Zoek de coureur op basis van de slug
     $stmt = $pdo->prepare("
         SELECT
             d.*,
@@ -29,9 +26,7 @@ try {
     $stmt->execute();
     $driver = $stmt->fetch(PDO::FETCH_ASSOC);
 
-    // Als de coureur niet gevonden is
     if (!$driver) {
-        // Gebruik de F1-styling voor de foutpagina
         http_response_code(404);
         ?>
         <!DOCTYPE html>
@@ -53,7 +48,6 @@ try {
         exit;
     }
 } catch (PDOException $e) {
-    // Databasefout (gebruik F1-styling voor de foutpagina)
     http_response_code(500);
     ?>
     <!DOCTYPE html>
@@ -109,7 +103,6 @@ $driverLastName = htmlspecialchars($driver['last_name']);
         }
     </script>
     <style>
-        /* Mobile menu styles */
         @media (max-width: 767px) {
             .main-nav[data-visible="false"] {
                 display: none;
@@ -269,7 +262,7 @@ $driverLastName = htmlspecialchars($driver['last_name']);
                 </div>
             </div>
             <div class="md:col-span-1 text-center md:text-left">
-                <p class="text-gray-500 text-xs mt-4">&copy; 2025 Webbair. Alle rechten voorbehouden.</p>
+                <p class="text-gray-500 text-xs mt-4">&copy; <?php echo (date('Y')); ?> Webbair. Alle rechten voorbehouden.</p>
             </div>
         </div>
     </footer>
