@@ -156,22 +156,23 @@ $schemaData = [
     </header>
     
     <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-8 container">
-        <div class="bg-f1-gray p-6 rounded-lg shadow-xl mb-8 flex flex-col md:flex-row justify-between items-center page-header-section">
+        <!-- nog toevoegen later -->
+        <!-- <div class="bg-f1-gray p-6 rounded-lg shadow-xl mb-8 flex flex-col md:flex-row justify-between items-center page-header-section">
             <div class="text-center md:text-left mb-4 md:mb-0">
                 <h3 class="text-xl md:text-2xl font-oswald font-bold text-white uppercase page-heading">
                     <?php
-                    if (isset($nextGrandPrix) && $nextGrandPrix) {
-                        echo htmlspecialchars($nextGrandPrix['grandprix']);
-                    } else {
-                        echo "Geen aankomende Grand Prix";
-                    }
-                    ?>
+                    // if (isset($nextGrandPrix) && $nextGrandPrix) {
+                    //     echo htmlspecialchars($nextGrandPrix['grandprix']);
+                    // } else {
+                    //     echo "Geen aankomende Grand Prix";
+                    // }
+                    // ?>
                 </h3>
                 <p class="text-sm text-gray-400">Next Race</p>
             </div>
             <div class="text-center text-3xl md:text-4xl font-oswald font-extrabold text-f1-red page-heading" id="countdown">
             </div>
-        </div>
+        </div> -->
 
         <section class="mb-12 f1-section">
             <h2 class="text-4xl font-oswald font-bold text-white uppercase mb-8 border-b border-f1-red pb-3 news-heading">

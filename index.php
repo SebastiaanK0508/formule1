@@ -1,5 +1,7 @@
 <?php
 require_once 'db_config.php'; 
+
+// 1. Nieuws ophalen (Exact jouw logica)
 $limit_home = 12; 
 $news_articles = [];
 try {
@@ -10,11 +12,41 @@ try {
 } catch (PDOException $e) {
     error_log("Fout bij ophalen nieuwsartikelen: " . $e->getMessage());
 }
-require_once 'achterkant/aanpassing/api-koppelingen/1result_api.php';
-if (isset($nextGrandPrix) && $nextGrandPrix && !isset($targetDateTime)) {
-    $targetDateTime = '2025-11-20T14:00:00+01:00'; 
+
+// 2. REPARATIE: Volgende GP ophalen uit tabel 'circuits' (2026 Fix)
+$nextGrandPrix = null;
+$targetDateTime = null;
+try {
+    $stmtNext = $pdo->prepare("SELECT grandprix, race_datetime, title FROM circuits WHERE race_datetime > NOW() ORDER BY race_datetime ASC LIMIT 1");
+    $stmtNext->execute();
+    $nextGPData = $stmtNext->fetch(PDO::FETCH_ASSOC);
+
+    if ($nextGPData) {
+        $nextGrandPrix = [
+            'grandprix' => $nextGPData['grandprix'],
+            'circuit'   => $nextGPData['title']
+        ];
+        $dateObj = new DateTime($nextGPData['race_datetime']);
+        $targetDateTime = $dateObj->format('Y-m-d\TH:i:s'); 
+        
+        // Backup maken voor het geval de API straks de boel overschrijft
+        $backupGP = $nextGrandPrix;
+        $backupTime = $targetDateTime;
+    }
+} catch (PDOException $e) {
+    error_log("Database fout in tabel circuits: " . $e->getMessage());
 }
 
+// 3. API koppeling laden
+require_once 'achterkant/aanpassing/api-koppelingen/1result_api.php';
+
+// Forceer backup terug als de API de variabele leegmaakt
+if ((!isset($nextGrandPrix['grandprix']) || empty($nextGrandPrix['grandprix'])) && isset($backupGP)) {
+    $nextGrandPrix = $backupGP;
+    $targetDateTime = $backupTime;
+}
+
+// 4. Schema.org data opbouw
 $schemaData = [
     '@context' => 'https://schema.org',
     '@graph' => [
@@ -26,7 +58,8 @@ $schemaData = [
         ]
     ]
 ];
-if (isset($nextGrandPrix) && $nextGrandPrix) {
+
+if (isset($nextGrandPrix) && $nextGrandPrix && isset($targetDateTime)) {
     $raceDate = (new DateTime($targetDateTime))->format(DateTime::ISO8601);
     $schemaData['@graph'][] = [
         '@type' => 'SportsEvent',
@@ -37,55 +70,12 @@ if (isset($nextGrandPrix) && $nextGrandPrix) {
             'name' => htmlspecialchars($nextGrandPrix['grandprix']),
             'address' => [
                 '@type' => 'PostalAddress',
-                'name' => 'Circuit van ' . htmlspecialchars($nextGrandPrix['circuit']),
+                'name' => 'Circuit van ' . htmlspecialchars($nextGrandPrix['circuit'] ?? 'onbekend'),
             ],
         ],
         'sport' => 'Formula 1',
-        'competitor' => [
-            '@type' => 'Organization',
-            'name' => 'F1 Teams',
-        ]
+        'competitor' => ['@type' => 'Organization', 'name' => 'F1 Teams']
     ];
-}
-if (isset($race_details) && !empty($race_results)) {
-    
-    $results = [];
-    foreach ($race_results as $result) {
-        $results[] = [
-            '@type' => 'Person',
-            'name' => htmlspecialchars($result['driver_name']),
-            'alumniOf' => [
-                '@type' => 'SportsTeam',
-                'name' => htmlspecialchars($result['team_name']),
-            ],
-            'sport' => 'Formula 1',
-        ];
-    }
-
-    $raceSchema = [
-        '@type' => 'SportsEvent',
-        'name' => 'Grand Prix van ' . htmlspecialchars($race_details['name']),
-        'startDate' => htmlspecialchars((new DateTime($race_details['date']))->format('Y-m-d')),
-        'location' => [
-            '@type' => 'Place',
-            'name' => htmlspecialchars($race_details['circuit']) . ', ' . htmlspecialchars($race_details['country']),
-        ],
-        'result' => [
-            '@type' => 'SportsResults',
-            'winningTeam' => $race_results[0]['team_name'] ?? 'Niet beschikbaar',
-            'winningTies' => [
-                '@type' => 'Win',
-                'winner' => [
-                    '@type' => 'Person',
-                    'name' => $race_results[0]['driver_name'] ?? 'Niet beschikbaar'
-                ]
-            ],
-            'performer' => $results,
-            'position' => $race_results[0]['position'] ?? null,
-        ],
-        'sport' => 'Formula 1'
-    ];
-    $schemaData['@graph'][] = $raceSchema;
 }
 ?>
 <!DOCTYPE html>
@@ -104,61 +94,22 @@ if (isset($race_details) && !empty($race_results)) {
         tailwind.config = {
             theme: {
                 extend: {
-                    fontFamily: {
-                        'sans': ['Roboto', 'sans-serif'],
-                        'oswald': ['Oswald', 'sans-serif'],
-                    },
-                    colors: {
-                        'f1-red': '#E10600',
-                        'f1-black': '#15151E', 
-                        'f1-gray': '#3A3A40',
-                    }
+                    fontFamily: { 'sans': ['Roboto', 'sans-serif'], 'oswald': ['Oswald', 'sans-serif'] },
+                    colors: { 'f1-red': '#E10600', 'f1-black': '#15151E', 'f1-gray': '#3A3A40' }
                 }
             }
         }
     </script>
     <style>
         @media (max-width: 767px) {
-            .main-nav[data-visible="false"] {
-                display: none;
-            }
-            .main-nav {
-                position: absolute;
-                top: 100%;
-                left: 0;
-                right: 0;
-                background-color: #15151E;
-                box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-                padding: 1rem;
-                display: flex;
-                flex-direction: column;
-                z-index: 40;
-                border-top: 1px solid #E10600;
-            }
-            .main-nav a {
-                padding: 0.5rem 0;
-            }
+            .main-nav[data-visible="false"] { display: none; }
+            .main-nav { position: absolute; top: 100%; left: 0; right: 0; background-color: #15151E; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); padding: 1rem; display: flex; flex-direction: column; z-index: 40; border-top: 1px solid #E10600; }
+            .main-nav a { padding: 0.5rem 0; }
         }
-        .news-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 1.5rem;
-        }
-        .news-card {
-            transition: transform 0.2s, box-shadow 0.2s;
-            border-left: 5px solid transparent;
-            display: flex; 
-            flex-direction: column;
-            height: 100%;
-        }
-        .news-card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 10px 15px rgba(225, 6, 0, 0.2);
-            border-left-color: #E10600;
-        }
-        .news-image {
-            height: 180px; 
-        }
+        .news-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; }
+        .news-card { transition: transform 0.2s, box-shadow 0.2s; border-left: 5px solid transparent; display: flex; flex-direction: column; height: 100%; }
+        .news-card:hover { transform: translateY(-3px); box-shadow: 0 10px 15px rgba(225, 6, 0, 0.2); border-left-color: #E10600; }
+        .news-image { height: 180px; }
     </style>
     
     <?php if (!empty($schemaData)): ?>
@@ -166,21 +117,14 @@ if (isset($race_details) && !empty($race_results)) {
     <?php echo json_encode($schemaData, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE); ?>
     </script>
     <?php endif; ?>
-    
 </head>
 <body class="bg-f1-black text-gray-100 font-sans">
     
     <header class="bg-black shadow-lg sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center header-content container">
-            <h1 id="site-title-header" class="text-3xl font-oswald font-extrabold text-f1-red tracking-widest site-title">
-                FORMULA 1
-            </h1>
-            <button class="md:hidden text-2xl text-f1-red hover:text-white menu-toggle" 
-                    aria-controls="main-nav-links" aria-expanded="false" aria-label="Toggle navigation">
-                &#9776; 
-            </button>
-            <nav class="main-nav md:flex md:space-x-8 text-sm font-semibold uppercase tracking-wider" 
-                 id="main-nav-links" data-visible="false">
+            <h1 id="site-title-header" class="text-3xl font-oswald font-extrabold text-f1-red tracking-widest site-title">FORMULA 1</h1>
+            <button class="md:hidden text-2xl text-f1-red hover:text-white menu-toggle" aria-controls="main-nav-links" aria-expanded="false" aria-label="Toggle navigation">&#9776;</button>
+            <nav class="main-nav md:flex md:space-x-8 text-sm font-semibold uppercase tracking-wider" id="main-nav-links" data-visible="false">
                 <a href="index.php" class="block py-2 px-3 md:p-0 text-f1-red border-b-2 border-f1-red md:border-none active transition duration-150">Home</a>
                 <a href="kalender.php" class="block py-2 px-3 md:p-0 hover:text-f1-red transition duration-150">Schedule</a>
                 <a href="teams.php" class="block py-2 px-3 md:p-0 hover:text-f1-red transition duration-150">Teams</a>
@@ -195,132 +139,69 @@ if (isset($race_details) && !empty($race_results)) {
         <div class="bg-f1-gray p-6 rounded-lg shadow-xl mb-8 flex flex-col md:flex-row justify-between items-center page-header-section">
             <div class="text-center md:text-left mb-4 md:mb-0">
                 <h3 class="text-xl md:text-2xl font-oswald font-bold text-white uppercase page-heading">
-                    <?php
-                    if (isset($nextGrandPrix) && $nextGrandPrix) {
-                        echo htmlspecialchars($nextGrandPrix['grandprix']);
-                    } else {
-                        echo "Geen aankomende Grand Prix";
-                    }
-                    ?>
+                    <?php echo (isset($nextGrandPrix) && $nextGrandPrix) ? htmlspecialchars($nextGrandPrix['grandprix']) : "Geen aankomende Grand Prix"; ?>
                 </h3>
                 <p class="text-sm text-gray-400">Next Race</p>
             </div>
-            <div class="text-center text-3xl md:text-4xl font-oswald font-extrabold text-f1-red page-heading" id="countdown">
-            </div>
+            <div class="text-center text-3xl md:text-4xl font-oswald font-extrabold text-f1-red page-heading" id="countdown"></div>
         </div>
+
         <section class="mb-12 f1-section">
-            <h2 class="text-3xl font-oswald font-bold text-white uppercase mb-6 border-b border-f1-red pb-2 news-heading">
-                 Recent F1 News
-            </h2>
+            <h2 class="text-3xl font-oswald font-bold text-white uppercase mb-6 border-b border-f1-red pb-2 news-heading">Recent F1 News</h2>
             <?php if (!empty($news_articles)): ?>
                 <div class="news-grid">
                     <?php foreach ($news_articles as $article): ?>
                         <div class="bg-f1-gray p-5 rounded-lg shadow-xl news-card">
                             <?php if ($article['afbeelding_url']): ?>
-                                <img src="<?php echo htmlspecialchars($article['afbeelding_url']); ?>" alt="Afbeelding bij nieuwsartikel" class="w-full news-image object-cover rounded-md mb-4">
+                                <img src="<?php echo htmlspecialchars($article['afbeelding_url']); ?>" alt="News" class="w-full news-image object-cover rounded-md mb-4">
                             <?php endif; ?>
                             <div class="flex flex-col flex-grow">
                                 <h3 class="text-xl font-oswald font-semibold mb-2 news-title flex-grow">
-                                    <a href="<?php echo htmlspecialchars($article['artikel_url']); ?>" target="_blank" 
-                                       class="text-gray-100 hover:text-f1-red transition duration-150 block">
-                                        <?php echo htmlspecialchars($article['titel']); ?>
-                                    </a>
+                                    <a href="<?php echo htmlspecialchars($article['artikel_url']); ?>" target="_blank" class="text-gray-100 hover:text-f1-red transition duration-150 block"><?php echo htmlspecialchars($article['titel']); ?></a>
                                 </h3>
-                                
                                 <div class="mt-auto">
-                                    <?php if (!empty($article['source'])): ?>
-                                        <span class="text-f1-red font-bold uppercase text-xs mb-1 block">
-                                            Source: <?php echo htmlspecialchars($article['source']); ?>
-                                        </span>
-                                    <?php endif; ?>
-
-                                    <?php if ($article['publicatie_datum']): ?>
-                                        <p class="text-xs text-gray-400 news-date">
-                                            <?php 
-                                                try {
-                                                    $date = new DateTime($article['publicatie_datum']);
-                                                    echo $date->format('d-m-Y H:i');
-                                                } catch (Exception $e) {
-                                                    echo 'Datum onbekend';
-                                                }
-                                            ?>
-                                        </p>
-                                    <?php endif; ?>
+                                    <?php if (!empty($article['source'])): ?><span class="text-f1-red font-bold uppercase text-xs mb-1 block">Source: <?php echo htmlspecialchars($article['source']); ?></span><?php endif; ?>
                                 </div>
                             </div>
                         </div>
                     <?php endforeach; ?>
                 </div>
-                
                 <div class="mt-8 text-center">
-                    <a href="nieuws.php" class="inline-block px-8 py-3 bg-f1-red text-white font-oswald font-bold uppercase rounded-lg shadow-lg hover:bg-red-700 transition duration-300 transform hover:scale-105">
-                        More news &rarr;
-                    </a>
+                    <a href="nieuws.php" class="inline-block px-8 py-3 bg-f1-red text-white font-oswald font-bold uppercase rounded-lg shadow-lg hover:bg-red-700 transition duration-300 transform hover:scale-105">More news &rarr;</a>
                 </div>
-
-            <?php else: ?>
-                <p class="text-gray-400">Er zijn momenteel geen nieuwsartikelen beschikbaar. Zorg ervoor dat de scraper draait en de database vult.</p>
             <?php endif; ?>
         </section>
-        <?php if (isset($error_message) && $error_message): ?>
-            <div class="bg-red-900 text-white p-4 rounded-lg mb-8 error-message">
-                <?php echo $error_message; ?>
+
+        <?php if (isset($race_details) && $race_details): ?>
+        <section class="bg-f1-gray p-6 rounded-lg shadow-xl f1-section">
+            <div class="border-b border-gray-600 pb-4 mb-6 race-info-card">
+                <h2 class="text-2xl font-oswald font-bold text-f1-red mb-2 page-heading">Result <?php echo htmlspecialchars($race_details['name']); ?></h2>
+                <p class="text-gray-300 text-sm"><strong>Location:</strong> <?php echo htmlspecialchars($race_details['circuit']); ?>, <?php echo htmlspecialchars($race_details['location'] ?? ''); ?>, <?php echo htmlspecialchars($race_details['country']); ?></p>
+                <p class="text-gray-300 text-sm"><strong>Date:</strong> <?php echo htmlspecialchars((new DateTime($race_details['date']))->format('d-m-Y')); ?></p>
             </div>
-        <?php else: ?>
-            <div class="selection-link">
-                <?php if (isset($races_in_season) && !empty($races_in_season)): ?>
-                    <?php else: ?>
-                    <p class="text-gray-400">No races found</p>
-                <?php endif; ?>
-            </div>
-            
-            <?php if (isset($race_details) && $race_details): ?>
-            <section class="bg-f1-gray p-6 rounded-lg shadow-xl f1-section">
-                
-                <div class="border-b border-gray-600 pb-4 mb-6 race-info-card">
-                    <h2 class="text-2xl font-oswald font-bold text-f1-red mb-2 page-heading">
-                        Result <?php echo htmlspecialchars($race_details['name']); ?>
-                    </h2>
-                    <p class="text-gray-300 text-sm">
-                        <strong>Location:</strong> <?php echo htmlspecialchars($race_details['circuit']); ?>, 
-                        <?php echo htmlspecialchars($race_details['location']); ?>, 
-                        <?php echo htmlspecialchars($race_details['country']); ?>
-                    </p>
-                    <p class="text-gray-300 text-sm">
-                        <strong>Date:</strong> <?php echo htmlspecialchars((new DateTime($race_details['date']))->format('d-m-Y')); ?>
-                    </p>
-                </div>
-                
-                <?php if (!empty($race_results)): ?>
-                <div class="overflow-x-auto">
-                    <table class="data-table w-full border-collapse rounded-lg overflow-hidden">
-                        <thead class="bg-f1-red text-white uppercase text-sm">
-                            <tr>
-                                <th class="py-3 px-4 text-left font-bold rounded-tl-lg">Pos</th>
-                                <th class="py-3 px-4 text-left font-bold">Driver</th>
-                                <th class="py-3 px-4 text-left font-bold">Team</th>
-                                <th class="py-3 px-4 text-left font-bold rounded-tr-lg">Time / Status</th>
+            <div class="overflow-x-auto">
+                <table class="data-table w-full border-collapse rounded-lg overflow-hidden">
+                    <thead class="bg-f1-red text-white uppercase text-sm">
+                        <tr>
+                            <th class="py-3 px-4 text-left font-bold rounded-tl-lg">Pos</th>
+                            <th class="py-3 px-4 text-left font-bold">Driver</th>
+                            <th class="py-3 px-4 text-left font-bold">Team</th>
+                            <th class="py-3 px-4 text-left font-bold rounded-tr-lg">Time / Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php foreach ($race_results as $result): ?>
+                            <tr style="border-left: 4px solid <?php echo htmlspecialchars($result['team_color'] ?? '#CCCCCC'); ?>;">
+                                <td class="py-3 px-4 position font-oswald font-bold text-lg text-white"><?php echo htmlspecialchars($result['position']); ?></td>
+                                <td class="py-3 px-4 driver-name font-semibold text-gray-100"><?php echo htmlspecialchars($result['driver_name']); ?></td>
+                                <td class="py-3 px-4 team-name font-medium text-sm" style="color: <?php echo htmlspecialchars($result['team_color'] ?? '#CCCCCC'); ?>;"><?php echo htmlspecialchars($result['team_name']); ?></td>
+                                <td class="py-3 px-4 lap-time-status font-mono text-gray-300"><?php echo htmlspecialchars($result['lap_time_or_status']); ?></td>
                             </tr>
-                        </thead>
-                        <tbody>
-                            <?php foreach ($race_results as $result): ?>
-                                <tr style="border-left-color: <?php echo htmlspecialchars($result['team_color'] ?? '#CCCCCC'); ?>;">
-                                            <td class="position font-oswald font-bold text-lg text-white"><?php echo htmlspecialchars($result['position']); ?></td>
-                                            <td class="driver-name font-semibold text-gray-100"><?php echo htmlspecialchars($result['driver_name']); ?></td>
-                                            <td style="color: <?php echo htmlspecialchars($result['team_color'] ?? '#CCCCCC'); ?>;" class="team-name font-medium text-sm"><?php echo htmlspecialchars($result['team_name']); ?></td>
-                                            <td class="lap-time-status font-mono text-gray-300"><?php echo htmlspecialchars($result['lap_time_or_status']); ?></td>
-                                </tr>
-                            <?php endforeach; ?>
-                        </tbody>
-                    </table>
-                </div>
-                <?php else: ?>
-                <p class="text-gray-400">no results available.</p>
-                <?php endif; ?>
-            </section>
-            <?php else: ?>
-                <p class="text-gray-400">select race for the results.</p>
-            <?php endif; ?>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
+            </div>
+        </section>
         <?php endif; ?>
     </main>
     
@@ -329,25 +210,13 @@ if (isset($race_details) && !empty($race_results)) {
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-left pb-6 border-b border-gray-800">
                 <div class="md:col-span-1 text-center md:text-left">
                     <h3 class="text-xl font-bold text-white mb-2 tracking-wider">F1SITE.NL</h3>
-                    <p class="text-gray-500 text-sm mb-2">
-                        De snelste bron voor F1 nieuws en data.
-                    </p>
+                    <p class="text-gray-500 text-sm mb-2">De snelste bron voor F1 nieuws en data.</p>
                 </div>
                 <div class="md:col-span-1 text-center md:text-left">
                     <h4 class="text-lg font-semibold text-red-500 mb-3 uppercase">Externe Sites</h4>
                     <ul class="space-y-2">
-                        <li>
-                            <a href="https://www.webbair.nl" target="_blank" 
-                            class="text-gray-400 text-sm hover:text-red-500 transition duration-150 block">
-                            Webbair (Ontwikkelaar)
-                            </a>
-                        </li>
-                        <li>
-                            <a href="https://urenheld.webbair.nl" target="_blank" 
-                            class="text-gray-400 text-sm hover:text-red-500 transition duration-150 block">
-                            Urenheld
-                            </a>
-                        </li>
+                        <li><a href="https://www.webbair.nl" target="_blank" class="text-gray-400 text-sm hover:text-red-500 transition duration-150 block">Webbair (Ontwikkelaar)</a></li>
+                        <li><a href="https://urenheld.webbair.nl" target="_blank" class="text-gray-400 text-sm hover:text-red-500 transition duration-150 block">Urenheld</a></li>
                     </ul>
                 </div>
                 <div class="md:col-span-1 text-center md:text-left">
@@ -361,48 +230,38 @@ if (isset($race_details) && !empty($race_results)) {
                 </div>
             </div>
             <div class="md:col-span-1 text-center md:text-left">
-                <p class="text-gray-500 text-xs mt-4">&copy; 2025 Webbair. Alle rechten voorbehouden.</p>
+                <p class="text-gray-500 text-xs mt-4">&copy; 20<?php echo date('y');?> Webbair. Alle rechten voorbehouden.</p>
             </div>
         </div>
     </footer>
+
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const nav = document.getElementById('main-nav-links');
             const toggle = document.querySelector('.menu-toggle');
-
             toggle.addEventListener('click', () => {
                 const isVisible = nav.getAttribute('data-visible') === 'true';
                 nav.setAttribute('data-visible', String(!isVisible));
                 toggle.setAttribute('aria-expanded', String(!isVisible));
             });
         });
-    </script> 
-    <script>
-        <?php if (isset($nextGrandPrix) && $nextGrandPrix && isset($targetDateTime)): ?>
+
+        <?php if (isset($targetDateTime)): ?>
         const targetDateTime = new Date('<?php echo $targetDateTime; ?>').getTime(); 
         const countdownElement = document.getElementById('countdown');
         function updateCountdown() {
-            const now = new Date().getTime();
-            const distance = targetDateTime - now;
-            
-            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
-            
-            if (distance < 0) {
-                countdownElement.innerHTML = "<span class='text-white text-xl'>Race is bezig!</span>";
-                clearInterval(countdownInterval);
-            } else {
-                countdownElement.innerHTML =
-                    `<span class="text-f1-red">${days}</span>d <span class="text-white">|</span> <span class="text-f1-red">${hours}</span>h <span class="text-white">|</span> <span class="text-f1-red">${minutes}</span>m <span class="text-white">|</span> <span class="text-f1-red">${seconds}</span>s`;
-            }
+            const distance = targetDateTime - new Date().getTime();
+            if (distance < 0) { countdownElement.innerHTML = "<span class='text-white text-xl'>Race is bezig!</span>"; return; }
+            const d = Math.floor(distance / 86400000);
+            const h = Math.floor((distance % 86400000) / 3600000);
+            const m = Math.floor((distance % 3600000) / 60000);
+            const s = Math.floor((distance % 60000) / 1000);
+            countdownElement.innerHTML = `<span class="text-f1-red">${d}</span>d <span class="text-white">|</span> <span class="text-f1-red">${h}</span>h <span class="text-white">|</span> <span class="text-f1-red">${m}</span>m <span class="text-white">|</span> <span class="text-f1-red">${s}</span>s`;
         }
         updateCountdown();
-        const countdownInterval = setInterval(updateCountdown, 1000);
+        setInterval(updateCountdown, 1000);
         <?php else: ?>
-        document.getElementById('countdown').innerHTML = "<span class='text-white text-xl'>Niet beschikbaar</span>";
-        console.log("Geen volgende Grand Prix om af te tellen of $targetDateTime is niet gezet.");
+        document.getElementById('countdown').innerHTML = "Niet beschikbaar";
         <?php endif; ?>
     </script>
 </body>
