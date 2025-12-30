@@ -88,7 +88,7 @@ try {
         
         <section class="bg-f1-gray p-6 rounded-lg shadow-xl mb-8 page-header-section">
             <h2 class="text-xl md:text-3xl font-oswald font-bold text-white uppercase page-heading text-center">
-                TEAMS FORMULA 1 2025
+                TEAMS FORMULA 1 <?php echo (date('Y')); ?>
             </h2>
         </section>
         
