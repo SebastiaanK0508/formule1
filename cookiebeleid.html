@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cookiebeleid - F1SITE.NL</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;700&family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Roboto', sans-serif; background-color: #15151E; color: #D1D5DB; }
+        .font-oswald { font-family: 'Oswald', sans-serif; }
+        .f1-red { color: #E10600; }
+        .content-card { background-color: #1F1F27; border-left: 4px solid #E10600; }
+    </style>
+</head>
+<body class="py-12 px-4">
+
+    <div class="max-w-4xl mx-auto">
+        <a href="index.php" class="text-f1-red hover:underline mb-8 inline-block font-oswald uppercase text-sm">&larr; Terug naar Home</a>
+        
+        <header class="mb-10 text-center md:text-left">
+            <h1 class="text-4xl font-oswald font-bold text-white uppercase tracking-tight">Cookiebeleid</h1>
+            <p class="text-gray-500 mt-2">Laatst bijgewerkt: <?php echo date('d-m-Y'); ?></p>
+        </header>
+
+        <div class="content-card p-6 md:p-10 rounded-lg shadow-2xl space-y-8">
+            
+            <section>
+                <h2 class="text-xl font-oswald font-bold text-white uppercase mb-3">1. Wat zijn cookies?</h2>
+                <p class="leading-relaxed text-gray-400">
+                    Cookies zijn kleine tekstbestanden die door je browser op je computer of mobiele apparaat worden opgeslagen wanneer je F1SITE.NL bezoekt. Ze helpen ons om de website goed te laten functioneren en om inzicht te krijgen in hoe de site wordt gebruikt.
+                </p>
+            </section>
+
+            <section>
+                <h2 class="text-xl font-oswald font-bold text-white uppercase mb-3">2. Welke cookies gebruiken wij?</h2>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-sm">
+                        <thead>
+                            <tr class="border-b border-gray-700">
+                                <th class="py-2 text-white font-bold">Type</th>
+                                <th class="py-2 text-white font-bold">Doel</th>
+                                <th class="py-2 text-white font-bold">Bewaartermijn</th>
+                            </tr>
+                        </thead>
+                        <tbody class="text-gray-400">
+                            <tr class="border-b border-gray-800">
+                                <td class="py-3 font-bold text-f1-red uppercase">Functioneel</td>
+                                <td class="py-3">Noodzakelijk voor de werking van de site (o.a. je cookievoorkeuren).</td>
+                                <td class="py-3">1 jaar</td>
+                            </tr>
+                            <tr class="border-b border-gray-800">
+                                <td class="py-3 font-bold text-f1-red uppercase">Analyse</td>
+                                <td class="py-3">Anonieme statistieken via Google Analytics om de site te verbeteren.</td>
+                                <td class="py-3">2 jaar</td>
+                            </tr>
+                            <tr class="border-b border-gray-800">
+                                <td class="py-3 font-bold text-f1-red uppercase">Marketing</td>
+                                <td class="py-3">Tonen van relevante advertenties gebaseerd op surfgedrag.</td>
+                                <td class="py-3">Sessie/1 jaar</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <section>
+                <h2 class="text-xl font-oswald font-bold text-white uppercase mb-3">3. Voorkeuren beheren</h2>
+                <p class="leading-relaxed text-gray-400">
+                    Je kunt je cookie-instellingen op elk gewenst moment aanpassen door je browsergeschiedenis en cookies te wissen. Bij een volgend bezoek aan de website zal de cookie-melding opnieuw verschijnen.
+                </p>
+                <button onclick="clearPreferences()" class="mt-4 px-4 py-2 bg-gray-700 hover:bg-f1-red text-white text-xs font-bold uppercase rounded transition">
+                    Verwijder mijn opgeslagen voorkeuren
+                </button>
+            </section>
+
+            <section class="border-t border-gray-800 pt-6">
+                <p class="text-sm text-gray-500 italic">
+                    Dit cookiebeleid is onderdeel van onze algemene voorwaarden en privacyverklaring. Voor vragen kun je contact opnemen via de contactpagina.
+                </p>
+            </section>
+
+        </div>
+    </div>
+
+    <script>
+        function clearPreferences() {
+            localStorage.removeItem('f1_cookie_choice');
+            alert('Je voorkeuren zijn gewist. De melding verschijnt weer bij je volgende bezoek.');
+            window.location.href = 'index.php';
+        }
+    </script>
+</body>
+</html>
