@@ -54,11 +54,22 @@ $driverLastName = htmlspecialchars($driver['last_name']);
     </script>
 
     <style>
-        body { background-color: #0b0b0f; color: #fff; }
+        body { background-color: #0b0b0f; color: #fff; overflow-x: hidden; }
         .bg-pattern {
             background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
         }
         .header-glass { background: rgba(11, 11, 15, 0.9); backdrop-filter: blur(15px); border-bottom: 1px solid rgba(225, 6, 0, 0.3); }
+            #mobile-menu { 
+            position: fixed; 
+            inset: 0; 
+            background: #0b0b0f; 
+            z-index: 9999; 
+            transform: translateX(100%); 
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1); 
+            display: flex;
+        }
+        #mobile-menu.active { transform: translateX(0); }
+
         .driver-glow { 
             position: absolute; top: 0; left: 0; width: 100%; height: 100%; 
             background: radial-gradient(circle at center, <?php echo $teamColor; ?>22 0%, transparent 70%);
@@ -68,15 +79,15 @@ $driverLastName = htmlspecialchars($driver['last_name']);
 </head>
 <body class="bg-pattern min-h-screen flex flex-col">
 
-    <div id="mobile-menu" class="fixed inset-y-0 right-0 w-full p-10 flex flex-col items-center justify-center">
-        <button onclick="toggleMenu()" class="absolute top-8 right-8 text-5xl font-light">&times;</button>
+    <div id="mobile-menu" class="flex flex-col items-center justify-center">
+        <button onclick="toggleMenu()" class="absolute top-8 right-8 text-5xl font-light text-white hover:text-f1-red transition">&times;</button>
         <nav class="flex flex-col space-y-10 text-4xl font-oswald font-black uppercase italic text-center">
-            <a href="index.php" onclick="toggleMenu()">Home</a>
-            <a href="kalender.php" onclick="toggleMenu()">Schedule</a>
-            <a href="teams.php" onclick="toggleMenu()">Teams</a>
-            <a href="drivers.php" class="text-f1-red" onclick="toggleMenu()">Drivers</a>
-            <a href="results.php" onclick="toggleMenu()">Results</a>
-            <a href="standings.php" onclick="toggleMenu()">Standings</a>
+            <a href="index.php" class="hover:text-f1-red transition" onclick="toggleMenu()">Home</a>
+            <a href="kalender.php" class="hover:text-f1-red transition" onclick="toggleMenu()">Schedule</a>
+            <a href="teams.php" class="hover:text-f1-red transition" onclick="toggleMenu()">Teams</a>
+            <a href="drivers.php" class="text-f1-red transition" onclick="toggleMenu()">Drivers</a>
+            <a href="results.php" class="hover:text-f1-red transition" onclick="toggleMenu()">Results</a>
+            <a href="standings.php" class="hover:text-f1-red transition" onclick="toggleMenu()">Standings</a>
         </nav>
     </div>
 
@@ -96,7 +107,6 @@ $driverLastName = htmlspecialchars($driver['last_name']);
     </header>
 
     <main class="max-w-7xl mx-auto px-6 py-12 flex-grow">
-        
         <div class="flex flex-col lg:flex-row gap-12 items-start">
             
             <div class="w-full lg:w-5/12 sticky top-32">
@@ -108,7 +118,7 @@ $driverLastName = htmlspecialchars($driver['last_name']);
                              class="w-full h-auto rounded-[2rem] shadow-[0_0_50px_rgba(0,0,0,0.8)] border border-white/10 relative z-10">
                     <?php endif; ?>
                     
-                    <div class="absolute -bottom-10 -right-4 text-[12rem] font-oswald font-black italic opacity-10 pointer-events-none select-none z-0" style="color: <?php echo $teamColor; ?>;">
+                    <div class="absolute -bottom-10 -right-4 text-[8rem] md:text-[12rem] font-oswald font-black italic opacity-10 pointer-events-none select-none z-0" style="color: <?php echo $teamColor; ?>;">
                         <?php echo htmlspecialchars($driver['driver_number']); ?>
                     </div>
                 </div>
@@ -174,17 +184,23 @@ $driverLastName = htmlspecialchars($driver['last_name']);
             </div>
         </div>
     </main>
+
     <footer class="bg-black py-16 mt-12 border-t-2 border-f1-red">
         <div class="max-w-7xl mx-auto px-6 text-center">
-            <p class="text-gray-600 text-[10px] font-black uppercase tracking-[0.6em] italic">&copy; 2026 WEBIUS.NL - ALL RIGHTS RESERVED</p>
+            <p class="text-gray-600 text-[10px] font-black uppercase tracking-[0.6em] italic">&copy; <?php echo date('Y'); ?> WEBIUS.NL - ALL RIGHTS RESERVED</p>
         </div>
     </footer>
-    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            AOS.init({ duration: 800, once: true });
-            window.toggleMenu = () => { document.getElementById('mobile-menu').classList.toggle('active'); };
-        });
+        function toggleMenu() {
+            const menu = document.getElementById('mobile-menu');
+            menu.classList.toggle('active');
+            if(menu.classList.contains('active')) {
+                document.body.style.overflow = 'hidden';
+            } else {
+                document.body.style.overflow = 'auto';
+            }
+        }
     </script> 
 </body>
 </html>

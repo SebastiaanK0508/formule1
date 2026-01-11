@@ -140,7 +140,6 @@ if (!is_array($circuitDetails)) { $circuitDetails = []; }
                     <div class="bg-f1-card p-8 md:p-12 rounded-[3rem] border border-white/5 relative overflow-hidden group">
                         <div class="absolute inset-0 bg-gradient-to-tr from-f1-red/5 to-transparent"></div>
                         <?php if (!empty($circuitDetails['map_url'])): ?>
-                            ); ?>]
                             <img src="<?php echo htmlspecialchars($circuitDetails['map_url']); ?>" class="relative z-10 w-full h-auto drop-shadow-[0_0_30px_rgba(0,0,0,0.5)] transform group-hover:scale-105 transition-transform duration-700" alt="Track Map">
                         <?php endif; ?>
                     </div>
