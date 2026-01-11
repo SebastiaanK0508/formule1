@@ -1,178 +1,175 @@
 <?php
-require_once 'achterkant/aanpassing/api-koppelingen/result_api.php';
+require_once 'db_config.php';
+/** @var PDO $pdo */
+
+$teamSlug = isset($_GET['slug']) ? $_GET['slug'] : '';
+if (empty($teamSlug)) {
+    header('Location: index.php');
+    exit;
+}
+
+$team = null;
+try {
+    $stmt = $pdo->prepare("
+        SELECT * FROM teams 
+        WHERE LOWER(REPLACE(team_name, ' ', '-')) = :slug
+    ");
+    $stmt->bindParam(':slug', $teamSlug);
+    $stmt->execute();
+    $team = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    if (!$team) {
+        http_response_code(404);
+        exit("Team niet gevonden.");
+    }
+
+    // Haal coureurs op die bij dit team horen
+    $stmtDrivers = $pdo->prepare("SELECT * FROM drivers WHERE team_id = :tid ORDER BY last_name ASC");
+    $stmtDrivers->execute(['tid' => $team['team_id']]);
+    $drivers = $stmtDrivers->fetchAll(PDO::FETCH_ASSOC);
+
+} catch (PDOException $e) {
+    exit("Databasefout.");
+}
+
+$teamColor = htmlspecialchars($team['team_color'] ?? '#E10600');
 ?>
 <!DOCTYPE html>
 <html lang="nl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Formula 1 - Select Race / Year</title>
-    <link rel="icon" type="image/x-icon" href="/afbeeldingen/logo/f1logobgrm.png">
-    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
-    <script src="https://t.contentsquare.net/uxa/688c1fe6f0f7c.js"></script>
+    <title><?php echo htmlspecialchars($team['full_team_name']); ?> | Team Profile</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700;900&family=Oswald:wght@700&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
+
     <script>
         tailwind.config = {
             theme: {
                 extend: {
-                    fontFamily: {
-                        'sans': ['Roboto', 'sans-serif'],
-                        'oswald': ['Oswald', 'sans-serif'],
-                    },
-                    colors: {
-                        'f1-red': '#E10600', 
-                        'f1-black': '#15151E', 
-                        'f1-gray': '#3A3A40',
-                        'f1-table-header': '#21212B', 
-                    }
+                    fontFamily: { 'sans': ['Inter', 'sans-serif'], 'oswald': ['Oswald', 'sans-serif'] },
+                    colors: { 'f1-red': '#E10600', 'f1-dark': '#0b0b0f', 'f1-card': '#16161c' }
                 }
             }
         }
     </script>
+
     <style>
-        @media (max-width: 767px) {
-            .main-nav[data-visible="false"] {
-                display: none;
-            }
-            .main-nav {
-                position: absolute;
-                top: 100%;
-                left: 0;
-                right: 0;
-                background-color: #15151E;
-                box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-                padding: 1rem;
-                display: flex;
-                flex-direction: column;
-                z-index: 40;
-                border-top: 1px solid #E10600;
-            }
-            .main-nav a {
-                padding: 0.5rem 0;
-            }
+        body { background-color: #0b0b0f; color: #fff; }
+        .bg-pattern {
+            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        }
+        .header-glass { background: rgba(11, 11, 15, 0.9); backdrop-filter: blur(15px); border-bottom: 1px solid rgba(225, 6, 0, 0.3); }
+        .team-glow { 
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%; 
+            background: radial-gradient(circle at center, <?php echo $teamColor; ?>15 0%, transparent 70%);
+            pointer-events: none;
         }
     </style>
 </head>
-<body class="bg-f1-black text-gray-100 font-sans min-h-screen flex flex-col">
-    
-    <header class="bg-black shadow-lg sticky top-0 z-50">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center header-content container">
-            <h1 class="text-3xl font-oswald font-extrabold text-f1-red tracking-widest site-title">
-                FORMULA 1
-            </h1>
-            <button class="md:hidden text-2xl text-f1-red hover:text-white menu-toggle" 
-                    aria-controls="main-nav-links" aria-expanded="false" aria-label="Toggle navigation">
-                &#9776; 
-            </button>
-            <nav class="main-nav md:flex md:space-x-8 text-sm font-semibold uppercase tracking-wider" 
-                 id="main-nav-links" data-visible="false">
-                <a href="index.php" class="block py-2 px-3 md:p-0 hover:text-f1-red transition duration-150">Home</a>
-                <a href="kalender.php" class="block py-2 px-3 md:p-0 hover:text-f1-red transition duration-150">Schedule</a>
-                <a href="teams.php" class="block py-2 px-3 md:p-0 hover:text-f1-red transition duration-150">Teams</a>
-                <a href="drivers.php" class="block py-2 px-3 md:p-0 hover:text-f1-red transition duration-150">Drivers</a>
-                <a href="results.php" class="block py-2 px-3 md:p-0 text-f1-red border-b-2 border-f1-red md:border-none active transition duration-150">Results</a>
-                <a href="standings.php" class="block py-2 px-3 md:p-0 hover:text-f1-red transition duration-150">Standings</a>
+<body class="bg-pattern min-h-screen flex flex-col">
+
+    <header class="header-glass sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-6 py-5 flex justify-between items-center">
+            <a href="index.php" class="text-3xl font-oswald font-black italic text-white uppercase tracking-tighter">F1SITE<span class="text-f1-red">.NL</span></a>
+            <nav class="hidden lg:flex space-x-8 text-[11px] font-black uppercase tracking-widest">
+                <a href="index.php" class="hover:text-f1-red transition">Home</a>
+                <a href="kalender.php" class="hover:text-f1-red transition">Schedule</a>
+                <a href="teams.php" class="text-f1-red">Teams</a>
+                <a href="drivers.php" class="hover:text-f1-red transition">Drivers</a>
+                <a href="results.php" class="hover:text-f1-red transition">Results</a>
             </nav>
         </div>
     </header>
-    
-    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-8 flex-grow container">
-        <section class="bg-f1-gray p-6 rounded-lg shadow-xl mb-8 page-header-section">
-            <h2 class="text-xl md:text-3xl font-oswald font-bold text-white uppercase page-heading text-center">
-                Select Race / Year
-            </h2>
-        </section>
-    
-        <section class="result-container flex justify-center">
-            <?php if ($error_message): ?>
-            <div class="bg-red-800 text-white p-4 rounded-lg shadow-md w-full max-w-lg">
-                <?php echo $error_message; ?>
-            </div>
-            <?php else: ?>
-                <div class="selection-container w-full max-w-lg bg-f1-gray p-6 rounded-lg shadow-xl mobile-full-view">
-                    
-                    <form action="selection.php" method="get" class="mb-6">
-                        <label for="year" class="block text-lg font-semibold text-white mb-2">Select a Year</label>
-                        <select id="year" name="year" onchange="this.form.submit()"
-                                class="w-full bg-f1-table-header border border-gray-600 text-white p-3 rounded-lg focus:ring-f1-red focus:border-f1-red cursor-pointer appearance-none">
-                            <?php foreach ($available_years as $year): ?>
-                                <option value="<?php echo htmlspecialchars($year); ?>" 
-                                        <?php echo ($selected_year == $year) ? 'selected' : ''; ?>>
-                                    <?php echo htmlspecialchars($year); ?>
-                                </option>
-                            <?php endforeach; ?>
-                        </select>
-                        <noscript><input type="submit" value="Selecteer" class="mt-4 bg-f1-red text-white font-bold py-2 px-4 rounded hover:bg-red-700 transition"></noscript>
-                    </form>
-                    
-                    <h3 class="text-xl font-oswald font-semibold text-white mb-4 border-b border-gray-600 pb-2">
-                        Races voor <?php echo htmlspecialchars($selected_year); ?>
-                    </h3>
 
-                    <?php if (!empty($races_in_season)): ?>
-                        <div class="race-link-list space-y-3">
-                            <?php foreach ($races_in_season as $race): ?>
-                                <a href="results.php?year=<?php echo htmlspecialchars($selected_year); ?>&round=<?php echo htmlspecialchars($race['round']); ?>"
-                                   class="block bg-f1-table-header text-white p-3 rounded-lg shadow hover:bg-f1-red transition duration-150">
-                                     <?php echo htmlspecialchars($race['raceName']); ?>
-                                </a>
-                            <?php endforeach; ?>
-                        </div>
-                    <?php else: ?>
-                        <p class="text-gray-400">Geen races gevonden</p>
+    <main class="max-w-7xl mx-auto px-6 py-12 flex-grow">
+        
+        <div class="flex flex-col lg:flex-row gap-12 items-start">
+            
+            <div class="w-full lg:w-5/12 sticky top-32">
+                <div class="relative">
+                    <div class="team-glow"></div>
+                    <?php if (!empty($team['team_logo'])): ?>
+                        <img src="<?php echo htmlspecialchars($team['team_logo']); ?>" 
+                             alt="<?php echo htmlspecialchars($team['team_name']); ?>" 
+                             class="w-full h-auto rounded-[2rem] shadow-[0_0_50px_rgba(0,0,0,0.6)] border border-white/5 relative z-10">
                     <?php endif; ?>
+                    
+                    <div class="absolute -bottom-8 -left-4 text-[8rem] font-oswald font-black italic opacity-5 pointer-events-none select-none z-0" style="color: <?php echo $teamColor; ?>;">
+                        EST
+                    </div>
                 </div>
-            <?php endif; ?>
-        </section>
-    </main>
+            </div>
 
-    <footer class="bg-black mt-12 py-8 border-t border-red-700">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-left pb-6 border-b border-gray-800">
-                <div class="md:col-span-1 text-center md:text-left">
-                    <h3 class="text-xl font-bold text-white mb-2 tracking-wider">F1SITE.NL</h3>
-                    <p class="text-gray-500 text-sm mb-2">
-                        De snelste bron voor F1 nieuws en data.
+            <div class="w-full lg:w-7/12">
+                <div class="mb-10">
+                    <div class="flex items-center gap-4 mb-4">
+                        <span class="h-[2px] w-12" style="background: <?php echo $teamColor; ?>;"></span>
+                        <span class="text-xs font-black uppercase tracking-[0.4em] text-gray-500 italic">Constructor Profile</span>
+                    </div>
+                    <h1 class="text-5xl md:text-7xl font-oswald font-black uppercase italic tracking-tighter leading-[0.9] mb-4">
+                        <?php echo htmlspecialchars($team['team_name']); ?>
+                    </h1>
+                    <p class="text-xl text-gray-400 font-bold uppercase tracking-tight"><?php echo htmlspecialchars($team['full_team_name']); ?></p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-10">
+                    <div class="bg-f1-card p-8 rounded-3xl border border-white/5">
+                        <span class="text-[10px] font-black uppercase tracking-widest text-gray-500">Base</span>
+                        <p class="text-2xl font-oswald font-black italic mt-2 uppercase tracking-wide">
+                            <?php echo htmlspecialchars($team['base'] ?? 'N/A'); ?>
+                        </p>
+                    </div>
+                    <div class="bg-f1-card p-8 rounded-3xl border border-white/5">
+                        <span class="text-[10px] font-black uppercase tracking-widest text-gray-500">Power Unit</span>
+                        <p class="text-2xl font-oswald font-black italic mt-2 uppercase tracking-wide">
+                            <?php echo htmlspecialchars($team['power_unit'] ?? 'N/A'); ?>
+                        </p>
+                    </div>
+                </div>
+
+                <div class="mb-10">
+                    <h3 class="text-xs font-black uppercase tracking-[0.3em] text-f1-red mb-6 italic">Current Line-up</h3>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <?php foreach ($drivers as $dr): ?>
+                            <a href="driver-details.php?slug=<?php echo strtolower($dr['first_name'].'-'.$dr['last_name']); ?>" 
+                               class="group bg-f1-card p-6 rounded-2xl border border-white/5 hover:border-f1-red/50 transition-all duration-300">
+                                <div class="flex justify-between items-center">
+                                    <div>
+                                        <span class="text-[10px] font-black text-gray-500">#<?php echo $dr['driver_number']; ?></span>
+                                        <p class="text-lg font-oswald font-black uppercase italic group-hover:text-f1-red transition-colors">
+                                            <?php echo htmlspecialchars($dr['first_name'] . ' ' . $dr['last_name']); ?>
+                                        </p>
+                                    </div>
+                                    <span class="text-2xl opacity-0 group-hover:opacity-100 transition-opacity">&rarr;</span>
+                                </div>
+                            </a>
+                        <?php endforeach; ?>
+                    </div>
+                </div>
+
+                <?php if (!empty($team['description'])): ?>
+                <div class="bg-white/5 p-10 rounded-[2.5rem] border border-white/5 relative mb-10">
+                    <h3 class="text-xs font-black uppercase tracking-[0.4em] text-f1-red mb-6 italic">History & Engineering</h3>
+                    <p class="text-gray-400 leading-relaxed text-sm font-medium italic">
+                        <?php echo nl2br(htmlspecialchars($team['description'])); ?>
                     </p>
                 </div>
-                <div class="md:col-span-1 text-center md:text-left">
-                    <h4 class="text-lg font-semibold text-red-500 mb-3 uppercase">Externe Sites</h4>
-                    <ul class="space-y-2">
-                        <li>
-                            <a href="https://www.webbair.nl" target="_blank" 
-                            class="text-gray-400 text-sm hover:text-red-500 transition duration-150 block">
-                            Webbair (Ontwikkelaar)
-                            </a>
-                        </li>
-                    </ul>
-                </div>
-                <div class="md:col-span-1 text-center md:text-left">
-                    <h4 class="text-lg font-semibold text-red-500 mb-3 uppercase">Navigatie & Info</h4>
-                    <ul class="space-y-2">
-                        <li><a href="sitemap.html" class="text-gray-400 text-sm hover:text-red-500 transition duration-150 block">Sitemap</a></li>
-                        <li><a href="privacy-en.html" class="text-gray-400 text-sm hover:text-red-500 transition duration-150 block">Privacy Policy (EN)</a></li>
-                        <li><a href="algemenevoorwaarden-en.html" class="text-gray-400 text-sm hover:text-red-500 transition duration-150 block">Terms and Conditions (EN)</a></li>
-                        <li><a href="contact.html" class="text-gray-400 text-sm hover:text-red-500 transition duration-150 block">Contact</a></li>
-                    </ul>
-                </div>
-            </div>
-            <div class="md:col-span-1 text-center md:text-left">
-                <p class="text-gray-500 text-xs mt-4">&copy; <?php echo (date('Y')); ?> Webbair. Alle rechten voorbehouden.</p>
+                <?php endif; ?>
+
+                <a href="teams.php" class="inline-flex items-center gap-4 bg-white text-black px-10 py-5 rounded-full font-black uppercase text-[10px] tracking-[0.3em] hover:bg-f1-red hover:text-white transition-all duration-500">
+                    <span>&larr;</span> All Constructors
+                </a>
             </div>
         </div>
-    </footer>
-    
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const nav = document.getElementById('main-nav-links');
-            const toggle = document.querySelector('.menu-toggle');
+    </main>
 
-            toggle.addEventListener('click', () => {
-                const isVisible = nav.getAttribute('data-visible') === 'true';
-                nav.setAttribute('data-visible', String(!isVisible));
-                toggle.setAttribute('aria-expanded', String(!isVisible));
-            });
-        });
-    </script>
+    <footer class="bg-black py-16 mt-12 border-t-2 border-f1-red">
+        <div class="max-w-7xl mx-auto px-6 text-center">
+            <p class="text-gray-600 text-[10px] font-black uppercase tracking-[0.6em] italic">&copy; 2026 WEBIUS.NL - CONSTRUCTOR ARCHIVE</p>
+        </div>
+    </footer>
+
 </body>
 </html>

@@ -3,204 +3,150 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Privacybeleid - Formula1</title>
-    <link rel="icon" type="image/x-icon" href="/afbeeldingen/logo/f1logobgrm.png">
-    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <title>Privacybeleid | F1SITE.NL</title>
     
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700;900&family=Oswald:wght@700&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
+
     <script>
         tailwind.config = {
             theme: {
                 extend: {
-                    fontFamily: {
-                        'sans': ['Roboto', 'sans-serif'],
-                        'oswald': ['Oswald', 'sans-serif'],
+                    fontFamily: { 
+                        'sans': ['Inter', 'sans-serif'], 
+                        'oswald': ['Oswald', 'sans-serif'] 
                     },
-                    colors: {
+                    colors: { 
                         'f1-red': '#E10600', 
-                        'f1-black': '#15151E', 
-                        'f1-gray': '#3A3A40',
-                        'f1-dark-table': '#21212B',
+                        'f1-black': '#0b0b0f', 
+                        'f1-card': '#16161c' 
                     }
                 }
             }
         }
     </script>
+
     <style>
-        /* Mobile menu styles */
-        @media (max-width: 767px) {
-            .main-nav[data-visible="false"] {
-                display: none;
-            }
-            .main-nav {
-                position: absolute;
-                top: 100%;
-                left: 0;
-                right: 0;
-                background-color: #15151E;
-                box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-                padding: 1rem;
-                display: flex;
-                flex-direction: column;
-                z-index: 40;
-                border-top: 1px solid #E10600;
-            }
-            .main-nav a {
-                padding: 0.5rem 0;
-            }
+        body { background-color: #0b0b0f; color: #fff; }
+        .bg-pattern {
+            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.02'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
         }
+
+        .elite-card {
+            @apply bg-f1-card/50 p-8 md:p-12 rounded-[2.5rem] border border-white/5 shadow-2xl backdrop-blur-sm;
+        }
+
+        .red-speed-line {
+            height: 3px;
+            background: linear-gradient(90deg, #E10600 0%, transparent 100%);
+            width: 100px;
+            margin-top: 10px;
+            border-radius: 99px;
+        }
+
+        .policy-h2 { @apply text-2xl font-oswald font-black uppercase italic text-white mt-12 mb-4 flex flex-col; }
+        .policy-p { @apply text-gray-400 leading-relaxed mb-6 text-sm md:text-base italic; }
         
-        /* Language Switcher Styling */
-        .language-switcher a, .language-switcher .active-lang {
-            transition: filter 0.2s ease;
-        }
-        .language-switcher a {
-            filter: grayscale(100%);
-        }
-        .language-switcher a:hover {
-            filter: grayscale(0%);
-        }
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #0b0b0f; }
+        ::-webkit-scrollbar-thumb { background: #E10600; border-radius: 10px; }
     </style>
-    <script src="https://t.contentsquare.net/uxa/688c1fe6f0f7c.js"></script>
 </head>
-<body class="bg-f1-black text-gray-100 font-sans min-h-screen flex flex-col">
-    
-    <header class="bg-black shadow-lg sticky top-0 z-50">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center header-content container">
-            <h1 class="text-3xl font-oswald font-extrabold text-f1-red tracking-widest site-title">
-                FORMULA 1
+<body class="bg-pattern min-h-screen flex flex-col italic">
+
+    <header class="bg-black/90 backdrop-blur-md sticky top-0 z-50 border-b border-f1-red/30">
+        <div class="max-w-7xl mx-auto px-6 py-5 flex justify-between items-center">
+            <h1 class="text-3xl font-oswald font-black italic text-white uppercase tracking-tighter">
+                F1SITE<span class="text-f1-red">.NL</span>
             </h1>
-            <button class="md:hidden text-2xl text-f1-red hover:text-white menu-toggle" 
-                    aria-controls="main-nav-links" aria-expanded="false" aria-label="Toggle navigation">&#9776; </button>
-            <nav class="main-nav md:flex md:space-x-8 text-sm font-semibold uppercase tracking-wider" id="main-nav-links" data-visible="false">
-                <a href="index.php" class="block py-2 px-3 md:p-0 hover:text-f1-red transition duration-150">Home</a>
-                <a href="kalender.php" class="block py-2 px-3 md:p-0 hover:text-f1-red transition duration-150">Schedule</a>
-                <a href="teams.php" class="block py-2 px-3 md:p-0 hover:text-f1-red transition duration-150">Teams</a>
-                <a href="drivers.php" class="block py-2 px-3 md:p-0 hover:text-f1-red transition duration-150">Drivers</a>
-                <a href="results.php" class="block py-2 px-3 md:p-0 hover:text-f1-red transition duration-150">Results</a>
-                <a href="standings.php" class="block py-2 px-3 md:p-0 hover:text-f1-red transition duration-150">Standings</a>
+            <nav class="hidden md:flex space-x-8 text-[11px] font-black uppercase tracking-widest text-white">
+                <a href="index.php" class="hover:text-f1-red transition">Home</a>
+                <a href="kalender.php" class="hover:text-f1-red transition">Schedule</a>
+                <a href="teams.php" class="hover:text-f1-red transition">Teams</a>
+                <a href="drivers.php" class="hover:text-f1-red transition">Drivers</a>
+                <a href="results.php" class="hover:text-f1-red transition">Results</a>
             </nav>
         </div>
     </header>
-    
-    <main class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 mt-8 flex-grow container">
+
+    <main class="max-w-4xl mx-auto px-6 py-16 flex-grow">
         
-        <div class="page-header-section bg-f1-gray p-6 rounded-lg shadow-xl mb-8">
-            <h1 class="text-4xl font-oswald font-extrabold text-f1-red uppercase page-heading text-center">
-                Privacybeleid
+        <div class="mb-16 text-center">
+            <h1 class="text-6xl md:text-8xl font-oswald font-black uppercase italic tracking-tighter leading-none mb-4">
+                PRIVACY<span class="text-f1-red">BELEID</span>
             </h1>
         </div>
 
-        <section class="bg-f1-gray p-6 rounded-lg shadow-xl text-gray-300 space-y-4">
-            <h2 class="text-2xl font-oswald font-bold text-white mt-0 pt-0 border-b-2 border-f1-red pb-2 mb-4">Privacybeleid</h2>
-            <p>
-                Dit privacybeleid beschrijft hoe uw persoonsgegevens worden verzameld, gebruikt en gedeeld wanneer u de **Webbair** Formule 1-website bezoekt of gebruikt. We vinden uw privacy belangrijk en zorgen ervoor dat de persoonsgegevens die u met ons deelt, zorgvuldig en vertrouwelijk worden behandeld.
-            </p>
-            
-            <h2 class="text-2xl font-oswald font-bold text-white border-b-2 border-f1-red pb-2 mt-8 mb-4">1. Verzamelde gegevens</h2>
-            <p>
-                Wij verzamelen twee soorten gegevens:
-            </p>
-            <ul class="list-disc ml-5 space-y-3">
-                <li><strong class="text-f1-red font-semibold">Automatisch verzamelde gegevens:</strong> Wanneer u de Website bezoekt, verzamelen wij automatisch bepaalde informatie over uw apparaat, zoals uw IP-adres, browsertype, internetprovider en de pagina's die u bekijkt. Deze informatie wordt verzameld via cookies en logbestanden en wordt gebruikt voor het beheer en de beveiliging van de Website en voor analytische doeleinden om de gebruikerservaring te verbeteren.</li>
-                <li><strong class="text-f1-red font-semibold">Door u verstrekte gegevens:</strong> Dit zijn gegevens die u vrijwillig aan ons verstrekt, bijvoorbeeld via contactformulieren of andere interacties op de site. Denk hierbij aan uw naam en e-mailadres.</li>
-            </ul>
+        <div class="elite-card">
+            <div class="mb-12 border-b border-white/5 pb-8">
+                <p class="text-lg text-white font-bold mb-2 italic">Laatste update: 11 januari 2026</p>
+                <p class="text-gray-400 italic">Dit privacybeleid legt uit hoe wij omgaan met uw persoonlijke gegevens op F1SITE.NL. Wij streven naar volledige transparantie en maximale beveiliging.</p>
+            </div>
 
-            <h2 class="text-2xl font-oswald font-bold text-white border-b-2 border-f1-red pb-2 mt-8 mb-4">2. Gebruik van uw gegevens</h2>
-            <p>
-                De verzamelde gegevens worden gebruikt voor de volgende doeleinden:
-            </p>
-            <ul class="list-disc ml-5 space-y-3">
-                <li>Om de Website te onderhouden en te verbeteren.</li>
-                <li>Voor het analyseren van websitegebruik en -gedrag, zodat we onze content kunnen optimaliseren.</li>
-                <li>Om te reageren op uw vragen en verzoeken via contactformulieren.</li>
-                <li>Voor beveiliging en fraudepreventie.</li>
-            </ul>
+            <section>
+                <h2 class="policy-h2">01. Gegevensverzameling <span class="red-speed-line"></span></h2>
+                <p class="policy-p">Wij verzamelen informatie die noodzakelijk is voor de werking van de site. Dit omvat technische gegevens zoals uw <strong>IP-adres</strong> en <strong>browsertype</strong>. Persoonlijke informatie wordt enkel opgeslagen wanneer u deze zelf verstrekt via onze formulieren.</p>
+            </section>
 
-            <h2 class="text-2xl font-oswald font-bold text-white border-b-2 border-f1-red pb-2 mt-8 mb-4">3. Delen van uw gegevens</h2>
-            <p>
-                Wij zullen uw persoonsgegevens niet verkopen, verhuren of anderszins openbaar maken aan derden, tenzij:
-            </p>
-            <ul class="list-disc ml-5 space-y-3">
-                <li>U ons daar uitdrukkelijk toestemming voor hebt gegeven.</li>
-                <li>Dit noodzakelijk is voor de levering van onze diensten (bijvoorbeeld aan hostingproviders).</li>
-                <li>Wij hiertoe wettelijk verplicht zijn.</li>
-            </ul>
+            <section>
+                <h2 class="policy-h2">02. Gebruik van Informatie <span class="red-speed-line"></span></h2>
+                <p class="policy-p">Uw gegevens worden gebruikt voor:</p>
+                <ul class="space-y-4 mb-8 text-gray-400 text-sm italic">
+                    <li class="flex items-center gap-4"><span class="w-2 h-[2px] bg-f1-red"></span> Het optimaliseren van de website-ervaring.</li>
+                    <li class="flex items-center gap-4"><span class="w-2 h-[2px] bg-f1-red"></span> Het beveiligen van ons netwerk tegen aanvallen.</li>
+                    <li class="flex items-center gap-4"><span class="w-2 h-[2px] bg-f1-red"></span> Het beantwoorden van uw directe support-vragen.</li>
+                </ul>
+            </section>
 
-            <h2 class="text-2xl font-oswald font-bold text-white border-b-2 border-f1-red pb-2 mt-8 mb-4">4. Cookies</h2>
-            <p>
-                De Website maakt gebruik van cookies om de gebruikerservaring te verbeteren. Cookies zijn kleine tekstbestanden die op uw computer of mobiele apparaat worden geplaatst. Ze helpen ons bijvoorbeeld om de website beter te laten functioneren en om geanonimiseerde statistieken over het websitebezoek te verzamelen. U kunt uw browserinstellingen aanpassen om cookies te weigeren, maar dit kan de functionaliteit van de Website beïnvloeden.
-            </p>
+            <section>
+                <h2 class="policy-h2">03. Uw Rechten <span class="red-speed-line"></span></h2>
+                <p class="policy-p">Onder de <strong>AVG</strong> heeft u recht op inzage, correctie en verwijdering van uw gegevens. Neem voor verzoeken contact met ons op via de onderstaande knop.</p>
+            </section>
 
-            <h2 class="text-2xl font-oswald font-bold text-white border-b-2 border-f1-red pb-2 mt-8 mb-4">5. Uw rechten</h2>
-            <p>
-                In overeenstemming met de Algemene Verordening Gegevensbescherming (AVG) hebt u verschillende rechten met betrekking tot uw persoonsgegevens:
-            </p>
-            <ul class="list-disc ml-5 space-y-3">
-                <li><strong class="text-f1-red font-semibold">Recht op inzage:</strong> U kunt een verzoek indienen om te zien welke persoonsgegevens wij van u bewaren.</li>
-                <li><strong class="text-f1-red font-semibold">Recht op rectificatie:</strong> U kunt ons vragen om onjuiste of onvolledige gegevens te corrigeren.</li>
-                <li><strong class="text-f1-red font-semibold">Recht op verwijdering:</strong> U hebt het recht om uw gegevens te laten wissen, tenzij er een wettelijke grond is om deze te bewaren.</li>
-                <li><strong class="text-f1-red font-semibold">Recht op bezwaar:</strong> U kunt bezwaar maken tegen de verwerking van uw gegevens.</li>
-            </ul>
-            <p>
-                Om een van deze rechten uit te oefenen, kunt u contact met ons opnemen via de contactgegevens die onderaan dit beleid worden vermeld.
-            </p>
-
-            <h2 class="text-2xl font-oswald font-bold text-white border-b-2 border-f1-red pb-2 mt-8 mb-4">6. Wijzigingen in dit beleid</h2>
-            <p>
-                Dit privacybeleid kan van tijd tot tijd worden gewijzigd. Wij raden u aan om deze pagina regelmatig te bezoeken om op de hoogte te blijven van eventuele wijzigingen. Wijzigingen worden van kracht zodra ze op de Website zijn geplaatst.
-            </p>
-
-            <h2 class="text-2xl font-oswald font-bold text-white border-b-2 border-f1-red pb-2 mt-8 mb-4">7. Contact</h2>
-            <p>
-                Voor vragen over dit privacybeleid of uw persoonsgegevens kunt u contact opnemen met Webbair via het contactformulier op onze website.
-            </p>
-        </section>
-        
+            <div class="mt-16 p-8 bg-black/40 rounded-2xl border border-f1-red/20 flex flex-col md:flex-row justify-between items-center gap-6">
+                <div>
+                    <h4 class="font-oswald text-xl uppercase italic text-white leading-none">Vragen?</h4>
+                    <p class="text-sm text-gray-500 italic">Neem contact op via het formulier.</p>
+                </div>
+                <a href="contact.html" class="px-8 py-3 bg-f1-red text-white font-black uppercase text-[10px] tracking-widest rounded-full hover:bg-white hover:text-black transition-all">
+                    Contact Formulier
+                </a>
+            </div>
+        </div>
     </main>
 
-    <footer class="bg-black mt-12 py-8 border-t border-red-700">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-left pb-6 border-b border-gray-800">
-                <div class="md:col-span-1 text-center md:text-left">
-                    <h3 class="text-xl font-bold text-white mb-2 tracking-wider">F1SITE.NL</h3>
-                    <p class="text-gray-500 text-sm mb-2">
-                        De snelste bron voor F1 nieuws en data.
-                    </p>
+    <footer class="bg-black py-12 border-t-2 border-f1-red mt-12">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-left pb-8 border-b border-white/5">
+                <div>
+                    <h3 class="text-xl font-oswald font-black text-white italic tracking-tighter mb-2 uppercase">F1SITE.NL</h3>
+                    <p class="text-gray-500 text-xs italic uppercase tracking-widest">De snelste bron voor F1 nieuws en data.</p>
                 </div>
-                <div class="md:col-span-1 text-center md:text-left">
-                    <h4 class="text-lg font-semibold text-red-500 mb-3 uppercase">Externe Sites</h4>
+                <div>
+                    <h4 class="text-sm font-oswald font-bold text-f1-red mb-3 uppercase italic">Externe Sites</h4>
                     <ul class="space-y-2">
-                        <li>
-                            <a href="https://www.webbair.nl" target="_blank" 
-                            class="text-gray-400 text-sm hover:text-red-500 transition duration-150 block">
-                            Webbair (Ontwikkelaar)
-                            </a>
-                        </li>
+                        <li><a href="https://www.webius.nl" target="_blank" class="text-gray-400 text-xs hover:text-white transition italic uppercase">Webius (Ontwikkelaar)</a></li>
                     </ul>
                 </div>
-                <div class="md:col-span-1 text-center md:text-left">
-                    <h4 class="text-lg font-semibold text-red-500 mb-3 uppercase">Navigatie & Info</h4>
-                    <ul class="space-y-2">
-                        <li><a href="sitemap.html" class="text-gray-400 text-sm hover:text-red-500 transition duration-150 block">Sitemap</a></li>
-                        <li><a href="privacy-en.html" class="text-gray-400 text-sm hover:text-red-500 transition duration-150 block">Privacy Policy (EN)</a></li>
-                        <li><a href="algemenevoorwaarden-en.html" class="text-gray-400 text-sm hover:text-red-500 transition duration-150 block">Terms and Conditions (EN)</a></li>
-                        <li><a href="contact.html" class="text-gray-400 text-sm hover:text-red-500 transition duration-150 block">Contact</a></li>
+                <div>
+                    <h4 class="text-sm font-oswald font-bold text-f1-red mb-3 uppercase italic">Navigatie & Info</h4>
+                    <ul class="space-y-2 text-xs uppercase italic tracking-wider">
+                        <li><a href="sitemap.php" class="text-gray-400 hover:text-white transition">Sitemap</a></li>
+                        <li><a href="privacy-en.html" class="text-gray-400 hover:text-white transition">Privacy Policy (EN)</a></li>
+                        <li><a href="algemenevoorwaarden-en.html" class="text-gray-400 hover:text-white transition">Terms and Conditions (EN)</a></li>
+                        <li><a href="contact.html" class="text-gray-400 hover:text-white transition">Contact</a></li>
                     </ul>
                 </div>
             </div>
-            <div class="md:col-span-1 text-center md:text-left">
-                <p class="text-gray-500 text-xs mt-4">&copy; 2026 Webbair. Alle rechten voorbehouden.</p>
+            <div class="text-center pt-8 text-gray-600 text-[10px] font-black uppercase tracking-[0.5em] italic">
+                &copy; 2026 Webius. Alle rechten voorbehouden.
             </div>
         </div>
     </footer>
-
-    
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const nav = document.getElementById('main-nav-links');
             const toggle = document.querySelector('.menu-toggle');
-
             if (nav && toggle) {
                 toggle.addEventListener('click', () => {
                     const isVisible = nav.getAttribute('data-visible') === 'true';
@@ -209,6 +155,6 @@
                 });
             }
         });
-    </script> 
+    </script>
 </body>
 </html>

@@ -21,174 +21,179 @@ if (file_exists($jsonFile)) {
 <!DOCTYPE html>
 <html lang="nl">
 <head>
-    <meta name="description" content="Het meest complete F1 archief & statistieken sinds 1950. Vind uitslagen, records en alle coureursdata. Duik in de F1 historie!" />
-    <script src="https://t.contentsquare.net/uxa/688c1fe6f0f7c.js"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>All Drivers Formula 1</title>
-    <link rel="icon" type="image/x-icon" href="/afbeeldingen/logo/f1logobgrm.png">
-    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <meta name="description" content="Het meest complete F1 archief & statistieken sinds 1950. Vind uitslagen, records en alle coureursdata. Duik in de F1 historie!" />
+    <title>All Drivers | F1SITE.NL</title>
     
+    <link rel="icon" type="image/x-icon" href="/afbeeldingen/logo/f1logobgrm.png">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700;900&family=Oswald:wght@700&display=swap" rel="stylesheet">
+    
+    <script src="https://t.contentsquare.net/uxa/688c1fe6f0f7c.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
+
     <script>
         tailwind.config = {
             theme: {
                 extend: {
-                    fontFamily: {
-                        'sans': ['Roboto', 'sans-serif'],
-                        'oswald': ['Oswald', 'sans-serif'],
+                    fontFamily: { 
+                        'sans': ['Inter', 'sans-serif'], 
+                        'oswald': ['Oswald', 'sans-serif'] 
                     },
-                    colors: {
+                    colors: { 
                         'f1-red': '#E10600', 
-                        'f1-black': '#15151E', 
-                        'f1-gray': '#3A3A40',
-                        'f1-dark-table': '#21212B',
+                        'f1-black': '#0b0b0f', 
+                        'f1-card': '#16161c' 
                     }
                 }
             }
         }
     </script>
+
     <style>
-        /* Mobile menu styles */
+        body { background-color: #0b0b0f; color: #fff; }
+        .bg-pattern {
+            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.02'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        }
+
+        .elite-card {
+            @apply bg-f1-card/50 p-6 md:p-10 rounded-[2.5rem] border border-white/5 shadow-2xl backdrop-blur-sm;
+        }
+
+        .driver-item-card {
+            @apply bg-black/40 p-5 rounded-2xl border border-white/5 transition-all duration-300 hover:border-f1-red/50 hover:bg-black/60 shadow-lg;
+        }
+
+        .form-input-elite {
+            @apply flex-1 p-3 bg-black/40 border border-white/10 text-white rounded-xl focus:ring-2 focus:ring-f1-red focus:border-transparent transition-all outline-none italic text-sm;
+        }
+
+        /* Mobile menu handling */
         @media (max-width: 767px) {
-            .main-nav[data-visible="false"] {
-                display: none;
-            }
+            .main-nav[data-visible="false"] { display: none; }
             .main-nav {
-                position: absolute;
-                top: 100%;
-                left: 0;
-                right: 0;
-                background-color: #15151E;
-                box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-                padding: 1rem;
-                display: flex;
-                flex-direction: column;
-                z-index: 40;
-                border-top: 1px solid #E10600;
-            }
-            .main-nav a {
-                padding: 0.5rem 0;
+                position: absolute; top: 100%; left: 0; right: 0;
+                background-color: #0b0b0f; padding: 1.5rem; display: flex;
+                flex-direction: column; z-index: 100; border-bottom: 2px solid #E10600;
             }
         }
+
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #0b0b0f; }
+        ::-webkit-scrollbar-thumb { background: #E10600; border-radius: 10px; }
     </style>
 </head>
-<body class="bg-f1-black text-gray-100 font-sans min-h-screen flex flex-col">
-    
-    <header class="bg-black shadow-lg sticky top-0 z-50">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center header-content container">
-            <h1 class="text-3xl font-oswald font-extrabold text-f1-red tracking-widest site-title">
-                FORMULA 1
+<body class="bg-pattern min-h-screen flex flex-col italic">
+
+    <header class="bg-black/90 backdrop-blur-md sticky top-0 z-50 border-b border-f1-red/30">
+        <div class="max-w-7xl mx-auto px-6 py-5 flex justify-between items-center relative">
+            <h1 class="text-3xl font-oswald font-black italic text-white uppercase tracking-tighter">
+                F1SITE<span class="text-f1-red">.NL</span>
             </h1>
-            <button class="md:hidden text-2xl text-f1-red hover:text-white menu-toggle" 
-                    aria-controls="main-nav-links" aria-expanded="false" aria-label="Toggle navigation">&#9776; </button>
-            <nav class="main-nav md:flex md:space-x-8 text-sm font-semibold uppercase tracking-wider" id="main-nav-links" data-visible="false">
-                <a href="index.php" class="block py-2 px-3 md:p-0 hover:text-f1-red transition duration-150">Home</a>
-                <a href="kalender.php" class="block py-2 px-3 md:p-0 hover:text-f1-red transition duration-150">Schedule</a>
-                <a href="teams.php" class="block py-2 px-3 md:p-0 hover:text-f1-red transition duration-150">Teams</a>
-                <a href="drivers.php" class="block py-2 px-3 md:p-0 text-f1-red border-b-2 border-f1-red md:border-none active transition duration-150">Drivers</a>
-                <a href="results.php" class="block py-2 px-3 md:p-0 hover:text-f1-red transition duration-150">Results</a>
-                <a href="standings.php" class="block py-2 px-3 md:p-0 hover:text-f1-red transition duration-150">Standings</a>
+            
+            <button class="md:hidden text-2xl text-f1-red menu-toggle" aria-expanded="false">&#9776;</button>
+
+            <nav class="main-nav hidden md:flex space-x-8 text-[11px] font-black uppercase tracking-widest text-white" id="main-nav-links" data-visible="false">
+                <a href="index.php" class="hover:text-f1-red transition">Home</a>
+                <a href="kalender.php" class="hover:text-f1-red transition">Schedule</a>
+                <a href="teams.php" class="hover:text-f1-red transition">Teams</a>
+                <a href="drivers.php" class="text-f1-red transition">Drivers</a>
+                <a href="results.php" class="hover:text-f1-red transition">Results</a>
+                <a href="standings.php" class="hover:text-f1-red transition">Standings</a>
             </nav>
         </div>
     </header>
 
-    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-8 flex-grow container">
+    <main class="max-w-7xl mx-auto px-6 py-16 flex-grow">
         
-        <section class="bg-f1-gray p-6 rounded-lg shadow-xl mb-8 page-header-section">
-            <h2 class="text-xl md:text-3xl font-oswald font-bold text-white uppercase page-heading text-center">
-                ALL DRIVERS FORMULA 1
-            </h2>
-        </section>
+        <div class="mb-16 text-center">
+            <h1 class="text-6xl md:text-8xl font-oswald font-black uppercase italic tracking-tighter leading-none mb-4">
+                ALL<span class="text-f1-red">DRIVERS</span>
+            </h1>
+        </div>
 
-        <section class="driver-list-section bg-f1-gray p-6 rounded-lg shadow-xl">
-            
-            <div class="filter-controls flex flex-col sm:flex-row gap-4 mb-8">
-                <input type="text" id="searchInput" placeholder="Zoek op naam..."
-                       class="flex-1 p-3 bg-f1-black border border-gray-700 text-white rounded-md focus:ring-f1-red focus:border-f1-red"
+        <div class="elite-card">
+            <div class="flex flex-col sm:flex-row gap-4 mb-12">
+                <input type="text" id="searchInput" placeholder="ZOEK OP NAAM..."
+                       class="form-input-elite"
                        aria-label="Zoeken op coureursnaam">
                 
                 <select id="sortSelect"
-                        class="p-3 bg-f1-black border border-gray-700 text-white rounded-md focus:ring-f1-red focus:border-f1-red sm:w-auto">
-                    <option value="az">Name (A-Z)</option>
-                    <option value="za">Name (Z-A)</option>
-                    <option value="oldest">Date of birth (Oldest first)</option>
-                    <option value="youngest">Date of birth (youngest first)</option>
+                        class="form-input-elite sm:w-64 cursor-pointer">
+                    <option value="az">NAME (A-Z)</option>
+                    <option value="za">NAME (Z-A)</option>
+                    <option value="oldest">DOB (OLDEST FIRST)</option>
+                    <option value="youngest">DOB (YOUNGEST FIRST)</option>
                 </select>
             </div>
-            
+
             <?php if ($error_message): ?>
-                <p class="text-red-500 p-4 bg-f1-dark-table rounded-lg"><?php echo $error_message; ?></p>
+                <div class="p-6 bg-red-900/20 border border-red-500/50 rounded-2xl text-red-500 text-center uppercase font-black tracking-widest text-xs">
+                    <?php echo $error_message; ?>
+                </div>
             <?php elseif (empty($allDrivers)): ?>
-                <p class="text-gray-400 p-4">Geen coureurs beschikbaar om weer te geven.</p>
+                <p class="text-gray-500 text-center italic">Geen coureurs beschikbaar om weer te geven.</p>
             <?php else: ?>
             
-            <ul class="driver-list space-y-3" id="driverList">
-                <?php foreach ($allDrivers as $driver): ?>
-                    <li class="driver-item bg-f1-dark-table p-4 rounded-lg shadow-md border-l-4 border-f1-red transition duration-200 hover:bg-black" 
-                        data-name="<?php echo htmlspecialchars($driver['firstName'] . ' ' . $driver['lastName']); ?>" 
-                        data-dob="<?php echo htmlspecialchars($driver['dateOfBirth']); ?>">
-                        
-                        <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center">
-                            <span class="driver-name-all text-xl font-oswald font-bold text-white uppercase mb-2 sm:mb-0">
-                                <?php echo htmlspecialchars($driver['firstName'] . ' ' . $driver['lastName']); ?>
-                            </span>
+                <ul class="grid grid-cols-1 gap-4" id="driverList">
+                    <?php foreach ($allDrivers as $driver): ?>
+                        <li class="driver-item-card driver-item" 
+                            data-name="<?php echo htmlspecialchars($driver['firstName'] . ' ' . $driver['lastName']); ?>" 
+                            data-dob="<?php echo htmlspecialchars($driver['dateOfBirth']); ?>">
                             
-                            <div class="driver-details-list text-sm text-gray-300 space-y-1 sm:space-y-0 sm:space-x-4 sm:flex">
-                                <span class="driver-info">
-                                    <strong class="driver-info-strong font-semibold text-f1-red">Date of birth:</strong> <?php echo htmlspecialchars($driver['dateOfBirth']); ?>
+                            <div class="flex flex-col md:flex-row md:justify-between md:items-center gap-4">
+                                <span class="text-2xl font-oswald font-black text-white uppercase italic tracking-tighter">
+                                    <?php echo htmlspecialchars($driver['firstName']); ?> <span class="text-f1-red"><?php echo htmlspecialchars($driver['lastName']); ?></span>
                                 </span>
-                                <span class="driver-info hidden md:inline">|</span>
-                                <span class="driver-info">
-                                    <strong class="driver-info-strong font-semibold text-f1-red">Place of birth:</strong> <?php echo htmlspecialchars($driver['placeOfBirth']),', ', htmlspecialchars($driver['countryOfBirthCountryId']); ?>
-                                </span>
-                                <span class="driver-info hidden md:inline">|</span>
-                                <span class="driver-info">
-                                    <strong class="driver-info-strong font-semibold text-f1-red">Nationality:</strong> <?php echo htmlspecialchars($driver['nationalityCountryId']); ?>
-                                </span>
+                                
+                                <div class="flex flex-wrap gap-y-2 gap-x-6 text-[11px] uppercase font-bold tracking-widest text-gray-400">
+                                    <div class="flex items-center gap-2">
+                                        <span class="text-f1-red">DOB:</span> 
+                                        <span class="text-white"><?php echo htmlspecialchars($driver['dateOfBirth']); ?></span>
+                                    </div>
+                                    <div class="flex items-center gap-2">
+                                        <span class="text-f1-red">BORN:</span> 
+                                        <span class="text-white"><?php echo htmlspecialchars($driver['placeOfBirth']) . ', ' . htmlspecialchars($driver['countryOfBirthCountryId']); ?></span>
+                                    </div>
+                                    <div class="flex items-center gap-2">
+                                        <span class="text-f1-red">NAT:</span> 
+                                        <span class="text-white"><?php echo htmlspecialchars($driver['nationalityCountryId']); ?></span>
+                                    </div>
+                                </div>
                             </div>
-                        </div>
-                    </li>
-                <?php endforeach; ?>
-            </ul>
+                        </li>
+                    <?php endforeach; ?>
+                </ul>
             
             <?php endif; ?>
-        </section>
-        
+        </div>
     </main>
 
-    <footer class="bg-black mt-12 py-8 border-t border-red-700">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-left pb-6 border-b border-gray-800">
-                <div class="md:col-span-1 text-center md:text-left">
-                    <h3 class="text-xl font-bold text-white mb-2 tracking-wider">F1SITE.NL</h3>
-                    <p class="text-gray-500 text-sm mb-2">
-                        De snelste bron voor F1 nieuws en data.
-                    </p>
+    <footer class="bg-black py-12 border-t-2 border-f1-red mt-12">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-left pb-8 border-b border-white/5">
+                <div>
+                    <h3 class="text-xl font-oswald font-black text-white italic tracking-tighter mb-2 uppercase">F1SITE.NL</h3>
+                    <p class="text-gray-500 text-xs italic uppercase tracking-widest">De snelste bron voor F1 nieuws en data.</p>
                 </div>
-                <div class="md:col-span-1 text-center md:text-left">
-                    <h4 class="text-lg font-semibold text-red-500 mb-3 uppercase">Externe Sites</h4>
+                <div>
+                    <h4 class="text-sm font-oswald font-bold text-f1-red mb-3 uppercase italic">Externe Sites</h4>
                     <ul class="space-y-2">
-                        <li>
-                            <a href="https://www.webbair.nl" target="_blank" 
-                            class="text-gray-400 text-sm hover:text-red-500 transition duration-150 block">
-                            Webbair (Ontwikkelaar)
-                            </a>
-                        </li>
+                        <li><a href="https://www.webbair.nl" target="_blank" class="text-gray-400 text-xs hover:text-white transition italic uppercase">Webbair (Ontwikkelaar)</a></li>
                     </ul>
                 </div>
-                <div class="md:col-span-1 text-center md:text-left">
-                    <h4 class="text-lg font-semibold text-red-500 mb-3 uppercase">Navigatie & Info</h4>
-                    <ul class="space-y-2">
-                        <li><a href="sitemap.html" class="text-gray-400 text-sm hover:text-red-500 transition duration-150 block">Sitemap</a></li>
-                        <li><a href="privacy-en.html" class="text-gray-400 text-sm hover:text-red-500 transition duration-150 block">Privacy Policy (EN)</a></li>
-                        <li><a href="algemenevoorwaarden-en.html" class="text-gray-400 text-sm hover:text-red-500 transition duration-150 block">Terms and Conditions (EN)</a></li>
-                        <li><a href="contact.html" class="text-gray-400 text-sm hover:text-red-500 transition duration-150 block">Contact</a></li>
+                <div>
+                    <h4 class="text-sm font-oswald font-bold text-f1-red mb-3 uppercase italic">Navigatie & Info</h4>
+                    <ul class="space-y-2 text-xs uppercase italic tracking-wider">
+                        <li><a href="sitemap.html" class="text-gray-400 hover:text-white transition">Sitemap</a></li>
+                        <li><a href="privacy-en.html" class="text-gray-400 hover:text-white transition">Privacy Policy (EN)</a></li>
+                        <li><a href="algemenevoorwaarden-en.html" class="text-gray-400 hover:text-white transition">Terms and Conditions (EN)</a></li>
+                        <li><a href="contact.html" class="text-gray-400 hover:text-white transition">Contact</a></li>
                     </ul>
                 </div>
             </div>
-            <div class="md:col-span-1 text-center md:text-left">
-                <p class="text-gray-500 text-xs mt-4">&copy; <?php echo (date('Y')); ?> Webbair. Alle rechten voorbehouden.</p>
+            <div class="text-center pt-8 text-gray-600 text-[10px] font-black uppercase tracking-[0.5em] italic">
+                &copy; <?php echo (date('Y')); ?> Webbair. Alle rechten voorbehouden.
             </div>
         </div>
     </footer>
@@ -199,7 +204,6 @@ if (file_exists($jsonFile)) {
         document.addEventListener('DOMContentLoaded', () => {
             const nav = document.getElementById('main-nav-links');
             const toggle = document.querySelector('.menu-toggle');
-
             if (nav && toggle) {
                 toggle.addEventListener('click', () => {
                     const isVisible = nav.getAttribute('data-visible') === 'true';

@@ -1,7 +1,7 @@
 <?php
 require_once 'db_config.php'; 
 require_once 'achterkant/aanpassing/api-koppelingen/1result_api.php';
-$limit = 12; // Artikelen per pagina
+$limit = 12; 
 $page = isset($_GET['page']) && is_numeric($_GET['page']) ? (int)$_GET['page'] : 1;
 $offset = ($page - 1) * $limit;
 
@@ -27,333 +27,200 @@ try {
 } catch (PDOException $e) {
     error_log("Fout bij ophalen nieuwsartikelen voor paginering: " . $e->getMessage());
 }
-
-if (isset($nextGrandPrix) && $nextGrandPrix && !isset($targetDateTime)) {
-    $targetDateTime = '2025-11-20T14:00:00+01:00'; 
-}
-
-$schemaData = [
-    '@context' => 'https://schema.org',
-    '@type' => 'WebPage',
-    'name' => 'F1 News',
-    'url' => 'https://f1site.online/nieuws.php',
-    'description' => 'Complete archive of Formula 1 news items.'
-];
 ?>
 <!DOCTYPE html>
 <html lang="nl">
 <head>
-    <meta name="description" content="Volledig archief van alle Formule 1 nieuwsberichten van F1SITE.NL." />
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>F1site - NEWS</title>
-    <script src="https://t.contentsquare.net/uxa/688c1fe6f0f7c.js"></script>
-    <link rel="icon" type="image/x-icon" href="/afbeeldingen/logo/f1logobgrm.png">
-    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="table.css">
+    <title>News Archive | F1SITE.NL</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700;900&family=Oswald:wght@700&display=swap" rel="stylesheet">
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
+
     <script>
         tailwind.config = {
             theme: {
                 extend: {
-                    fontFamily: {
-                        'sans': ['Roboto', 'sans-serif'],
-                        'oswald': ['Oswald', 'sans-serif'],
-                    },
-                    colors: {
-                        'f1-red': '#E10600',
-                        'f1-black': '#15151E', 
-                        'f1-gray': '#3A3A40',
-                    }
+                    fontFamily: { 'sans': ['Inter', 'sans-serif'], 'oswald': ['Oswald', 'sans-serif'] },
+                    colors: { 'f1-red': '#E10600', 'f1-black': '#0b0b0f', 'f1-card': '#16161c' }
                 }
             }
         }
     </script>
+
     <style>
-        @media (max-width: 767px) {
-            .main-nav[data-visible="false"] {
-                display: none;
-            }
-            .main-nav {
-                position: absolute;
-                top: 100%;
-                left: 0;
-                right: 0;
-                background-color: #15151E;
-                box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-                padding: 1rem;
-                display: flex;
-                flex-direction: column;
-                z-index: 40;
-                border-top: 1px solid #E10600;
-            }
-            .main-nav a {
-                padding: 0.5rem 0;
-            }
+        body { background-color: #0b0b0f; color: #fff; overflow-x: hidden; }
+        .bg-pattern {
+            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.02'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
         }
-        .news-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 1.5rem;
+
+        .header-glass { background: rgba(11, 11, 15, 0.95); backdrop-filter: blur(10px); border-bottom: 1px solid rgba(225, 6, 0, 0.3); }
+        
+        #mobile-menu { 
+            position: fixed; inset: 0; background: #0b0b0f; 
+            z-index: 10000; transform: translateX(100%); 
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1); 
         }
-        .news-card {
-            transition: transform 0.2s, box-shadow 0.2s;
-            border-left: 5px solid transparent;
-            display: flex;
-            flex-direction: column;
-            height: 100%; 
+        #mobile-menu.active { transform: translateX(0); }
+
+        .news-card-elite {
+            @apply bg-f1-card/50 rounded-[2rem] border border-white/5 shadow-2xl backdrop-blur-sm overflow-hidden flex flex-col transition-all duration-300;
         }
-        .news-card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 10px 15px rgba(225, 6, 0, 0.2);
-            border-left-color: #E10600;
+        
+        .pagination-link-elite {
+            @apply px-4 py-2 text-[10px] font-black uppercase tracking-widest rounded-xl transition-all duration-200;
         }
-        .news-image {
-            height: 180px; 
-        }
-        .pagination-link {
-            transition: background-color 0.2s, color 0.2s;
-        }
-        .pagination-link:hover {
-            background-color: #E10600;
-            color: white;
-        }
-        .pagination-link.active {
-            background-color: #E10600;
-            color: white;
-            font-weight: bold;
-        }
+
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #0b0b0f; }
+        ::-webkit-scrollbar-thumb { background: #E10600; border-radius: 10px; }
     </style>
-    
-    <?php if (!empty($schemaData)): ?>
-    <script type="application/ld+json">
-    <?php echo json_encode($schemaData, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE); ?>
-    </script>
-    <?php endif; ?>
-    
 </head>
-<body class="bg-f1-black text-gray-100 font-sans">
-    
-    <header class="bg-black shadow-lg sticky top-0 z-50">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center header-content container">
-            <h1 id="site-title-header" class="text-3xl font-oswald font-extrabold text-f1-red tracking-widest site-title">
-                FORMULA 1
-            </h1>
-            <button class="md:hidden text-2xl text-f1-red hover:text-white menu-toggle" 
-                    aria-controls="main-nav-links" aria-expanded="false" aria-label="Toggle navigation">
-                &#9776; 
-            </button>
-            <nav class="main-nav md:flex md:space-x-8 text-sm font-semibold uppercase tracking-wider" 
-                 id="main-nav-links" data-visible="false">
-                <a href="index.php" class="block py-2 px-3 md:p-0 text-f1-red border-b-2 border-f1-red md:border-none active transition duration-150">Home</a>
-                <a href="kalender.php" class="block py-2 px-3 md:p-0 hover:text-f1-red transition duration-150">Schedule</a>
-                <a href="teams.php" class="block py-2 px-3 md:p-0 hover:text-f1-red transition duration-150">Teams</a>
-                <a href="drivers.php" class="block py-2 px-3 md:p-0 hover:text-f1-red transition duration-150">Drivers</a>
-                <a href="results.php" class="block py-2 px-3 md:p-0 hover:text-f1-red transition duration-150">Results</a>
-                <a href="standings.php" class="block py-2 px-3 md:p-0 hover:text-f1-red transition duration-150">Standings</a>
+
+<body class="bg-pattern min-h-screen flex flex-col italic">
+
+    <div id="mobile-menu" class="flex flex-col items-center justify-center">
+        <button onclick="toggleMenu()" class="absolute top-8 right-8 text-5xl font-light text-f1-red">&times;</button>
+        <nav class="flex flex-col space-y-8 text-3xl font-oswald font-black uppercase italic text-center">
+            <a href="index.php" onclick="toggleMenu()">Home</a>
+            <a href="kalender.php" onclick="toggleMenu()">Schedule</a>
+            <a href="teams.php" onclick="toggleMenu()">Teams</a>
+            <a href="drivers.php" onclick="toggleMenu()">Drivers</a>
+            <a href="results.php" onclick="toggleMenu()">Results</a>
+            <a href="standings.php" onclick="toggleMenu()">Standings</a>
+        </nav>
+    </div>
+
+    <header class="header-glass sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-6 py-5 flex justify-between items-center">
+            <a href="index.php" class="flex items-baseline gap-1">
+                <span class="text-2xl md:text-3xl font-oswald font-black italic tracking-tighter text-white uppercase">F1SITE<span class="text-f1-red">.NL</span></span>
+            </a>
+            
+            <nav class="hidden lg:flex space-x-10 text-[11px] font-bold uppercase tracking-[0.25em]">
+                <a href="index.php" class="hover:text-f1-red transition">Home</a>
+                <a href="kalender.php" class="hover:text-f1-red transition">Schedule</a>
+                <a href="teams.php" class="hover:text-f1-red transition">Teams</a>
+                <a href="drivers.php" class="hover:text-f1-red transition">Drivers</a>
+                <a href="results.php" class="hover:text-f1-red transition">Results</a>
+                <a href="standings.php" class="hover:text-f1-red transition">Standings</a>
             </nav>
+
+            <button onclick="toggleMenu()" class="lg:hidden text-f1-red text-3xl">☰</button>
         </div>
     </header>
-    
-    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-8 container">
-        <!-- nog toevoegen later -->
-        <!-- <div class="bg-f1-gray p-6 rounded-lg shadow-xl mb-8 flex flex-col md:flex-row justify-between items-center page-header-section">
-            <div class="text-center md:text-left mb-4 md:mb-0">
-                <h3 class="text-xl md:text-2xl font-oswald font-bold text-white uppercase page-heading">
-                    <?php
-                    // if (isset($nextGrandPrix) && $nextGrandPrix) {
-                    //     echo htmlspecialchars($nextGrandPrix['grandprix']);
-                    // } else {
-                    //     echo "Geen aankomende Grand Prix";
-                    // }
-                    // ?>
-                </h3>
-                <p class="text-sm text-gray-400">Next Race</p>
-            </div>
-            <div class="text-center text-3xl md:text-4xl font-oswald font-extrabold text-f1-red page-heading" id="countdown">
-            </div>
-        </div> -->
 
-        <section class="mb-12 f1-section">
-            <h2 class="text-4xl font-oswald font-bold text-white uppercase mb-8 border-b border-f1-red pb-3 news-heading">
-                News Archive
-            </h2>
-            <?php if (!empty($news_articles)): ?>
-                <div class="news-grid mb-10">
-                    <?php foreach ($news_articles as $article): ?>
-                        <div class="bg-f1-gray p-5 rounded-lg shadow-xl news-card">
+    <main class="max-w-7xl mx-auto px-6 py-12 md:py-20 flex-grow">
+        
+        <div class="mb-12 md:mb-20 text-center" data-aos="fade-down">
+            <h1 class="text-5xl md:text-8xl font-oswald font-black uppercase italic tracking-tighter leading-none">
+                NEWS<span class="text-f1-red">ARCHIVE</span>
+            </h1>
+        </div>
+
+        <?php if (!empty($news_articles)): ?>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-10">
+                <?php foreach ($news_articles as $article): ?>
+                    <article class="news-card-elite" data-aos="fade-up">
+                        <div class="relative h-48 md:h-56 overflow-hidden">
                             <?php if ($article['afbeelding_url']): ?>
-                                <img src="<?php echo htmlspecialchars($article['afbeelding_url']); ?>" alt="Afbeelding bij nieuwsartikel" class="w-full news-image object-cover rounded-md mb-4">
-                            <?php endif; ?>
-                            <div class="flex flex-col flex-grow">
-                                <h3 class="text-xl font-oswald font-semibold mb-2 news-title flex-grow">
-                                    <a href="<?php echo htmlspecialchars($article['artikel_url']); ?>" target="_blank" 
-                                       class="text-gray-100 hover:text-f1-red transition duration-150 block">
-                                        <?php echo htmlspecialchars($article['titel']); ?>
-                                    </a>
-                                </h3>
-                                
-                                <div class="mt-auto">
-                                    <?php if (!empty($article['source'])): ?>
-                                        <span class="text-f1-red font-bold uppercase text-xs mb-1 block">
-                                            Source: <?php echo htmlspecialchars($article['source']); ?>
-                                        </span>
-                                    <?php endif; ?>
-
-                                    <?php if ($article['publicatie_datum']): ?>
-                                        <p class="text-xs text-gray-400 news-date">
-                                            <?php 
-                                                try {
-                                                    $date = new DateTime($article['publicatie_datum']);
-                                                    echo 'Gepubliceerd op: ' . $date->format('d-m-Y H:i');
-                                                } catch (Exception $e) {
-                                                    echo 'Datum onbekend';
-                                                }
-                                            ?>
-                                        </p>
-                                    <?php endif; ?>
+                                <img src="<?php echo htmlspecialchars($article['afbeelding_url']); ?>" 
+                                     alt="F1 News" 
+                                     class="w-full h-full object-cover transition-transform duration-700 hover:scale-110">
+                            <?php else: ?>
+                                <div class="w-full h-full bg-zinc-900 flex items-center justify-center">
+                                    <span class="text-f1-red font-oswald italic font-bold">F1SITE.NL</span>
                                 </div>
+                            <?php endif; ?>
+                            <div class="absolute top-4 left-4">
+                                <span class="bg-f1-red text-white text-[8px] font-black px-3 py-1 uppercase tracking-tighter rounded-full">
+                                    <?php echo htmlspecialchars($article['source'] ?? 'News'); ?>
+                                </span>
                             </div>
                         </div>
-                    <?php endforeach; ?>
-                </div>
 
-                <nav class="flex justify-center items-center space-x-2 mt-8" aria-label="Pagination">
-                    <?php if ($page > 1): ?>
-                        <a href="?page=<?php echo $page - 1; ?>" 
-                           class="pagination-link px-4 py-2 text-sm bg-f1-gray rounded-lg hover:bg-f1-red hover:text-white transition duration-150">
-                           &larr; Vorige
-                        </a>
-                    <?php endif; ?>
+                        <div class="p-6 md:p-8 flex flex-col flex-grow">
+                            <h3 class="text-lg md:text-xl font-oswald font-black uppercase italic leading-tight mb-6 flex-grow">
+                                <a href="<?php echo htmlspecialchars($article['artikel_url']); ?>" target="_blank" 
+                                   class="hover:text-f1-red transition-colors duration-200">
+                                    <?php echo htmlspecialchars($article['titel']); ?>
+                                </a>
+                            </h3>
+                            
+                            <div class="pt-4 border-t border-white/5 flex justify-between items-center">
+                                <span class="text-[9px] text-gray-500 font-bold uppercase tracking-widest">
+                                    <?php echo date('d M Y', strtotime($article['publicatie_datum'])); ?>
+                                </span>
+                                <a href="<?php echo htmlspecialchars($article['artikel_url']); ?>" target="_blank" class="text-f1-red text-[10px] font-black uppercase tracking-tighter hover:text-white transition-colors">
+                                    Read more +
+                                </a>
+                            </div>
+                        </div>
+                    </article>
+                <?php endforeach; ?>
+            </div>
 
-                    <?php 
-                    // Toon maximaal 7 paginanummers, gecentreerd rond de huidige pagina
-                    $start_page = max(1, $page - 3);
-                    $end_page = min($total_pages, $page + 3);
-                    
-                    if ($end_page - $start_page < 6) {
-                        $start_page = max(1, $end_page - 6);
-                    }
-                    if ($end_page - $start_page < 6) {
-                        $end_page = min($total_pages, $start_page + 6);
-                    }
-                    
-                    if ($start_page > 1) {
-                        echo '<a href="?page=1" class="pagination-link px-4 py-2 text-sm rounded-lg bg-f1-gray">1</a>';
-                        if ($start_page > 2) {
-                            echo '<span class="px-2 py-2 text-sm text-gray-400">...</span>';
-                        }
-                    }
+            <nav class="flex flex-wrap justify-center items-center gap-2 mt-16" aria-label="Pagination">
+                <?php if ($page > 1): ?>
+                    <a href="?page=<?php echo $page - 1; ?>" class="pagination-link-elite bg-white/5 hover:bg-f1-red text-white">Prev</a>
+                <?php endif; ?>
 
-                    for ($i = $start_page; $i <= $end_page; $i++): ?>
-                        <a href="?page=<?php echo $i; ?>" 
-                           class="pagination-link px-4 py-2 text-sm rounded-lg <?php echo ($i == $page ? 'active' : 'bg-f1-gray'); ?>">
-                           <?php echo $i; ?>
-                        </a>
-                    <?php endfor; ?>
-                    
-                    <?php if ($end_page < $total_pages): 
-                        if ($end_page < $total_pages - 1) {
-                            echo '<span class="px-2 py-2 text-sm text-gray-400">...</span>';
-                        }
-                        echo '<a href="?page=' . $total_pages . '" class="pagination-link px-4 py-2 text-sm rounded-lg bg-f1-gray">' . $total_pages . '</a>';
-                    endif; ?>
+                <?php 
+                $start_page = max(1, $page - 1);
+                $end_page = min($total_pages, $page + 1);
+                for ($i = $start_page; $i <= $end_page; $i++): ?>
+                    <a href="?page=<?php echo $i; ?>" 
+                       class="pagination-link-elite <?php echo ($i == $page ? 'bg-f1-red text-white' : 'bg-white/5 text-gray-400'); ?>">
+                       <?php echo $i; ?>
+                    </a>
+                <?php endfor; ?>
 
-                    <?php if ($page < $total_pages): ?>
-                        <a href="?page=<?php echo $page + 1; ?>" 
-                           class="pagination-link px-4 py-2 text-sm bg-f1-gray rounded-lg hover:bg-f1-red hover:text-white transition duration-150">
-                           Volgende &rarr;
-                        </a>
-                    <?php endif; ?>
-                </nav>
+                <?php if ($page < $total_pages): ?>
+                    <a href="?page=<?php echo $page + 1; ?>" class="pagination-link-elite bg-white/5 hover:bg-f1-red text-white">Next</a>
+                <?php endif; ?>
+            </nav>
 
-            <?php else: ?>
-                <p class="text-gray-400">Er zijn geen nieuwsartikelen gevonden in het archief.</p>
-            <?php endif; ?>
-        </section>
-        
+        <?php else: ?>
+            <div class="bg-f1-card/50 p-20 rounded-[2.5rem] border border-white/5 text-center">
+                <p class="text-gray-500 font-oswald italic uppercase tracking-widest">No articles found.</p>
+            </div>
+        <?php endif; ?>
     </main>
     
-    <footer class="bg-black mt-12 py-8 border-t border-red-700">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-left pb-6 border-b border-gray-800">
-                <div class="md:col-span-1 text-center md:text-left">
-                    <h3 class="text-xl font-bold text-white mb-2 tracking-wider">F1SITE.NL</h3>
-                    <p class="text-gray-500 text-sm mb-2">
-                        De snelste bron voor F1 nieuws en data.
-                    </p>
+    <footer class="bg-black py-12 border-t-2 border-f1-red">
+        <div class="max-w-7xl mx-auto px-6 text-center md:text-left">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-10 pb-8 border-b border-white/5">
+                <div>
+                    <h3 class="text-xl font-oswald font-black text-white italic tracking-tighter mb-2 uppercase">F1SITE<span class="text-f1-red">.NL</span></h3>
+                    <p class="text-gray-500 text-[10px] italic uppercase tracking-widest">Premium Formula 1 News Hub.</p>
                 </div>
-                <div class="md:col-span-1 text-center md:text-left">
-                    <h4 class="text-lg font-semibold text-red-500 mb-3 uppercase">Externe Sites</h4>
-                    <ul class="space-y-2">
-                        <li>
-                            <a href="https://www.webbair.nl" target="_blank" 
-                            class="text-gray-400 text-sm hover:text-red-500 transition duration-150 block">
-                            Webbair (Ontwikkelaar)
-                            </a>
-                        </li>
-                        <li>
-                            <a href="https://urenheld.webbair.nl" target="_blank" 
-                            class="text-gray-400 text-sm hover:text-red-500 transition duration-150 block">
-                            Urenheld
-                            </a>
-                        </li>
+                <div>
+                    <h4 class="text-xs font-black text-f1-red mb-4 uppercase italic tracking-widest">Navigation</h4>
+                    <ul class="space-y-2 text-[10px] uppercase italic text-gray-400">
+                        <li><a href="sitemap.html" class="hover:text-white">Sitemap</a></li>
+                        <li><a href="privacy-en.html" class="hover:text-white">Privacy</a></li>
+                        <li><a href="contact.html" class="hover:text-white">Contact</a></li>
                     </ul>
                 </div>
-                <div class="md:col-span-1 text-center md:text-left">
-                    <h4 class="text-lg font-semibold text-red-500 mb-3 uppercase">Navigatie & Info</h4>
-                    <ul class="space-y-2">
-                        <li><a href="sitemap.html" class="text-gray-400 text-sm hover:text-red-500 transition duration-150 block">Sitemap</a></li>
-                        <li><a href="privacy-en.html" class="text-gray-400 text-sm hover:text-red-500 transition duration-150 block">Privacy Policy (EN)</a></li>
-                        <li><a href="algemenevoorwaarden-en.html" class="text-gray-400 text-sm hover:text-red-500 transition duration-150 block">Terms and Conditions (EN)</a></li>
-                        <li><a href="contact.html" class="text-gray-400 text-sm hover:text-red-500 transition duration-150 block">Contact</a></li>
-                    </ul>
+                <div>
+                    <h4 class="text-xs font-black text-f1-red mb-4 uppercase italic tracking-widest">Developer</h4>
+                    <a href="https://www.webbair.nl" target="_blank" class="text-[10px] text-gray-400 uppercase italic hover:text-white">Webbair</a>
                 </div>
             </div>
-            <div class="md:col-span-1 text-center md:text-left">
-                <p class="text-gray-500 text-xs mt-4">&copy; <?php echo (date('Y')); ?> Webbair. Alle rechten voorbehouden.</p>
-            </div>
+            <p class="pt-8 text-gray-700 text-[9px] font-black uppercase tracking-[0.4em] italic">&copy; 2026 Webbair. All rights reserved.</p>
         </div>
     </footer>
+
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            const nav = document.getElementById('main-nav-links');
-            const toggle = document.querySelector('.menu-toggle');
-
-            toggle.addEventListener('click', () => {
-                const isVisible = nav.getAttribute('data-visible') === 'true';
-                nav.setAttribute('data-visible', String(!isVisible));
-                toggle.setAttribute('aria-expanded', String(!isVisible));
-            });
+            AOS.init({ duration: 800, once: true });
+            window.toggleMenu = () => {
+                document.getElementById('mobile-menu').classList.toggle('active');
+            };
         });
     </script> 
-    <script>
-        <?php if (isset($nextGrandPrix) && $nextGrandPrix && isset($targetDateTime)): ?>
-        const targetDateTime = new Date('<?php echo $targetDateTime; ?>').getTime(); 
-        const countdownElement = document.getElementById('countdown');
-        function updateCountdown() {
-            const now = new Date().getTime();
-            const distance = targetDateTime - now;
-            
-            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
-            
-            if (distance < 0) {
-                countdownElement.innerHTML = "<span class='text-white text-xl'>Race is bezig!</span>";
-                clearInterval(countdownInterval);
-            } else {
-                countdownElement.innerHTML =
-                    `<span class="text-f1-red">${days}</span>d <span class="text-white">|</span> <span class="text-f1-red">${hours}</span>h <span class="text-white">|</span> <span class="text-f1-red">${minutes}</span>m <span class="text-white">|</span> <span class="text-f1-red">${seconds}</span>s`;
-            }
-        }
-        updateCountdown();
-        const countdownInterval = setInterval(updateCountdown, 1000);
-        <?php else: ?>
-        document.getElementById('countdown').innerHTML = "<span class='text-white text-xl'>Niet beschikbaar</span>";
-        console.log("Geen volgende Grand Prix om af te tellen of $targetDateTime is niet gezet.");
-        <?php endif; ?>
-    </script>
 </body>
-</html>
+</html>`

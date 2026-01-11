@@ -3,187 +3,155 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Algemene Voorwaarden - Formula 1 Site</title>
-    <link rel="icon" type="image/x-icon" href="/afbeeldingen/logo/f1logobgrm.png">
-    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
-    <script src="https://t.contentsquare.net/uxa/688c1fe6f0f7c.js"></script>
+    <title>Algemene Voorwaarden | F1SITE.NL</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700;900&family=Oswald:wght@700&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
+
     <script>
         tailwind.config = {
             theme: {
                 extend: {
-                    fontFamily: {
-                        'sans': ['Roboto', 'sans-serif'],
-                        'oswald': ['Oswald', 'sans-serif'],
+                    fontFamily: { 
+                        'sans': ['Inter', 'sans-serif'], 
+                        'oswald': ['Oswald', 'sans-serif'] 
                     },
-                    colors: {
+                    colors: { 
                         'f1-red': '#E10600', 
-                        'f1-black': '#15151E', 
-                        'f1-gray': '#3A3A40',
-                        'f1-dark-table': '#21212B',
+                        'f1-black': '#0b0b0f', 
+                        'f1-card': '#16161c' 
                     }
                 }
             }
         }
     </script>
+
     <style>
-        /* Mobile menu styles */
-        @media (max-width: 767px) {
-            .main-nav[data-visible="false"] {
-                display: none;
-            }
-            .main-nav {
-                position: absolute;
-                top: 100%;
-                left: 0;
-                right: 0;
-                background-color: #15151E;
-                box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-                padding: 1rem;
-                display: flex;
-                flex-direction: column;
-                z-index: 40;
-                border-top: 1px solid #E10600;
-            }
-            .main-nav a {
-                padding: 0.5rem 0;
-            }
+        body { background-color: #0b0b0f; color: #fff; }
+        .bg-pattern {
+            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.02'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
         }
+
+        .elite-card {
+            @apply bg-f1-card/50 p-8 md:p-12 rounded-[2.5rem] border border-white/5 shadow-2xl backdrop-blur-sm;
+        }
+
+        .red-speed-line {
+            height: 3px;
+            background: linear-gradient(90deg, #E10600 0%, transparent 100%);
+            width: 100px;
+            margin-top: 10px;
+            border-radius: 99px;
+        }
+
+        .policy-h2 { @apply text-2xl font-oswald font-black uppercase italic text-white mt-12 mb-4 flex flex-col; }
+        .policy-p { @apply text-gray-400 leading-relaxed mb-6 text-sm md:text-base italic; }
         
-        /* Language Switcher Styling */
-        .language-switcher a, .language-switcher .active-lang {
-            transition: filter 0.2s ease;
-        }
-        .language-switcher a {
-            filter: grayscale(100%);
-        }
-        .language-switcher a:hover {
-            filter: grayscale(0%);
-        }
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #0b0b0f; }
+        ::-webkit-scrollbar-thumb { background: #E10600; border-radius: 10px; }
     </style>
 </head>
-<body class="bg-f1-black text-gray-100 font-sans min-h-screen flex flex-col">
-    
-    <header class="bg-black shadow-lg sticky top-0 z-50">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center header-content container">
-            <h1 class="text-3xl font-oswald font-extrabold text-f1-red tracking-widest site-title">
-                FORMULA 1
+<body class="bg-pattern min-h-screen flex flex-col italic">
+
+    <header class="bg-black/90 backdrop-blur-md sticky top-0 z-50 border-b border-f1-red/30">
+        <div class="max-w-7xl mx-auto px-6 py-5 flex justify-between items-center">
+            <h1 class="text-3xl font-oswald font-black italic text-white uppercase tracking-tighter">
+                F1SITE<span class="text-f1-red">.NL</span>
             </h1>
-            <button class="md:hidden text-2xl text-f1-red hover:text-white menu-toggle" 
-                    aria-controls="main-nav-links" aria-expanded="false" aria-label="Toggle navigation">&#9776; </button>
-            <nav class="main-nav md:flex md:space-x-8 text-sm font-semibold uppercase tracking-wider" id="main-nav-links" data-visible="false">
-                <a href="index.php" class="block py-2 px-3 md:p-0 hover:text-f1-red transition duration-150">Home</a>
-                <a href="kalender.php" class="block py-2 px-3 md:p-0 hover:text-f1-red transition duration-150">Schedule</a>
-                <a href="teams.php" class="block py-2 px-3 md:p-0 hover:text-f1-red transition duration-150">Teams</a>
-                <a href="drivers.php" class="block py-2 px-3 md:p-0 hover:text-f1-red transition duration-150">Drivers</a>
-                <a href="results.php" class="block py-2 px-3 md:p-0 hover:text-f1-red transition duration-150">Results</a>
-                <a href="standings.php" class="block py-2 px-3 md:p-0 hover:text-f1-red transition duration-150">Standings</a>
+            <nav class="hidden md:flex space-x-8 text-[11px] font-black uppercase tracking-widest text-white">
+                <a href="index.php" class="hover:text-f1-red transition">Home</a>
+                <a href="kalender.php" class="hover:text-f1-red transition">Schedule</a>
+                <a href="teams.php" class="hover:text-f1-red transition">Teams</a>
+                <a href="drivers.php" class="hover:text-f1-red transition">Drivers</a>
+                <a href="results.php" class="hover:text-f1-red transition">Results</a>
             </nav>
         </div>
     </header>
-    
-    <main class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 mt-8 flex-grow container">
+
+    <main class="max-w-4xl mx-auto px-6 py-16 flex-grow">
         
-        <div class="page-header-section bg-f1-gray p-6 rounded-lg shadow-xl mb-8">
-            <h1 class="text-4xl font-oswald font-extrabold text-f1-red uppercase page-heading text-center">
-                Algemene Voorwaarden
+        <div class="mb-16 text-center">
+            <h1 class="text-6xl md:text-8xl font-oswald font-black uppercase italic tracking-tighter leading-none mb-4">
+                ALGEMENE<span class="text-f1-red">VOORWAARDEN</span>
             </h1>
         </div>
 
-        <section class="bg-f1-gray p-6 rounded-lg shadow-xl text-gray-300">
-            <h2 class="text-2xl font-oswald font-bold text-white mt-0 pt-0 border-b-2 border-f1-red pb-2 mb-4">1. Definities</h2>
-            <ul class="list-disc ml-5 space-y-3">
-                <li><strong class="text-f1-red font-semibold">Website:</strong> De Formule 1 website die eigendom is van Webbair.</li>
-                <li><strong class="text-f1-red font-semibold">Gebruiker:</strong> Iedereen die de Website bezoekt en/of gebruikt.</li>
-                <li><strong class="text-f1-red font-semibold">Diensten:</strong> Alle informatie, inhoud, functionaliteiten en diensten die via de Website worden aangeboden.</li>
-                <li><strong class="text-f1-red font-semibold">Webbair:</strong> De eigenaar en beheerder van de Website.</li>
-            </ul>
+        <div class="elite-card">
+            <section>
+                <h2 class="policy-h2">1. Definities <span class="red-speed-line"></span></h2>
+                <ul class="space-y-3 text-gray-400 text-sm italic">
+                    <li><strong class="text-white uppercase tracking-tighter">Website:</strong> De Formule 1 website die eigendom is van Webbair.</li>
+                    <li><strong class="text-white uppercase tracking-tighter">Gebruiker:</strong> Iedereen die de Website bezoekt en/of gebruikt.</li>
+                    <li><strong class="text-white uppercase tracking-tighter">Diensten:</strong> Alle informatie, inhoud en functionaliteiten die worden aangeboden.</li>
+                    <li><strong class="text-white uppercase tracking-tighter">Webbair:</strong> De eigenaar en beheerder van de Website.</li>
+                </ul>
+            </section>
 
-            <h2 class="text-2xl font-oswald font-bold text-white border-b-2 border-f1-red pb-2 mt-8 mb-4">2. Toepasselijkheid</h2>
-            <ul class="list-disc ml-5 space-y-3">
-                <li>Deze Algemene Voorwaarden zijn van toepassing op elk bezoek aan en gebruik van de Website.</li>
-                <li>Door de Website te bezoeken en te gebruiken, stemt de Gebruiker in met deze voorwaarden. Als de Gebruiker niet akkoord gaat met deze voorwaarden, dient hij of zij de Website onmiddellijk te verlaten.</li>
-                <li>Webbair behoudt zich het recht voor om deze Algemene Voorwaarden op elk moment te wijzigen. Wijzigingen worden van kracht zodra ze op de Website zijn geplaatst.</li>
-            </ul>
+            <section>
+                <h2 class="policy-h2">2. Toepasselijkheid <span class="red-speed-line"></span></h2>
+                <p class="policy-p">Door de Website te bezoeken en te gebruiken, stemt de Gebruiker in met deze voorwaarden. Webbair behoudt zich het recht voor deze voorwaarden op elk moment te wijzigen.</p>
+            </section>
 
-            <h2 class="text-2xl font-oswald font-bold text-white border-b-2 border-f1-red pb-2 mt-8 mb-4">3. Gebruik van de Website</h2>
-            <ul class="list-disc ml-5 space-y-3">
-                <li>De informatie op de Website is uitsluitend bedoeld voor algemene informatiedoeleinden. Webbair streeft ernaar de informatie actueel en correct te houden, maar kan de nauwkeurigheid, volledigheid en betrouwbaarheid ervan niet garanderen. Webbair maakt gebruik van externe API wat er voor kan zorgen dat de data niet actueel is.</li>
-                <li>De Gebruiker is verantwoordelijk voor het correct en rechtmatig gebruik van de Website. Het is niet toegestaan om de Website te gebruiken op een manier die de werking ervan verstoort, schaadt of de rechten van anderen schendt.</li>
-                <li>Het is Gebruikers niet toegestaan om zonder uitdrukkelijke schriftelijke toestemming van Webbair de inhoud van de Website te kopiëren, te verspreiden of op enigerlei wijze openbaar te maken.</li>
-            </ul>
+            <section>
+                <h2 class="policy-h2">3. Gebruik van de Website <span class="red-speed-line"></span></h2>
+                <p class="policy-p">Informatie is uitsluitend bedoeld voor algemene doeleinden. Webbair maakt gebruik van een externe API waardoor data mogelijk niet actueel is. Kopiëren of verspreiden zonder toestemming is niet toegestaan.</p>
+            </section>
 
-            <h2 class="text-2xl font-oswald font-bold text-white border-b-2 border-f1-red pb-2 mt-8 mb-4">4. Intellectuele Eigendomsrechten</h2>
-            <ul class="list-disc ml-5 space-y-3">
-                <li>Alle intellectuele eigendomsrechten met betrekking tot de Website, inclusief maar niet beperkt tot teksten, afbeeldingen, logo's, lay-out, software en databestanden, zijn eigendom van Webbair of zijn licentiegevers.</li>
-                <li>De Gebruiker mag de inhoud van de Website uitsluitend bekijken voor persoonlijk, niet-commercieel gebruik. Elk ander gebruik is strikt verboden zonder voorafgaande schriftelijke toestemming van Webbair.</li>
-            </ul>
+            <section>
+                <h2 class="policy-h2">4. Intellectuele Eigendomsrechten <span class="red-speed-line"></span></h2>
+                <p class="policy-p">Alle rechten met betrekking tot teksten, afbeeldingen, logo's en lay-out zijn eigendom van Webbair. Gebruik is enkel toegestaan voor persoonlijke, niet-commerciële doeleinden.</p>
+            </section>
 
-            <h2 class="text-2xl font-oswald font-bold text-white border-b-2 border-f1-red pb-2 mt-8 mb-4">5. Aansprakelijkheid</h2>
-            <ul class="list-disc ml-5 space-y-3">
-                <li>Webbair is niet aansprakelijk voor enige schade die voortvloeit uit het gebruik van de Website of de onmogelijkheid om de Website te gebruiken.</li>
-                <li>Webbair is niet verantwoordelijk voor de inhoud van websites van derden waarnaar de Website linkt. Het bezoeken van dergelijke websites is volledig op eigen risico van de Gebruiker.</li>
-                <li>Webbair kan de ononderbroken en foutloze werking van de Website niet garanderen en is niet aansprakelijk voor schade die voortkomt uit storingen of onderbrekingen.</li>
-            </ul>
+            <section>
+                <h2 class="policy-h2">5. Aansprakelijkheid <span class="red-speed-line"></span></h2>
+                <p class="policy-p">Webbair is niet aansprakelijk voor schade door gebruik van de Website of links van derden. Een ononderbroken werking van de site kan niet worden gegarandeerd.</p>
+            </section>
 
-            <h2 class="text-2xl font-oswald font-bold text-white border-b-2 border-f1-red pb-2 mt-8 mb-4">6. Privacy</h2>
-            <ul class="list-disc ml-5 space-y-3">
-                <li>Webbair respecteert de privacy van Gebruikers. De manier waarop Webbair persoonsgegevens verwerkt, staat beschreven in het Privacybeleid, dat op de Website beschikbaar is.</li>
-                <li>Door de Website te gebruiken, stemt de Gebruiker in met de verwerking van persoonsgegevens zoals omschreven in het Privacybeleid.</li>
-            </ul>
+            <section>
+                <h2 class="policy-h2">6. Privacy <span class="red-speed-line"></span></h2>
+                <p class="policy-p">De verwerking van persoonsgegevens staat beschreven in ons Privacybeleid. Door gebruik van de site stemt u in met deze verwerking.</p>
+            </section>
 
-            <h2 class="text-2xl font-oswald font-bold text-white border-b-2 border-f1-red pb-2 mt-8 mb-4">7. Toepasselijk recht</h2>
-            <ul class="list-disc ml-5 space-y-3">
-                <li>Op deze Algemene Voorwaarden en op elk geschil dat hieruit voortvloeit, is het Nederlandse recht van toepassing.</li>
-                <li>Alle geschillen zullen uitsluitend worden voorgelegd aan de bevoegde rechter in Nederland.</li>
-            </ul>
-        </section>
-        
+            <section>
+                <h2 class="policy-h2">7. Toepasselijk recht <span class="red-speed-line"></span></h2>
+                <p class="policy-p">Op deze voorwaarden is het Nederlands recht van toepassing. Geschillen worden voorgelegd aan de bevoegde rechter in Nederland.</p>
+            </section>
+        </div>
     </main>
 
-    <footer class="bg-black mt-12 py-8 border-t border-red-700">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-left pb-6 border-b border-gray-800">
-                <div class="md:col-span-1 text-center md:text-left language-switcher mt-4 text-white text-2xl">
-                    <span class="active-lang text-f1-red font-bold" aria-label="Nederlandse taal">🇳🇱</span>
-                    <a href="algemenevoorwaarden-en.html" class="hover:text-f1-red" aria-label="English language">🇬🇧</a>
-                    <h3 class="text-xl font-bold text-white mb-2 tracking-wider">F1SITE.NL</h3>
-                    <p class="text-gray-500 text-sm mb-2">
-                        De snelste bron voor F1 nieuws en data.
-                    </p>
+    <footer class="bg-black py-12 border-t-2 border-f1-red mt-12">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-left pb-8 border-b border-white/5">
+                <div>
+                    <h3 class="text-xl font-oswald font-black text-white italic tracking-tighter mb-2 uppercase">F1SITE.NL</h3>
+                    <p class="text-gray-500 text-xs italic uppercase tracking-widest">De snelste bron voor F1 nieuws en data.</p>
                 </div>
-                <div class="md:col-span-1 text-center md:text-left">
-                    <h4 class="text-lg font-semibold text-red-500 mb-3 uppercase">Externe Sites</h4>
+                <div>
+                    <h4 class="text-sm font-oswald font-bold text-f1-red mb-3 uppercase italic">Externe Sites</h4>
                     <ul class="space-y-2">
-                        <li>
-                            <a href="https://www.webbair.nl" target="_blank" 
-                            class="text-gray-400 text-sm hover:text-red-500 transition duration-150 block">
-                            Webbair (Ontwikkelaar)
-                            </a>
-                        </li>
+                        <li><a href="https://www.webius.nl" target="_blank" class="text-gray-400 text-xs hover:text-white transition italic uppercase">Webius (Ontwikkelaar)</a></li>
                     </ul>
                 </div>
-                <div class="md:col-span-1 text-center md:text-left">
-                    <h4 class="text-lg font-semibold text-red-500 mb-3 uppercase">Navigatie & Info</h4>
-                    <ul class="space-y-2">
-                        <li><a href="sitemap.html" class="text-gray-400 text-sm hover:text-red-500 transition duration-150 block">Sitemap</a></li>
-                        <li><a href="privacy-en.html" class="text-gray-400 text-sm hover:text-red-500 transition duration-150 block">Privacy Policy (EN)</a></li>
-                        <li><a href="algemenevoorwaarden-en.html" class="text-gray-400 text-sm hover:text-red-500 transition duration-150 block">Terms and Conditions (EN)</a></li>
-                        <li><a href="contact.html" class="text-gray-400 text-sm hover:text-red-500 transition duration-150 block">Contact</a></li>
+                <div>
+                    <h4 class="text-sm font-oswald font-bold text-f1-red mb-3 uppercase italic">Navigatie & Info</h4>
+                    <ul class="space-y-2 text-xs uppercase italic tracking-wider">
+                        <li><a href="sitemap.php" class="text-gray-400 hover:text-white transition">Sitemap</a></li>
+                        <li><a href="privacy-en.html" class="text-gray-400 hover:text-white transition">Privacy Policy (EN)</a></li>
+                        <li><a href="algemenevoorwaarden-en.html" class="text-gray-400 hover:text-white transition">Terms and Conditions (EN)</a></li>
+                        <li><a href="contact.html" class="text-gray-400 hover:text-white transition">Contact</a></li>
                     </ul>
                 </div>
             </div>
-            <div class="md:col-span-1 text-center md:text-left">
-                <p class="text-gray-500 text-xs mt-4">&copy; 2026 Webbair. Alle rechten voorbehouden.</p>
+            <div class="text-center pt-8 text-gray-600 text-[10px] font-black uppercase tracking-[0.5em] italic">
+                &copy; 2026 Webius. Alle rechten voorbehouden.
             </div>
         </div>
     </footer>
-    
-    <script>
+<script>
         document.addEventListener('DOMContentLoaded', () => {
             const nav = document.getElementById('main-nav-links');
             const toggle = document.querySelector('.menu-toggle');
-
             if (nav && toggle) {
                 toggle.addEventListener('click', () => {
                     const isVisible = nav.getAttribute('data-visible') === 'true';

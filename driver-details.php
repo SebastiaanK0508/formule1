@@ -10,17 +10,10 @@ if (empty($driverSlug)) {
 $driver = null;
 try {
     $stmt = $pdo->prepare("
-        SELECT
-            d.*,
-            t.team_color,
-            t.team_name,
-            t.full_team_name
-        FROM
-            drivers d
-        JOIN
-            teams t ON d.team_id = t.team_id
-        WHERE
-            LOWER(REPLACE(CONCAT(d.first_name, '-', d.last_name), ' ', '')) = :slug
+        SELECT d.*, t.team_color, t.team_name, t.full_team_name
+        FROM drivers d
+        JOIN teams t ON d.team_id = t.team_id
+        WHERE LOWER(REPLACE(CONCAT(d.first_name, '-', d.last_name), ' ', '')) = :slug
     ");
     $stmt->bindParam(':slug', $driverSlug);
     $stmt->execute();
@@ -28,256 +21,170 @@ try {
 
     if (!$driver) {
         http_response_code(404);
-        ?>
-        <!DOCTYPE html>
-        <html lang="nl">
-        <head>
-            <meta charset="UTF-8">
-            <title>Coureur niet gevonden | F1</title>
-            <script src="https://cdn.tailwindcss.com"></script>
-            </head>
-        <body class="bg-f1-black text-gray-100 p-8">
-            <div class="max-w-xl mx-auto bg-f1-gray p-8 rounded-lg shadow-xl text-center">
-                <h1 class="text-3xl font-oswald text-f1-red mb-4">404 - Coureur niet gevonden!</h1>
-                <p class="text-gray-300 mb-6">De coureur die u zoekt, is helaas niet gevonden in onze database.</p>
-                <a href='drivers.php' class="text-white bg-f1-red py-2 px-4 rounded hover:bg-red-700 transition">Terug naar coureuroverzicht</a>
-            </div>
-        </body>
-        </html>
-        <?php
-        exit;
+        exit("Coureur niet gevonden.");
     }
 } catch (PDOException $e) {
     http_response_code(500);
-    ?>
-    <!DOCTYPE html>
-    <html lang="nl">
-    <head>
-        <meta charset="UTF-8">
-        <title>Databasefout | F1</title>
-        <script src="https://cdn.tailwindcss.com"></script>
-    </head>
-    <body class="bg-f1-black text-gray-100 p-8">
-        <div class="max-w-xl mx-auto bg-f1-gray p-8 rounded-lg shadow-xl text-center">
-            <h1 class="text-3xl font-oswald text-f1-red mb-4">Databasefout</h1>
-            <p class="text-gray-300 mb-6">Er is een fout opgetreden bij het laden van de gegevens.</p>
-            <p class="text-xs text-red-400">Details: <?php echo htmlspecialchars($e->getMessage()); ?></p>
-            <a href='drivers.php' class="text-white bg-f1-red py-2 px-4 rounded hover:bg-red-700 transition mt-4 inline-block">Terug naar coureuroverzicht</a>
-        </div>
-    </body>
-    </html>
-    <?php
-    exit;
+    exit("Databasefout.");
 }
-$teamColor = htmlspecialchars($driver['team_color'] ?? '#CCCCCC');
+
+$teamColor = htmlspecialchars($driver['team_color'] ?? '#E10600');
 $driverFirstName = htmlspecialchars($driver['first_name']);
 $driverLastName = htmlspecialchars($driver['last_name']);
 ?>
 <!DOCTYPE html>
 <html lang="nl">
 <head>
-    <meta name="description" content="Het meest complete F1 archief & statistieken sinds 1950. Vind uitslagen, records en alle coureursdata. Duik in de F1 historie!" />
-    <script src="https://t.contentsquare.net/uxa/688c1fe6f0f7c.js"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?php echo $driverFirstName . ' ' . $driverLastName; ?> | Driver Details</title>
-    <link rel="icon" type="image/x-icon" href="/afbeeldingen/logo/f1logobgrm.png">
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Oswald:wght@400;600;700&display=swap" rel="stylesheet">
+    <title><?php echo $driverFirstName . ' ' . $driverLastName; ?> | Driver Profile</title>
     
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700;900&family=Oswald:wght@700&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
+
     <script>
         tailwind.config = {
             theme: {
                 extend: {
-                    fontFamily: {
-                        'sans': ['Roboto', 'sans-serif'],
-                        'oswald': ['Oswald', 'sans-serif'],
-                    },
-                    colors: {
-                        'f1-red': '#E10600', 
-                        'f1-black': '#15151E', 
-                        'f1-gray': '#3A3A40',
-                    }
+                    fontFamily: { 'sans': ['Inter', 'sans-serif'], 'oswald': ['Oswald', 'sans-serif'] },
+                    colors: { 'f1-red': '#E10600', 'f1-dark': '#0b0b0f', 'f1-card': '#16161c' }
                 }
             }
         }
     </script>
+
     <style>
-        @media (max-width: 767px) {
-            .main-nav[data-visible="false"] {
-                display: none;
-            }
-            .main-nav {
-                position: absolute;
-                top: 100%;
-                left: 0;
-                right: 0;
-                background-color: #15151E;
-                box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-                padding: 1rem;
-                display: flex;
-                flex-direction: column;
-                z-index: 40;
-                border-top: 1px solid #E10600;
-            }
-            .main-nav a {
-                padding: 0.5rem 0;
-            }
+        body { background-color: #0b0b0f; color: #fff; }
+        .bg-pattern {
+            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        }
+        .header-glass { background: rgba(11, 11, 15, 0.9); backdrop-filter: blur(15px); border-bottom: 1px solid rgba(225, 6, 0, 0.3); }
+        .driver-glow { 
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%; 
+            background: radial-gradient(circle at center, <?php echo $teamColor; ?>22 0%, transparent 70%);
+            pointer-events: none;
         }
     </style>
 </head>
-<body class="bg-f1-black text-gray-100 font-sans min-h-screen flex flex-col">
-    
-    <header class="bg-black shadow-lg sticky top-0 z-50">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center header-content container">
-            <h1 class="text-3xl font-oswald font-extrabold text-f1-red tracking-widest site-title">
-                FORMULA 1
-            </h1>
-            <button class="md:hidden text-2xl text-f1-red hover:text-white menu-toggle" 
-                    aria-controls="main-nav-links" aria-expanded="false" aria-label="Toggle navigation">
-                &#9776; 
-            </button>
-            <nav class="main-nav md:flex md:space-x-8 text-sm font-semibold uppercase tracking-wider" 
-                 id="main-nav-links" data-visible="false">
-                <a href="index.php" class="block py-2 px-3 md:p-0 hover:text-f1-red transition duration-150">Home</a>
-                <a href="kalender.php" class="block py-2 px-3 md:p-0 hover:text-f1-red transition duration-150">Schedule</a>
-                <a href="teams.php" class="block py-2 px-3 md:p-0 hover:text-f1-red transition duration-150">Teams</a>
-                <a href="drivers.php" class="block py-2 px-3 md:p-0 text-f1-red border-b-2 border-f1-red md:border-none active transition duration-150">Drivers</a>
-                <a href="results.php" class="block py-2 px-3 md:p-0 hover:text-f1-red transition duration-150">Results</a>
-                <a href="standings.php" class="block py-2 px-3 md:p-0 hover:text-f1-red transition duration-150">Standings</a>
+<body class="bg-pattern min-h-screen flex flex-col">
+
+    <div id="mobile-menu" class="fixed inset-y-0 right-0 w-full p-10 flex flex-col items-center justify-center">
+        <button onclick="toggleMenu()" class="absolute top-8 right-8 text-5xl font-light">&times;</button>
+        <nav class="flex flex-col space-y-10 text-4xl font-oswald font-black uppercase italic text-center">
+            <a href="index.php" onclick="toggleMenu()">Home</a>
+            <a href="kalender.php" onclick="toggleMenu()">Schedule</a>
+            <a href="teams.php" onclick="toggleMenu()">Teams</a>
+            <a href="drivers.php" class="text-f1-red" onclick="toggleMenu()">Drivers</a>
+            <a href="results.php" onclick="toggleMenu()">Results</a>
+            <a href="standings.php" onclick="toggleMenu()">Standings</a>
+        </nav>
+    </div>
+
+    <header class="header-glass sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-6 py-5 flex justify-between items-center">
+            <a href="index.php" class="text-3xl font-oswald font-black italic tracking-tighter text-white uppercase">F1SITE<span class="text-f1-red">.NL</span></a>
+            <nav class="hidden lg:flex space-x-10 text-[11px] font-bold uppercase tracking-[0.25em]">
+                <a href="index.php" class="hover:text-f1-red transition">Home</a>
+                <a href="kalender.php" class="hover:text-f1-red transition">Schedule</a>
+                <a href="teams.php" class="hover:text-f1-red transition">Teams</a>
+                <a href="drivers.php" class="text-f1-red border-b-2 border-f1-red pb-1">Drivers</a>
+                <a href="results.php" class="hover:text-f1-red transition">Results</a>
+                <a href="standings.php" class="hover:text-f1-red transition">Standings</a>
             </nav>
+            <button onclick="toggleMenu()" class="lg:hidden text-white text-3xl">☰</button>
         </div>
     </header>
-    
-    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-8 flex-grow container">
+
+    <main class="max-w-7xl mx-auto px-6 py-12 flex-grow">
         
-        <div class="bg-f1-gray p-6 rounded-lg shadow-xl mb-8 page-header-section">
-            <h1 class="text-3xl md:text-5xl font-oswald font-extrabold uppercase text-white page-heading text-center">
-                <span style="color: <?php echo $teamColor; ?>;">#<?php echo htmlspecialchars($driver['driver_number']); ?></span> 
-                <?php echo $driverFirstName . ' ' . $driverLastName; ?>
-            </h1>
-            <p class="text-center text-xl text-gray-400 font-semibold mt-1"><?php echo htmlspecialchars($driver['full_team_name']); ?></p>
-        </div>
-
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 driver-details-grid bg-f1-gray p-6 rounded-lg shadow-xl">
+        <div class="flex flex-col lg:flex-row gap-12 items-start">
             
-            <div class="md:col-span-2 driver-image-container">
-                <?php if (!empty($driver['image'])): ?>
-                    <img src="<?php echo htmlspecialchars($driver['image']); ?>" 
-                         alt="<?php echo $driverFirstName . ' ' . $driverLastName; ?>" 
-                         class="w-full h-auto object-cover rounded-lg shadow-2xl driver-image-details">
-                <?php else: ?>
-                    <div class="w-full h-64 bg-gray-700 flex items-center justify-center rounded-lg text-gray-400">Geen afbeelding beschikbaar</div>
-                <?php endif; ?>
+            <div class="w-full lg:w-5/12 sticky top-32">
+                <div class="relative group">
+                    <div class="driver-glow"></div>
+                    <?php if (!empty($driver['image'])): ?>
+                        <img src="<?php echo htmlspecialchars($driver['image']); ?>" 
+                             alt="<?php echo $driverFirstName; ?>" 
+                             class="w-full h-auto rounded-[2rem] shadow-[0_0_50px_rgba(0,0,0,0.8)] border border-white/10 relative z-10">
+                    <?php endif; ?>
+                    
+                    <div class="absolute -bottom-10 -right-4 text-[12rem] font-oswald font-black italic opacity-10 pointer-events-none select-none z-0" style="color: <?php echo $teamColor; ?>;">
+                        <?php echo htmlspecialchars($driver['driver_number']); ?>
+                    </div>
+                </div>
             </div>
-            
-            <div class="md:col-span-1 border-l-4 pl-4 driver-info-container" style="border-left-color: <?php echo $teamColor; ?>;">
-                <dl class="driver-details-list space-y-3">
-                    <div class="flex justify-between items-center">
-                        <dt class="font-bold text-gray-300">Team:</dt>
-                        <dd class="text-white font-semibold" style="color: <?php echo $teamColor; ?>;"><?php echo htmlspecialchars($driver['team_name']); ?></dd>
+
+            <div class="w-full lg:w-7/12">
+                <div class="mb-10">
+                    <div class="flex items-center gap-4 mb-4">
+                        <span class="h-[2px] w-12 bg-f1-red"></span>
+                        <span class="text-xs font-black uppercase tracking-[0.4em] text-gray-400 italic">
+                            <?php echo htmlspecialchars($driver['full_team_name']); ?>
+                        </span>
+                    </div>
+                    <h1 class="text-6xl md:text-8xl font-oswald font-black uppercase italic tracking-tighter leading-[0.85] mb-6">
+                        <?php echo $driverFirstName; ?><br>
+                        <span class="text-f1-red"><?php echo $driverLastName; ?></span>
+                    </h1>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-10">
+                    <div class="bg-f1-card p-8 rounded-3xl border border-white/5 relative overflow-hidden group">
+                        <div class="absolute top-0 left-0 w-1 h-full" style="background: <?php echo $teamColor; ?>;"></div>
+                        <span class="text-[10px] font-black uppercase tracking-widest text-gray-500">Number</span>
+                        <p class="text-4xl font-oswald font-black italic mt-2">#<?php echo htmlspecialchars($driver['driver_number']); ?></p>
                     </div>
 
-                    <div class="flex justify-between items-center border-t border-gray-700 pt-3">
-                        <dt class="font-bold text-gray-300">Driver Number:</dt>
-                        <dd class="text-white font-bold text-2xl">#<?php echo htmlspecialchars($driver['driver_number']); ?></dd>
+                    <div class="bg-f1-card p-8 rounded-3xl border border-white/5 relative overflow-hidden">
+                        <div class="absolute top-0 left-0 w-1 h-full" style="background: <?php echo $teamColor; ?>;"></div>
+                        <span class="text-[10px] font-black uppercase tracking-widest text-gray-500">Championships</span>
+                        <p class="text-4xl font-oswald font-black italic mt-2"><?php echo htmlspecialchars($driver['championships_won'] ?? '0'); ?></p>
                     </div>
 
-                    <div class="flex justify-between items-center border-t border-gray-700 pt-3">
-                        <dt class="font-bold text-gray-300">Nationality:</dt>
-                        <dd class="text-white flex items-center">
+                    <div class="bg-f1-card p-8 rounded-3xl border border-white/5">
+                        <span class="text-[10px] font-black uppercase tracking-widest text-gray-500">Nationality</span>
+                        <div class="flex items-center gap-3 mt-3">
                             <?php if (!empty($driver['flag_url'])): ?>
-                                <img src="<?php echo htmlspecialchars($driver['flag_url']); ?>" alt="Vlag" class="flag-icon w-6 h-auto mr-2 rounded shadow-md">
+                                <img src="<?php echo htmlspecialchars($driver['flag_url']); ?>" class="w-8 h-auto rounded shadow-sm" alt="Flag">
                             <?php endif; ?>
-                            <?php echo htmlspecialchars($driver['nationality']); ?>
-                        </dd>
+                            <p class="text-xl font-bold uppercase tracking-tight"><?php echo htmlspecialchars($driver['nationality']); ?></p>
+                        </div>
                     </div>
 
-                    <?php if (!empty($driver['date_of_birth'])): ?>
-                        <div class="flex justify-between items-center border-t border-gray-700 pt-3">
-                            <dt class="font-bold text-gray-300">Date of birth:</dt>
-                            <dd class="text-white"><?php echo htmlspecialchars(date('d-m-Y', strtotime($driver['date_of_birth']))); ?></dd>
-                        </div>
-                    <?php endif; ?>
-                    
-                    <?php if (isset($driver['career_points'])): ?>
-                        <div class="flex justify-between items-center border-t border-gray-700 pt-3">
-                            <dt class="font-bold text-gray-300">Career points:</dt>
-                            <dd class="text-f1-red font-bold text-xl"><?php echo htmlspecialchars(number_format($driver['career_points'], 1, ',', '.')); ?></dd>
-                        </div>
-                    <?php endif; ?>
-                    
-                    <?php if (isset($driver['championships_won'])): ?>
-                        <div class="flex justify-between items-center border-t border-gray-700 pt-3">
-                            <dt class="font-bold text-gray-300">Championsships won:</dt>
-                            <dd class="text-white font-bold text-xl"><?php echo htmlspecialchars($driver['championships_won']); ?></dd>
-                        </div>
-                    <?php endif; ?>
-                </dl>
-            </div>
-        </div>
+                    <div class="bg-f1-card p-8 rounded-3xl border border-white/5">
+                        <span class="text-[10px] font-black uppercase tracking-widest text-gray-500">Career Points</span>
+                        <p class="text-3xl font-oswald font-black italic mt-2 text-f1-red">
+                            <?php echo number_format($driver['career_points'] ?? 0, 1, ',', '.'); ?>
+                        </p>
+                    </div>
+                </div>
 
-        <?php if (!empty($driver['description'])): ?>
-            <div class="bg-f1-gray p-6 rounded-lg shadow-xl mt-8 driver-description">
-                <h2 class="text-2xl font-oswald text-f1-red mb-4 border-b border-gray-700 pb-2">About the Driver</h2>
-                <p class="text-gray-300 leading-relaxed"><?php echo nl2br(htmlspecialchars($driver['description'])); ?></p>
-            </div>
-        <?php endif; ?>
-
-        <div class="mt-8 text-center">
-            <a href="drivers.php" class="bg-f1-red text-white py-3 px-6 rounded-lg font-bold uppercase tracking-wider hover:bg-red-700 transition back-link">
-                &larr; Back to Drivers list
-            </a>
-        </div>
-    </main>
-    
-    <footer class="bg-black mt-12 py-8 border-t border-red-700">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-left pb-6 border-b border-gray-800">
-                <div class="md:col-span-1 text-center md:text-left">
-                    <h3 class="text-xl font-bold text-white mb-2 tracking-wider">F1SITE.NL</h3>
-                    <p class="text-gray-500 text-sm mb-2">
-                        De snelste bron voor F1 nieuws en data.
+                <?php if (!empty($driver['description'])): ?>
+                <div class="bg-white/5 p-10 rounded-[2.5rem] border border-white/5 relative mb-10">
+                    <h3 class="text-xs font-black uppercase tracking-[0.4em] text-f1-red mb-6 italic">The Biography</h3>
+                    <p class="text-gray-400 leading-relaxed text-sm font-medium italic">
+                        <?php echo nl2br(htmlspecialchars($driver['description'])); ?>
                     </p>
                 </div>
-                <div class="md:col-span-1 text-center md:text-left">
-                    <h4 class="text-lg font-semibold text-red-500 mb-3 uppercase">Externe Sites</h4>
-                    <ul class="space-y-2">
-                        <li>
-                            <a href="https://www.webbair.nl" target="_blank" 
-                            class="text-gray-400 text-sm hover:text-red-500 transition duration-150 block">
-                            Webbair (Ontwikkelaar)
-                            </a>
-                        </li>
-                    </ul>
-                </div>
-                <div class="md:col-span-1 text-center md:text-left">
-                    <h4 class="text-lg font-semibold text-red-500 mb-3 uppercase">Navigatie & Info</h4>
-                    <ul class="space-y-2">
-                        <li><a href="sitemap.html" class="text-gray-400 text-sm hover:text-red-500 transition duration-150 block">Sitemap</a></li>
-                        <li><a href="privacy-en.html" class="text-gray-400 text-sm hover:text-red-500 transition duration-150 block">Privacy Policy (EN)</a></li>
-                        <li><a href="algemenevoorwaarden-en.html" class="text-gray-400 text-sm hover:text-red-500 transition duration-150 block">Terms and Conditions (EN)</a></li>
-                        <li><a href="contact.html" class="text-gray-400 text-sm hover:text-red-500 transition duration-150 block">Contact</a></li>
-                    </ul>
-                </div>
-            </div>
-            <div class="md:col-span-1 text-center md:text-left">
-                <p class="text-gray-500 text-xs mt-4">&copy; <?php echo (date('Y')); ?> Webbair. Alle rechten voorbehouden.</p>
+                <?php endif; ?>
+
+                <a href="drivers.php" class="inline-flex items-center gap-4 bg-white text-black px-10 py-5 rounded-full font-black uppercase text-[10px] tracking-[0.3em] hover:bg-f1-red hover:text-white transition-all duration-500">
+                    <span>&larr;</span> Back to Ranking
+                </a>
             </div>
         </div>
+    </main>
+    <footer class="bg-black py-16 mt-12 border-t-2 border-f1-red">
+        <div class="max-w-7xl mx-auto px-6 text-center">
+            <p class="text-gray-600 text-[10px] font-black uppercase tracking-[0.6em] italic">&copy; 2026 WEBIUS.NL - ALL RIGHTS RESERVED</p>
+        </div>
     </footer>
-    
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            const nav = document.getElementById('main-nav-links');
-            const toggle = document.querySelector('.menu-toggle');
-
-            toggle.addEventListener('click', () => {
-                const isVisible = nav.getAttribute('data-visible') === 'true';
-                nav.setAttribute('data-visible', String(!isVisible));
-                toggle.setAttribute('aria-expanded', String(!isVisible));
-            });
+            AOS.init({ duration: 800, once: true });
+            window.toggleMenu = () => { document.getElementById('mobile-menu').classList.toggle('active'); };
         });
-    </script>
+    </script> 
 </body>
 </html>

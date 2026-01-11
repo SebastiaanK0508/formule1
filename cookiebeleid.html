@@ -3,61 +3,129 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cookiebeleid - F1SITE.NL</title>
+    <title>Cookiebeleid | F1SITE.NL</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700;900&family=Oswald:wght@700&display=swap" rel="stylesheet">
+    
+    <script src="https://t.contentsquare.net/uxa/688c1fe6f0f7c.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;700&family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { 
+                        'sans': ['Inter', 'sans-serif'], 
+                        'oswald': ['Oswald', 'sans-serif'] 
+                    },
+                    colors: { 
+                        'f1-red': '#E10600', 
+                        'f1-black': '#0b0b0f', 
+                        'f1-card': '#16161c' 
+                    }
+                }
+            }
+        }
+    </script>
+
     <style>
-        body { font-family: 'Roboto', sans-serif; background-color: #15151E; color: #D1D5DB; }
-        .font-oswald { font-family: 'Oswald', sans-serif; }
-        .f1-red { color: #E10600; }
-        .content-card { background-color: #1F1F27; border-left: 4px solid #E10600; }
+        body { background-color: #0b0b0f; color: #fff; }
+        .bg-pattern {
+            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.02'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        }
+
+        .elite-card {
+            @apply bg-f1-card/50 p-8 md:p-12 rounded-[2.5rem] border border-white/5 shadow-2xl backdrop-blur-sm;
+        }
+
+        .red-speed-line {
+            height: 3px;
+            background: linear-gradient(90deg, #E10600 0%, transparent 100%);
+            width: 100px;
+            margin-top: 10px;
+            border-radius: 99px;
+        }
+
+        .policy-h2 { @apply text-2xl font-oswald font-black uppercase italic text-white mt-12 mb-4 flex flex-col; }
+        .policy-p { @apply text-gray-400 leading-relaxed mb-6 text-sm md:text-base italic; }
+        
+        @media (max-width: 767px) {
+            .main-nav[data-visible="false"] { display: none; }
+            .main-nav {
+                position: absolute; top: 100%; left: 0; right: 0;
+                background-color: #0b0b0f; padding: 1.5rem; display: flex;
+                flex-direction: column; z-index: 100; border-bottom: 2px solid #E10600;
+            }
+        }
+
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #0b0b0f; }
+        ::-webkit-scrollbar-thumb { background: #E10600; border-radius: 10px; }
     </style>
 </head>
-<body class="py-12 px-4">
+<body class="bg-pattern min-h-screen flex flex-col italic">
 
-    <div class="max-w-4xl mx-auto">
-        <a href="index.php" class="text-f1-red hover:underline mb-8 inline-block font-oswald uppercase text-sm">&larr; Terug naar Home</a>
-        
-        <header class="mb-10 text-center md:text-left">
-            <h1 class="text-4xl font-oswald font-bold text-white uppercase tracking-tight">Cookiebeleid</h1>
-            <p class="text-gray-500 mt-2">Laatst bijgewerkt: <?php echo date('d-m-Y'); ?></p>
-        </header>
-
-        <div class="content-card p-6 md:p-10 rounded-lg shadow-2xl space-y-8">
+    <header class="bg-black/90 backdrop-blur-md sticky top-0 z-50 border-b border-f1-red/30">
+        <div class="max-w-7xl mx-auto px-6 py-5 flex justify-between items-center relative">
+            <h1 class="text-3xl font-oswald font-black italic text-white uppercase tracking-tighter">
+                F1SITE<span class="text-f1-red">.NL</span>
+            </h1>
             
+            <button class="md:hidden text-2xl text-f1-red menu-toggle" aria-expanded="false">&#9776;</button>
+
+            <nav class="main-nav hidden md:flex space-x-8 text-[11px] font-black uppercase tracking-widest text-white" id="main-nav-links" data-visible="false">
+                <a href="index.php" class="hover:text-f1-red transition">Home</a>
+                <a href="kalender.php" class="hover:text-f1-red transition">Schedule</a>
+                <a href="teams.php" class="hover:text-f1-red transition">Teams</a>
+                <a href="drivers.php" class="hover:text-f1-red transition">Drivers</a>
+                <a href="results.php" class="hover:text-f1-red transition">Results</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="max-w-4xl mx-auto px-6 py-16 flex-grow">
+        
+        <div class="mb-16 text-center">
+            <h1 class="text-6xl md:text-8xl font-oswald font-black uppercase italic tracking-tighter leading-none mb-4">
+                COOKIE<span class="text-f1-red">BELEID</span>
+            </h1>
+            <p class="text-gray-500 text-[10px] font-black uppercase tracking-[0.3em]">Laatst bijgewerkt: <?php echo date('d-m-Y'); ?></p>
+        </div>
+
+        <div class="elite-card">
             <section>
-                <h2 class="text-xl font-oswald font-bold text-white uppercase mb-3">1. Wat zijn cookies?</h2>
-                <p class="leading-relaxed text-gray-400">
-                    Cookies zijn kleine tekstbestanden die door je browser op je computer of mobiele apparaat worden opgeslagen wanneer je F1SITE.NL bezoekt. Ze helpen ons om de website goed te laten functioneren en om inzicht te krijgen in hoe de site wordt gebruikt.
+                <h2 class="policy-h2">1. Wat zijn cookies? <span class="red-speed-line"></span></h2>
+                <p class="policy-p">
+                    Cookies zijn kleine tekstbestanden die door je browser op je apparaat worden opgeslagen. Ze helpen ons om de website goed te laten functioneren en om inzicht te krijgen in hoe de site wordt gebruikt.
                 </p>
             </section>
 
             <section>
-                <h2 class="text-xl font-oswald font-bold text-white uppercase mb-3">2. Welke cookies gebruiken wij?</h2>
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left text-sm">
+                <h2 class="policy-h2">2. Welke cookies gebruiken wij? <span class="red-speed-line"></span></h2>
+                <div class="overflow-x-auto mt-6">
+                    <table class="w-full text-left text-[11px] font-bold uppercase tracking-widest italic">
                         <thead>
-                            <tr class="border-b border-gray-700">
-                                <th class="py-2 text-white font-bold">Type</th>
-                                <th class="py-2 text-white font-bold">Doel</th>
-                                <th class="py-2 text-white font-bold">Bewaartermijn</th>
+                            <tr class="border-b border-white/10 text-f1-red">
+                                <th class="py-4">Type</th>
+                                <th class="py-4">Doel</th>
+                                <th class="py-4 text-right">Termijn</th>
                             </tr>
                         </thead>
-                        <tbody class="text-gray-400">
-                            <tr class="border-b border-gray-800">
-                                <td class="py-3 font-bold text-f1-red uppercase">Functioneel</td>
-                                <td class="py-3">Noodzakelijk voor de werking van de site (o.a. je cookievoorkeuren).</td>
-                                <td class="py-3">1 jaar</td>
+                        <tbody class="text-gray-400 divide-y divide-white/5">
+                            <tr class="hover:bg-white/5 transition-colors">
+                                <td class="py-4 text-white">Functioneel</td>
+                                <td class="py-4">Noodzakelijk voor de werking van de site.</td>
+                                <td class="py-4 text-right">1 jaar</td>
                             </tr>
-                            <tr class="border-b border-gray-800">
-                                <td class="py-3 font-bold text-f1-red uppercase">Analyse</td>
-                                <td class="py-3">Anonieme statistieken via Google Analytics om de site te verbeteren.</td>
-                                <td class="py-3">2 jaar</td>
+                            <tr class="hover:bg-white/5 transition-colors">
+                                <td class="py-4 text-white">Analyse</td>
+                                <td class="py-4">Anonieme statistieken voor verbetering.</td>
+                                <td class="py-4 text-right">2 jaar</td>
                             </tr>
-                            <tr class="border-b border-gray-800">
-                                <td class="py-3 font-bold text-f1-red uppercase">Marketing</td>
-                                <td class="py-3">Tonen van relevante advertenties gebaseerd op surfgedrag.</td>
-                                <td class="py-3">Sessie/1 jaar</td>
+                            <tr class="hover:bg-white/5 transition-colors">
+                                <td class="py-4 text-white">Marketing</td>
+                                <td class="py-4">Relevante advertenties op maat.</td>
+                                <td class="py-4 text-right">1 jaar</td>
                             </tr>
                         </tbody>
                     </table>
@@ -65,30 +133,70 @@
             </section>
 
             <section>
-                <h2 class="text-xl font-oswald font-bold text-white uppercase mb-3">3. Voorkeuren beheren</h2>
-                <p class="leading-relaxed text-gray-400">
-                    Je kunt je cookie-instellingen op elk gewenst moment aanpassen door je browsergeschiedenis en cookies te wissen. Bij een volgend bezoek aan de website zal de cookie-melding opnieuw verschijnen.
+                <h2 class="policy-h2">3. Voorkeuren beheren <span class="red-speed-line"></span></h2>
+                <p class="policy-p">
+                    Je kunt je cookie-instellingen aanpassen door je browsergeschiedenis te wissen. Bij een volgend bezoek verschijnt de melding opnieuw.
                 </p>
-                <button onclick="clearPreferences()" class="mt-4 px-4 py-2 bg-gray-700 hover:bg-f1-red text-white text-xs font-bold uppercase rounded transition">
-                    Verwijder mijn opgeslagen voorkeuren
+                <button onclick="clearPreferences()" class="mt-4 bg-white/5 hover:bg-f1-red text-white py-3 px-6 rounded-full font-black uppercase tracking-widest text-[10px] transition-all border border-white/10">
+                    Verwijder mijn voorkeuren
                 </button>
             </section>
 
-            <section class="border-t border-gray-800 pt-6">
-                <p class="text-sm text-gray-500 italic">
-                    Dit cookiebeleid is onderdeel van onze algemene voorwaarden en privacyverklaring. Voor vragen kun je contact opnemen via de contactpagina.
+            <section class="mt-12 pt-8 border-t border-white/5">
+                <p class="text-[10px] text-gray-600 uppercase font-black leading-loose">
+                    Dit beleid is onderdeel van onze algemene voorwaarden en privacyverklaring.
                 </p>
             </section>
-
         </div>
-    </div>
+    </main>
+
+    <footer class="bg-black py-12 border-t-2 border-f1-red mt-12">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-left pb-8 border-b border-white/5">
+                <div>
+                    <h3 class="text-xl font-oswald font-black text-white italic tracking-tighter mb-2 uppercase">F1SITE.NL</h3>
+                    <p class="text-gray-500 text-xs italic uppercase tracking-widest">De snelste bron voor F1 nieuws en data.</p>
+                </div>
+                <div>
+                    <h4 class="text-sm font-oswald font-bold text-f1-red mb-3 uppercase italic">Externe Sites</h4>
+                    <ul class="space-y-2">
+                        <li><a href="https://www.webbair.nl" target="_blank" class="text-gray-400 text-xs hover:text-white transition italic uppercase">Webbair (Ontwikkelaar)</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-sm font-oswald font-bold text-f1-red mb-3 uppercase italic">Navigatie & Info</h4>
+                    <ul class="space-y-2 text-xs uppercase italic tracking-wider">
+                        <li><a href="sitemap.php" class="text-gray-400 hover:text-white transition">Sitemap</a></li>
+                        <li><a href="privacy.html" class="text-gray-400 hover:text-white transition text-f1-red">Privacy Policy (NL)</a></li>
+                        <li><a href="algemenevoorwaarden.html" class="text-gray-400 hover:text-white transition">Terms and Conditions (NL)</a></li>
+                        <li><a href="contact.html" class="text-gray-400 hover:text-white transition">Contact</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="text-center pt-8 text-gray-600 text-[10px] font-black uppercase tracking-[0.5em] italic">
+                &copy; 2026 Webbair. Alle rechten voorbehouden.
+            </div>
+        </div>
+    </footer>
 
     <script>
+        // Cookie reset functie
         function clearPreferences() {
             localStorage.removeItem('f1_cookie_choice');
             alert('Je voorkeuren zijn gewist. De melding verschijnt weer bij je volgende bezoek.');
             window.location.href = 'index.php';
         }
+        document.addEventListener('DOMContentLoaded', () => {
+            const nav = document.getElementById('main-nav-links');
+            const toggle = document.querySelector('.menu-toggle');
+            if (nav && toggle) {
+                toggle.addEventListener('click', () => {
+                    const isVisible = nav.getAttribute('data-visible') === 'true';
+                    nav.setAttribute('data-visible', String(!isVisible));
+                    toggle.setAttribute('aria-expanded', String(!isVisible));
+                });
+            }
+        });
     </script>
 </body>
 </html>
