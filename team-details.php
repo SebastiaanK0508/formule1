@@ -190,7 +190,7 @@ try {
         <?php endif; ?>
 
         <section class="mb-20">
-            <h2 class="text-3xl font-oswald font-black uppercase italic italic tracking-tighter mb-10 text-center">
+            <h2 class="text-3xl font-oswald font-black uppercase italic tracking-tighter mb-10 text-center">
                 ACTIVE <span class="text-f1-red">LINEUP</span>
             </h2>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
@@ -199,30 +199,38 @@ try {
                     $driverPageUrl = 'driver-details.php?slug=' . $driverSlug;
                 ?>
                 <a href="<?php echo htmlspecialchars($driverPageUrl); ?>" 
-                   class="group bg-f1-card rounded-[2.5rem] overflow-hidden border border-white/5 flex flex-col sm:flex-row items-center hover:border-white/20 transition-all duration-500" data-aos="zoom-in">
+                   class="group bg-f1-card rounded-[2.5rem] overflow-hidden border border-white/5 flex flex-col md:flex-row hover:border-white/20 transition-all duration-500" data-aos="zoom-in">
                     
-                    <div class="w-full sm:w-1/2 relative driver-image-container overflow-hidden h-64 sm:h-auto self-stretch">
+                    <div class="w-full md:w-1/2 h-72 md:h-96 relative overflow-hidden">
                         <img src="<?php echo htmlspecialchars($driver['image'] ?: '/afbeeldingen/coureurs/default.jpg'); ?>" 
-                             alt="Driver" class="w-full h-full object-cover grayscale group-hover:grayscale-0 group-hover:scale-110 transition-all duration-700">
+                             alt="Driver" 
+                             class="w-full h-full object-cover grayscale group-hover:grayscale-0 group-hover:scale-110 transition-all duration-700 object-top">
+                        <div class="absolute inset-0 bg-gradient-to-t from-f1-card via-transparent to-transparent opacity-60"></div>
                     </div>
                     
-                    <div class="w-full sm:w-1/2 p-10 text-center sm:text-left">
-                        <span class="text-5xl font-oswald font-black italic opacity-20" style="color: <?php echo $teamColor; ?>;">
+                    <div class="w-full md:w-1/2 p-8 flex flex-col justify-center relative bg-f1-card">
+                        <div class="absolute top-4 right-8 text-5xl font-oswald font-black italic opacity-10" style="color: <?php echo $teamColor; ?>;">
                             #<?php echo htmlspecialchars($driver['driver_number']); ?>
-                        </span>
-                        <h3 class="text-lg font-bold text-gray-400 mt-4 leading-none"><?php echo htmlspecialchars($driver['first_name']); ?></h3>
-                        <h4 class="text-3xl font-oswald font-black uppercase italic tracking-tight group-hover:text-f1-red transition-colors">
-                            <?php echo htmlspecialchars($driver['last_name']); ?>
-                        </h4>
-                        <div class="mt-6 inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-f1-red">
-                            Profile <span class="group-hover:translate-x-2 transition-transform">→</span>
+                        </div>
+                        
+                        <div class="relative z-10">
+                            <h3 class="text-sm font-bold text-gray-400 uppercase tracking-widest leading-none mb-1">
+                                <?php echo htmlspecialchars($driver['first_name']); ?>
+                            </h3>
+                            <h4 class="text-3xl font-oswald font-black uppercase italic tracking-tight group-hover:text-f1-red transition-colors">
+                                <?php echo htmlspecialchars($driver['last_name']); ?>
+                            </h4>
+                            
+                            <div class="mt-6 flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-f1-red">
+                                <span>View Profile</span>
+                                <span class="group-hover:translate-x-2 transition-transform duration-300">→</span>
+                            </div>
                         </div>
                     </div>
                 </a>
                 <?php endforeach; ?>
             </div>
         </section>
-
         <div class="text-center">
             <a href="teams.php" class="inline-block bg-white text-black px-12 py-5 rounded-full font-black uppercase text-[10px] tracking-[0.3em] hover:bg-f1-red hover:text-white transition-all duration-300">
                 Back to Constructor list
