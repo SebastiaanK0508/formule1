@@ -154,27 +154,27 @@ try {
             <div class="grid grid-cols-1 md:grid-cols-3 gap-12 text-left pb-12 border-b border-white/5">
                 <div class="space-y-4 text-center md:text-left">
                     <h3 class="text-2xl font-oswald font-black text-white italic tracking-tighter uppercase">F1SITE<span class="text-f1-red">.NL</span></h3>
-                    <p class="text-gray-500 text-sm font-medium leading-relaxed max-w-xs mx-auto md:mx-0">De snelste bron voor het laatste Formule 1 nieuws en statistieken.</p>
+                    <p class="text-gray-500 text-sm font-medium leading-relaxed max-w-xs mx-auto md:mx-0">The fastest source for the latest Formula 1 news and statistics.</p>
                 </div>
 
                 <div class="text-center md:text-left">
-                    <h4 class="text-xs font-black text-f1-red mb-6 uppercase tracking-[0.3em]">Ontwikkelaar</h4>
+                    <h4 class="text-xs font-black text-f1-red mb-6 uppercase tracking-[0.3em]">Developer</h4>
                     <ul class="space-y-4">
                         <li><a href="https://www.webius.nl" target="_blank" class="text-gray-400 text-sm font-bold hover:text-white transition duration-200 block uppercase tracking-wider">Webius</a></li>
                     </ul>
                 </div>
-
                 <div class="text-center md:text-left">
-                    <h4 class="text-xs font-black text-f1-red mb-6 uppercase tracking-[0.3em]">Navigatie & Info</h4>
+                    <h4 class="text-xs font-black text-f1-red mb-6 uppercase tracking-[0.3em]">Navigation & Info</h4>
                     <ul class="space-y-4">
-                        <li><a href="sitemap.html" class="text-gray-400 text-sm font-bold hover:text-white transition duration-200 block uppercase tracking-wider">Sitemap</a></li>
+                        <li><a href="sitemap.php" class="text-gray-400 text-sm font-bold hover:text-white transition duration-200 block uppercase tracking-wider">Sitemap</a></li>
                         <li><a href="privacy-en.html" class="text-gray-400 text-sm font-bold hover:text-white transition duration-200 block uppercase tracking-wider">Privacy Policy</a></li>
+                        <li><a href="algemenevoorwaarden-en.html" class="text-gray-400 text-sm font-bold hover:text-white transition duration-200 block uppercase tracking-wider">Terms & Conditions</a></li>
                         <li><a href="contact.html" class="text-gray-400 text-sm font-bold hover:text-white transition duration-200 block uppercase tracking-wider">Contact</a></li>
                     </ul>
                 </div>
             </div>
             <div class="pt-10 text-center md:text-left">
-                <p class="text-gray-600 text-[10px] font-black uppercase tracking-[0.5em] italic">&copy; 2026 WEBIUS. Alle rechten voorbehouden.</p>
+                <p class="text-gray-600 text-[10px] font-black uppercase tracking-[0.5em] italic">&copy; 2026 WEBIUS. All rights reserved.</p>
             </div>
         </div>
     </footer>

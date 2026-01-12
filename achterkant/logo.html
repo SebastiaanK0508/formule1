@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700;900&family=Oswald:wght@700&display=swap" rel="stylesheet">
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { 'sans': ['Inter', 'sans-serif'], 'oswald': ['Oswald', 'sans-serif'] },
+                    colors: { 'f1-red': '#E10600', 'f1-dark': '#0b0b0f', 'f1-card': '#16161c' }
+                }
+            }
+        }
+    </script>
+    <style>
+        body{
+            background-color: black;
+        }
+    </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+<svg viewBox="0 0 450 80" xmlns="http://www.w3.org/2000/svg" class="w-full max-w-[800px] drop-shadow-2xl">
+    <defs>
+        <style>
+            .f1-font { font: italic 900 65px 'Oswald', 'Inter', sans-serif; letter-spacing: -3px; }
+            .f1-white { fill: #ffffff; }
+            .f1-red { fill: #E10600; }
+        </style>
+    </defs>  
+    <text x="0" y="60" class="f1-font">
+        <tspan class="f1-white">F1SITE</tspan>
+        <tspan class="f1-red">.NL</tspan>
+    </text>
+</svg>
+</body>
+</html>

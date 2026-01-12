@@ -174,7 +174,7 @@
     <footer class="bg-black py-12 mt-20 border-t-2 border-f1-red">
         <div class="max-w-7xl mx-auto px-6 text-center">
             <h3 class="text-2xl font-oswald font-black text-white italic tracking-tighter uppercase mb-4">F1SITE<span class="text-f1-red">.NL</span></h3>
-            <p class="text-gray-600 text-[10px] font-black uppercase tracking-[0.5em]">&copy; 2026 Webbair. Alle rechten voorbehouden.</p>
+            <p class="text-gray-600 text-[10px] font-black uppercase tracking-[0.5em]">&copy; 2026 WEBIUS. All rights reserved.</p>
         </div>
     </footer>
 

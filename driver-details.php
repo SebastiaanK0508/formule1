@@ -6,7 +6,6 @@ if (empty($driverSlug)) {
     header('Location: index.php');
     exit;
 }
-
 $driver = null;
 try {
     $stmt = $pdo->prepare("
@@ -18,7 +17,6 @@ try {
     $stmt->bindParam(':slug', $driverSlug);
     $stmt->execute();
     $driver = $stmt->fetch(PDO::FETCH_ASSOC);
-
     if (!$driver) {
         http_response_code(404);
         exit("Coureur niet gevonden.");
@@ -27,7 +25,6 @@ try {
     http_response_code(500);
     exit("Databasefout.");
 }
-
 $teamColor = htmlspecialchars($driver['team_color'] ?? '#E10600');
 $driverFirstName = htmlspecialchars($driver['first_name']);
 $driverLastName = htmlspecialchars($driver['last_name']);
@@ -52,7 +49,6 @@ $driverLastName = htmlspecialchars($driver['last_name']);
             }
         }
     </script>
-
     <style>
         body { background-color: #0b0b0f; color: #fff; overflow-x: hidden; }
         .bg-pattern {
@@ -69,7 +65,6 @@ $driverLastName = htmlspecialchars($driver['last_name']);
             display: flex;
         }
         #mobile-menu.active { transform: translateX(0); }
-
         .driver-glow { 
             position: absolute; top: 0; left: 0; width: 100%; height: 100%; 
             background: radial-gradient(circle at center, <?php echo $teamColor; ?>22 0%, transparent 70%);
@@ -123,7 +118,6 @@ $driverLastName = htmlspecialchars($driver['last_name']);
                     </div>
                 </div>
             </div>
-
             <div class="w-full lg:w-7/12">
                 <div class="mb-10">
                     <div class="flex items-center gap-4 mb-4">
@@ -137,20 +131,17 @@ $driverLastName = htmlspecialchars($driver['last_name']);
                         <span class="text-f1-red"><?php echo $driverLastName; ?></span>
                     </h1>
                 </div>
-
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-10">
                     <div class="bg-f1-card p-8 rounded-3xl border border-white/5 relative overflow-hidden group">
                         <div class="absolute top-0 left-0 w-1 h-full" style="background: <?php echo $teamColor; ?>;"></div>
                         <span class="text-[10px] font-black uppercase tracking-widest text-gray-500">Number</span>
                         <p class="text-4xl font-oswald font-black italic mt-2">#<?php echo htmlspecialchars($driver['driver_number']); ?></p>
                     </div>
-
                     <div class="bg-f1-card p-8 rounded-3xl border border-white/5 relative overflow-hidden">
                         <div class="absolute top-0 left-0 w-1 h-full" style="background: <?php echo $teamColor; ?>;"></div>
                         <span class="text-[10px] font-black uppercase tracking-widest text-gray-500">Championships</span>
                         <p class="text-4xl font-oswald font-black italic mt-2"><?php echo htmlspecialchars($driver['championships_won'] ?? '0'); ?></p>
                     </div>
-
                     <div class="bg-f1-card p-8 rounded-3xl border border-white/5">
                         <span class="text-[10px] font-black uppercase tracking-widest text-gray-500">Nationality</span>
                         <div class="flex items-center gap-3 mt-3">
@@ -160,7 +151,6 @@ $driverLastName = htmlspecialchars($driver['last_name']);
                             <p class="text-xl font-bold uppercase tracking-tight"><?php echo htmlspecialchars($driver['nationality']); ?></p>
                         </div>
                     </div>
-
                     <div class="bg-f1-card p-8 rounded-3xl border border-white/5">
                         <span class="text-[10px] font-black uppercase tracking-widest text-gray-500">Career Points</span>
                         <p class="text-3xl font-oswald font-black italic mt-2 text-f1-red">
@@ -168,7 +158,6 @@ $driverLastName = htmlspecialchars($driver['last_name']);
                         </p>
                     </div>
                 </div>
-
                 <?php if (!empty($driver['description'])): ?>
                 <div class="bg-white/5 p-10 rounded-[2.5rem] border border-white/5 relative mb-10">
                     <h3 class="text-xs font-black uppercase tracking-[0.4em] text-f1-red mb-6 italic">The Biography</h3>
@@ -177,20 +166,17 @@ $driverLastName = htmlspecialchars($driver['last_name']);
                     </p>
                 </div>
                 <?php endif; ?>
-
                 <a href="drivers.php" class="inline-flex items-center gap-4 bg-white text-black px-10 py-5 rounded-full font-black uppercase text-[10px] tracking-[0.3em] hover:bg-f1-red hover:text-white transition-all duration-500">
                     <span>&larr;</span> Back to Ranking
                 </a>
             </div>
         </div>
     </main>
-
     <footer class="bg-black py-16 mt-12 border-t-2 border-f1-red">
         <div class="max-w-7xl mx-auto px-6 text-center">
-            <p class="text-gray-600 text-[10px] font-black uppercase tracking-[0.6em] italic">&copy; <?php echo date('Y'); ?> WEBIUS.NL - ALL RIGHTS RESERVED</p>
+            <p class="text-gray-600 text-[10px] font-black uppercase tracking-[0.6em] italic">&copy; <?php echo date('Y'); ?> WEBIUS. All rights reserved.</p>
         </div>
     </footer>
-
     <script>
         function toggleMenu() {
             const menu = document.getElementById('mobile-menu');

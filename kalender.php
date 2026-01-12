@@ -218,7 +218,7 @@ if ($selectedYear) {
                 <div class="text-center md:text-left">
                     <h4 class="text-xs font-black text-f1-red mb-6 uppercase tracking-[0.3em]">Navigatie & Info</h4>
                     <ul class="space-y-4">
-                        <li><a href="sitemap.html" class="text-gray-400 text-sm font-bold hover:text-white transition duration-200 block uppercase tracking-wider">Sitemap</a></li>
+                        <li><a href="sitemap.php" class="text-gray-400 text-sm font-bold hover:text-white transition duration-200 block uppercase tracking-wider">Sitemap</a></li>
                         <li><a href="privacy-en.html" class="text-gray-400 text-sm font-bold hover:text-white transition duration-200 block uppercase tracking-wider">Privacy Policy (EN)</a></li>
                         <li><a href="algemenevoorwaarden-en.html" class="text-gray-400 text-sm font-bold hover:text-white transition duration-200 block uppercase tracking-wider">Terms and Conditions (EN)</a></li>
                         <li><a href="contact.html" class="text-gray-400 text-sm font-bold hover:text-white transition duration-200 block uppercase tracking-wider">Contact</a></li>
@@ -228,7 +228,7 @@ if ($selectedYear) {
 
             <div class="pt-10 text-center md:text-left">
                 <p class="text-gray-600 text-[10px] font-black uppercase tracking-[0.5em] italic">
-                    &copy; 2026 WEBIUS. Alle rechten voorbehouden.
+                    &copy; 2026 WEBIUS. All rights reserved..
                 </p>
             </div>
         </div>

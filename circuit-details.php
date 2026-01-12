@@ -200,12 +200,14 @@ if (!is_array($circuitDetails)) { $circuitDetails = []; }
                 <div class="text-center md:text-left">
                     <h4 class="text-xs font-black text-f1-red mb-6 uppercase tracking-[0.3em]">Navigatie</h4>
                     <ul class="space-y-4">
-                        <li><a href="kalender.php" class="text-gray-400 text-sm font-bold hover:text-white transition duration-200 block uppercase tracking-wider">Kalender</a></li>
+                        <li><a href="sitemap.php" class="text-gray-400 text-sm font-bold hover:text-white transition duration-200 block uppercase tracking-wider">Sitemap</a></li>
+                        <li><a href="privacy-en.html" class="text-gray-400 text-sm font-bold hover:text-white transition duration-200 block uppercase tracking-wider">Privacy Policy</a></li>
+                        <li><a href="algemenevoorwaarden-en.html" class="text-gray-400 text-sm font-bold hover:text-white transition duration-200 block uppercase tracking-wider">Terms & Conditions</a></li>
                         <li><a href="contact.html" class="text-gray-400 text-sm font-bold hover:text-white transition duration-200 block uppercase tracking-wider">Contact</a></li>
                     </ul>
                 </div>
             </div>
-            <p class="pt-10 text-gray-600 text-[10px] font-black uppercase tracking-[0.5em] italic text-center md:text-left">&copy; 2026 WEBIUS.</p>
+            <p class="pt-10 text-gray-600 text-[10px] font-black uppercase tracking-[0.5em] italic text-center md:text-left">&copy; 2026 WEBIUS. All rights reserved.</p>
         </div>
     </footer>
     

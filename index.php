@@ -250,7 +250,7 @@ $ogImage = "https://f1site.nl/afbeeldingen/og-image-default.jpg"; // Zorg dat di
 
             <div class="pt-10 flex flex-col md:flex-row justify-between items-center gap-4 text-center md:text-left">
                 <p class="text-gray-600 text-[10px] font-black uppercase tracking-[0.5em] italic">
-                    &copy; <?php echo date('Y'); ?> WEBIUS. Alle rechten voorbehouden.
+                    &copy; <?php echo date('Y'); ?> WEBIUS. All rights reserved.
                 </p>
                 <div class="flex gap-6">
                     <span class="text-f1-red opacity-20 text-xl font-oswald italic font-black uppercase" aria-hidden="true">Faster than light</span>

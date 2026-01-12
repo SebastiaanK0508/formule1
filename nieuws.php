@@ -198,10 +198,11 @@ try {
                 </div>
                 <div>
                     <h4 class="text-xs font-black text-f1-red mb-4 uppercase italic tracking-widest">Navigation</h4>
-                    <ul class="space-y-2 text-[10px] uppercase italic text-gray-400">
-                        <li><a href="sitemap.html" class="hover:text-white">Sitemap</a></li>
-                        <li><a href="privacy-en.html" class="hover:text-white">Privacy</a></li>
-                        <li><a href="contact.html" class="hover:text-white">Contact</a></li>
+                    <ul class="space-y-4">
+                        <li><a href="sitemap.php" class="text-gray-400 text-sm font-bold hover:text-white transition duration-200 block uppercase tracking-wider">Sitemap</a></li>
+                        <li><a href="privacy-en.html" class="text-gray-400 text-sm font-bold hover:text-white transition duration-200 block uppercase tracking-wider">Privacy Policy</a></li>
+                        <li><a href="algemenevoorwaarden-en.html" class="text-gray-400 text-sm font-bold hover:text-white transition duration-200 block uppercase tracking-wider">Terms & Conditions</a></li>
+                        <li><a href="contact.html" class="text-gray-400 text-sm font-bold hover:text-white transition duration-200 block uppercase tracking-wider">Contact</a></li>
                     </ul>
                 </div>
                 <div>
