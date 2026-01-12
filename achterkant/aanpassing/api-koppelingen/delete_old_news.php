@@ -5,7 +5,7 @@ function log_message($message) {
 
 require_once 'db_config.php'; 
 log_message("--- START Oude Nieuws Opschoning ---");
-$cutoff_datetime = date('Y-m-d H:i:s', strtotime('-2 days'));
+$cutoff_datetime = date('Y-m-d H:i:s', strtotime('-5 days'));
 
 log_message("Cutoff Datum/Tijd ingesteld op: " . $cutoff_datetime);
 log_message("Artikelen met created_at OUDER dan dit worden verwijderd.");
@@ -19,13 +19,13 @@ try {
     if ($rows_deleted > 0) {
         log_message("✅ SUCCES: " . $rows_deleted . " oude artikelen verwijderd.");
     } else {
-        log_message("⚠️ GEEN ACTIE: Geen artikelen gevonden ouder dan 2 dagen om te verwijderen.");
+        log_message("⚠️ GEEN ACTIE: Geen artikelen gevonden ouder dan 5 dagen om te verwijderen.");
     }
 
 } catch (\PDOException $e) {
     log_message("❌ DATABASE FOUT: Fout bij het verwijderen van oude berichten.");
     log_message("Foutdetails: " . $e->getMessage());
-    exit(1); // Exit met foutcode bij databasefout
+    exit(1); 
 }
 
 log_message("--- EINDE Oude Nieuws Opschoning ---");

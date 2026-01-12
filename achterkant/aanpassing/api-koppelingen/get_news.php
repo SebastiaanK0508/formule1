@@ -2,104 +2,75 @@
 function log_message($message) {
     echo "[" . date('Y-m-d H:i:s') . "] " . $message . "\n";
 }
-require_once 'db_config.php'; 
-log_message("--- START F1 Nieuws Scraper (met Strikte Validatie) ---");
 
-$new_api_url = "https://f1newsapi.onrender.com/news"; 
-log_message("API-Endpoint: " . $new_api_url);
+require_once 'db_config.php'; 
+log_message("--- START F1 NIEUWS SCRAPER (STRICTE F1 FILTER) ---");
+
+$apiKey = '967a1f5bab57402eba78e99d0f157d64';
+$keywords = '("Formula 1" OR "F1" OR "Grand Prix" OR "Verstappen" OR "Hamilton" OR "Norris" OR "Leclerc" OR "Piastri" OR "Sainz" OR "Alonso" OR "Russell" OR "Christian Horner" OR "Toto Wolff" OR "Adrian Newey" OR "Red Bull Racing" OR "Mercedes F1" OR "Scuderia Ferrari" OR "McLaren F1" OR "Silly Season" OR "Paddock" OR "FIA" OR "Qualifying")';
+$query = urlencode($keywords);
+$domains = "autosport.com,skysports.com,motorsport.com,espn.com,f1i.com,gpblog.com,racefans.net,f1.com";
+
+$api_url = "https://newsapi.org/v2/everything?q={$query}&domains={$domains}&language=en&sortBy=publishedAt&pageSize=40&apiKey={$apiKey}";
+
+log_message("API-Endpoint: NewsAPI.org (Strict Sport Filter)");
+log_message("Geselecteerde Domeinen: " . $domains);
+
 $ch = curl_init();
-curl_setopt($ch, CURLOPT_URL, $new_api_url);
+curl_setopt($ch, CURLOPT_URL, $api_url);
 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+curl_setopt($ch, CURLOPT_USERAGENT, 'F1SiteScraper/1.0');
 curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
 
 $response = curl_exec($ch);
 $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-$curl_error = curl_error($ch);
 curl_close($ch);
-if ($curl_error) {
-    log_message("❌ cURL FOUT: De aanroep naar de API is mislukt. Reden: " . $curl_error);
-    log_message("--- EINDE SCRAPER (MISLUKT) ---");
-    exit(1);
-}
+
+$data = json_decode($response, true);
 
 if ($http_code !== 200) {
-    log_message("❌ HTTP FOUT: Fout bij ophalen data. HTTP Code: " . $http_code);
-    if (strlen($response) < 500) {
-        log_message("API-Respons (Kort): " . trim($response));
-    }
-    log_message("--- EINDE SCRAPER (MISLUKT) ---");
+    log_message("❌ API FOUT: " . ($data['message'] ?? 'Onbekende fout'));
     exit(1);
 }
 
-$data = json_decode($response, true); 
-$articles = $data; 
-if (!is_array($articles)) {
-    log_message("⚠️ PARSE WAARSCHUWING: Respons is geen array. Aantal artikelen: 0");
-    $articles = [];
-}
-$total_articles = count($articles);
-log_message("✅ Data succesvol opgehaald. Totaal aantal artikelen om te verwerken: " . $total_articles);
+$articles = $data['articles'] ?? [];
+log_message("✅ Artikelen gevonden: " . count($articles));
 
 $count_saved = 0;
-$count_skipped_duplicate = 0;
-$count_skipped_missing_data = 0;
+$count_skipped = 0;
 
-if ($total_articles > 0) {
+if (count($articles) > 0) {
     $stmt = $pdo->prepare("INSERT INTO f1_nieuws (titel, artikel_url, publicatie_datum, afbeelding_url, source) VALUES (?, ?, ?, ?, ?)");
 
-    foreach ($articles as $index => $article) {
-        $titel = $article['title'] ?? null;
-        $url = $article['url'] ?? null;
-        $published_date_api = $article['publishedAt'] ?? null;
-        $image_url = $article['urlToImage'] ?? null;
-        $source = $article['source'] ?? null; 
-        
-        if (empty($titel) || empty($url) || empty($source)) {
-            $missing = [];
-            if (empty($titel)) $missing[] = 'Title';
-            if (empty($url)) $missing[] = 'URL';
-            if (empty($source)) $missing[] = 'Source';
-            
-            log_message("⚠️ ARTIKEL " . ($index + 1) . " OVERGESLAGEN: Essentiële data ontbreekt: " . implode(', ', $missing) . ". JSON Index: " . $index);
-            $count_skipped_missing_data++;
+    foreach ($articles as $article) {
+        $titel = $article['title'] ?? '';
+        $url = $article['url'] ?? '';
+        $image_url = $article['urlToImage'] ?? '';
+        $source = $article['source']['name'] ?? 'F1 Official';
+
+        // EXTRA CHECK: Bevat de titel wel echt F1 gerelateerde woorden? (Dubbele veiligheid)
+        $cleanTitle = strtolower($titel);
+        if (!str_contains($cleanTitle, 'f1') && !str_contains($cleanTitle, 'formula') && !str_contains($cleanTitle, 'grand prix') && !str_contains($cleanTitle, 'verstappen')) {
+            continue;
+        }
+
+        if (empty($titel) || empty($url) || empty($image_url)) {
             continue; 
         }
-        
-        $published_date_mysql = null;
-        if ($published_date_api) {
-            try {
-                $dt = new DateTime($published_date_api);
-                $published_date_mysql = $dt->format('Y-m-d H:i:s');
-            } catch (Exception $e) {
-                log_message("⚠️ ARTIKEL " . ($index + 1) . " (" . $titel . "): Kon publicatiedatum niet parsen.");
-            }
-        }
+
         try {
             $stmt->execute([
                 $titel, 
                 $url, 
-                $published_date_mysql, 
+                date('Y-m-d H:i:s', strtotime($article['publishedAt'])), 
                 $image_url,
                 $source             
             ]);
-            log_message("   -> Artikel opgeslagen: " . substr($titel, 0, 50) . "...");
             $count_saved++;
-
         } catch (\PDOException $e) {
-            if ($e->getCode() == 23000) { 
-                log_message("   -> Duplicaat overgeslagen: " . substr($titel, 0, 50) . "...");
-                $count_skipped_duplicate++;
-            } else {
-                log_message("   -> ❌ DB FOUT bij opslaan: " . substr($titel, 0, 50) . "... Fout: " . $e->getMessage());
-            }
+            $count_skipped++;
         }
     }
-} else {
-    log_message("Geen artikelen gevonden in de API-respons om op te slaan.");
 }
-log_message("--- SAMENVATTING ---");
-log_message("Artikelen succesvol opgeslagen: " . $count_saved);
-log_message("Duplicaten overgeslagen: " . $count_skipped_duplicate);
-log_message("Overgeslagen (data ontbreekt): " . $count_skipped_missing_data);
-log_message("--- EINDE F1 Nieuws Scraper ---");
+log_message("--- KLAAR ---");
+log_message("Nieuw: {$count_saved} | Overgeslagen: {$count_skipped}");
