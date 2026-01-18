@@ -207,10 +207,10 @@ try {
                 </div>
                 <div>
                     <h4 class="text-xs font-black text-f1-red mb-4 uppercase italic tracking-widest">Developer</h4>
-                    <a href="https://www.webbair.nl" target="_blank" class="text-[10px] text-gray-400 uppercase italic hover:text-white">Webbair</a>
+                    <a href="https://www.Webius.nl" target="_blank" class="text-[10px] text-gray-400 uppercase italic hover:text-white">Webius</a>
                 </div>
             </div>
-            <p class="pt-8 text-gray-700 text-[9px] font-black uppercase tracking-[0.4em] italic">&copy; 2026 Webbair. All rights reserved.</p>
+            <p class="pt-8 text-gray-700 text-[9px] font-black uppercase tracking-[0.4em] italic">&copy; 2026 Webius. All rights reserved.</p>
         </div>
     </footer>
 
