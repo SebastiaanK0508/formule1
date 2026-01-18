@@ -581,3 +581,5 @@ UPDATE circuits SET map_url = 'https://www.formula1.com/content/dam/fom-website/
 UPDATE circuits SET map_url = 'https://www.formula1.com/content/dam/fom-website/2018-redesign-assets/Circuit%20maps%2016x9/Las_Vegas_Circuit.png' WHERE circuit_key = 'las_vegas';
 UPDATE circuits SET map_url = 'https://www.formula1.com/content/dam/fom-website/2018-redesign-assets/Circuit%20maps%2016x9/Qatar_Circuit.png' WHERE circuit_key = 'losail';
 UPDATE circuits SET map_url = 'https://www.formula1.com/content/dam/fom-website/2018-redesign-assets/Circuit%20maps%2016x9/Abu_Dhabi_Circuit.png' WHERE circuit_key = 'yas_marina';
+
+ALTER TABLE `contact` MODIFY `ID` INT(11) NOT NULL AUTO_INCREMENT;

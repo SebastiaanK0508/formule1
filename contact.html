@@ -1,74 +1,56 @@
 <!DOCTYPE html>
-<html lang="nl">
+<html lang="en" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Contact | F1SITE.NL</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700;900&family=Oswald:wght@700&display=swap" rel="stylesheet">
-    
-    <script src="https://t.contentsquare.net/uxa/688c1fe6f0f7c.js"></script>
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
 
     <script>
         tailwind.config = {
             theme: {
                 extend: {
-                    fontFamily: { 
-                        'sans': ['Inter', 'sans-serif'], 
-                        'oswald': ['Oswald', 'sans-serif'] 
-                    },
-                    colors: { 
-                        'f1-red': '#E10600', 
-                        'f1-black': '#0b0b0f', 
-                        'f1-card': '#16161c' 
-                    }
+                    fontFamily: { 'sans': ['Inter', 'sans-serif'], 'oswald': ['Oswald', 'sans-serif'] },
+                    colors: { 'f1-red': '#E10600', 'f1-dark': '#0b0b0f', 'f1-card': '#16161c' }
                 }
             }
         }
     </script>
 
     <style>
-        body { background-color: #0b0b0f; color: #fff; }
+        body { background-color: #0b0b0f; color: #fff; overflow-x: hidden; }
         .bg-pattern {
-            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.02'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
         }
-
-        .elite-card {
-            @apply bg-f1-card/50 p-8 md:p-12 rounded-[2.5rem] border border-white/5 shadow-2xl backdrop-blur-sm;
-        }
-
-        .form-input-elite {
-            @apply w-full p-4 bg-black/40 border border-white/10 text-white rounded-xl focus:ring-2 focus:ring-f1-red focus:border-transparent transition-all outline-none italic text-sm;
-        }
-
-        .policy-h2 { @apply text-2xl font-oswald font-black uppercase italic text-white mb-6 flex flex-col; }
-        
-        @media (max-width: 767px) {
-            .main-nav[data-visible="false"] { display: none; }
-            .main-nav {
-                position: absolute; top: 100%; left: 0; right: 0;
-                background-color: #0b0b0f; padding: 1.5rem; display: flex;
-                flex-direction: column; z-index: 100; border-bottom: 2px solid #E10600;
-            }
-        }
-
-        ::-webkit-scrollbar { width: 8px; }
-        ::-webkit-scrollbar-track { background: #0b0b0f; }
-        ::-webkit-scrollbar-thumb { background: #E10600; border-radius: 10px; }
+        .header-glass { background: rgba(11, 11, 15, 0.9); backdrop-filter: blur(15px); border-bottom: 1px solid rgba(225, 6, 0, 0.3); }
+        .elite-card { @apply bg-f1-card p-8 md:p-12 rounded-[2.5rem] border border-white/5 shadow-2xl; }
+        #mobile-menu { position: fixed; right: 0; top: 0; bottom: 0; width: 100%; transform: translateX(100%); transition: transform 0.4s ease-in-out; background: #0b0b0f; z-index: 101; }
+        #mobile-menu.active { transform: translateX(0); }
     </style>
 </head>
-<body class="bg-pattern min-h-screen flex flex-col italic">
+<body class="bg-pattern font-sans">
 
-    <header class="bg-black/90 backdrop-blur-md sticky top-0 z-50 border-b border-f1-red/30">
-        <div class="max-w-7xl mx-auto px-6 py-5 flex justify-between items-center relative">
-            <h1 class="text-3xl font-oswald font-black italic text-white uppercase tracking-tighter">
-                F1SITE<span class="text-f1-red">.NL</span>
-            </h1>
-            
-            <button class="md:hidden text-2xl text-f1-red menu-toggle" aria-expanded="false">&#9776;</button>
+    <div id="mobile-menu" class="p-10 flex flex-col items-center justify-center">
+        <button onclick="toggleMenu()" class="absolute top-8 right-8 text-5xl font-light text-white hover:text-f1-red transition">&times;</button>
+        <nav class="flex flex-col space-y-10 text-4xl font-oswald font-black uppercase italic text-center">
+            <a href="index.php" onclick="toggleMenu()">Home</a>
+            <a href="kalender.php" onclick="toggleMenu()">Schedule</a>
+            <a href="teams.php" onclick="toggleMenu()">Teams</a>
+            <a href="drivers.php" onclick="toggleMenu()">Drivers</a>
+            <a href="results.php" onclick="toggleMenu()">Results</a>
+            <a href="standings.php" onclick="toggleMenu()">Standings</a>
+        </nav>
+    </div>
 
-            <nav class="main-nav hidden md:flex space-x-8 text-[11px] font-black uppercase tracking-widest text-white" id="main-nav-links" data-visible="false">
+    <header class="header-glass sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-6 py-5 flex justify-between items-center">
+            <a href="index.php" class="flex items-baseline gap-1" aria-label="F1SITE.NL Home">
+                <span class="text-3xl font-oswald font-black italic tracking-tighter text-white uppercase">F1SITE<span class="text-f1-red">.NL</span></span>
+            </a>
+            <nav class="hidden lg:flex space-x-10 text-[11px] font-bold uppercase tracking-[0.25em]">
                 <a href="index.php" class="hover:text-f1-red transition">Home</a>
                 <a href="kalender.php" class="hover:text-f1-red transition">Schedule</a>
                 <a href="teams.php" class="hover:text-f1-red transition">Teams</a>
@@ -76,90 +58,101 @@
                 <a href="results.php" class="hover:text-f1-red transition">Results</a>
                 <a href="standings.php" class="hover:text-f1-red transition">Standings</a>
             </nav>
+            <button onclick="toggleMenu()" class="lg:hidden text-white text-3xl" aria-label="Menu openen">☰</button>
         </div>
     </header>
 
     <main class="max-w-3xl mx-auto px-6 py-16 flex-grow">
-        
-        <div class="mb-16 text-center">
+        <div class="mb-16 text-center" data-aos="fade-down">
             <h1 class="text-6xl md:text-8xl font-oswald font-black uppercase italic tracking-tighter leading-none mb-4">
                 GET IN<span class="text-f1-red">TOUCH</span>
             </h1>
         </div>
 
-        <div class="elite-card">
-            <h2 class="policy-h2 italic">Stuur ons een bericht</h2>
+        <div class="elite-card relative overflow-hidden" data-aos="fade-up">
+            <div id="status-box" class="hidden mb-8 p-5 rounded-xl border italic font-bold uppercase tracking-widest text-xs text-center"></div>
+
+            <h2 class="text-4xl font-oswald font-black uppercase italic tracking-tighter mb-8 border-l-4 border-f1-red pl-6">
+                Send a <span class="text-f1-red">Message</span>
+            </h2>
             
-            <form class="space-y-6" id="contact-form" action="contact.php" method="post">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div>
-                        <label class="block text-[10px] font-black uppercase tracking-widest text-f1-red mb-2 ml-2" for="name">Naam</label>
-                        <input class="form-input-elite" type="text" id="name" name="contact_name" placeholder="JE NAAM..." required>
-                    </div>
-                    <div>
-                        <label class="block text-[10px] font-black uppercase tracking-widest text-f1-red mb-2 ml-2" for="email">E-mail</label>
-                        <input class="form-input-elite" type="email" id="email" name="contact_email" placeholder="JE EMAIL..." required>
-                    </div>
+            <form class="space-y-4" id="contact-form" action="contact.php" method="post">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <input class="w-full bg-black/40 border-l-2 border-white/10 p-5 text-white focus:border-f1-red transition-all outline-none italic text-sm placeholder:text-white/20" 
+                           type="text" name="contact_name" placeholder="YOUR NAME" required>
+                    <input class="w-full bg-black/40 border-l-2 border-white/10 p-5 text-white focus:border-f1-red transition-all outline-none italic text-sm placeholder:text-white/20" 
+                           type="email" name="contact_email" placeholder="YOUR EMAIL" required>
                 </div>
                 
-                <div>
-                    <label class="block text-[10px] font-black uppercase tracking-widest text-f1-red mb-2 ml-2" for="subject">Onderwerp</label>
-                    <input class="form-input-elite" type="text" id="subject" name="contact_subject" placeholder="WAAR GAAT HET OVER?" required>
-                </div>
+                <input class="w-full bg-black/40 border-l-2 border-white/10 p-5 text-white focus:border-f1-red transition-all outline-none italic text-sm placeholder:text-white/20" 
+                       type="text" name="contact_subject" placeholder="SUBJECT" required>
                 
-                <div>
-                    <label class="block text-[10px] font-black uppercase tracking-widest text-f1-red mb-2 ml-2" for="message">Bericht</label>
-                    <textarea class="form-input-elite" id="message" name="contact_message" rows="5" placeholder="TYP HIER JE BERICHT..." required></textarea>
-                </div>
+                <textarea class="w-full bg-black/40 border-l-2 border-white/10 p-5 text-white focus:border-f1-red transition-all outline-none italic text-sm placeholder:text-white/20 min-h-[150px] resize-none" 
+                          name="contact_message" placeholder="TYPE YOUR MESSAGE HERE..." required></textarea>
                 
-                <div class="pt-4">
-                    <button type="submit" class="w-full bg-f1-red hover:bg-white hover:text-black text-white py-4 rounded-full font-black uppercase tracking-[0.3em] text-xs transition-all shadow-lg shadow-f1-red/20">
-                        Verzenden
+                <div class="flex justify-end pt-4">
+                    <button type="submit" class="group relative flex items-center gap-4 bg-transparent border-2 border-f1-red px-10 py-4 overflow-hidden transition-all hover:bg-f1-red">
+                        <span class="relative z-10 text-xs font-black uppercase tracking-[0.3em] text-white">
+                            Transmit Data
+                        </span>
+                        <svg class="relative z-10 w-5 h-5 text-f1-red group-hover:text-white group-hover:translate-x-2 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                        </svg>
                     </button>
                 </div>
             </form>
         </div>
     </main>
 
-    <footer class="bg-black py-12 border-t-2 border-f1-red mt-12">
-        <div class="max-w-7xl mx-auto px-6">
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-left pb-8 border-b border-white/5">
-                <div>
-                    <h3 class="text-xl font-oswald font-black text-white italic tracking-tighter mb-2 uppercase">F1SITE.NL</h3>
-                    <p class="text-gray-500 text-xs italic uppercase tracking-widest">De snelste bron voor F1 nieuws en data.</p>
+    <footer class="bg-black mt-24 py-16 border-t-2 border-f1-red">
+        <div class="max-w-7xl mx-auto px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-12 text-left pb-12 border-b border-white/5">
+                <div class="space-y-4 text-center md:text-left">
+                    <h3 class="text-2xl font-oswald font-black text-white italic tracking-tighter uppercase">F1SITE<span class="text-f1-red">.NL</span></h3>
+                    <p class="text-gray-500 text-sm font-medium leading-relaxed max-w-xs mx-auto md:mx-0 italic">
+                        Your ultimate source for the latest Formula 1 news, live countdowns, statistics and race updates.
+                    </p>
                 </div>
-                <div>
-                    <h4 class="text-sm font-oswald font-bold text-f1-red mb-3 uppercase italic">Externe Sites</h4>
-                    <ul class="space-y-2">
-                        <li><a href="https://www.webius.nl" target="_blank" class="text-gray-400 text-xs hover:text-white transition italic uppercase">Webius (Ontwikkelaar)</a></li>
+                <div class="text-center md:text-left">
+                    <h4 class="text-xs font-black text-f1-red mb-6 uppercase tracking-[0.3em]">Developer</h4>
+                    <ul class="space-y-4">
+                        <li><a href="https://www.webius.nl" target="_blank" class="text-gray-400 text-sm font-bold hover:text-white transition duration-200 block uppercase tracking-wider">Webius</a></li>
                     </ul>
                 </div>
-                <div>
-                    <h4 class="text-sm font-oswald font-bold text-f1-red mb-3 uppercase italic">Navigatie & Info</h4>
-                    <ul class="space-y-2 text-xs uppercase italic tracking-wider">
-                        <li><a href="sitemap.php" class="text-gray-400 hover:text-white transition">Sitemap</a></li>
-                        <li><a href="privacy-en.html" class="text-gray-400 hover:text-white transition">Privacy Policy (EN)</a></li>
-                        <li><a href="algemenevoorwaarden-en.html" class="text-gray-400 hover:text-white transition">Terms and Conditions (EN)</a></li>
-                        <li><a href="contact.html" class="text-gray-400 hover:text-white transition border-b border-f1-red">Contact</a></li>
+                <div class="text-center md:text-left">
+                    <h4 class="text-xs font-black text-f1-red mb-6 uppercase tracking-[0.3em]">Navigation & Info</h4>
+                    <ul class="space-y-4">
+                        <li><a href="sitemap.php" class="text-gray-400 text-sm font-bold hover:text-white transition duration-200 block uppercase tracking-wider">Sitemap</a></li>
+                        <li><a href="privacy-en.html" class="text-gray-400 text-sm font-bold hover:text-white transition duration-200 block uppercase tracking-wider">Privacy Policy</a></li>
+                        <li><a href="algemenevoorwaarden-en.html" class="text-gray-400 text-sm font-bold hover:text-white transition duration-200 block uppercase tracking-wider">Terms & Conditions</a></li>
+                        <li><a href="contact.html" class="text-gray-400 text-sm font-bold hover:text-white transition duration-200 block uppercase tracking-wider underline decoration-f1-red">Contact</a></li>
                     </ul>
                 </div>
             </div>
-            <div class="text-center pt-8 text-gray-600 text-[10px] font-black uppercase tracking-[0.5em] italic">
-                &copy; 2026 WEBIUS. All rights reserved.
+            <div class="pt-10 flex flex-col md:flex-row justify-between items-center gap-4 text-center md:text-left">
+                <p class="text-gray-600 text-[10px] font-black uppercase tracking-[0.5em] italic">
+                    &copy; 2026 WEBIUS. All rights reserved.
+                </p>
+                <div class="flex gap-6">
+                    <span class="text-f1-red opacity-20 text-xl font-oswald italic font-black uppercase">Faster than light</span>
+                </div>
             </div>
         </div>
     </footer>
 
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            const nav = document.getElementById('main-nav-links');
-            const toggle = document.querySelector('.menu-toggle');
-            if (nav && toggle) {
-                toggle.addEventListener('click', () => {
-                    const isVisible = nav.getAttribute('data-visible') === 'true';
-                    nav.setAttribute('data-visible', String(!isVisible));
-                    toggle.setAttribute('aria-expanded', String(!isVisible));
-                });
+            AOS.init({ duration: 1000, once: true });
+            window.toggleMenu = () => { 
+                document.getElementById('mobile-menu').classList.toggle('active'); 
+            };
+            const params = new URLSearchParams(window.location.search);
+            if (params.get('status') === 'success') {
+                const box = document.getElementById('status-box');
+                box.textContent = "Message successfully transmitted!";
+                box.classList.remove('hidden');
+                box.classList.add('bg-green-500/10', 'border-green-500/50', 'text-green-500');
             }
         });
     </script>
