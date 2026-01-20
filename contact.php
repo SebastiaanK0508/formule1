@@ -1,8 +1,6 @@
 <?php
 require_once 'db_config.php';
 /** @var PDO $pdo */
-var_dump ("Test 123");
-die;
 $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 try {
     if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
