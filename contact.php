@@ -4,7 +4,7 @@ require_once 'db_config.php';
 $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 try {
     if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-        header('Location: contact.html');
+        header('Location: contact.html?status=error');
         exit;
     }
     $contact_name = $_POST['contact_name'] ?? null;
