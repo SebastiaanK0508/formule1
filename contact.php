@@ -3,10 +3,9 @@ require_once 'db_config.php';
 /** @var PDO $pdo */
 $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 try {
-    if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-        header('Location: contact.html?status=error');
-        exit;
-    }
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    die("Fout: Server ontving een " . $_SERVER['REQUEST_METHOD'] . " verzoek in plaats van POST.");
+}
     $contact_name = $_POST['contact_name'] ?? null;
     $contact_email = $_POST['contact_email'] ?? null;
     $contact_subject = $_POST['contact_subject'] ?? null;
