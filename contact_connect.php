@@ -3,8 +3,6 @@ require_once 'db_config.php';
 /** @var PDO $pdo */
 $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 try {
-    var_dump ($_SERVER);
-    die;
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     die("Fout: Server ontving een " . $_SERVER['REQUEST_METHOD'] . " verzoek in plaats van POST.");
 }
