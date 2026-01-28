@@ -210,7 +210,7 @@ $ogImage = "https://f1site.nl/afbeeldingen/og-image-default.jpg"; // Zorg dat di
                 <a href="nieuws.php" class="group relative inline-flex items-center justify-center px-12 py-5 overflow-hidden font-black uppercase tracking-[0.4em] text-[11px] text-white transition-all duration-300 bg-f1-card border border-white/10 rounded-full hover:border-f1-red/50 shadow-2xl">
                     <span class="absolute inset-0 w-full h-full bg-gradient-to-r from-f1-red/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></span>
                     <span class="relative flex items-center gap-3">
-                        Bekijk Nieuwsarchief 
+                        View News Archive 
                         <span class="text-f1-red text-xl group-hover:translate-x-2 transition-transform duration-300">→</span>
                     </span>
                 </a>

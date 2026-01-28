@@ -27,25 +27,39 @@
         .header-glass { background: rgba(11, 11, 15, 0.9); backdrop-filter: blur(15px); border-bottom: 1px solid rgba(225, 6, 0, 0.3); }
         .sitemap-link { @apply text-gray-400 hover:text-f1-red transition-all duration-200 block py-1 text-sm; }
         .section-card { @apply bg-f1-card/30 p-8 rounded-[2rem] border border-white/5 hover:border-f1-red/20 transition-all duration-500; }
+        
+        /* Mobile Menu Transitions */
+        #mobile-menu {
+            background: rgba(11, 11, 15, 0.98);
+            backdrop-filter: blur(20px);
+            z-index: 100;
+            transition: transform 0.5s cubic-bezier(0.77, 0, 0.175, 1);
+            transform: translateX(100%);
+        }
+
+        #mobile-menu.active {
+            transform: translateX(0); 
+        }
     </style>
 </head>
 <body class="bg-pattern min-h-screen flex flex-col">
 
     <div id="mobile-menu" class="fixed inset-y-0 right-0 w-full p-10 flex flex-col items-center justify-center">
-        <button onclick="toggleMenu()" class="absolute top-8 right-8 text-5xl font-light">&times;</button>
-        <nav class="flex flex-col space-y-10 text-4xl font-oswald font-black uppercase italic text-center">
-            <a href="index.php" onclick="toggleMenu()">Home</a>
-            <a href="kalender.php" onclick="toggleMenu()">Schedule</a>
-            <a href="teams.php" onclick="toggleMenu()">Teams</a>
-            <a href="drivers.php" onclick="toggleMenu()">Drivers</a>
-            <a href="results.php" onclick="toggleMenu()">Results</a>
-            <a href="standings.php" onclick="toggleMenu()">Standings</a>
+        <button class="menu-toggle absolute top-8 right-8 text-5xl font-light text-white">&times;</button>
+        <nav class="flex flex-col space-y-10 text-4xl font-oswald font-black uppercase italic text-center text-white">
+            <a href="index.php" class="hover:text-f1-red">Home</a>
+            <a href="kalender.php" class="hover:text-f1-red">Schedule</a>
+            <a href="teams.php" class="hover:text-f1-red">Teams</a>
+            <a href="drivers.php" class="hover:text-f1-red">Drivers</a>
+            <a href="results.php" class="hover:text-f1-red">Results</a>
+            <a href="standings.php" class="hover:text-f1-red">Standings</a>
         </nav>
     </div>
 
     <header class="header-glass sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-6 py-5 flex justify-between items-center">
             <a href="index.php" class="text-3xl font-oswald font-black italic tracking-tighter text-white uppercase">F1SITE<span class="text-f1-red">.NL</span></a>
+            
             <nav class="hidden lg:flex space-x-10 text-[11px] font-bold uppercase tracking-[0.25em]">
                 <a href="index.php" class="hover:text-f1-red transition">Home</a>
                 <a href="kalender.php" class="hover:text-f1-red transition">Schedule</a>
@@ -54,7 +68,8 @@
                 <a href="results.php" class="hover:text-f1-red transition">Results</a>
                 <a href="standings.php" class="hover:text-f1-red transition">Standings</a>
             </nav>
-            <button onclick="toggleMenu()" class="lg:hidden text-white text-3xl">☰</button>
+
+            <button class="menu-toggle lg:hidden text-white text-3xl">☰</button>
         </div>
     </header>
 
@@ -68,7 +83,6 @@
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-
             <section class="section-card">
                 <h3 class="text-2xl font-oswald font-black uppercase italic text-f1-red mb-6 border-b border-white/10 pb-2">Basic & Info</h3>
                 <ul class="space-y-1">
@@ -178,5 +192,6 @@
         </div>
     </footer>
 
+    <script src="mobiel_nav.js"></script>
 </body>
 </html>
