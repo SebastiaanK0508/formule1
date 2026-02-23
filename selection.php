@@ -22,8 +22,6 @@ try {
         http_response_code(404);
         exit("Team niet gevonden.");
     }
-
-    // Haal coureurs op die bij dit team horen
     $stmtDrivers = $pdo->prepare("SELECT * FROM drivers WHERE team_id = :tid ORDER BY last_name ASC");
     $stmtDrivers->execute(['tid' => $team['team_id']]);
     $drivers = $stmtDrivers->fetchAll(PDO::FETCH_ASSOC);
@@ -41,26 +39,9 @@ $teamColor = htmlspecialchars($team['team_color'] ?? '#E10600');
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?php echo htmlspecialchars($team['full_team_name']); ?> | Team Profile</title>
     
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700;900&family=Oswald:wght@700&display=swap" rel="stylesheet">
-    <script src="https://cdn.tailwindcss.com"></script>
-
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    fontFamily: { 'sans': ['Inter', 'sans-serif'], 'oswald': ['Oswald', 'sans-serif'] },
-                    colors: { 'f1-red': '#E10600', 'f1-dark': '#0b0b0f', 'f1-card': '#16161c' }
-                }
-            }
-        }
-    </script>
+    <?php include 'navigatie/head.php'; ?>
 
     <style>
-        body { background-color: #0b0b0f; color: #fff; }
-        .bg-pattern {
-            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
-        }
-        .header-glass { background: rgba(11, 11, 15, 0.9); backdrop-filter: blur(15px); border-bottom: 1px solid rgba(225, 6, 0, 0.3); }
         .team-glow { 
             position: absolute; top: 0; left: 0; width: 100%; height: 100%; 
             background: radial-gradient(circle at center, <?php echo $teamColor; ?>15 0%, transparent 70%);
@@ -69,24 +50,9 @@ $teamColor = htmlspecialchars($team['team_color'] ?? '#E10600');
     </style>
 </head>
 <body class="bg-pattern min-h-screen flex flex-col">
-
-    <header class="header-glass sticky top-0 z-50">
-        <div class="max-w-7xl mx-auto px-6 py-5 flex justify-between items-center">
-            <a href="index.php" class="text-3xl font-oswald font-black italic text-white uppercase tracking-tighter">F1SITE<span class="text-f1-red">.NL</span></a>
-            <nav class="hidden lg:flex space-x-8 text-[11px] font-black uppercase tracking-widest">
-                <a href="index.php" class="hover:text-f1-red transition">Home</a>
-                <a href="kalender.php" class="hover:text-f1-red transition">Schedule</a>
-                <a href="teams.php" class="text-f1-red">Teams</a>
-                <a href="drivers.php" class="hover:text-f1-red transition">Drivers</a>
-                <a href="results.php" class="hover:text-f1-red transition">Results</a>
-            </nav>
-        </div>
-    </header>
-
+    <?php include 'navigatie/header.php'; ?>
     <main class="max-w-7xl mx-auto px-6 py-12 flex-grow">
-        
         <div class="flex flex-col lg:flex-row gap-12 items-start">
-            
             <div class="w-full lg:w-5/12 sticky top-32">
                 <div class="relative">
                     <div class="team-glow"></div>
@@ -164,12 +130,6 @@ $teamColor = htmlspecialchars($team['team_color'] ?? '#E10600');
             </div>
         </div>
     </main>
-
-    <footer class="bg-black py-16 mt-12 border-t-2 border-f1-red">
-        <div class="max-w-7xl mx-auto px-6 text-center">
-            <p class="text-gray-600 text-[10px] font-black uppercase tracking-[0.6em] italic">&copy; 2026 WEBIUS.NL - CONSTRUCTOR ARCHIVE</p>
-        </div>
-    </footer>
-
+    <?php include 'navigatie/footer.php'; ?>
 </body>
 </html>

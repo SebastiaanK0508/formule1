@@ -1,7 +1,6 @@
 <?php
 require_once 'achterkant/aanpassing/api-koppelingen/result_api.php';
 
-// Zorg dat we variabelen hebben voor de selector, ook als de API hapert
 $available_years = $available_years ?? range(date("Y"), 1950);
 $races_in_season = $races_in_season ?? [];
 $selected_year = $_GET['year'] ?? date("Y");
@@ -41,30 +40,8 @@ if (!empty($race_results) && $race_details) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>F1 Results <?php echo $race_details['name'] ?? 'Overview'; ?> | F1SITE.NL</title>
-    
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700;900&family=Oswald:wght@700&display=swap" rel="stylesheet">
-    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
-    <script src="https://cdn.tailwindcss.com"></script>
-
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    fontFamily: { 'sans': ['Inter', 'sans-serif'], 'oswald': ['Oswald', 'sans-serif'] },
-                    colors: { 'f1-red': '#E10600', 'f1-dark': '#0b0b0f', 'f1-card': '#16161c' }
-                }
-            }
-        }
-    </script>
-
+    <?php include 'navigatie/head.php'; ?>
     <style>
-        body { background-color: #0b0b0f; color: #fff; overflow-x: hidden; }
-        .bg-pattern {
-            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
-        }
-        .header-glass { background: rgba(11, 11, 15, 0.9); backdrop-filter: blur(15px); border-bottom: 1px solid rgba(225, 6, 0, 0.3); }
-        
-        #mobile-menu, #mobile-selection-drawer { transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
         .active-drawer { transform: translateY(0) !important; }
 
         .sidebar-scroll::-webkit-scrollbar { width: 4px; }
@@ -79,19 +56,7 @@ if (!empty($race_results) && $race_details) {
     <?php endif; ?>
 </head>
 <body class="bg-pattern">
-
-    <div id="mobile-menu" class="fixed inset-y-0 right-0 w-full p-10 flex flex-col items-center justify-center bg-f1-dark z-[110] translate-x-full lg:hidden">
-        <button onclick="toggleMenu()" class="absolute top-8 right-8 text-5xl font-light">&times;</button>
-        <nav class="flex flex-col space-y-10 text-4xl font-oswald font-black uppercase italic text-center">
-            <a href="index.php">Home</a>
-            <a href="kalender.php">Schedule</a>
-            <a href="teams.php">Teams</a>
-            <a href="drivers.php">Drivers</a>
-            <a href="results.php" class="text-f1-red">Results</a>
-            <a href="standings.php">Standings</a>
-        </nav>
-    </div>
-
+    <?php include 'navigatie/header.php'; ?>
     <div id="mobile-selection-drawer" class="fixed inset-0 z-[120] bg-f1-dark/98 backdrop-blur-xl translate-y-full lg:hidden">
         <div class="flex flex-col h-full">
             <div class="p-6 border-b border-white/10 flex justify-between items-center">
@@ -132,21 +97,6 @@ if (!empty($race_results) && $race_details) {
             </div>
         </div>
     </div>
-
-    <header class="header-glass sticky top-0 z-50">
-        <div class="max-w-7xl mx-auto px-6 py-5 flex justify-between items-center">
-            <a href="index.php" class="text-3xl font-oswald font-black italic tracking-tighter text-white uppercase">F1SITE<span class="text-f1-red">.NL</span></a>
-            <nav class="hidden lg:flex space-x-10 text-[11px] font-bold uppercase tracking-[0.25em]">
-                <a href="index.php" class="hover:text-f1-red transition">Home</a>
-                <a href="kalender.php" class="hover:text-f1-red transition">Schedule</a>
-                <a href="teams.php" class="hover:text-f1-red transition">Teams</a>
-                <a href="drivers.php" class="hover:text-f1-red transition">Drivers</a>
-                <a href="results.php" class="text-f1-red border-b-2 border-f1-red pb-1">Results</a>
-                <a href="standings.php" class="hover:text-f1-red transition">Standings</a>
-            </nav>
-            <button onclick="toggleMenu()" class="lg:hidden text-white text-3xl">☰</button>
-        </div>
-    </header>
 
     <main class="max-w-7xl mx-auto px-6 py-12">
         <div class="lg:hidden mb-8">
@@ -269,50 +219,11 @@ if (!empty($race_results) && $race_details) {
             </div>
         </div>
     </main>
-    <footer class="bg-black mt-24 py-16 border-t-2 border-f1-red">
-        <div class="max-w-7xl mx-auto px-6 lg:px-8">
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-12 text-left pb-12 border-b border-white/5">
-                <div class="space-y-4 text-center md:text-left">
-                    <h3 class="text-2xl font-oswald font-black text-white italic tracking-tighter uppercase">F1SITE<span class="text-f1-red">.NL</span></h3>
-                    <p class="text-gray-500 text-sm font-medium leading-relaxed max-w-xs mx-auto md:mx-0">
-                        Your ultimate source for the latest Formula 1 news, live countdowns, statistics and race updates.                    </p>
-                </div>
-                <div class="text-center md:text-left">
-                    <h4 class="text-xs font-black text-f1-red mb-6 uppercase tracking-[0.3em]">Developer</h4>
-                    <ul class="space-y-4">
-                        <li>
-                            <a href="https://www.webius.nl" target="_blank" class="text-gray-400 text-sm font-bold hover:text-white transition duration-200 block uppercase tracking-wider">Webius</a>
-                        </li>
-                    </ul>
-                </div>
-                <div class="text-center md:text-left">
-                    <h4 class="text-xs font-black text-f1-red mb-6 uppercase tracking-[0.3em]">Navigatie & Info</h4>
-                    <ul class="space-y-4">
-                        <li><a href="sitemap.php" class="text-gray-400 text-sm font-bold hover:text-white transition duration-200 block uppercase tracking-wider">Sitemap</a></li>
-                        <li><a href="privacy-en.html" class="text-gray-400 text-sm font-bold hover:text-white transition duration-200 block uppercase tracking-wider">Privacy Policy</a></li>
-                        <li><a href="algemenevoorwaarden-en.html" class="text-gray-400 text-sm font-bold hover:text-white transition duration-200 block uppercase tracking-wider">Terms & Conditions</a></li>
-                        <li><a href="contact.html" class="text-gray-400 text-sm font-bold hover:text-white transition duration-200 block uppercase tracking-wider">Contact</a></li>
-                    </ul>
-                </div>
-            </div>
-            <div class="pt-10 flex flex-col md:flex-row justify-between items-center gap-4 text-center md:text-left">
-                <p class="text-gray-600 text-[10px] font-black uppercase tracking-[0.5em] italic">
-                    &copy; <?php echo date('Y'); ?> WEBIUS. All rights reserved.
-                </p>
-                <div class="flex gap-6">
-                    <span class="text-f1-red opacity-20 text-xl font-oswald italic font-black uppercase" aria-hidden="true">Faster than light</span>
-                </div>
-            </div>
-        </div>
-    </footer>
+    <?php include 'navigatie/footer.php'; ?>
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             AOS.init({ duration: 800, once: true });
-            window.toggleMenu = () => {
-                const menu = document.getElementById('mobile-menu');
-                menu.classList.toggle('translate-x-full');
-            };
             window.toggleSelectionDrawer = () => {
                 const drawer = document.getElementById('mobile-selection-drawer');
                 drawer.classList.toggle('active-drawer');
