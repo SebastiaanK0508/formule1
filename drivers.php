@@ -8,8 +8,6 @@ try {
 } catch (\PDOException $e) {
     error_log("Fout bij het ophalen van alle coureurs: " . $e->getMessage());
 }
-
-// SEO Schema Data
 $schemaData = [
     '@context' => 'https://schema.org',
     '@graph' => [
@@ -21,7 +19,6 @@ $schemaData = [
         ]
     ]
 ];
-
 $driverListItems = [];
 foreach ($allDrivers as $index => $driver) {
     $driverSlug = strtolower(str_replace(' ', '-', htmlspecialchars($driver['first_name'] . '-' . $driver['last_name'])));
@@ -50,11 +47,9 @@ if (!empty($driverListItems)) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>F1 Drivers <?php echo date('Y'); ?> | F1SITE.NL</title>
     <meta name="description" content="Bekijk alle actieve Formule 1 coureurs, hun racenummers en teams." />
-    
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700;900&family=Oswald:wght@700&display=swap" rel="stylesheet">
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
-
     <script>
         tailwind.config = {
             theme: {
@@ -86,35 +81,8 @@ if (!empty($driverListItems)) {
 </head>
 <body class="bg-pattern">
 
-    <div id="mobile-menu" class="fixed inset-y-0 right-0 w-full p-10 flex flex-col items-center justify-center">
-        <button onclick="toggleMenu()" class="absolute top-8 right-8 text-5xl font-light">&times;</button>
-        <nav class="flex flex-col space-y-10 text-4xl font-oswald font-black uppercase italic text-center">
-            <a href="index.php" onclick="toggleMenu()">Home</a>
-            <a href="kalender.php" onclick="toggleMenu()">Schedule</a>
-            <a href="teams.php" onclick="toggleMenu()">Teams</a>
-            <a href="drivers.php" class="text-f1-red" onclick="toggleMenu()">Drivers</a>
-            <a href="results.php" onclick="toggleMenu()">Results</a>
-            <a href="standings.php" onclick="toggleMenu()">Standings</a>
-        </nav>
-    </div>
-
-    <header class="header-glass sticky top-0 z-50">
-        <div class="max-w-7xl mx-auto px-6 py-5 flex justify-between items-center">
-            <a href="index.php" class="text-3xl font-oswald font-black italic tracking-tighter text-white uppercase">F1SITE<span class="text-f1-red">.NL</span></a>
-            <nav class="hidden lg:flex space-x-10 text-[11px] font-bold uppercase tracking-[0.25em]">
-                <a href="index.php" class="hover:text-f1-red transition">Home</a>
-                <a href="kalender.php" class="hover:text-f1-red transition">Schedule</a>
-                <a href="teams.php" class="hover:text-f1-red transition">Teams</a>
-                <a href="drivers.php" class="text-f1-red border-b-2 border-f1-red pb-1">Drivers</a>
-                <a href="results.php" class="hover:text-f1-red transition">Results</a>
-                <a href="standings.php" class="hover:text-f1-red transition">Standings</a>
-            </nav>
-            <button onclick="toggleMenu()" class="lg:hidden text-white text-3xl">☰</button>
-        </div>
-    </header>
-
+    <?php include 'navigatie/header.php'; ?>
     <main class="max-w-7xl mx-auto px-6 py-12">
-        
         <section class="mb-16" data-aos="fade-down">
             <div class="flex flex-col md:flex-row items-center justify-between gap-6">
                 <div>
@@ -131,7 +99,6 @@ if (!empty($driverListItems)) {
                 </a>
             </div>
         </section>
-
         <section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
             <?php if (!empty($allDrivers)): ?>
                 <?php $i=0; foreach ($allDrivers as $driver): ?>
@@ -142,7 +109,6 @@ if (!empty($driverListItems)) {
                     ?>
                     <article data-aos="fade-up" data-aos-delay="<?php echo $i*40; ?>" 
                              class="driver-card f1-border bg-f1-card rounded-br-3xl border-r border-b border-white/5 overflow-hidden group">
-                        
                         <a href="<?php echo $driverPageUrl; ?>" class="block p-6">
                             <div class="flex items-start justify-between mb-8">
                                 <div class="flex flex-col">

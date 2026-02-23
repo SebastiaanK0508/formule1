@@ -30,39 +30,11 @@ $sqlNextGP = "SELECT grandprix, race_datetime, title, location FROM circuits ORD
 }
 
 require_once 'achterkant/aanpassing/api-koppelingen/1result_api.php';
-
-$pageTitle = "F1SITE.NL | Laatste Formule 1 Nieuws, Uitslagen & Kalender 2026";
-$pageDesc = "Blijf op de hoogte van het laatste Formule 1 nieuws. Bekijk de live countdown naar de volgende Grand Prix, uitslagen, standen en de volledige F1 kalender van 2026.";
-$currentUrl = "https://f1site.nl" . $_SERVER['REQUEST_URI'];
-$ogImage = "https://f1site.nl/afbeeldingen/f1site_logo_nieuw.png";
 ?>
 <!DOCTYPE html>
-<html lang="nl" class="scroll-smooth">
+<html lang="nl">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
-    <title><?php echo $pageTitle; ?></title>
-    <meta name="title" content="<?php echo $pageTitle; ?>">
-    <meta name="description" content="<?php echo $pageDesc; ?>">
-    <meta name="keywords" content="F1 nieuws, Formule 1 2026, Max Verstappen, F1 kalender, F1 uitslagen, Grand Prix countdown, live F1 updates">
-    <meta name="author" content="F1SITE.NL">
-    <link rel="canonical" href="<?php echo $currentUrl; ?>">
-
-    <meta property="og:type" content="website">
-    <meta property="og:url" content="<?php echo $currentUrl; ?>">
-    <meta property="og:title" content="<?php echo $pageTitle; ?>">
-    <meta property="og:description" content="<?php echo $pageDesc; ?>">
-    <meta property="og:image" content="<?php echo $ogImage; ?>">
-
-    <meta property="twitter:card" content="summary_large_image">
-    <meta property="twitter:url" content="<?php echo $currentUrl; ?>">
-    <meta property="twitter:title" content="<?php echo $pageTitle; ?>">
-    <meta property="twitter:description" content="<?php echo $pageDesc; ?>">
-    <meta property="twitter:image" content="<?php echo $ogImage; ?>">
-
-    <link rel="icon" type="image/png" href="/favicon.png">
-
+    <?php include 'navigatie/head.php'; ?>
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
@@ -79,22 +51,6 @@ $ogImage = "https://f1site.nl/afbeeldingen/f1site_logo_nieuw.png";
       }
     }
     </script>
-
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700;900&family=Oswald:wght@700&display=swap" rel="stylesheet">
-    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
-    <script src="https://cdn.tailwindcss.com"></script>
-
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    fontFamily: { 'sans': ['Inter', 'sans-serif'], 'oswald': ['Oswald', 'sans-serif'] },
-                    colors: { 'f1-red': '#E10600', 'f1-dark': '#0b0b0f', 'f1-card': '#16161c' }
-                }
-            }
-        }
-    </script>
-
     <style>
         body { background-color: #0b0b0f; color: #fff; overflow-x: hidden; }
         .bg-pattern {
@@ -113,76 +69,7 @@ $ogImage = "https://f1site.nl/afbeeldingen/f1site_logo_nieuw.png";
     </style>
 </head>
 <body class="bg-pattern">
-
-    <div id="cookie-overlay" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-[9999] flex items-center justify-center">
-    <div class="bg-f1-card p-8 rounded-2xl border-t-4 border-f1-red max-w-md w-full mx-4 shadow-2xl relative overflow-hidden">
-        <div class="absolute -right-10 -top-10 opacity-10">
-            <svg width="200" height="200" viewBox="0 0 100 100"><path d="M0 0 L100 0 L100 20 L20 20 L0 100 Z" fill="white"/></svg>
-        </div>
-
-        <div class="relative z-10">
-            <h2 class="text-3xl font-oswald font-black mb-2 uppercase italic tracking-tighter flex items-center justify-center gap-2">
-                <span class="text-f1-red">/</span> Data Pitstop
-            </h2>
-            
-            <p class="text-gray-300 text-sm mb-6 leading-relaxed">
-                Om je de snelste race-ervaring en de scherpste analyses te bieden, gebruiken we cookies. Hiermee optimaliseren we de site en tonen we relevante F1-content.
-            </p>
-
-            <div class="space-y-3">
-                <button onclick="acceptCookies()" 
-                    class="w-full bg-f1-red py-4 rounded-lg font-bold uppercase text-sm hover:brightness-110 transition shadow-lg transform hover:scale-[1.02] active:scale-95">
-                    Accepteer Alle Cookies
-                </button>
-                
-                <div class="flex gap-3">
-                    <button onclick="acceptEssential()" 
-                        class="flex-1 bg-white/10 py-3 rounded-lg font-bold uppercase text-[10px] tracking-widest hover:bg-white/20 transition">
-                        Alleen Functioneel
-                    </button>
-                    
-                    <a href="/privacy-policy" 
-                        class="flex-1 border border-white/20 py-3 rounded-lg font-bold uppercase text-[10px] tracking-widest text-gray-400 hover:text-white transition flex items-center justify-center">
-                        Privacy Policy
-                    </a>
-                </div>
-            </div>
-
-            <p class="mt-6 text-[10px] text-gray-500 uppercase tracking-widest">
-                Snelheid is alles, ook voor je privacy.
-            </p>
-        </div>
-    </div>
-</div>
-
-    <div id="mobile-menu" class="p-10 flex flex-col items-center justify-center">
-        <button onclick="toggleMenu()" class="absolute top-8 right-8 text-5xl font-light text-white hover:text-f1-red transition">&times;</button>
-        <nav class="flex flex-col space-y-10 text-4xl font-oswald font-black uppercase italic text-center">
-            <a href="index.php" class="text-f1-red" onclick="toggleMenu()">Home</a>
-            <a href="kalender.php" onclick="toggleMenu()">Schedule</a>
-            <a href="teams.php" onclick="toggleMenu()">Teams</a>
-            <a href="drivers.php" onclick="toggleMenu()">Drivers</a>
-            <a href="results.php" onclick="toggleMenu()">Results</a>
-            <a href="standings.php" onclick="toggleMenu()">Standings</a>
-        </nav>
-    </div>
-
-    <header class="header-glass sticky top-0 z-50">
-        <div class="max-w-7xl mx-auto px-6 py-5 flex justify-between items-center">
-            <a href="index.php" class="flex items-baseline gap-1" aria-label="F1SITE.NL Home">
-                <span class="text-3xl font-oswald font-black italic tracking-tighter text-white uppercase">F1SITE<span class="text-f1-red">.NL</span></span>
-            </a>
-            <nav class="hidden lg:flex space-x-10 text-[11px] font-bold uppercase tracking-[0.25em]">
-                <a href="index.php" class="text-f1-red border-b-2 border-f1-red pb-1">Home</a>
-                <a href="kalender.php" class="hover:text-f1-red transition">Schedule</a>
-                <a href="teams.php" class="hover:text-f1-red transition">Teams</a>
-                <a href="drivers.php" class="hover:text-f1-red transition">Drivers</a>
-                <a href="results.php" class="hover:text-f1-red transition">Results</a>
-                <a href="standings.php" class="hover:text-f1-red transition">Standings</a>
-            </nav>
-            <button onclick="toggleMenu()" class="lg:hidden text-white text-3xl" aria-label="Menu openen">☰</button>
-        </div>
-    </header>
+    <?php include 'navigatie/header.php'; ?>
     <main class="max-w-7xl mx-auto px-6 py-12">
         <section class="mb-24" data-aos="fade-down">
             <div class="relative p-10 md:p-16 rounded-[2.5rem] bg-f1-card border border-white/5 overflow-hidden">
@@ -248,62 +135,12 @@ $ogImage = "https://f1site.nl/afbeeldingen/f1site_logo_nieuw.png";
         </section>
     </main>
 
-    <footer class="bg-black mt-24 py-16 border-t-2 border-f1-red">
-        <div class="max-w-7xl mx-auto px-6 lg:px-8">
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-12 text-left pb-12 border-b border-white/5">
-                
-                <div class="space-y-4 text-center md:text-left">
-                    <h3 class="text-2xl font-oswald font-black text-white italic tracking-tighter uppercase">F1SITE<span class="text-f1-red">.NL</span></h3>
-                    <p class="text-gray-500 text-sm font-medium leading-relaxed max-w-xs mx-auto md:mx-0">
-                        Your ultimate source for the latest Formula 1 news, live countdowns, statistics and race updates.                    </p>
-                </div>
-
-                <div class="text-center md:text-left">
-                    <h4 class="text-xs font-black text-f1-red mb-6 uppercase tracking-[0.3em]">Developer</h4>
-                    <ul class="space-y-4">
-                        <li>
-                            <a href="https://www.webius.nl" target="_blank" class="text-gray-400 text-sm font-bold hover:text-white transition duration-200 block uppercase tracking-wider">Webius</a>
-                        </li>
-                    </ul>
-                </div>
-
-                <div class="text-center md:text-left">
-                    <h4 class="text-xs font-black text-f1-red mb-6 uppercase tracking-[0.3em]">Navigatie & Info</h4>
-                    <ul class="space-y-4">
-                        <li><a href="sitemap.php" class="text-gray-400 text-sm font-bold hover:text-white transition duration-200 block uppercase tracking-wider">Sitemap</a></li>
-                        <li><a href="privacy-en.html" class="text-gray-400 text-sm font-bold hover:text-white transition duration-200 block uppercase tracking-wider">Privacy Policy</a></li>
-                        <li><a href="algemenevoorwaarden-en.html" class="text-gray-400 text-sm font-bold hover:text-white transition duration-200 block uppercase tracking-wider">Terms & Conditions</a></li>
-                        <li><a href="contact.html" class="text-gray-400 text-sm font-bold hover:text-white transition duration-200 block uppercase tracking-wider">Contact</a></li>
-                    </ul>
-                </div>
-            </div>
-
-            <div class="pt-10 flex flex-col md:flex-row justify-between items-center gap-4 text-center md:text-left">
-                <p class="text-gray-600 text-[10px] font-black uppercase tracking-[0.5em] italic">
-                    &copy; <?php echo date('Y'); ?> WEBIUS. All rights reserved.
-                </p>
-                <div class="flex gap-6">
-                    <span class="text-f1-red opacity-20 text-xl font-oswald italic font-black uppercase" aria-hidden="true">Faster than light</span>
-                </div>
-            </div>
-        </div>
-    </footer>
+    <?php include 'navigatie/footer.php'; ?>
 
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             AOS.init({ duration: 1000, once: true });
-            
-            const overlay = document.getElementById('cookie-overlay');
-            if (!localStorage.getItem('f1_consent_fixed')) {
-                overlay.style.display = 'flex';
-                document.body.style.overflow = 'hidden';
-            }
-            window.acceptCookies = () => {
-                localStorage.setItem('f1_consent_fixed', 'true');
-                overlay.style.display = 'none';
-                document.body.style.overflow = 'auto';
-            };
             
             window.toggleMenu = () => { document.getElementById('mobile-menu').classList.toggle('active'); };
 

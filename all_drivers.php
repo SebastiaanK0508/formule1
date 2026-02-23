@@ -17,24 +17,7 @@ if (file_exists($jsonFile)) {
 <!DOCTYPE html>
 <html lang="nl" class="scroll-smooth">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>All Drivers | F1SITE.NL</title>
-    
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;900&family=Oswald:wght@700&display=swap" rel="stylesheet">
-    <script src="https://cdn.tailwindcss.com"></script>
-
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    fontFamily: { 'sans': ['Inter', 'sans-serif'], 'oswald': ['Oswald', 'sans-serif'] },
-                    colors: { 'f1-red': '#E10600', 'f1-dark': '#0b0b0f', 'f1-card': '#16161c' }
-                }
-            }
-        }
-    </script>
-
+    <?php include 'navigatie/head.php'; ?>
     <style>
         body { background-color: #0b0b0f; color: #fff; overflow-x: hidden; }
         .bg-pattern {
@@ -64,32 +47,7 @@ if (file_exists($jsonFile)) {
     </style>
 </head>
 <body class="bg-pattern min-h-screen flex flex-col italic">
-    <div id="mobile-menu" class="fixed inset-y-0 right-0 w-full p-10 flex flex-col items-center justify-center lg:hidden">
-        <button onclick="toggleMenu()" class="absolute top-8 right-8 text-5xl font-light">&times;</button>
-        <nav class="flex flex-col space-y-10 text-4xl font-oswald font-black uppercase italic text-center">
-            <a href="index.php" onclick="toggleMenu()">Home</a>
-            <a href="kalender.php" onclick="toggleMenu()">Schedule</a>
-            <a href="teams.php" onclick="toggleMenu()">Teams</a>
-            <a href="drivers.php" class="text-f1-red" onclick="toggleMenu()">Drivers</a>
-            <a href="results.php" onclick="toggleMenu()">Results</a>
-            <a href="standings.php" onclick="toggleMenu()">Standings</a>
-        </nav>
-    </div>
-    <header class="header-glass sticky top-0 z-50">
-        <div class="max-w-7xl mx-auto px-6 py-5 flex justify-between items-center">
-            <a href="index.php" class="text-3xl font-oswald font-black italic tracking-tighter text-white uppercase">F1SITE<span class="text-f1-red">.NL</span></a>
-            <nav class="hidden lg:flex space-x-10 text-[11px] font-bold uppercase tracking-[0.25em]">
-                <a href="index.php" class="hover:text-f1-red transition">Home</a>
-                <a href="kalender.php" class="hover:text-f1-red transition">Schedule</a>
-                <a href="teams.php" class="hover:text-f1-red transition">Teams</a>
-                <a href="drivers.php" class="text-f1-red border-b-2 border-f1-red pb-1">Drivers</a>
-                <a href="results.php" class="hover:text-f1-red transition">Results</a>
-                <a href="standings.php" class="hover:text-f1-red transition">Standings</a>
-            </nav>
-            <button onclick="toggleMenu()" class="lg:hidden text-white text-3xl">☰</button>
-        </div>
-    </header>
-
+    <?php include 'navigatie/header.php'; ?>
     <main class="max-w-7xl mx-auto px-6 py-16 flex-grow w-full">
         
         <div class="mb-16 text-center">
@@ -151,20 +109,9 @@ if (file_exists($jsonFile)) {
         <?php endif; ?>
     </main>
 
-    <footer class="bg-black py-16 border-t-2 border-f1-red mt-12">
-        <div class="max-w-7xl mx-auto px-6 text-center">
-            <h3 class="text-2xl font-oswald font-black text-white italic tracking-tighter mb-4 uppercase">F1SITE<span class="text-f1-red">.NL</span></h3>
-            <p class="text-gray-600 text-[10px] font-black uppercase tracking-[0.5em] italic">
-                &copy; <?php echo (date('Y')); ?> WEBIUS. All rights reserved.
-            </p>
-        </div>
-    </footer>
+    <?php include 'navigatie/footer.php'; ?>
     
     <script>
-        function toggleMenu() {
-            document.getElementById('mobile-menu').classList.toggle('active');
-            document.body.style.overflow = document.getElementById('mobile-menu').classList.contains('active') ? 'hidden' : '';
-        }
         const searchInput = document.getElementById('searchInput');
         const sortSelect = document.getElementById('sortSelect');
         const driverList = document.getElementById('driverList');
