@@ -51,7 +51,7 @@ try {
         $error_message = "Geen kalendergegevens gevonden voor seizoen " . $current_year . ".";
     }
     $stmt = $pdo->prepare("
-        SELECT grandprix, race_datetime
+        SELECT grandprix, race_datetime, title, location
         FROM circuits
         WHERE race_datetime > NOW() AND YEAR(race_datetime) = :current_year
         ORDER BY race_datetime ASC
@@ -63,7 +63,10 @@ try {
 
     if ($next_race_data) {
         $nextGrandPrix = [
-            'grandprix' => $next_race_data['grandprix']
+            'grandprix' => $next_race_data['grandprix'],
+            'title'     => $next_race_data['title'],
+            'location'  => $next_race_data['location'], 
+            'circuit'   => $next_race_data['title']     
         ];
         $targetDateTime = $next_race_data['race_datetime'];
     }

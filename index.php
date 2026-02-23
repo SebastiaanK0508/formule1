@@ -1,8 +1,6 @@
 <?php
 require_once 'db_config.php'; 
-
-// 1. Nieuws ophalen
-$limit_home = 12; 
+$limit_home = 6; 
 $news_articles = [];
 try {
     $stmt = $pdo->prepare("SELECT titel, artikel_url, publicatie_datum, afbeelding_url, source FROM f1_nieuws ORDER BY publicatie_datum DESC, id DESC LIMIT :limit");
@@ -12,17 +10,18 @@ try {
 } catch (PDOException $e) {
     error_log("Fout bij ophalen nieuwsartikelen: " . $e->getMessage());
 }
-
-// 2. Volgende GP ophalen
 $nextGrandPrix = null;
 $targetDateTime = null;
 try {
-    $stmtNext = $pdo->prepare("SELECT grandprix, race_datetime, title FROM circuits WHERE race_datetime > NOW() ORDER BY race_datetime ASC LIMIT 1");
-    $stmtNext->execute();
-    $nextGPData = $stmtNext->fetch(PDO::FETCH_ASSOC);
+$sqlNextGP = "SELECT grandprix, race_datetime, title, location FROM circuits ORDER BY race_datetime ASC LIMIT 1";
+    $stmtNextGP = $pdo->prepare($sqlNextGP);
+    $stmtNextGP->execute();
+    
+    $nextGPData = $stmtNextGP->fetch(PDO::FETCH_ASSOC);
 
     if ($nextGPData) {
-        $nextGrandPrix = ['grandprix' => $nextGPData['grandprix'], 'circuit' => $nextGPData['title']];
+        $nextGrandPrix = $nextGPData; 
+        
         $dateObj = new DateTime($nextGPData['race_datetime']);
         $targetDateTime = $dateObj->format('Y-m-d\TH:i:s'); 
     }
@@ -32,11 +31,10 @@ try {
 
 require_once 'achterkant/aanpassing/api-koppelingen/1result_api.php';
 
-// SEO Variabelen
 $pageTitle = "F1SITE.NL | Laatste Formule 1 Nieuws, Uitslagen & Kalender 2026";
 $pageDesc = "Blijf op de hoogte van het laatste Formule 1 nieuws. Bekijk de live countdown naar de volgende Grand Prix, uitslagen, standen en de volledige F1 kalender van 2026.";
 $currentUrl = "https://f1site.nl" . $_SERVER['REQUEST_URI'];
-$ogImage = "https://f1site.nl/afbeeldingen/og-image-default.jpg"; // Zorg dat dit bestand bestaat voor social media
+$ogImage = "https://f1site.nl/afbeeldingen/f1site_logo_nieuw.png";
 ?>
 <!DOCTYPE html>
 <html lang="nl" class="scroll-smooth">
@@ -116,13 +114,46 @@ $ogImage = "https://f1site.nl/afbeeldingen/og-image-default.jpg"; // Zorg dat di
 </head>
 <body class="bg-pattern">
 
-    <div id="cookie-overlay">
-        <div class="bg-f1-card p-10 rounded-2xl border-t-4 border-f1-red max-w-sm w-full mx-4 shadow-2xl text-center">
-            <h2 class="text-3xl font-oswald font-black mb-4 uppercase italic tracking-tighter">Data Pitstop</h2>
-            <p class="text-gray-400 text-sm mb-8">Accepteer cookies voor de snelste race-ervaring.</p>
-            <button onclick="acceptCookies()" class="w-full bg-f1-red py-4 rounded-lg font-bold uppercase text-sm hover:brightness-110 transition shadow-lg">Akkoord</button>
+    <div id="cookie-overlay" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-[9999] flex items-center justify-center">
+    <div class="bg-f1-card p-8 rounded-2xl border-t-4 border-f1-red max-w-md w-full mx-4 shadow-2xl relative overflow-hidden">
+        <div class="absolute -right-10 -top-10 opacity-10">
+            <svg width="200" height="200" viewBox="0 0 100 100"><path d="M0 0 L100 0 L100 20 L20 20 L0 100 Z" fill="white"/></svg>
+        </div>
+
+        <div class="relative z-10">
+            <h2 class="text-3xl font-oswald font-black mb-2 uppercase italic tracking-tighter flex items-center justify-center gap-2">
+                <span class="text-f1-red">/</span> Data Pitstop
+            </h2>
+            
+            <p class="text-gray-300 text-sm mb-6 leading-relaxed">
+                Om je de snelste race-ervaring en de scherpste analyses te bieden, gebruiken we cookies. Hiermee optimaliseren we de site en tonen we relevante F1-content.
+            </p>
+
+            <div class="space-y-3">
+                <button onclick="acceptCookies()" 
+                    class="w-full bg-f1-red py-4 rounded-lg font-bold uppercase text-sm hover:brightness-110 transition shadow-lg transform hover:scale-[1.02] active:scale-95">
+                    Accepteer Alle Cookies
+                </button>
+                
+                <div class="flex gap-3">
+                    <button onclick="acceptEssential()" 
+                        class="flex-1 bg-white/10 py-3 rounded-lg font-bold uppercase text-[10px] tracking-widest hover:bg-white/20 transition">
+                        Alleen Functioneel
+                    </button>
+                    
+                    <a href="/privacy-policy" 
+                        class="flex-1 border border-white/20 py-3 rounded-lg font-bold uppercase text-[10px] tracking-widest text-gray-400 hover:text-white transition flex items-center justify-center">
+                        Privacy Policy
+                    </a>
+                </div>
+            </div>
+
+            <p class="mt-6 text-[10px] text-gray-500 uppercase tracking-widest">
+                Snelheid is alles, ook voor je privacy.
+            </p>
         </div>
     </div>
+</div>
 
     <div id="mobile-menu" class="p-10 flex flex-col items-center justify-center">
         <button onclick="toggleMenu()" class="absolute top-8 right-8 text-5xl font-light text-white hover:text-f1-red transition">&times;</button>
@@ -152,7 +183,6 @@ $ogImage = "https://f1site.nl/afbeeldingen/og-image-default.jpg"; // Zorg dat di
             <button onclick="toggleMenu()" class="lg:hidden text-white text-3xl" aria-label="Menu openen">☰</button>
         </div>
     </header>
-
     <main class="max-w-7xl mx-auto px-6 py-12">
         <section class="mb-24" data-aos="fade-down">
             <div class="relative p-10 md:p-16 rounded-[2.5rem] bg-f1-card border border-white/5 overflow-hidden">
@@ -162,7 +192,7 @@ $ogImage = "https://f1site.nl/afbeeldingen/og-image-default.jpg"; // Zorg dat di
                         <h2 class="text-5xl md:text-7xl font-oswald font-black uppercase italic leading-none mb-4 tracking-tighter">
                             <?php echo ($nextGrandPrix) ? htmlspecialchars($nextGrandPrix['grandprix']) : "Aankomende Race"; ?>
                         </h2>
-                        <p class="text-gray-400 text-lg flex items-center gap-2">📍 <?php echo htmlspecialchars($nextGrandPrix['circuit'] ?? 'Wordt geladen...'); ?></p>
+                        <p class="text-gray-400 text-lg flex items-center gap-2">📍 <?php echo htmlspecialchars($nextGrandPrix['title'] ?? 'Wordt geladen...'); ?>, <?php echo htmlspecialchars($nextGrandPrix['location'] ?? ''); ?></p>
                     </div>
                     <div class="grid grid-cols-4 gap-4" id="countdown">
                         <?php foreach(['Days' => 'd', 'Hrs' => 'h', 'Min' => 'm', 'Sec' => 's'] as $label => $id): ?>
