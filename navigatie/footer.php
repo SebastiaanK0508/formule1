@@ -42,7 +42,7 @@ if ($server === 'localhost' || $server === '127.0.0.1') {
                         'sitemap.php' => 'Sitemap',
                         'privacy-en.html' => 'Privacy Policy',
                         'algemenevoorwaarden-en.html' => 'Terms & Conditions',
-                        'contact.html' => 'Contact'
+                        'contact.php' => 'Contact'
                     ];
 
                     foreach ($nav_items as $url => $label) {
@@ -65,8 +65,6 @@ if ($server === 'localhost' || $server === '127.0.0.1') {
     </div>
 </footer>
 <?php 
-// We checken alleen op de PHP cookie. 
-// Als deze niet bestaat, tonen we de overlay.
 if (!isset($_COOKIE['f1_consent'])): 
 ?>
 <div id="cookie-overlay" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-[9999] flex items-center justify-center transition-opacity duration-300">

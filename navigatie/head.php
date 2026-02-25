@@ -24,12 +24,15 @@ if ($server === 'localhost' || $server === '127.0.0.1') {
     <meta property="og:url" content="<?php echo $baseUrl; ?>">
     <meta property="og:title" content="F1SITE.NL - Alles over Formule 1">
     <meta property="og:description" content="Check de laatste resultaten en standen in het F1 kampioenschap.">
-    <meta property="og:image" content="<?php echo $baseUrl; ?>assets/img/og-share-image.jpg">
+    <meta property="og:image" content="<?php echo $baseUrl; ?>afbeeldingen/logo/f1_icon.png">
     <meta property="twitter:card" content="summary_large_image">
     <meta property="twitter:title" content="F1SITE.NL - Alles over Formule 1">
     <meta property="twitter:description" content="Check de laatste resultaten en standen in het F1 kampioenschap.">
-    <link rel="icon" type="image/x-icon" href="favicon.ico">
-    <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+    <link rel="icon" type="image/x-icon" href="../afbeeldingen/logo/f1_icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="../afbeeldingen/logo/f1_icon.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="../afbeeldingen/logo/f1_icon.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="../afbeeldingen/logo/f1_icon.png">
+    <link rel="manifest" href="/site.webmanifest">    
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=Oswald:wght@400;700;900&display=swap" rel="stylesheet">

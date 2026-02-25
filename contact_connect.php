@@ -22,10 +22,10 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
         ':contact_subject' => $contact_subject,
         ':contact_message' => $contact_message
     ]);
-    header('Location: contact.html?status=success');
+    header('Location: contact.php?status=success');
     exit;
 } catch (Exception $e) {
     error_log("F1SITE Error: " . $e->getMessage());
-    header('Location: contact.html?status=error');
+    header('Location: contact.php?status=error');
     exit;
 }
