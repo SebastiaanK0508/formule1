@@ -11,11 +11,8 @@ function nav_class($pageName, $current_page, $is_mobile = false) {
 }
 $server = $_SERVER['SERVER_NAME'];
 $requestUri = $_SERVER['REQUEST_URI'];
-
 if ($server === 'localhost' || $server === '127.0.0.1') {
-    $baseUrl = (strpos($requestUri, '/~sebastiaanbaskamphuis') !== false)
-        ? "http://localhost:8080/~sebastiaanbaskamphuis/formule1/"
-        : "http://localhost/formule1/";
+    $baseUrl = "http://localhost:8080/formule1/";
 } else {
     $baseUrl = "https://f1site.nl/";
 }
@@ -27,7 +24,6 @@ if ($server === 'localhost' || $server === '127.0.0.1') {
         overflow-y: auto;
         -webkit-overflow-scrolling: touch;
     }
-    
     #mobile-menu.is-open {
         transform: translateX(0);
         visibility: visible !important;
@@ -42,18 +38,15 @@ if ($server === 'localhost' || $server === '127.0.0.1') {
             padding-top: 2rem;
             space-y: 0 !important; 
         }
-        
         #mobile-menu nav a {
             font-size: 1.5rem !important;
             margin-top: 0 !important;
         }
-
         #mobile-menu .close-btn-container {
             top: 1rem !important;
             right: 1rem !important;
         }
     }
-
     .menu-trigger { cursor: pointer; -webkit-tap-highlight-color: transparent; }
 </style>
 <base href="<?php echo $baseUrl; ?>">
