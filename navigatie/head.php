@@ -5,9 +5,7 @@ $server = $_SERVER['SERVER_NAME'];
 $requestUri = $_SERVER['REQUEST_URI'];
 
 if ($server === 'localhost' || $server === '127.0.0.1') {
-    $baseUrl = (strpos($requestUri, '/~sebastiaanbaskamphuis') !== false)
-        ? "http://localhost:8080/~sebastiaanbaskamphuis/formule1/"
-        : "http://localhost/formule1/";
+    $baseUrl = "http://localhost:8080/formule1/";
 } else {
     $baseUrl = "https://f1site.nl/";
 }
