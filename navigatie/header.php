@@ -9,6 +9,7 @@ function nav_class($pageName, $current_page, $is_mobile = false) {
         ? 'text-f1-red border-b-2 border-f1-red pb-1' 
         : 'hover:text-f1-red transition pb-1 border-b-2 border-transparent';
 }
+
 $server = $_SERVER['SERVER_NAME'];
 $requestUri = $_SERVER['REQUEST_URI'];
 if ($server === 'localhost' || $server === '127.0.0.1') {
