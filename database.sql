@@ -583,3 +583,15 @@ UPDATE circuits SET map_url = 'https://www.formula1.com/content/dam/fom-website/
 UPDATE circuits SET map_url = 'https://www.formula1.com/content/dam/fom-website/2018-redesign-assets/Circuit%20maps%2016x9/Abu_Dhabi_Circuit.png' WHERE circuit_key = 'yas_marina';
 
 ALTER TABLE `contact` MODIFY `ID` INT(11) NOT NULL AUTO_INCREMENT;
+
+CREATE TABLE IF NOT EXISTS admin_users (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(50) NOT NULL UNIQUE,
+    password_hash VARCHAR(255) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+INSERT INTO admin_users (username, password_hash) 
+VALUES ('SebastiaanK0508', '$2y$12$drJbP65U7ZoASeeH8qTpLOto/X73FXkTGVNA0hHfrdu1fEbTvdYm6');
+
+ALTER TABLE f1_nieuws ADD COLUMN source VARCHAR(522);
