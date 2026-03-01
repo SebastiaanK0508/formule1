@@ -5,13 +5,11 @@ if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) {
     header("Location: login.php");
     exit;
 }
-
 require_once 'db_config.php';
-
 try {
     $countStmt = $pdo->query("SELECT COUNT(*) FROM f1_nieuws");
     $totalArticles = $countStmt->fetchColumn();
-    $newsStmt = $pdo->query("SELECT id, titel, source, publicatie_datum FROM f1_nieuws ORDER BY publicatie_datum DESC LIMIT 5");
+    $newsStmt = $pdo->query("SELECT id, titel, source, publicatie_datum FROM f1_nieuws ORDER BY publicatie_datum DESC LIMIT 4");
     $articles = $newsStmt->fetchAll(PDO::FETCH_ASSOC);
 
 } catch (PDOException $e) {
