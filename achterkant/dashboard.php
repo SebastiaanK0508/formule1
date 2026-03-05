@@ -1,11 +1,11 @@
 <?php
 session_start();
-
 if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) {
     header("Location: login.php");
     exit;
 }
 require_once 'db_config.php';
+/** @var PDO $pdo */
 try {
     $countStmt = $pdo->query("SELECT COUNT(*) FROM f1_nieuws");
     $totalArticles = $countStmt->fetchColumn();

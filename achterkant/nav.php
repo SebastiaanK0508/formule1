@@ -8,6 +8,7 @@ if ($server === 'localhost' || $server === '127.0.0.1') {
     $baseUrl = "https://achterkant.f1site.nl/";
 }
 ?>
+<base href="<?php echo htmlspecialchars($baseUrl); ?>">
 <aside class="hidden lg:flex flex-col w-72 bg-f1-dark border-r border-white/5 p-6 sticky top-0 h-screen">
     <div class="mb-12 px-4">
         <h1 class="text-3xl font-oswald font-black italic tracking-tighter">F1SITE<span class="text-f1-red">.NL</span></h1>
@@ -18,16 +19,16 @@ if ($server === 'localhost' || $server === '127.0.0.1') {
         <a href="dashboard.php" class="sidebar-link flex items-center gap-4 px-4 py-3 rounded-lg text-f1-red bg-white/5 font-bold">
             <span>📊</span> Dashboard
         </a>
-        <a href="beheer/nieuws.php" class="sidebar-link flex items-center gap-4 px-4 py-3 rounded-lg text-gray-400 hover:text-white transition">
+        <a href="bewerken/nieuws.php" class="sidebar-link flex items-center gap-4 px-4 py-3 rounded-lg text-gray-400 hover:text-white transition">
             <span>📰</span> Nieuws Beheer
         </a>
-        <a href="beheer/kalender.php" class="sidebar-link flex items-center gap-4 px-4 py-3 rounded-lg text-gray-400 hover:text-white transition">
+        <a href="bewerken/circuits.php" class="sidebar-link flex items-center gap-4 px-4 py-3 rounded-lg text-gray-400 hover:text-white transition">
             <span>🏁</span> Circuits & Kalender
         </a>
-        <a href="beheer/teams.php" class="sidebar-link flex items-center gap-4 px-4 py-3 rounded-lg text-gray-400 hover:text-white transition">
+        <a href="bewerken/teams.php" class="sidebar-link flex items-center gap-4 px-4 py-3 rounded-lg text-gray-400 hover:text-white transition">
             <span>🏎️</span> Formule 1 Teams
         </a>
-        <a href="beheer/courreurs.php" class="sidebar-link flex items-center gap-4 px-4 py-3 rounded-lg text-gray-400 hover:text-white transition">
+        <a href="bewerken/courreurs.php" class="sidebar-link flex items-center gap-4 px-4 py-3 rounded-lg text-gray-400 hover:text-white transition">
             <span>⛑️</span> Formule 1 Courreurs
         </a>
         </a>
