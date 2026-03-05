@@ -10,7 +10,7 @@ if ($server === 'localhost' || $server === '127.0.0.1') {
 ?>
 <aside class="hidden lg:flex flex-col w-72 bg-f1-dark border-r border-white/5 p-6 sticky top-0 h-screen">
     <div class="mb-12 px-4">
-        <h1 class="text-3xl font-oswald font-black italic tracking-tighter">F1<span class="text-f1-red">SITE</span></h1>
+        <h1 class="text-3xl font-oswald font-black italic tracking-tighter">F1SITE<span class="text-f1-red">.NL</span></h1>
         <span class="text-[10px] font-black text-gray-500 tracking-[0.3em] uppercase">Control Center</span>
     </div>
 
