@@ -21,15 +21,21 @@ $schemaData = [
 ];
 $driverListItems = [];
 foreach ($allDrivers as $index => $driver) {
-    $driverSlug = strtolower(str_replace(' ', '-', htmlspecialchars($driver['first_name'] . '-' . $driver['last_name'])));
+    $firstName = $driver['first_name'] ?? '';
+    $lastName = $driver['last_name'] ?? '';
+    $teamName = $driver['full_team_name'] ?? '';
+    $driverSlug = strtolower(str_replace(' ', '-', htmlspecialchars($firstName . '-' . $lastName)));
     $driverListItems[] = [
         '@type' => 'ListItem',
         'position' => $index + 1,
         'item' => [
             '@type' => 'Person',
-            'name' => htmlspecialchars($driver['first_name']) . ' ' . htmlspecialchars($driver['last_name']),
+            'name' => htmlspecialchars($firstName) . ' ' . htmlspecialchars($lastName),
             'jobTitle' => 'Formula 1 Driver',
-            'alumniOf' => ['@type' => 'SportsTeam', 'name' => htmlspecialchars($driver['full_team_name'])]
+            'alumniOf' => [
+                '@type' => 'SportsTeam', 
+                'name' => htmlspecialchars($teamName)
+            ]
         ]
     ];
 }
