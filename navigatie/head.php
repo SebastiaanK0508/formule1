@@ -19,13 +19,13 @@ if (isset($_COOKIE['f1_consent'])) {
 ?>
 
 <?php if ($has_analytics_consent): ?>
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-HM1DBJF6VW"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
 
-      gtag('config', 'G-XXXXXXXXXX', {
+      gtag('config', 'G-HM1DBJF6VW', {
           'anonymize_ip': true,
           'cookie_flags': 'SameSite=None;Secure'
       });
