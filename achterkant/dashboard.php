@@ -35,18 +35,13 @@ try {
     </style>
 </head>
 <body class="bg-pattern text-white font-sans overflow-x-hidden">
-
     <div class="lg:hidden bg-f1-dark p-4 border-b border-white/10 flex justify-between items-center sticky top-0 z-50">
         <h1 class="font-oswald font-black italic text-xl uppercase tracking-tighter">F1<span class="text-f1-red">SITE</span></h1>
         <button class="bg-white/5 p-2 rounded text-xs font-bold uppercase tracking-widest border border-white/10">Menu</button>
     </div>
-
     <div class="flex min-h-screen">
-        
         <?php include 'nav.php'; ?>
-
         <main class="flex-grow p-6 lg:p-12">
-            
             <header class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12" data-aos="fade-down">
                 <div>
                     <h2 class="text-4xl lg:text-5xl font-oswald font-black uppercase italic tracking-tighter leading-none">

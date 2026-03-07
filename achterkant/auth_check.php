@@ -1,6 +1,7 @@
 <?php
 session_start();
-require_once 'db_config.php'; // Zorg dat hier je PDO verbinding in staat
+require_once 'db_config.php'; 
+/** @var PDO $pdo */
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $user = $_POST['username'] ?? '';
