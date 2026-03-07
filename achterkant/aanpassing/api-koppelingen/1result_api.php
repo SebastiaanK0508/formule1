@@ -8,7 +8,7 @@ $race_details = null;
 $race_results = [];
 $error_message = '';
 $team_colors_from_db = [];
-
+ 
 $nextGrandPrix = null;
 $targetDateTime = null;
 
@@ -140,5 +140,41 @@ try {
     }
 } catch (Exception $e) {
     $error_message = "Er is een probleem opgetreden bij het ophalen van de race-uitslagen: " . $e->getMessage();
+}
+$qualifying_results = [];
+try {
+    if ($selected_round !== null) {
+        $cache_file_qual = "cache_qualifying_" . $selected_round . ".json";
+        $json_data_qual = null;
+        if (file_exists($cache_file_qual) && (time() - filemtime($cache_file_qual) < 3600)) {
+            $json_data_qual = file_get_contents($cache_file_qual);
+        } else {
+            $qual_url = 'http://api.jolpi.ca/ergast/f1/' . $current_year . '/' . $selected_round . '/qualifying.json';
+            $json_data_qual = @file_get_contents($qual_url);
+            if ($json_data_qual) {
+                file_put_contents($cache_file_qual, $json_data_qual);
+            } elseif (file_exists($cache_file_qual)) {
+                $json_data_qual = file_get_contents($cache_file_qual);
+            }
+        }
+        if ($json_data_qual) {
+            $qual_data = json_decode($json_data_qual, true);
+            if (isset($qual_data['MRData']['RaceTable']['Races'][0]['QualifyingResults'])) {
+                foreach ($qual_data['MRData']['RaceTable']['Races'][0]['QualifyingResults'] as $q_res) {
+                    $team = $q_res['Constructor']['name'];
+                    $qualifying_results[] = [
+                        'position' => $q_res['position'],
+                        'driver' => $q_res['Driver']['familyName'],
+                        'team_color' => $team_colors_from_db[$team] ?? '#E10600',
+                        'q1' => $q_res['Q1'] ?? '-',
+                        'q2' => $q_res['Q2'] ?? '-',
+                        'q3' => $q_res['Q3'] ?? '-'
+                    ];
+                }
+            }
+        }
+    }
+} catch (Exception $e) {
+    error_log("Qualifying API error: " . $e->getMessage());
 }
 ?>

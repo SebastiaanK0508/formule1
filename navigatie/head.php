@@ -9,6 +9,28 @@ if ($server === 'localhost' || $server === '127.0.0.1') {
     $baseUrl = "https://f1site.nl/";
 }
 ?>
+<?php
+$has_analytics_consent = false;
+if (isset($_COOKIE['f1_consent'])) {
+    if ($_COOKIE['f1_consent'] === 'all' || $_COOKIE['f1_consent'] === 'analytics') {
+        $has_analytics_consent = true;
+    }
+}
+?>
+
+<?php if ($has_analytics_consent): ?>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-XXXXXXXXXX', {
+          'anonymize_ip': true,
+          'cookie_flags': 'SameSite=None;Secure'
+      });
+    </script>
+<?php endif; ?>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
