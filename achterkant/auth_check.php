@@ -1,40 +1,59 @@
 <?php
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
+// 1. Forceer alle fouten naar het scherm
 error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
 session_start();
 
-require_once 'db_config.php'; 
-/** @var PDO $pdo */
+echo "DEBUG: Script gestart...<br>";
+
+// 2. Controleer of het bestand bestaat voor we het laden
+if (!file_exists('db_config.php')) {
+    die("FOUT: db_config.php niet gevonden op de server!");
+}
+
+require_once 'db_config.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    echo "DEBUG: POST ontvangen...<br>";
+    
     $user = $_POST['username'] ?? '';
     $pass = $_POST['password'] ?? '';
 
-    if (!empty($user) && !empty($pass)) {
-    echo "Stap 1: Input ontvangen<br>";
+    if (empty($user) || empty($pass)) {
+        die("DEBUG: Gebruikersnaam of wachtwoord is leeg in de POST.");
+    }
+
     try {
+        // Controleer of $pdo wel echt bestaat
+        if (!isset($pdo)) {
+            die("FOUT: De variabele \$pdo is niet gedefinieerd. Check db_config.php");
+        }
+
         $stmt = $pdo->prepare("SELECT id, username, password_hash FROM admin_users WHERE username = :username LIMIT 1");
         $stmt->execute(['username' => $user]);
         $admin = $stmt->fetch(PDO::FETCH_ASSOC);
-        
-        echo "Stap 2: Database query uitgevoerd<br>";
 
         if ($admin) {
-            echo "Stap 3: Gebruiker gevonden. Hash checken...<br>";
+            echo "DEBUG: Gebruiker gevonden in DB...<br>";
             if (password_verify($pass, $admin['password_hash'])) {
-                echo "Stap 4: Wachtwoord correct!";
-                // $_SESSION logs...
-                // header...
+                echo "DEBUG: Wachtwoord match! Redirecten naar dashboard...<br>";
+                $_SESSION['admin_id'] = $admin['id'];
+                $_SESSION['logged_in'] = true;
+                
+                // Als header() niet werkt, gebruiken we JS als fallback voor debug
+                echo "<script>window.location.href='dashboard.php';</script>";
+                exit;
             } else {
-                echo "Stap 4: Wachtwoord incorrect.";
+                die("DEBUG: Wachtwoord onjuist voor deze gebruiker.");
             }
         } else {
-            echo "Stap 3: Gebruiker NIET gevonden.";
+            die("DEBUG: Gebruiker '$user' niet gevonden in de tabel admin_users.");
         }
-    } catch (PDOException $e) {
-        echo "Fout: " . $e->getMessage();
+    } catch (Exception $e) {
+        die("KRITIEKE FOUT: " . $e->getMessage());
     }
-    die("<br>Einde debug.");
+} else {
+    echo "DEBUG: Geen POST data gevonden. Kom je wel van het formulier af?";
 }
-}
+?>
