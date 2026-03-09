@@ -1,21 +1,21 @@
 <?php
 session_start();
-if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) {
-    header("Location: index.php");
-    exit;
-}
+if (!isset($_SESSION['logged_in'])) { header("Location: index.php"); exit; }
 require_once 'db_config.php';
 /** @var PDO $pdo */
+
 try {
-    $countStmt = $pdo->query("SELECT COUNT(*) FROM f1_nieuws");
-    $totalArticles = $countStmt->fetchColumn();
-    $newsStmt = $pdo->query("SELECT id, titel, source, publicatie_datum FROM f1_nieuws ORDER BY publicatie_datum DESC LIMIT 4");
-    $articles = $newsStmt->fetchAll(PDO::FETCH_ASSOC);
+    $totalNews = $pdo->query("SELECT COUNT(*) FROM f1_nieuws")->fetchColumn();
+    $totalTeams = $pdo->query("SELECT COUNT(*) FROM teams WHERE is_active = 1")->fetchColumn();
+    $totalDrivers = $pdo->query("SELECT COUNT(*) FROM drivers WHERE is_active = 1")->fetchColumn();
+    $newMessages = $pdo->query("SELECT COUNT(*) FROM contact")->fetchColumn();
+    $stmtRace = $pdo->query("SELECT title, race_datetime, location FROM circuits WHERE race_datetime > NOW() ORDER BY race_datetime ASC LIMIT 1");
+    $nextRace = $stmtRace->fetch(PDO::FETCH_ASSOC);
+    $topDriver = $pdo->query("SELECT first_name, last_name, championships_won FROM drivers ORDER BY championships_won DESC LIMIT 1")->fetch();
+    $articles = $pdo->query("SELECT id, titel, source, publicatie_datum FROM f1_nieuws ORDER BY publicatie_datum DESC LIMIT 5")->fetchAll();
 
 } catch (PDOException $e) {
-    error_log("Dashboard Database Fout: " . $e->getMessage());
-    $articles = [];
-    $totalArticles = 0;
+    die("Data Error: " . $e->getMessage());
 }
 ?>
 <!DOCTYPE html>
@@ -23,174 +23,155 @@ try {
 <head>
     <?php include 'head.php'; ?>
     <style>
-        .bg-f1-card { background: rgba(22, 22, 28, 0.8); backdrop-filter: blur(10px); }
-        .sidebar-link:hover { background: linear-gradient(90deg, rgba(225, 6, 0, 0.1) 0%, transparent 100%); border-left: 3px solid #E10600; }
-        .stat-card { border-bottom: 1px solid rgba(255,255,255,0.05); transition: all 0.3s ease; }
-        .stat-card:hover { transform: translateY(-5px); border-bottom-color: #E10600; }
-        .glow-red { box-shadow: 0 0 20px rgba(225, 6, 0, 0.15); }
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-track { background: #0b0b0f; }
-        ::-webkit-scrollbar-thumb { background: #333; border-radius: 10px; }
-        ::-webkit-scrollbar-thumb:hover { background: #E10600; }
+        .f1-card { background: rgba(22, 22, 28, 0.7); backdrop-filter: blur(15px); border: 1px solid rgba(255,255,255,0.05); }
+        .f1-red-gradient { background: linear-gradient(135deg, #E10600 0%, #8b0000 100%); }
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; }
     </style>
 </head>
-<body class="bg-pattern text-white font-sans overflow-x-hidden">
-    <div class="lg:hidden bg-f1-dark p-4 border-b border-white/10 flex justify-between items-center sticky top-0 z-50">
-        <h1 class="font-oswald font-black italic text-xl uppercase tracking-tighter">F1<span class="text-f1-red">SITE</span></h1>
-        <button class="bg-white/5 p-2 rounded text-xs font-bold uppercase tracking-widest border border-white/10">Menu</button>
-    </div>
+<body class="bg-[#0b0b0f] text-white font-sans overflow-x-hidden">
+
     <div class="flex min-h-screen">
         <?php include 'nav.php'; ?>
-        <main class="flex-grow p-6 lg:p-12">
-            <header class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12" data-aos="fade-down">
-                <div>
-                    <h2 class="text-4xl lg:text-5xl font-oswald font-black uppercase italic tracking-tighter leading-none">
-                        Paddock <span class="text-f1-red">Overview</span>
-                    </h2>
-                    <p class="text-gray-500 text-sm mt-2 flex items-center gap-2">
-                        <span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
-                        Telemetry active for engineer: <span class="text-white font-bold"><?php echo htmlspecialchars($_SESSION['admin_name'] ?? 'Unknown'); ?></span>
-                    </p>
+        
+        <main class="flex-grow p-6 lg:p-10 mt-16 lg:mt-0">
+            <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center mb-10 gap-4">
+                <div data-aos="fade-right">
+                    <h1 class="text-4xl font-oswald font-black italic uppercase tracking-tighter text-white">Engineering <span class="text-f1-red">Station</span></h1>
+                    <p class="text-gray-500 text-xs font-bold uppercase tracking-widest mt-1">Live Database Access: <span class="text-green-500">Connected</span></p>
                 </div>
-                <div class="flex gap-4">
-                    <a href="add_news.php" class="bg-f1-red text-white px-8 py-4 rounded-full font-black text-[11px] uppercase tracking-[0.2em] hover:scale-105 hover:shadow-[0_0_20px_rgba(225,6,0,0.4)] transition-all duration-300">
-                        + Deploy News
-                    </a>
+                
+                <?php if($newMessages > 0): ?>
+                <div class="bg-blue-600/20 border border-blue-500/50 px-4 py-2 rounded-xl flex items-center gap-3 animate-bounce">
+                    <i data-lucide="mail" class="w-4 h-4 text-blue-400"></i>
+                    <span class="text-[10px] font-black uppercase tracking-tight"><?php echo $newMessages; ?> New Contact Requests</span>
                 </div>
-            </header>
+                <?php endif; ?>
+            </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
-                <?php 
-                $stats = [
-                    ['title' => 'Total Articles', 'val' => number_format($totalArticles, 0, ',', '.'), 'trend' => 'Live Database'],
-                    ['title' => 'System Health', 'val' => '99.8%', 'trend' => 'Optimal'],
-                    ['title' => 'API Uptime', 'val' => '100%', 'trend' => 'Stable'],
-                    ['title' => 'DB Latency', 'val' => '12ms', 'trend' => 'Fast']
-                ];
-                $delay = 0;
-                foreach($stats as $s): ?>
-                <div class="stat-card bg-f1-card p-8 rounded-[2rem] border border-white/5 relative overflow-hidden" data-aos="fade-up" data-aos-delay="<?php echo $delay; ?>">
-                    <p class="text-[10px] font-black text-gray-500 uppercase tracking-[0.2em] mb-3"><?php echo $s['title']; ?></p>
-                    <h3 class="text-4xl font-oswald font-black italic tracking-tighter text-white"><?php echo $s['val']; ?></h3>
-                    <div class="flex items-center gap-2 mt-2">
-                        <span class="w-1 h-1 rounded-full bg-f1-red"></span>
-                        <span class="text-[9px] text-f1-red font-black uppercase tracking-widest"><?php echo $s['trend']; ?></span>
-                    </div>
+            <div class="stats-grid mb-10">
+                <div class="f1-card p-6 rounded-3xl" data-aos="zoom-in">
+                    <p class="text-[10px] font-black text-gray-500 uppercase tracking-widest mb-2">Active Grid</p>
+                    <h3 class="text-3xl font-oswald font-black italic"><?php echo $totalTeams; ?> <span class="text-sm text-gray-600">TEAMS</span></h3>
                 </div>
-                <?php $delay += 100; endforeach; ?>
+                <div class="f1-card p-6 rounded-3xl" data-aos="zoom-in" data-aos-delay="100">
+                    <p class="text-[10px] font-black text-gray-500 uppercase tracking-widest mb-2">Entry List</p>
+                    <h3 class="text-3xl font-oswald font-black italic"><?php echo $totalDrivers; ?> <span class="text-sm text-gray-600">DRIVERS</span></h3>
+                </div>
+                <div class="f1-card p-6 rounded-3xl" data-aos="zoom-in" data-aos-delay="200">
+                    <p class="text-[10px] font-black text-gray-500 uppercase tracking-widest mb-2">News Database</p>
+                    <h3 class="text-3xl font-oswald font-black italic"><?php echo $totalNews; ?> <span class="text-sm text-gray-600">POSTS</span></h3>
+                </div>
+                <div class="f1-card p-6 rounded-3xl border-l-4 border-l-f1-red" data-aos="zoom-in" data-aos-delay="300">
+                    <p class="text-[10px] font-black text-gray-500 uppercase tracking-widest mb-2">G.O.A.T Status</p>
+                    <h3 class="text-xl font-oswald font-black italic uppercase"><?php echo $topDriver['last_name']; ?></h3>
+                    <p class="text-[9px] text-f1-red font-bold uppercase"><?php echo $topDriver['championships_won']; ?> World Titles</p>
+                </div>
             </div>
 
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                
-                <div class="lg:col-span-2 bg-f1-card rounded-[2.5rem] border border-white/5 overflow-hidden shadow-2xl" data-aos="fade-right">
-                    <div class="p-8 border-b border-white/5 flex justify-between items-center bg-white/2">
-                        <h3 class="font-oswald font-black uppercase italic text-xl tracking-tighter">Recent <span class="text-f1-red">News</span> Stream</h3>
-                        <span class="text-[9px] font-black text-gray-600 uppercase tracking-widest italic">Showing last 5 entries</span>
+                <div class="lg:col-span-2 f1-card rounded-[2.5rem] overflow-hidden shadow-2xl" data-aos="fade-up">
+                    <div class="p-8 border-b border-white/5 flex justify-between items-center">
+                        <h3 class="font-oswald font-black uppercase italic text-xl tracking-tighter">Telemetrie <span class="text-f1-red">Feed</span></h3>
+                        <a href="bewerken/add/add-news.php" class="text-[10px] font-black bg-f1-red px-4 py-2 rounded-full uppercase tracking-tighter">Add Entry</a>
                     </div>
-                    
-                    <div class="overflow-x-auto text-white">
+                    <div class="overflow-x-auto">
                         <table class="w-full text-left">
-                            <thead>
-                                <tr class="text-[10px] font-black text-gray-500 uppercase tracking-[0.2em] border-b border-white/5">
-                                    <th class="p-6">Article Description</th>
-                                    <th class="p-6">Source</th>
-                                    <th class="p-6 text-center">Actions</th>
-                                </tr>
-                            </thead>
                             <tbody class="divide-y divide-white/5">
-                                <?php if (!empty($articles)): ?>
-                                    <?php foreach ($articles as $article): ?>
-                                    <tr class="hover:bg-white/[0.03] transition-all group">
-                                        <td class="p-6">
-                                            <p class="font-bold text-sm text-gray-200 group-hover:text-white transition tracking-tight leading-snug max-w-md">
-                                                <?php echo htmlspecialchars($article['titel']); ?>
-                                            </p>
-                                            <p class="text-[10px] text-gray-600 font-bold mt-1 uppercase tracking-tighter">
-                                                📅 <?php echo date('d M Y | H:i', strtotime($article['publicatie_datum'])); ?>
-                                            </p>
-                                        </td>
-                                        <td class="p-6">
-                                            <span class="px-3 py-1 bg-white/5 border border-white/10 text-gray-400 text-[9px] font-black rounded-full uppercase tracking-[0.15em]">
-                                                <?php echo htmlspecialchars($article['source'] ?? 'Unknown'); ?>
-                                            </span>
-                                        </td>
-                                        <td class="p-6">
-                                            <div class="flex justify-center items-center gap-4">
-                                                <a href="edit_news.php?id=<?php echo $article['id']; ?>" class="text-[10px] font-black uppercase text-gray-500 hover:text-white transition tracking-widest">Edit</a>
-                                                <button onclick="confirmDelete(<?php echo $article['id']; ?>)" class="text-[10px] font-black uppercase text-red-900 hover:text-f1-red transition tracking-widest">Delete</button>
+                                <?php foreach($articles as $a): ?>
+                                <tr class="hover:bg-white/[0.02] transition-all group">
+                                    <td class="p-6">
+                                        <div class="flex items-center gap-4">
+                                            <div class="hidden sm:block w-2 h-2 rounded-full bg-f1-red"></div>
+                                            <div>
+                                                <p class="font-bold text-sm text-gray-200 group-hover:text-white transition leading-tight mb-1"><?php echo htmlspecialchars($a['titel']); ?></p>
+                                                <p class="text-[9px] text-gray-600 font-bold uppercase"><?php echo $a['source']; ?> • <?php echo date('H:i', strtotime($a['publicatie_datum'])); ?></p>
                                             </div>
-                                        </td>
-                                    </tr>
-                                    <?php endforeach; ?>
-                                <?php else: ?>
-                                    <tr>
-                                        <td colspan="3" class="p-20 text-center">
-                                            <p class="text-gray-600 font-oswald uppercase italic text-lg tracking-widest">No data in stream...</p>
-                                        </td>
-                                    </tr>
-                                <?php endif; ?>
+                                        </div>
+                                    </td>
+                                    <td class="p-6 text-right">
+                                        <div class="flex justify-end gap-3 opacity-0 group-hover:opacity-100 transition-opacity">
+                                            <a href="edit_news.php?id=<?php echo $a['id']; ?>" class="text-gray-500 hover:text-white"><i data-lucide="edit-3" class="w-4 h-4"></i></a>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <?php endforeach; ?>
                             </tbody>
                         </table>
                     </div>
                 </div>
-
-                <div class="space-y-8" data-aos="fade-left">
-                    <div class="bg-f1-red rounded-[2.5rem] p-10 glow-red relative overflow-hidden group transition-transform duration-500 hover:scale-[1.02]">
+                <div class="space-y-8">
+                    <?php if($nextRace): ?>
+                    <div class="f1-red-gradient rounded-[2.5rem] p-8 shadow-[0_20px_50px_rgba(225,6,0,0.3)] relative overflow-hidden" data-aos="fade-left">
                         <div class="relative z-10">
-                            <span class="inline-block px-3 py-1 bg-white/20 rounded-full text-[9px] font-black uppercase tracking-widest mb-6">Upcoming Event</span>
-                            <h4 class="text-4xl font-oswald font-black italic uppercase leading-tight mb-2 tracking-tighter">Monaco <br>Grand Prix</h4>
-                            <p class="text-white/70 font-bold uppercase text-[10px] tracking-widest">Monte Carlo Circuit 🇮🇩</p>
+                            <div class="flex justify-between items-start mb-6">
+                                <span class="px-3 py-1 bg-black/20 rounded-full text-[9px] font-black uppercase tracking-widest">Next Grand Prix</span>
+                                <i data-lucide="timer" class="w-5 h-5 opacity-50"></i>
+                            </div>
+                            <h4 class="text-3xl font-oswald font-black italic uppercase leading-none mb-2"><?php echo $nextRace['title']; ?></h4>
+                            <p class="text-[10px] font-bold uppercase tracking-widest opacity-80 mb-8"><?php echo $nextRace['location']; ?></p>
                             
-                            <div class="mt-10 pt-8 border-t border-white/20 flex items-end justify-between">
+                            <div id="race-timer" class="flex gap-4">
                                 <div>
-                                    <p class="text-xs font-black uppercase text-white/60 mb-1">Qualifying</p>
-                                    <p class="text-3xl font-oswald font-black italic tracking-tighter text-white">16:00 <span class="text-sm">CET</span></p>
+                                    <span id="d" class="text-3xl font-oswald font-black italic">00</span>
+                                    <p class="text-[8px] uppercase font-black opacity-60">Days</p>
                                 </div>
-                                <span class="text-5xl opacity-20">🏁</span>
+                                <span class="text-2xl opacity-30">:</span>
+                                <div>
+                                    <span id="h" class="text-3xl font-oswald font-black italic">00</span>
+                                    <p class="text-[8px] uppercase font-black opacity-60">Hrs</p>
+                                </div>
+                                <span class="text-2xl opacity-30">:</span>
+                                <div>
+                                    <span id="m" class="text-3xl font-oswald font-black italic">00</span>
+                                    <p class="text-[8px] uppercase font-black opacity-60">Min</p>
+                                </div>
                             </div>
                         </div>
-                        <div class="absolute -bottom-10 -right-10 w-48 h-48 bg-black/10 rounded-full blur-3xl pointer-events-none"></div>
+                        <div class="absolute -bottom-10 -right-5 text-[120px] font-black italic opacity-10 select-none">GP</div>
                     </div>
+                    <?php endif; ?>
 
-                    <div class="bg-f1-card rounded-[2.5rem] border border-white/5 p-8 shadow-xl">
-                        <div class="flex items-center gap-3 mb-8">
-                            <span class="w-1 h-4 bg-f1-red rounded-full"></span>
-                            <h4 class="font-oswald font-black uppercase italic text-xl tracking-tighter">System <span class="text-f1-red">Logs</span></h4>
-                        </div>
-                        <div class="space-y-6">
-                            <div class="flex gap-4">
-                                <div class="w-2 h-2 rounded-full bg-green-500 mt-1 flex-shrink-0 shadow-[0_0_10px_rgba(34,197,94,0.5)]"></div>
-                                <div>
-                                    <p class="text-[11px] text-gray-300 font-bold leading-tight uppercase tracking-tight">Scraper: 1Result API</p>
-                                    <p class="text-[10px] text-gray-500 mt-1 italic">Successful sync - 14 new records added.</p>
-                                </div>
+                    <div class="f1-card rounded-[2.5rem] p-8" data-aos="fade-left" data-aos-delay="200">
+                        <h4 class="font-oswald font-black uppercase italic text-lg tracking-tighter mb-6 flex items-center gap-2">
+                            <span class="w-1 h-4 bg-f1-red"></span> Data Integrity
+                        </h4>
+                        <div class="space-y-4 text-[11px]">
+                            <div class="flex justify-between items-center border-b border-white/5 pb-2">
+                                <span class="text-gray-500 uppercase font-bold">SQL Status</span>
+                                <span class="text-green-500 font-black tracking-widest uppercase">Optimal</span>
                             </div>
-                            <div class="flex gap-4">
-                                <div class="w-2 h-2 rounded-full bg-blue-500 mt-1 flex-shrink-0 shadow-[0_0_10px_rgba(59,130,246,0.5)]"></div>
-                                <div>
-                                    <p class="text-[11px] text-gray-300 font-bold leading-tight uppercase tracking-tight">Security Protocol</p>
-                                    <p class="text-[10px] text-gray-500 mt-1 italic">New login detected from IP: 127.0.0.1</p>
-                                </div>
+                            <div class="flex justify-between items-center border-b border-white/5 pb-2">
+                                <span class="text-gray-500 uppercase font-bold">SSL Certificate</span>
+                                <span class="text-blue-400 font-black tracking-widest uppercase">Active</span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span class="text-gray-500 uppercase font-bold">PHP Version</span>
+                                <span class="text-white font-black tracking-widest uppercase"><?php echo phpversion(); ?></span>
                             </div>
                         </div>
                     </div>
                 </div>
-
             </div>
         </main>
     </div>
 
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            AOS.init({ duration: 800, once: true });
-        });
+        AOS.init({ duration: 800, once: true });
+        lucide.createIcons();
 
-        function confirmDelete(id) {
-            if (confirm('⚠️ WARNING: Deleting this article is permanent. Proceed?')) {
-                window.location.href = 'delete_news.php?id=' + id;
-            }
-        }
+        <?php if($nextRace): ?>
+        // COUNTDOWN LOGIC
+        const raceTime = new Date("<?php echo $nextRace['race_datetime']; ?>").getTime();
+        setInterval(() => {
+            const now = new Date().getTime();
+            const diff = raceTime - now;
+            if(diff < 0) return;
+            document.getElementById('d').innerText = Math.floor(diff / (1000 * 60 * 60 * 24)).toString().padStart(2, '0');
+            document.getElementById('h').innerText = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)).toString().padStart(2, '0');
+            document.getElementById('m').innerText = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60)).toString().padStart(2, '0');
+        }, 1000);
+        <?php endif; ?>
     </script>
 </body>
 </html>

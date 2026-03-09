@@ -19,21 +19,17 @@ $circuitsData = [];
 try {
     $sql = "SELECT circuit_key, grandprix, location, race_datetime, calendar_order FROM circuits";
     $params = [];
-
     if ($selectedYear !== 'all') {
         $sql .= " WHERE YEAR(race_datetime) = :year";
         $params['year'] = $selectedYear;
     }
-
     $sql .= " ORDER BY YEAR(race_datetime) DESC, calendar_order ASC";
-    
     $stmt = $pdo->prepare($sql);
     $stmt->execute($params);
     $circuitsData = $stmt->fetchAll();
 } catch (\PDOException $e) {
     error_log("Fout bij het ophalen van circuits: " . $e->getMessage());
 }
-
 $currentYearHeader = null;
 ?>
 <!DOCTYPE html>
@@ -80,7 +76,7 @@ $currentYearHeader = null;
             <header class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12" data-aos="fade-down">
                 <div>
                     <h2 class="text-4xl lg:text-5xl font-oswald font-black uppercase italic tracking-tighter leading-none">
-                        Race <span class="text-f1-red">Calendar</span>
+                        Shedule <span class="text-f1-red"><?php echo date('Y'); ?></span>
                     </h2>
                     <p class="text-gray-500 text-sm mt-2 flex items-center gap-2">
                         <span class="w-2 h-2 rounded-full bg-f1-red animate-pulse"></span>

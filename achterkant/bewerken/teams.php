@@ -12,7 +12,7 @@ $teams = [];
 
 try {
     if (!empty($search)) {
-        $sql = "SELECT team_id, full_team_name, base_location, team_principal, team_logo FROM teams 
+        $sql = "SELECT team_id, full_team_name, base_location, team_principal, logo_url FROM teams 
                 WHERE full_team_name LIKE :search 
                 OR base_location LIKE :search 
                 OR team_principal LIKE :search 
@@ -20,7 +20,7 @@ try {
         $stmt = $pdo->prepare($sql);
         $stmt->bindValue(':search', '%' . $search . '%');
     } else {
-        $sql = "SELECT team_id, full_team_name, base_location, team_principal, team_logo FROM teams ORDER BY full_team_name ASC";
+        $sql = "SELECT team_id, full_team_name, base_location, team_principal, logo_url FROM teams ORDER BY full_team_name ASC";
         $stmt = $pdo->prepare($sql);
     }
     $stmt->execute();
@@ -35,9 +35,7 @@ try {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Constructor Standings | F1 Administration</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Oswald:wght@700&display=swap" rel="stylesheet">
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <?php include '../head.php'; ?>
     <style>
         :root { --f1-red: #E10600; }
         .bg-f1-card { background: rgba(22, 22, 28, 0.8); backdrop-filter: blur(10px); }
@@ -72,7 +70,7 @@ try {
                 <header class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6 mb-12" data-aos="fade-down">
                     <div>
                         <h2 class="text-5xl font-oswald font-black uppercase italic tracking-tighter">
-                            F1 <span class="text-f1-red">Teams</span>
+                            Teams <span class="text-f1-red"><?php echo date('Y'); ?></span>
                         </h2>
                         <p class="text-gray-500 text-[10px] font-black uppercase tracking-[0.2em] mt-2 flex items-center gap-2">
                             <span class="w-2 h-2 rounded-full bg-f1-red"></span>
@@ -89,10 +87,10 @@ try {
                                 Search
                             </button>
                             <?php if(!empty($search)): ?>
-                                <a href="teams.php" class="bg-f1-red/10 border border-f1-red/20 text-f1-red px-6 py-3 rounded-full text-[10px] font-black uppercase tracking-widest transition flex items-center">Reset</a>
+                                <a href="bewerken/teams.php" class="bg-f1-red/10 border border-f1-red/20 text-f1-red px-6 py-3 rounded-full text-[10px] font-black uppercase tracking-widest transition flex items-center">Reset</a>
                             <?php endif; ?>
                         </form>
-                        <a href="add/add-team.php" class="bg-f1-red text-white px-8 py-3 rounded-full font-black text-[10px] uppercase tracking-[0.2em] hover:scale-105 transition shadow-[0_0_20px_rgba(225,6,0,0.3)]">
+                        <a href="bewerken/add/add-team.php" class="bg-f1-red text-white px-8 py-3 rounded-full font-black text-[10px] uppercase tracking-[0.2em] hover:scale-105 transition shadow-[0_0_20px_rgba(225,6,0,0.3)]">
                             + Add Team
                         </a>
                     </div>
@@ -177,7 +175,7 @@ try {
                 row.addEventListener('dblclick', function() {
                     const teamId = this.dataset.teamId;
                     if (teamId) {
-                        window.location.href = 'team-details.php?id=' + teamId;
+                        window.location.href = 'bewerken/team-details.php?id=' + teamId;
                     }
                 });
             });
