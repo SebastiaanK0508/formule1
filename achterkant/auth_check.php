@@ -8,25 +8,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $pass = $_POST['password'] ?? '';
 
     if (!empty($user) && !empty($pass)) {
-        try {
-            $stmt = $pdo->prepare("SELECT id, username, password_hash FROM admin_users WHERE username = :username LIMIT 1");
-            $stmt->execute(['username' => $user]);
-            $admin = $stmt->fetch(PDO::FETCH_ASSOC);
+    echo "Stap 1: Input ontvangen<br>";
+    try {
+        $stmt = $pdo->prepare("SELECT id, username, password_hash FROM admin_users WHERE username = :username LIMIT 1");
+        $stmt->execute(['username' => $user]);
+        $admin = $stmt->fetch(PDO::FETCH_ASSOC);
+        
+        echo "Stap 2: Database query uitgevoerd<br>";
 
-            if ($admin && password_verify($pass, $admin['password_hash'])) {
-                $_SESSION['admin_id'] = $admin['id'];
-                $_SESSION['admin_name'] = $admin['username'];
-                $_SESSION['logged_in'] = true;
-
-                header("Location: dashboard.php");
-                exit;
+        if ($admin) {
+            echo "Stap 3: Gebruiker gevonden. Hash checken...<br>";
+            if (password_verify($pass, $admin['password_hash'])) {
+                echo "Stap 4: Wachtwoord correct!";
+                // $_SESSION logs...
+                // header...
             } else {
-                header("Location: index.php?error=invalid_credentials");
-                exit;
+                echo "Stap 4: Wachtwoord incorrect.";
             }
-        } catch (PDOException $e) {
-            error_log($e->getMessage());
-            die("Systeemfout in de pitstraat.");
+        } else {
+            echo "Stap 3: Gebruiker NIET gevonden.";
         }
+    } catch (PDOException $e) {
+        echo "Fout: " . $e->getMessage();
     }
+    die("<br>Einde debug.");
+}
 }
