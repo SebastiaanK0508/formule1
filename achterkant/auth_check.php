@@ -7,7 +7,6 @@ session_start();
 
 echo "DEBUG: Script gestart...<br>";
 
-// 2. Controleer of het bestand bestaat voor we het laden
 if (!file_exists('db_config.php')) {
     die("FOUT: db_config.php niet gevonden op de server!");
 }
@@ -25,7 +24,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     try {
-        // Controleer of $pdo wel echt bestaat
         if (!isset($pdo)) {
             die("FOUT: De variabele \$pdo is niet gedefinieerd. Check db_config.php");
         }
@@ -40,8 +38,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 echo "DEBUG: Wachtwoord match! Redirecten naar dashboard...<br>";
                 $_SESSION['admin_id'] = $admin['id'];
                 $_SESSION['logged_in'] = true;
-                
-                // Als header() niet werkt, gebruiken we JS als fallback voor debug
                 echo "<script>window.location.href='dashboard.php';</script>";
                 exit;
             } else {
