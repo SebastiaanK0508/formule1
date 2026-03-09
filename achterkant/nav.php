@@ -28,7 +28,7 @@ if ($server === 'localhost' || $server === '127.0.0.1') {
         <a href="bewerken/teams.php" class="sidebar-link flex items-center gap-4 px-4 py-3 rounded-lg text-gray-400 hover:text-white transition">
             <span>🏎️</span> Formule 1 Teams
         </a>
-        <a href="bewerken/courreurs.php" class="sidebar-link flex items-center gap-4 px-4 py-3 rounded-lg text-gray-400 hover:text-white transition">
+        <a href="bewerken/drivers.php" class="sidebar-link flex items-center gap-4 px-4 py-3 rounded-lg text-gray-400 hover:text-white transition">
             <span>⛑️</span> Formule 1 Courreurs
         </a>
         </a>

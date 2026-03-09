@@ -105,7 +105,7 @@ try {
                     <div class="p-8 border-b border-white/5 flex justify-between items-center bg-white/2">
                         <h3 class="font-oswald font-black uppercase italic text-xl tracking-tighter">Current <span class="text-f1-red">Drivers</span></h3>
                         <?php if(!empty($search)): ?>
-                            <a href="drivers.php" class="text-[9px] font-black text-f1-red uppercase tracking-widest border-b border-f1-red/30 pb-1">Reset Filters</a>
+                            <a href="bewerken/drivers.php" class="text-[9px] font-black text-f1-red uppercase tracking-widest border-b border-f1-red/30 pb-1">Reset Filters</a>
                         <?php endif; ?>
                     </div>
                     
@@ -122,7 +122,7 @@ try {
                             <tbody class="divide-y divide-white/5">
                                 <?php if (!empty($drivers)): ?>
                                     <?php foreach ($drivers as $driver): ?>
-                                    <tr class="group" onclick="window.location.href='driver-details.php?id=<?php echo $driver['driver_id']; ?>'">
+                                    <tr class="group" onclick="window.location.href='bewerken/driver-details.php?id=<?php echo $driver['driver_id']; ?>'">
                                         <td class="p-6">
                                             <span class="font-oswald text-2xl italic font-black text-f1-red group-hover:scale-110 inline-block transition">
                                                 <?php echo htmlspecialchars($driver['driver_number']); ?>
