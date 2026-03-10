@@ -595,3 +595,10 @@ INSERT INTO admin_users (username, password_hash)
 VALUES ('SebastiaanK0508', '$2y$12$drJbP65U7ZoASeeH8qTpLOto/X73FXkTGVNA0hHfrdu1fEbTvdYm6');
 
 ALTER TABLE f1_nieuws ADD COLUMN source VARCHAR(522);
+
+ALTER TABLE circuits
+ADD COLUMN fp1_datetime DATETIME NULL AFTER race_datetime,
+ADD COLUMN fp2_datetime DATETIME NULL AFTER fp1_datetime,
+ADD COLUMN fp3_datetime DATETIME NULL AFTER fp2_datetime,
+ADD COLUMN quali_datetime DATETIME NULL AFTER fp3_datetime,
+ADD COLUMN sprint_datetime DATETIME NULL AFTER quali_datetime;

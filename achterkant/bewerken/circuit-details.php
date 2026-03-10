@@ -9,9 +9,9 @@ require_once '../db_config.php';
 
 $circuitDetails = null;
 $message = '';
-
 $circuitKey = isset($_GET['key']) ? htmlspecialchars($_GET['key']) : null;
 
+// --- 1. VERWERK FORMULIER DATA ---
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && $circuitKey) {
     try {
         $sql = "UPDATE circuits SET
@@ -20,7 +20,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $circuitKey) {
                     first_gp_year = :first_gp_year, lap_count = :lap_count,
                     circuit_length_km = :circuit_length_km, race_distance_km = :race_distance_km,
                     lap_record = :lap_record, description = :description,
-                    highlights = :highlights, calendar_order = :calendar_order
+                    highlights = :highlights, calendar_order = :calendar_order,
+                    fp1_datetime = :fp1, fp2_datetime = :fp2, fp3_datetime = :fp3,
+                    sprint_quali_datetime = :sprint_quali, sprint_datetime = :sprint,
+                    quali_datetime = :quali, race_datetime = :race
                 WHERE circuit_key = :circuit_key";
 
         $stmt = $pdo->prepare($sql);
@@ -38,22 +41,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $circuitKey) {
             ':description' => $_POST['description'],
             ':highlights' => $_POST['highlights'],
             ':calendar_order' => $_POST['calendar_order'],
+            ':fp1' => $_POST['fp1_datetime'] ?: null,
+            ':fp2' => $_POST['fp2_datetime'] ?: null,
+            ':fp3' => $_POST['fp3_datetime'] ?: null,
+            ':sprint_quali' => $_POST['sprint_quali_datetime'] ?: null,
+            ':sprint' => $_POST['sprint_datetime'] ?: null,
+            ':quali' => $_POST['quali_datetime'] ?: null,
+            ':race' => $_POST['race_datetime'] ?: null,
             ':circuit_key' => $circuitKey
         ]);
-
-        $message = "<div class='bg-green-500/20 border border-green-500 text-green-400 p-4 rounded-xl mb-6 font-bold uppercase text-xs tracking-widest'>✓ Circuit Data Synchronized</div>";
+        $message = "<div class='bg-green-500/20 border border-green-500 text-green-400 p-4 rounded-xl mb-6 font-bold uppercase text-xs tracking-widest'>✓ Telemetry & Session Data Synchronized</div>";
     } catch (\PDOException $e) {
         $message = "<div class='bg-red-900/50 border border-red-500 text-white p-4 rounded-xl mb-6'>Error: " . $e->getMessage() . "</div>";
     }
 }
 
+// --- 2. HAAL CIRCUIT DATA OP ---
 if ($circuitKey) {
     $stmt = $pdo->prepare("SELECT * FROM circuits WHERE circuit_key = :circuit_key");
     $stmt->execute([':circuit_key' => $circuitKey]);
     $circuitDetails = $stmt->fetch();
 }
 ?>
-
 <!DOCTYPE html>
 <html lang="nl">
 <head>
@@ -68,7 +77,6 @@ if ($circuitKey) {
         .bg-f1-card { background: rgba(22, 22, 28, 0.9); backdrop-filter: blur(15px); }
         .bg-pattern { background-color: #0b0b0f; background-image: radial-gradient(rgba(255,255,255,0.03) 1px, transparent 0); background-size: 40px 40px; }
         .font-oswald { font-family: 'Oswald', sans-serif; }
-        
         input, textarea { 
             background: rgba(255,255,255,0.03) !important;
             border: 1px solid rgba(255,255,255,0.1) !important;
@@ -87,22 +95,21 @@ if ($circuitKey) {
             cursor: default;
         }
         .form-label { font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em; color: #6b7280; margin-bottom: 0.5rem; display: block; }
+        /* Style for datetime-local icon */
+        ::-webkit-calendar-picker-indicator { filter: invert(1); opacity: 0.5; cursor: pointer; }
     </style>
 </head>
 <body class="bg-pattern text-white font-sans min-h-screen overflow-x-hidden">
-
     <div class="flex min-h-screen">
         <?php include '../nav.php'; ?>
-
         <main class="flex-grow p-6 lg:p-12">
             <div class="max-w-6xl mx-auto">
-                
                 <div class="flex justify-between items-center mb-8" data-aos="fade-down">
-                    <a href="schedule.php" class="text-xs font-black uppercase tracking-widest text-gray-500 hover:text-f1-red transition flex items-center gap-2">
+                    <a href="bewerken/circuits.php" class="text-xs font-black uppercase tracking-widest text-gray-500 hover:text-f1-red transition flex items-center gap-2">
                         <span>←</span> Back to Schedule
                     </a>
                     <button type="button" id="editButton" class="bg-white/5 border border-white/10 px-8 py-3 rounded-full text-[10px] font-black uppercase tracking-[0.2em] hover:bg-white/10 transition">
-                        Edit Circuit
+                        Edit Circuit & Times
                     </button>
                 </div>
 
@@ -136,9 +143,10 @@ if ($circuitKey) {
 
                         <div class="lg:col-span-8 space-y-6" data-aos="fade-left">
                             <div class="bg-f1-card rounded-[2.5rem] border border-white/5 p-10">
+                                
                                 <div class="flex items-center gap-4 mb-8">
                                     <div class="w-2 h-8 bg-f1-red rounded-full"></div>
-                                    <h3 class="font-oswald font-black uppercase italic text-2xl tracking-tighter">Technical <span class="text-f1-red">Specifications</span></h3>
+                                    <h3 class="font-oswald font-black uppercase italic text-2xl tracking-tighter">Technical <span class="text-f1-red">Specs</span></h3>
                                 </div>
 
                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -150,13 +158,32 @@ if ($circuitKey) {
                                         <label class="form-label">Grand Prix Title</label>
                                         <input type="text" name="grandprix" value="<?php echo htmlspecialchars($circuitDetails['grandprix']); ?>" class="w-full p-3 rounded-lg text-sm font-bold" readonly required>
                                     </div>
-                                    <div>
-                                        <label class="form-label">Location</label>
-                                        <input type="text" name="location" value="<?php echo htmlspecialchars($circuitDetails['location']); ?>" class="w-full p-3 rounded-lg text-sm font-bold" readonly required>
+                                </div>
+
+                                <div class="mt-12 pt-10 border-t border-white/5">
+                                    <div class="flex items-center gap-4 mb-8">
+                                        <div class="w-2 h-8 bg-f1-red rounded-full"></div>
+                                        <h3 class="font-oswald font-black uppercase italic text-2xl tracking-tighter">Weekend <span class="text-f1-red">Schedule</span></h3>
                                     </div>
-                                    <div>
-                                        <label class="form-label">Inaugural GP Year</label>
-                                        <input type="number" name="first_gp_year" value="<?php echo htmlspecialchars($circuitDetails['first_gp_year']); ?>" class="w-full p-3 rounded-lg text-sm font-bold" readonly>
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        <?php 
+                                        $sessions = [
+                                            'fp1_datetime' => 'Practice 1',
+                                            'fp2_datetime' => 'Practice 2',
+                                            'fp3_datetime' => 'Practice 3',
+                                            'sprint_quali_datetime' => 'Sprint Qualifying',
+                                            'sprint_datetime' => 'Sprint Race',
+                                            'quali_datetime' => 'Official Qualifying',
+                                            'race_datetime' => 'Main Grand Prix'
+                                        ];
+                                        foreach ($sessions as $name => $label): 
+                                            $val = !empty($circuitDetails[$name]) ? date('Y-m-d\TH:i', strtotime($circuitDetails[$name])) : '';
+                                        ?>
+                                            <div class="bg-white/[0.02] p-4 rounded-2xl border border-white/5">
+                                                <label class="form-label"><?php echo $label; ?></label>
+                                                <input type="datetime-local" name="<?php echo $name; ?>" value="<?php echo $val; ?>" class="w-full p-2 rounded-lg text-xs font-bold" readonly>
+                                            </div>
+                                        <?php endforeach; ?>
                                     </div>
                                 </div>
 
@@ -176,29 +203,18 @@ if ($circuitKey) {
                                 </div>
 
                                 <div class="mt-8">
-                                    <label class="form-label">Lap Record Holder & Time</label>
-                                    <input type="text" name="lap_record" value="<?php echo htmlspecialchars($circuitDetails['lap_record']); ?>" class="w-full p-3 rounded-lg text-sm font-mono tracking-tight" readonly>
-                                </div>
-
-                                <div class="mt-8">
                                     <label class="form-label">Circuit Profile / Description</label>
                                     <textarea name="description" rows="5" class="w-full p-4 rounded-2xl text-sm leading-relaxed" readonly><?php echo htmlspecialchars($circuitDetails['description']); ?></textarea>
                                 </div>
 
-                                <div class="mt-8">
-                                    <label class="form-label">Session Highlights (Comma separated)</label>
-                                    <textarea name="highlights" rows="2" class="w-full p-4 rounded-2xl text-sm italic" readonly><?php echo htmlspecialchars($circuitDetails['highlights']); ?></textarea>
-                                </div>
-
                                 <div id="assetFields" class="hidden mt-10 pt-10 border-t border-white/5 space-y-6">
-                                    <h4 class="form-label text-white">External Assets</h4>
                                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                                         <div>
-                                            <label class="form-label text-[9px]">Map Image URL</label>
+                                            <label class="form-label">Map Image URL</label>
                                             <input type="text" name="map_url" value="<?php echo htmlspecialchars($circuitDetails['map_url']); ?>" class="w-full p-3 rounded-lg text-xs font-mono">
                                         </div>
                                         <div>
-                                            <label class="form-label text-[9px]">Country Flag URL</label>
+                                            <label class="form-label">Country Flag URL</label>
                                             <input type="text" name="country_flag_url" value="<?php echo htmlspecialchars($circuitDetails['country_flag_url']); ?>" class="w-full p-3 rounded-lg text-xs font-mono">
                                         </div>
                                     </div>
@@ -218,8 +234,6 @@ if ($circuitKey) {
         </main>
     </div>
 
-    
-
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
@@ -235,8 +249,6 @@ if ($circuitKey) {
                 assetFields.classList.remove('hidden');
                 saveBtn.classList.remove('hidden');
                 editBtn.classList.add('hidden');
-                
-                // Focus the first field
                 document.querySelector('input[name="title"]').focus();
             });
         });

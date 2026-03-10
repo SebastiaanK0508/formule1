@@ -71,13 +71,10 @@ try {
     </style>
 </head>
 <body class="bg-pattern text-white font-sans min-h-screen antialiased">
-
     <div class="flex">
         <?php include '../nav.php'; ?>
-
         <main class="flex-grow p-6 lg:p-12">
             <div class="max-w-7xl mx-auto">
-                
                 <header class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12" data-aos="fade-down">
                     <div>
                         <h2 class="text-6xl font-oswald font-black uppercase italic tracking-tighter leading-none">
@@ -88,7 +85,6 @@ try {
                             Current Grid & Historical Archives
                         </p>
                     </div>
-                    
                     <div class="flex flex-wrap items-center gap-4 w-full lg:w-auto">
                         <div class="relative w-full lg:w-80 search-focus bg-white/5 border border-white/10 rounded-full transition-all duration-300">
                             <i data-lucide="search" class="absolute left-5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500"></i>
@@ -100,12 +96,10 @@ try {
                         </a>
                     </div>
                 </header>
-
                 <div class="mb-6 flex items-center gap-4" data-aos="fade-right">
                     <h3 class="font-oswald text-2xl uppercase italic font-black tracking-tighter">Active <span class="text-f1-red">Grid</span></h3>
                     <div class="h-[2px] flex-grow bg-white/5"></div>
                 </div>
-
                 <div class="bg-[#16161c]/80 backdrop-blur-xl rounded-[2.5rem] border border-white/5 overflow-hidden shadow-2xl mb-16" data-aos="fade-up">
                     <div class="overflow-x-auto">
                         <table class="w-full text-left">
@@ -154,13 +148,11 @@ try {
                         </table>
                     </div>
                 </div>
-
                 <?php if(!empty($retiredDrivers)): ?>
                 <div class="mb-6 flex items-center gap-4" data-aos="fade-right">
                     <h3 class="font-oswald text-2xl uppercase italic font-black tracking-tighter text-gray-600">Hall of <span class="text-gray-400 text-opacity-30">Fame</span></h3>
                     <div class="h-[1px] flex-grow bg-white/5"></div>
                 </div>
-
                 <div class="bg-black/20 rounded-[2.5rem] border border-white/5 overflow-hidden transition-all" data-aos="fade-up">
                     <div class="overflow-x-auto">
                         <table class="w-full text-left">
@@ -202,7 +194,6 @@ try {
                     <i data-lucide="ghost" class="w-16 h-16 text-gray-800 mx-auto mb-6"></i>
                     <p class="text-gray-600 font-oswald uppercase italic text-2xl tracking-widest">No matching driver telemetry found...</p>
                 </div>
-
             </div>
         </main>
     </div>
@@ -215,7 +206,6 @@ try {
             const searchInput = document.getElementById('masterSearch');
             const rows = document.querySelectorAll('.driver-row');
             const noResults = document.getElementById('noResults');
-
             searchInput.addEventListener('input', function() {
                 const term = this.value.toLowerCase().trim();
                 let matches = 0;

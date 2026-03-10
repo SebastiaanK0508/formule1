@@ -97,7 +97,7 @@ $currentYearHeader = null;
                         </select>
                     </form>
 
-                    <a href="add/add-circuit.php" class="bg-f1-red text-white px-8 py-3 rounded-full font-black text-[11px] uppercase tracking-[0.2em] hover:scale-105 hover:shadow-[0_0_20px_rgba(225,6,0,0.4)] transition-all duration-300">
+                    <a href="bewerken/add/add-circuit.php" class="bg-f1-red text-white px-8 py-3 rounded-full font-black text-[11px] uppercase tracking-[0.2em] hover:scale-105 hover:shadow-[0_0_20px_rgba(225,6,0,0.4)] transition-all duration-300">
                         + Add Grand Prix
                     </a>
                 </div>
@@ -205,7 +205,7 @@ $currentYearHeader = null;
                 row.addEventListener('dblclick', function() {
                     const circuitKey = this.dataset.circuitKey;
                     if (circuitKey) {
-                        window.location.href = 'circuit-details.php?key=' + circuitKey;
+                        window.location.href = 'bewerken/circuit-details.php?key=' + circuitKey;
                     }
                 });
             });

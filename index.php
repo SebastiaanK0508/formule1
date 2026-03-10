@@ -12,25 +12,37 @@ try {
 } catch (PDOException $e) {
     error_log("Fout bij ophalen nieuwsartikelen: " . $e->getMessage());
 }
-$nextGrandPrix = null;
+$dbNextGP = null; 
 $targetDateTime = null;
+
 try {
-$sqlNextGP = "SELECT grandprix, race_datetime, title, location FROM circuits ORDER BY race_datetime ASC LIMIT 1";
+    $sqlNextGP = "SELECT * FROM circuits WHERE race_datetime >= NOW() ORDER BY race_datetime ASC LIMIT 1";
     $stmtNextGP = $pdo->prepare($sqlNextGP);
     $stmtNextGP->execute();
-    
-    $nextGPData = $stmtNextGP->fetch(PDO::FETCH_ASSOC);
+    $dbNextGP = $stmtNextGP->fetch(PDO::FETCH_ASSOC);
 
-    if ($nextGPData) {
-        $nextGrandPrix = $nextGPData; 
-        
-        $dateObj = new DateTime($nextGPData['race_datetime']);
-        $targetDateTime = $dateObj->format('Y-m-d\TH:i:s'); 
+    if ($dbNextGP) {
+        // Bepaal countdown target (eerstvolgende sessie)
+        $sessionTimes = [
+            $dbNextGP['fp1_datetime'] ?? null,
+            $dbNextGP['fp2_datetime'] ?? $dbNextGP['sprint_quali_datetime'] ?? null,
+            $dbNextGP['fp3_datetime'] ?? $dbNextGP['sprint_datetime'] ?? null,
+            $dbNextGP['quali_datetime'] ?? null,
+            $dbNextGP['race_datetime'] ?? null
+        ];
+
+        $targetTime = $dbNextGP['race_datetime']; 
+        foreach ($sessionTimes as $sTime) {
+            if (!empty($sTime) && $sTime !== '0000-00-00 00:00:00' && strtotime($sTime) > time()) {
+                $targetTime = $sTime;
+                break;
+            }
+        }
+        $targetDateTime = (new DateTime($targetTime))->format('Y-m-d\TH:i:s'); 
     }
-} catch (PDOException $e) {
-    error_log("Database fout: " . $e->getMessage());
+} catch (\PDOException $e) {
+    error_log("DB Fout: " . $e->getMessage());
 }
-
 require_once 'achterkant/aanpassing/api-koppelingen/1result_api.php';
 ?>
 <!DOCTYPE html>
@@ -78,38 +90,64 @@ require_once 'achterkant/aanpassing/api-koppelingen/1result_api.php';
     <?php include 'navigatie/header.php'; ?>
     <main class="max-w-7xl mx-auto px-6 py-12">
         <section class="mb-24" data-aos="fade-down">
-    <div class="relative p-8 md:p-16 rounded-[2.5rem] bg-f1-card border border-white/5 overflow-hidden">
-        <div class="absolute -right-10 -top-10 w-40 h-40 bg-f1-red/5 rounded-full blur-3xl pointer-events-none"></div>
-
-        <div class="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-10 md:gap-12">
-            
-            <div class="text-center lg:text-left">
-                <div class="flex items-center justify-center lg:justify-start gap-3 mb-4 md:mb-6">
-                    <span class="h-[2px] w-8 md:w-12 bg-f1-red"></span>
-                    <span class="text-f1-red text-[10px] md:text-xs font-black uppercase tracking-[0.3em]">Next Grand Prix Countdown</span>
+    <div class="relative p-6 md:p-12 rounded-[2.5rem] bg-f1-card border border-white/5 overflow-hidden">
+        <div class="relative z-10">
+            <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-8 mb-12">
+                <div class="text-center lg:text-left">
+                    <div class="flex items-center justify-center lg:justify-start gap-3 mb-4">
+                        <span class="h-[2px] w-8 bg-f1-red"></span>
+                        <span class="text-f1-red text-[10px] font-black uppercase tracking-[0.3em]">Next Session Countdown</span>
+                    </div>
+                    <h2 class="text-4xl md:text-7xl font-oswald font-black uppercase italic leading-none mb-4 tracking-tighter">
+                        <?php echo ($dbNextGP) ? htmlspecialchars($dbNextGP['grandprix']) : "Aankomende Race"; ?>
+                    </h2>
+                    <p class="text-gray-400 text-sm md:text-lg flex items-center justify-center lg:justify-start gap-2">
+                        <span class="opacity-60 text-f1-red">📍</span> 
+                        <?php echo htmlspecialchars($dbNextGP['title'] ?? 'Circuit info...'); ?>
+                    </p>
                 </div>
-                <h2 class="text-4xl md:text-7xl font-oswald font-black uppercase italic leading-none mb-4 tracking-tighter">
-                    <?php echo ($nextGrandPrix) ? htmlspecialchars($nextGrandPrix['grandprix']) : "Aankomende Race"; ?>
-                </h2>
-                <p class="text-gray-400 text-sm md:text-lg flex items-center justify-center lg:justify-start gap-2">
-                    <span class="opacity-60 text-f1-red">📍</span> 
-                    <?php echo htmlspecialchars($nextGrandPrix['title'] ?? 'Wordt geladen...'); ?>, <?php echo htmlspecialchars($nextGrandPrix['location'] ?? ''); ?>
-                </p>
+                
+                <div class="grid grid-cols-4 gap-2 md:gap-4" id="countdown">
+                    <?php foreach(['Days' => 'd', 'Hrs' => 'h', 'Min' => 'm', 'Sec' => 's'] as $label => $id): ?>
+                    <div class="timer-unit rounded-2xl p-3 md:p-6 text-center border border-white/5 bg-white/[0.02] shadow-inner min-w-[70px] md:min-w-[100px]">
+                        <div class="text-2xl md:text-5xl font-oswald font-bold text-white leading-none tabular-nums" id="unit-<?php echo $id; ?>">00</div>
+                        <div class="text-[7px] md:text-[9px] uppercase font-black text-f1-red tracking-widest mt-1 opacity-80"><?php echo $label; ?></div>
+                    </div>
+                    <?php endforeach; ?>
+                </div>
             </div>
 
-            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 md:gap-4 w-full lg:w-auto" id="countdown">
-                <?php foreach(['Days' => 'd', 'Hrs' => 'h', 'Min' => 'm', 'Sec' => 's'] as $label => $id): ?>
-                <div class="timer-unit rounded-2xl md:rounded-[1.5rem] p-4 md:p-7 text-center min-w-0 flex flex-col justify-center border border-white/5 shadow-inner">
-                    <div class="text-3xl md:text-5xl font-oswald font-bold text-white mb-1 leading-none tabular-nums" id="unit-<?php echo $id; ?>">
-                        00
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 border-t border-white/10 pt-8">
+                <?php 
+                if ($dbNextGP):
+                    $isSprint = !empty($dbNextGP['sprint_datetime']);
+                    $displaySessions = [
+                        'Practice 1' => $dbNextGP['fp1_datetime'] ?? null,
+                        ($isSprint ? 'Sprint Quali' : 'Practice 2') => $isSprint ? ($dbNextGP['sprint_quali_datetime'] ?? null) : ($dbNextGP['fp2_datetime'] ?? null),
+                        ($isSprint ? 'Sprint Race' : 'Practice 3')  => $isSprint ? ($dbNextGP['sprint_datetime'] ?? null) : ($dbNextGP['fp3_datetime'] ?? null),
+                        'Qualifying' => $dbNextGP['quali_datetime'] ?? null,
+                        'Grand Prix' => $dbNextGP['race_datetime'] ?? null
+                    ];
+
+                    foreach($displaySessions as $label => $time): 
+                        if(empty($time) || $time === '0000-00-00 00:00:00') continue;
+                        $sessionTs = strtotime($time);
+                        $isPassed = $sessionTs < time();
+                        $isLive = (time() >= $sessionTs && time() <= ($sessionTs + 7200));
+                ?>
+                <div class="flex items-center lg:flex-col lg:justify-center p-4 rounded-2xl border transition-all duration-500 <?php echo $isLive ? 'bg-f1-red/10 border-f1-red animate-pulse' : 'bg-white/[0.02] border-white/5'; ?> <?php echo ($isPassed && !$isLive) ? 'opacity-30 grayscale' : ''; ?>">                    
+                    <div class="flex-1 lg:flex-none lg:mb-2 text-left lg:text-center">
+                        <p class="text-[8px] font-black uppercase tracking-widest <?php echo $isLive ? 'text-white' : 'text-f1-red'; ?>"><?php echo $label; ?></p>
+                        <p class="font-oswald text-sm font-bold uppercase italic text-white/90"><?php echo date('d M', $sessionTs); ?></p>
                     </div>
-                    <div class="text-[8px] md:text-[9px] uppercase font-black text-f1-red tracking-[0.2em] opacity-80">
-                        <?php echo $label; ?>
+                    <div class="text-right lg:text-center">
+                        <p class="text-lg font-oswald font-black text-white"><?php echo date('H:i', $sessionTs); ?></p>
                     </div>
                 </div>
-                <?php endforeach; ?>
+                <?php endforeach; else: ?>
+                    <p class="text-gray-500 text-xs italic p-4">Geen data beschikbaar in database.</p>
+                <?php endif; ?>
             </div>
-
         </div>
     </div>
 </section>

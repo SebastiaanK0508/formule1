@@ -54,10 +54,10 @@ if ($server === 'localhost' || $server === '127.0.0.1') {
         <div class="pt-8 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-8">
             <div class="flex flex-col md:flex-row items-center gap-4 md:gap-8">
                 <p class="text-gray-600 text-[9px] font-black uppercase tracking-[0.4em] italic text-center md:text-left">
-                    &copy; <?php echo date('Y'); ?> WEBIUS Engineering. All rights reserved.
+                    &copy; <?php echo date('Y'); ?>  F1SITE.NL - All rights reserved.
                 </p>
                 <div class="hidden md:block h-4 w-[1px] bg-white/10"></div>
-                <p class="text-gray-700 text-[9px] font-bold uppercase tracking-widest text-center">Not affiliated with the Formula One Group</p>
+                <p class="text-gray-700 text-[9px] font-bold uppercase tracking-widest text-center">Not affiliated with the Formula One Group | Developed by Bas Kamphuis</p>
             </div>
             
             <div class="flex items-center gap-4">
@@ -67,7 +67,6 @@ if ($server === 'localhost' || $server === '127.0.0.1') {
         </div>
     </div>
 </footer>
-
 <?php if (!isset($_COOKIE['f1_consent'])): ?>
 <div id="cookie-overlay" class="fixed inset-0 bg-black/95 backdrop-blur-xl z-[9999] flex items-center justify-center p-4 md:p-6 opacity-0 transition-opacity duration-500 overflow-y-auto">
     <div class="bg-[#0a0a0a] border border-white/10 rounded-[2rem] w-full max-w-2xl shadow-2xl relative overflow-hidden flex flex-col max-h-[95vh] md:max-h-[90vh]">
@@ -86,9 +85,7 @@ if ($server === 'localhost' || $server === '127.0.0.1') {
                 Tune your privacy settings. We use cookies to optimize the aerodynamics of our website and provide you with the fastest news updates.
             </p>
         </div>
-
         <div class="px-6 md:px-8 py-4 overflow-y-auto space-y-3">
-            
             <div class="bg-white/5 border border-white/5 p-4 rounded-2xl flex items-center justify-between opacity-50">
                 <div class="flex-grow pr-4">
                     <h4 class="text-white font-bold text-xs uppercase tracking-wider">Necessary</h4>

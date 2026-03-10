@@ -101,7 +101,8 @@ $currentPage = basename($_SERVER['PHP_SELF']);
             $menuItems = [
                 ['url' => 'dashboard.php', 'label' => 'Dashboard', 'icon' => 'layout-dashboard'],
                 ['url' => 'bewerken/nieuws.php', 'label' => 'Nieuws Beheer', 'icon' => 'newspaper'],
-                ['url' => 'bewerken/circuits.php', 'label' => 'Circuits & Kalender', 'icon' => 'map-pin'],
+                ['url' => 'bewerken/circuits.php', 'label' => 'Circuits', 'icon' => 'map-pin'],
+                ['url' => 'bewerken/kalender.php', 'label' => 'Kalender', 'icon' => 'calendar'],
                 ['url' => 'bewerken/teams.php', 'label' => 'F1 Teams', 'icon' => 'shield'],
                 ['url' => 'bewerken/drivers.php', 'label' => 'Coureurs', 'icon' => 'user-circle']
             ];

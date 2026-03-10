@@ -1,121 +1,159 @@
 <?php
 $current_page = basename($_SERVER['PHP_SELF']);
+
 function nav_class($pageName, $current_page, $is_mobile = false) {
     $active = ($pageName === $current_page);
     if ($is_mobile) {
-        return $active ? 'text-f1-red' : 'text-white hover:text-f1-red transition';
+        return $active ? 'text-f1-red font-bold' : 'text-white/70 hover:text-white transition-all';
     }
     return $active 
         ? 'text-f1-red border-b-2 border-f1-red pb-1' 
-        : 'hover:text-f1-red transition pb-1 border-b-2 border-transparent';
+        : 'hover:text-f1-red transition-all pb-1 border-b-2 border-transparent';
 }
 
-$server = $_SERVER['SERVER_NAME'];
-$requestUri = $_SERVER['REQUEST_URI'];
-if ($server === 'localhost' || $server === '127.0.0.1') {
-    $baseUrl = "http://localhost:8080/formule1/";
-} else {
-    $baseUrl = "https://f1site.nl/";
-}
+$links = [
+    'index.php' => 'Home',
+    'kalender.php' => 'Schedule',
+    'teams.php' => 'Teams',
+    'drivers.php' => 'Drivers',
+    'results.php' => 'Results',
+    'standings.php' => 'Standings'
+];
 ?>
+
 <style>
     #mobile-menu {
-        transform: translateX(100%);
-        transition: all 0.3s ease-in-out;
-        overflow-y: auto;
-        -webkit-overflow-scrolling: touch;
+        position: fixed;
+        inset: 0;
+        z-index: 9999;
+        background: rgba(10, 10, 10, 0.98);
+        backdrop-filter: blur(15px);
+        transform: translateY(-100%);
+        transition: transform 0.5s cubic-bezier(0.8, 0, 0.2, 1);
+        display: flex;
+        flex-direction: column;
+        padding: 1.5rem;
+        visibility: hidden;
     }
+    
     #mobile-menu.is-open {
-        transform: translateX(0);
-        visibility: visible !important;
-        opacity: 1 !important;
-        pointer-events: auto !important;
+        transform: translateY(0);
+        visibility: visible;
     }
-    @media (max-height: 500px) and (orientation: landscape) {
-        #mobile-menu nav {
-            display: grid;
-            grid-template-columns: 1fr 1fr; 
-            gap: 1rem !important;
-            padding-top: 2rem;
-            space-y: 0 !important; 
-        }
-        #mobile-menu nav a {
-            font-size: 1.5rem !important;
-            margin-top: 0 !important;
-        }
-        #mobile-menu .close-btn-container {
-            top: 1rem !important;
-            right: 1rem !important;
-        }
+
+    /* Subtiele Verticale Lijn */
+    .nav-wrapper {
+        position: relative;
+        padding-left: 20px;
+        margin-top: 2rem;
     }
-    .menu-trigger { cursor: pointer; -webkit-tap-highlight-color: transparent; }
+
+    .nav-line {
+        position: absolute;
+        left: 0;
+        top: 5px;
+        bottom: 5px;
+        width: 2px;
+        background: #E10600;
+        transform: scaleY(0);
+        transform-origin: top;
+        transition: transform 0.6s ease-out 0.3s;
+    }
+
+    #mobile-menu.is-open .nav-line {
+        transform: scaleY(1);
+    }
+
+    /* Compacte Linkjes */
+    .mobile-link {
+        opacity: 0;
+        transform: translateY(10px);
+        transition: all 0.3s ease-out;
+    }
+
+    #mobile-menu.is-open .mobile-link {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    /* Stagger delays */
+    <?php for($i=1; $i<=6; $i++): ?>
+    #mobile-menu.is-open .mobile-link:nth-child(<?php echo $i+1; ?>) { transition-delay: <?php echo 0.1 + ($i * 0.05); ?>s; }
+    <?php endfor; ?>
 </style>
-<base href="<?php echo $baseUrl; ?>">
-<div id="mobile-menu" 
-     class="fixed inset-0 bg-black/95 z-[9999] p-6 flex flex-col items-center justify-center invisible opacity-0 pointer-events-none">
-    <button id="close-menu-btn" class="absolute top-8 right-8 text-5xl text-white p-4 leading-none z-[10000]">&times;</button>
-    <nav class="flex flex-col space-y-6 text-4xl font-oswald font-black uppercase italic text-center text-white w-full max-w-2xl">
-        <a href="index.php" class="mobile-link <?php echo nav_class('index.php', $current_page, true); ?>">Home</a>
-        <a href="kalender.php" class="mobile-link <?php echo nav_class('kalender.php', $current_page, true); ?>">Schedule</a>
-        <a href="teams.php" class="mobile-link <?php echo nav_class('teams.php', $current_page, true); ?>">Teams</a>
-        <a href="drivers.php" class="mobile-link <?php echo nav_class('drivers.php', $current_page, true); ?>">Drivers</a>
-        <a href="results.php" class="mobile-link <?php echo nav_class('results.php', $current_page, true); ?>">Results</a>
-        <a href="standings.php" class="mobile-link <?php echo nav_class('standings.php', $current_page, true); ?>">Standings</a>
+
+<div id="mobile-menu">
+    <div class="flex justify-between items-center w-full mb-8">
+        <span class="text-lg font-oswald font-black italic text-white uppercase tracking-tighter">
+            F1SITE<span class="text-f1-red">.NL</span>
+        </span>
+        <button id="close-menu-btn" class="text-white/50 hover:text-white p-2">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+            </svg>
+        </button>
+    </div>
+
+    <nav class="nav-wrapper">
+        <div class="nav-line"></div>
+        <div class="flex flex-col space-y-4">
+            <span class="text-[9px] font-bold text-white/30 uppercase tracking-[0.3em] mb-2">Menu</span>
+            <?php foreach($links as $file => $label): ?>
+            <a href="<?php echo $file; ?>" class="mobile-link flex items-center justify-between py-1 <?php echo nav_class($file, $current_page, true); ?>">
+                <span class="text-2xl font-oswald font-bold uppercase italic tracking-tight">
+                    <?php echo $label; ?>
+                </span>
+                <span class="text-f1-red/50 text-sm">/0<?php echo array_search($file, array_keys($links)) + 1; ?></span>
+            </a>
+            <?php endforeach; ?>
+        </div>
     </nav>
+
+    <div class="mt-auto pt-8 border-t border-white/5 flex justify-between items-center text-[10px] uppercase tracking-widest font-bold text-white/20">
+        <div class="flex gap-4">
+            <a href="#" class="hover:text-f1-red transition-colors">TW</a>
+            <a href="#" class="hover:text-f1-red transition-colors">IG</a>
+        </div>
+        <span>&copy; <?php echo date('Y'); ?></span>
+    </div>
 </div>
 
-<header class="header-glass sticky top-0 z-[100] bg-black/80 backdrop-blur-md border-b border-white/10">
-    <div class="max-w-7xl mx-auto px-6 py-5 flex justify-between items-center">
-        
-        <a href="index.php" class="flex items-baseline gap-1">
-            <span class="text-3xl font-oswald font-black italic text-white uppercase">F1SITE<span class="text-f1-red">.NL</span></span>
+<header class="sticky top-0 z-[100] bg-black/90 backdrop-blur-md border-b border-white/5">
+    <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+        <a href="index.php" class="text-2xl font-oswald font-black italic text-white uppercase tracking-tighter">
+            F1SITE<span class="text-f1-red">.NL</span>
         </a>
         
-        <nav class="hidden lg:flex space-x-10 text-[11px] font-bold uppercase tracking-[0.25em] text-white">
-            <a href="index.php" class="<?php echo nav_class('index.php', $current_page); ?>">Home</a>
-            <a href="kalender.php" class="<?php echo nav_class('kalender.php', $current_page); ?>">Schedule</a>
-            <a href="teams.php" class="<?php echo nav_class('teams.php', $current_page); ?>">Teams</a>
-            <a href="drivers.php" class="<?php echo nav_class('drivers.php', $current_page); ?>">Drivers</a>
-            <a href="results.php" class="<?php echo nav_class('results.php', $current_page); ?>">Results</a>
-            <a href="standings.php" class="<?php echo nav_class('standings.php', $current_page); ?>">Standings</a>
+        <nav class="hidden lg:flex space-x-8 text-[10px] font-bold uppercase tracking-[0.2em] text-white/80">
+            <?php foreach($links as $file => $label): ?>
+                <a href="<?php echo $file; ?>" class="<?php echo nav_class($file, $current_page); ?>"><?php echo $label; ?></a>
+            <?php endforeach; ?>
         </nav>
 
-        <div id="mobile-menu-btn" class="lg:hidden menu-trigger z-[110] p-4 -mr-4">
-            <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path id="menu-icon-path" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-16 6h16"></path>
-            </svg>
-        </div>
+        <button id="mobile-menu-btn" class="lg:hidden flex flex-col justify-between w-6 h-3.5">
+            <span class="w-full h-[1.5px] bg-white"></span>
+            <span class="w-full h-[1.5px] bg-f1-red"></span>
+            <span class="w-full h-[1.5px] bg-white"></span>
+        </button>
     </div>
 </header>
 
 <script>
-    document.addEventListener('DOMContentLoaded', () => {
-        const menuBtn = document.getElementById('mobile-menu-btn');
-        const closeBtn = document.getElementById('close-menu-btn');
-        const mobileMenu = document.getElementById('mobile-menu');
-        const menuIconPath = document.getElementById('menu-icon-path');
-        const mobileLinks = document.querySelectorAll('.mobile-link');
-        
-        let menuOpen = false;
+document.addEventListener('DOMContentLoaded', () => {
+    const menuBtn = document.getElementById('mobile-menu-btn');
+    const closeBtn = document.getElementById('close-menu-btn');
+    const mobileMenu = document.getElementById('mobile-menu');
 
-        function toggleMenu() {
-            menuOpen = !menuOpen;
-            if (menuOpen) {
-                mobileMenu.classList.add('is-open');
-                menuIconPath.setAttribute('d', 'M6 18L18 6M6 6l12 12'); 
-                document.body.style.overflow = 'hidden';
-            } else {
-                mobileMenu.classList.remove('is-open');
-                menuIconPath.setAttribute('d', 'M4 6h16M4 12h16m-16 6h16'); 
-                document.body.style.overflow = '';
-            }
-        }
-        menuBtn.addEventListener('click', toggleMenu);
-        closeBtn.addEventListener('click', toggleMenu);
-        mobileLinks.forEach(link => {
-            link.addEventListener('click', () => {
-                if (menuOpen) toggleMenu();
-            });
-        });
+    const toggle = (open) => {
+        mobileMenu.classList.toggle('is-open', open);
+        document.body.style.overflow = open ? 'hidden' : '';
+    };
+
+    if(menuBtn) menuBtn.addEventListener('click', () => toggle(true));
+    if(closeBtn) closeBtn.addEventListener('click', () => toggle(false));
+
+    document.querySelectorAll('.mobile-link').forEach(link => {
+        link.addEventListener('click', () => toggle(false));
     });
+});
 </script>
