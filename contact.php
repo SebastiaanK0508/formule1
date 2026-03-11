@@ -14,7 +14,7 @@
     <main class="max-w-3xl mx-auto px-6 py-16 flex-grow">
         <div class="mb-16 text-center" data-aos="fade-down">
             <h1 class="text-6xl md:text-8xl font-oswald font-black uppercase italic tracking-tighter leading-none mb-4">
-                GET IN<span class="text-f1-red">TOUCH</span>
+                RADIO <span class="text-f1-red">CHECK</span>
             </h1>
         </div>
         <div class="elite-card relative overflow-hidden" data-aos="fade-up">

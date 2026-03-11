@@ -9,6 +9,10 @@ if ($server === 'localhost' || $server === '127.0.0.1') {
 }
 
 $currentPage = basename($_SERVER['PHP_SELF']);
+require_once 'db_config.php';
+/** @var PDO $pdo */
+$stmtUnread = $pdo->query("SELECT COUNT(*) FROM contact WHERE is_read = 0");
+$unreadCount = $stmtUnread->fetchColumn();
 ?>
 <base href="<?php echo htmlspecialchars($baseUrl); ?>">
 
@@ -105,14 +109,24 @@ $currentPage = basename($_SERVER['PHP_SELF']);
                 ['url' => 'bewerken/kalender.php', 'label' => 'Kalender', 'icon' => 'calendar'],
                 ['url' => 'bewerken/teams.php', 'label' => 'F1 Teams', 'icon' => 'shield'],
                 ['url' => 'bewerken/drivers.php', 'label' => 'Coureurs', 'icon' => 'user-circle'],
-                ['url' => 'bewerken/contact.php', 'label' => 'Contact', 'icon' => 'envelope']
+                ['url' => 'bewerken/contact.php', 'label' => 'Contact', 'icon' => 'mail','badge' => ($unreadCount > 0) ? $unreadCount : null],            
             ];
             foreach ($menuItems as $item): 
+                $isActive = (strpos($requestUri, $item['url']) !== false);
             ?>
                 <a href="<?php echo $item['url']; ?>" 
-                   class="sidebar-link group flex items-center gap-4 px-4 py-3 rounded-r-xl text-gray-400 <?php echo $isActive ? 'active' : ''; ?>">
-                    <i data-lucide="<?php echo $item['icon']; ?>" class="w-5 h-5 group-hover:text-f1-red transition-colors"></i>
-                    <span class="text-sm tracking-wide uppercase italic font-oswald group-hover:text-white"><?php echo $item['label']; ?></span>
+                class="sidebar-link group flex items-center justify-between px-4 py-3 rounded-r-xl text-gray-400 <?php echo $isActive ? 'active' : ''; ?>">
+                    
+                    <div class="flex items-center gap-4">
+                        <i data-lucide="<?php echo $item['icon']; ?>" class="w-5 h-5 group-hover:text-f1-red transition-colors"></i>
+                        <span class="text-sm tracking-wide uppercase italic font-oswald group-hover:text-white"><?php echo $item['label']; ?></span>
+                    </div>
+
+                    <?php if (isset($item['badge']) && $item['badge'] > 0): ?>
+                        <span class="bg-f1-red text-white text-[10px] font-black px-2 py-0.5 rounded-full shadow-[0_0_10px_rgba(225,6,0,0.5)] animate-pulse">
+                            <?php echo $item['badge']; ?>
+                        </span>
+                    <?php endif; ?>
                 </a>
             <?php endforeach; ?>
         </nav>
