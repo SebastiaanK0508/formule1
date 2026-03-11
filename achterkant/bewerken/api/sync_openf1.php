@@ -2,29 +2,22 @@
 session_start();
 require_once '../db_config.php';
 /** @var PDO $pdo */
-
 echo "<h2>Starting OpenF1 Sync...</h2>";
-
 $year = 2026;
 $apiUrl = "https://api.openf1.org/v1/sessions?year=" . $year;
-
-// Helper functie om API datum naar MySQL DATETIME te converteren
 function formatToMySQL($dateStr) {
     if (empty($dateStr)) return null;
     try {
         $date = new DateTime($dateStr);
-        return $date->format('Y-m-d H:i:s'); // Verwijst de T en de +00:00 offset
+        return $date->format('Y-m-d H:i:s'); 
     } catch (Exception $e) {
         return null;
     }
 }
-
 $response = @file_get_contents($apiUrl);
 if (!$response) { die("Fout bij ophalen API data."); }
-
 $sessions = json_decode($response, true);
 $groupedSessions = [];
-
 foreach ($sessions as $session) {
     $loc = $session['location'];
     if (!isset($groupedSessions[$loc])) {
@@ -33,11 +26,8 @@ foreach ($sessions as $session) {
             'quali' => null, 'sprint_quali' => null, 'sprint' => null, 'race' => null
         ];
     }
-
     $name = strtolower($session['session_name']);
-    // Gebruik hier de nieuwe format functie
     $startTime = formatToMySQL($session['date_start']);
-
     if (str_contains($name, 'practice 1')) {
         $groupedSessions[$loc]['fp1'] = $startTime;
     } elseif (str_contains($name, 'practice 2')) {
@@ -54,10 +44,8 @@ foreach ($sessions as $session) {
         $groupedSessions[$loc]['race'] = $startTime;
     }
 }
-
 foreach ($groupedSessions as $location => $times) {
     try {
-        // We filteren alleen op de GP waar de RACE_DATETIME in het juiste jaar valt
         $sql = "UPDATE circuits SET 
                     fp1_datetime = :fp1, 
                     fp2_datetime = :fp2, 
@@ -85,7 +73,6 @@ foreach ($groupedSessions as $location => $times) {
         if ($stmt->rowCount() > 0) {
             echo "✅ Updated: " . htmlspecialchars($location) . "<br>";
         } else {
-            // Optioneel: laat zien welke locaties niet gematcht konden worden
             echo "⚠️ No match for: " . htmlspecialchars($location) . "<br>";
         }
     } catch (\PDOException $e) {

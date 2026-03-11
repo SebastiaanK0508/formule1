@@ -602,3 +602,5 @@ ADD COLUMN fp2_datetime DATETIME NULL AFTER fp1_datetime,
 ADD COLUMN fp3_datetime DATETIME NULL AFTER fp2_datetime,
 ADD COLUMN quali_datetime DATETIME NULL AFTER fp3_datetime,
 ADD COLUMN sprint_datetime DATETIME NULL AFTER quali_datetime;
+
+ALTER TABLE contact ADD COLUMN is_read TINYINT(1) DEFAULT 0;
