@@ -1,6 +1,5 @@
 <?php
 session_start();
-// Pas dit aan naar jouw eigen auth-check
 if (!isset($_SESSION['logged_in'])) { header("Location: ../../index.php"); exit; }
 require_once '../db_config.php';
 /** @var PDO $pdo */

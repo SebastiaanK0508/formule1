@@ -3,39 +3,25 @@ require_once 'db_config.php';
 /** @var PDO $pdo */
 $teamId = isset($_GET['id']) ? (int)$_GET['id'] : 0;
 
-if ($teamId === 0) {
-    header('Location: teams.php'); 
-    exit;
-}
+if ($teamId === 0) { header('Location: teams.php'); exit; }
 
 $team = null;
 try {
     $stmt = $pdo->prepare("SELECT * FROM teams WHERE team_id = :id");
-    $stmt->bindParam(':id', $teamId, PDO::PARAM_INT);
-    $stmt->execute();
+    $stmt->execute(['id' => $teamId]);
     $team = $stmt->fetch(PDO::FETCH_ASSOC);
-
-    if (!$team) {
-        http_response_code(404);
-        echo "<div style='background:#0b0b0f; color:white; height:100vh; display:flex; align-items:center; justify-content:center; font-family:sans-serif;'>Team niet gevonden. <a href='teams.php' style='color:#E10600; margin-left:10px;'>Terug naar overzicht</a></div>";
-        exit;
-    }
-} catch (PDOException $e) {
-    http_response_code(500);
-    exit("Databasefout.");
-}
+    if (!$team) { header("Location: teams.php"); exit; }
+} catch (PDOException $e) { exit("Databasefout."); }
 
 $teamDrivers = [];
 $teamColor = htmlspecialchars($team['team_color'] ?? '#E10600');
+list($r, $g, $b) = sscanf($teamColor, "#%02x%02x%02x");
 
 try {
     $stmtDrivers = $pdo->prepare("SELECT driver_id, first_name, last_name, driver_number, image FROM drivers WHERE team_id = :team_id AND is_active = TRUE ORDER BY driver_number ASC");
-    $stmtDrivers->bindParam(':team_id', $teamId, PDO::PARAM_INT);
-    $stmtDrivers->execute();
+    $stmtDrivers->execute(['team_id' => $teamId]);
     $teamDrivers = $stmtDrivers->fetchAll(PDO::FETCH_ASSOC);
-} catch (PDOException $e) {
-    error_log($e->getMessage());
-}
+} catch (PDOException $e) { error_log($e->getMessage()); }
 ?>
 <!DOCTYPE html>
 <html lang="nl" class="scroll-smooth">
@@ -45,153 +31,163 @@ try {
     <title><?php echo htmlspecialchars($team['full_team_name']); ?> | F1SITE.NL</title>
     <?php include 'navigatie/head.php'; ?>
     <style>
-        .team-border { border-left: 4px solid <?php echo $teamColor; ?>; }
-        .team-gradient { background: linear-gradient(135deg, <?php echo $teamColor; ?>22 0%, transparent 100%); }        
-        .driver-image-container::after {
-            content: ""; position: absolute; bottom: 0; left: 0; right: 0; height: 50%;
-            background: linear-gradient(to top, #16161c, transparent);
-        }
+        :root { --team-color: <?php echo $teamColor; ?>; --team-rgb: <?php echo "$r, $g, $b"; ?>; }
+        .hero-title { font-size: clamp(3rem, 8vw, 7rem); line-height: 0.85; }
+        .bg-blur-dot { position: absolute; width: 40vw; height: 40vw; background: rgba(var(--team-rgb), 0.15); filter: blur(120px); border-radius: 50%; z-index: -1; }
+        .stat-card { background: linear-gradient(145deg, rgba(255,255,255,0.03) 0%, rgba(255,255,255,0.01) 100%); transition: all 0.4s ease; }
+        .stat-card:hover { border-color: var(--team-color); transform: translateY(-5px); }
+        .diagonal-bg { clip-path: polygon(0 0, 100% 0, 100% 85%, 0% 100%); background: #16161c; height: 60vh; width: 100%; position: absolute; top: 0; left: 0; z-index: -2; }
+        @keyframes float { 0%, 100% { transform: translateY(0) rotate(0deg); } 50% { transform: translateY(-15px) rotate(2deg); } }
+        .animate-float { animation: float 8s ease-in-out infinite; }
     </style>
 </head>
-<body class="bg-pattern">
+<body class="bg-[#0b0b0f] text-white italic selection:bg-f1-red selection:text-white">
     <?php include 'navigatie/header.php'; ?>
-    <main class="max-w-7xl mx-auto px-6 py-12">
-        <section class="mb-16" data-aos="fade-down">
-            <div class="flex flex-col lg:flex-row items-center gap-12 bg-f1-card/50 rounded-[3rem] p-8 md:p-12 border border-white/5 team-gradient relative overflow-hidden">
-                <div class="flex-1 z-10 text-center lg:text-left">
-                    <span class="text-xs font-black uppercase tracking-[0.5em] mb-4 block" style="color: <?php echo $teamColor; ?>;">Official Constructor</span>
-                    <h1 class="text-5xl md:text-7xl font-oswald font-black uppercase italic tracking-tighter leading-none mb-6">
-                        <?php echo htmlspecialchars($team['full_team_name']); ?>
+
+    <main class="relative min-h-screen">
+        <div class="diagonal-bg"></div>
+        <div class="bg-blur-dot top-0 -right-20"></div>
+
+        <div class="max-w-7xl mx-auto px-6 py-12 lg:py-24 relative z-10">
+            
+            <section class="flex flex-col lg:flex-row items-end gap-16 mb-24" data-aos="fade-up">
+                <div class="lg:w-2/3">
+                    <div class="flex items-center gap-4 mb-8">
+                        <span class="px-4 py-1 bg-f1-red text-white text-[10px] font-black uppercase tracking-widest italic rounded-sm">Constructor</span>
+                        <span class="text-gray-500 font-bold uppercase tracking-widest text-[10px]">Active Grid <?php echo date('Y'); ?></span>
+                    </div>
+                    
+                    <h1 class="hero-title font-oswald font-black uppercase italic tracking-tighter mb-6">
+                        <?php echo htmlspecialchars($team['team_name']); ?>
                     </h1>
-                    <div class="flex flex-wrap justify-center lg:justify-start gap-4">
-                        <div class="px-6 py-2 bg-black/40 rounded-full border border-white/10 text-[10px] font-black uppercase tracking-widest">
-                            Base: <?php echo htmlspecialchars($team['base_location']); ?>
-                        </div>
-                        <div class="px-6 py-2 bg-black/40 rounded-full border border-white/10 text-[10px] font-black uppercase tracking-widest">
-                            Power: <?php echo htmlspecialchars($team['current_engine_supplier']); ?>
-                        </div>
-                    </div>
-                </div>
-                <?php if (!empty($team['logo_url'])): ?>
-                <div class="flex-shrink-0 z-10">
-                    <img src="<?php echo htmlspecialchars($team['logo_url']); ?>" alt="Team Logo" class="max-h-48 md:max-h-64 object-contain drop-shadow-[0_0_30px_rgba(255,255,255,0.1)]">
-                </div>
-                <?php endif; ?>
-            </div>
-        </section>
-
-        <section class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
-            <div class="bg-f1-card p-8 rounded-3xl border border-white/5 team-border" data-aos="fade-up" data-aos-delay="0">
-                <h4 class="text-[10px] font-black uppercase tracking-[0.3em] text-gray-500 mb-4">Leadership</h4>
-                <div class="space-y-4">
-                    <div>
-                        <span class="text-[9px] font-bold text-f1-red uppercase">Team Principal</span>
-                        <p class="text-lg font-oswald font-black italic uppercase"><?php echo htmlspecialchars($team['team_principal']); ?></p>
-                    </div>
-                    <div>
-                        <span class="text-[9px] font-bold text-f1-red uppercase">Technical Director</span>
-                        <p class="text-lg font-oswald font-black italic uppercase"><?php echo htmlspecialchars($team['technical_director']); ?></p>
-                    </div>
-                </div>
-            </div>
-
-            <div class="bg-f1-card p-8 rounded-3xl border border-white/5 team-border" data-aos="fade-up" data-aos-delay="100">
-                <h4 class="text-[10px] font-black uppercase tracking-[0.3em] text-gray-500 mb-4">Car Stats</h4>
-                <div class="space-y-4">
-                    <div>
-                        <span class="text-[9px] font-bold text-f1-red uppercase">Chassis</span>
-                        <p class="text-lg font-oswald font-black italic uppercase"><?php echo htmlspecialchars($team['chassis']); ?></p>
-                    </div>
-                    <div>
-                        <span class="text-[9px] font-bold text-f1-red uppercase">Engine</span>
-                        <p class="text-lg font-oswald font-black italic uppercase"><?php echo htmlspecialchars($team['current_engine_supplier']); ?></p>
-                    </div>
-                </div>
-            </div>
-
-            <div class="bg-f1-card p-8 rounded-3xl border border-white/5 team-border" data-aos="fade-up" data-aos-delay="200">
-                <h4 class="text-[10px] font-black uppercase tracking-[0.3em] text-gray-500 mb-4">History</h4>
-                <div class="space-y-4">
-                    <div>
-                        <span class="text-[9px] font-bold text-f1-red uppercase">World Titles</span>
-                        <p class="text-3xl font-oswald font-black italic uppercase"><?php echo htmlspecialchars($team['championships_won'] ?? '0'); ?></p>
-                    </div>
-                    <div>
-                        <span class="text-[9px] font-bold text-f1-red uppercase">Total Wins</span>
-                        <p class="text-3xl font-oswald font-black italic uppercase text-f1-red"><?php echo htmlspecialchars($team['total_victories'] ?? '0'); ?></p>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <?php if (!empty($team['description'])): ?>
-        <section class="mb-20" data-aos="fade-up">
-            <div class="max-w-4xl">
-                <h2 class="text-2xl font-oswald font-black uppercase italic italic tracking-tighter mb-6 flex items-center gap-4">
-                    <span class="w-12 h-[2px] bg-f1-red"></span> The Constructor Story
-                </h2>
-                <p class="text-gray-400 leading-loose font-medium first-letter:text-5xl first-letter:font-oswald first-letter:font-black first-letter:text-f1-red first-letter:mr-3 first-letter:float-left uppercase text-xs tracking-wider">
-                    <?php echo nl2br(htmlspecialchars($team['description'])); ?>
-                </p>
-            </div>
-        </section>
-        <?php endif; ?>
-
-        <section class="mb-20">
-            <h2 class="text-3xl font-oswald font-black uppercase italic tracking-tighter mb-10 text-center">
-                ACTIVE <span class="text-f1-red">LINEUP</span>
-            </h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
-                <?php foreach ($teamDrivers as $driver): 
-                    $driverSlug = strtolower(str_replace(' ', '-', $driver['first_name'] . '-' . $driver['last_name']));
-                    $driverPageUrl = 'driver-details.php?slug=' . $driverSlug;
-                ?>
-                <a href="<?php echo htmlspecialchars($driverPageUrl); ?>" 
-                   class="group bg-f1-card rounded-[2.5rem] overflow-hidden border border-white/5 flex flex-col md:flex-row hover:border-white/20 transition-all duration-500" data-aos="zoom-in">
                     
-                    <div class="w-full md:w-1/2 h-72 md:h-96 relative overflow-hidden">
-                        <img src="<?php echo htmlspecialchars($driver['image'] ?: '/afbeeldingen/coureurs/default.jpg'); ?>" 
-                             alt="Driver" 
-                             class="w-full h-full object-cover grayscale group-hover:grayscale-0 group-hover:scale-110 transition-all duration-700 object-top">
-                        <div class="absolute inset-0 bg-gradient-to-t from-f1-card via-transparent to-transparent opacity-60"></div>
-                    </div>
-                    
-                    <div class="w-full md:w-1/2 p-8 flex flex-col justify-center relative bg-f1-card">
-                        <div class="absolute top-4 right-8 text-5xl font-oswald font-black italic opacity-10" style="color: <?php echo $teamColor; ?>;">
-                            #<?php echo htmlspecialchars($driver['driver_number']); ?>
+                    <p class="text-2xl md:text-3xl font-oswald text-gray-400 uppercase italic tracking-tight mb-10 max-w-2xl leading-none">
+                        <?php echo htmlspecialchars($team['full_team_name']); ?>
+                    </p>
+
+                    <div class="flex flex-wrap gap-8 py-8 border-y border-white/5">
+                        <div class="flex flex-col">
+                            <span class="text-f1-red font-black uppercase text-[10px] tracking-widest mb-1">Base of Operations</span>
+                            <span class="text-lg font-bold uppercase"><?php echo htmlspecialchars($team['base_location']); ?></span>
                         </div>
+                        <div class="flex flex-col">
+                            <span class="text-f1-red font-black uppercase text-[10px] tracking-widest mb-1">Power Unit</span>
+                            <span class="text-lg font-bold uppercase"><?php echo htmlspecialchars($team['current_engine_supplier']); ?></span>
+                        </div>
+                        <div class="flex flex-col">
+                            <span class="text-f1-red font-black uppercase text-[10px] tracking-widest mb-1">Championships</span>
+                            <span class="text-lg font-bold uppercase"><?php echo htmlspecialchars($team['championships_won'] ?? '0'); ?> Titles</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="lg:w-1/3 flex justify-center lg:justify-end w-full">
+                    <?php if (!empty($team['logo_url'])): ?>
+                    <div class="relative group">
+                        <div class="absolute inset-0 bg-[var(--team-color)] opacity-20 blur-3xl rounded-full animate-pulse"></div>
+                        <img src="<?php echo htmlspecialchars($team['logo_url']); ?>" alt="Logo" class="max-h-64 object-contain animate-float relative z-10 drop-shadow-2xl">
+                    </div>
+                    <?php endif; ?>
+                </div>
+            </section>
+
+            <section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-32">
+                <div class="stat-card p-6 rounded-2xl border border-white/5" data-aos="fade-up" data-aos-delay="100">
+                    <h4 class="text-gray-500 text-[10px] font-black uppercase tracking-widest mb-4">Team Leadership</h4>
+                    <p class="text-xs text-f1-red font-bold uppercase mb-1">Principal</p>
+                    <p class="text-xl font-oswald font-black italic uppercase mb-4"><?php echo htmlspecialchars($team['team_principal']); ?></p>
+                    <p class="text-xs text-f1-red font-bold uppercase mb-1">Tech Director</p>
+                    <p class="text-xl font-oswald font-black italic uppercase"><?php echo htmlspecialchars($team['technical_director']); ?></p>
+                </div>
+
+                <div class="stat-card p-6 rounded-2xl border border-white/5" data-aos="fade-up" data-aos-delay="200">
+                    <h4 class="text-gray-500 text-[10px] font-black uppercase tracking-widest mb-4">Engineering</h4>
+                    <p class="text-xs text-f1-red font-bold uppercase mb-1">Chassis</p>
+                    <p class="text-xl font-oswald font-black italic uppercase mb-4"><?php echo htmlspecialchars($team['chassis']); ?></p>
+                    <p class="text-xs text-f1-red font-bold uppercase mb-1">Supplier</p>
+                    <p class="text-xl font-oswald font-black italic uppercase"><?php echo htmlspecialchars($team['current_engine_supplier']); ?></p>
+                </div>
+
+                <div class="stat-card p-6 rounded-2xl border border-white/5 bg-gradient-to-br from-f1-red/10 to-transparent" data-aos="fade-up" data-aos-delay="300">
+                    <h4 class="text-gray-500 text-[10px] font-black uppercase tracking-widest mb-4">Performance</h4>
+                    <div class="flex items-end gap-2">
+                        <p class="text-5xl font-oswald font-black italic uppercase leading-none"><?php echo htmlspecialchars($team['total_victories'] ?? '0'); ?></p>
+                        <p class="text-[10px] font-black uppercase text-f1-red pb-1">Grand Prix Wins</p>
+                    </div>
+                    <div class="mt-6 h-1 w-full bg-white/5 rounded-full overflow-hidden">
+                        <div class="h-full bg-f1-red" style="width: 75%"></div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="mb-20">
+                <div class="flex items-center justify-between mb-16">
+                    <h2 class="text-4xl md:text-6xl font-oswald font-black uppercase italic tracking-tighter">
+                        ACTIVE <span class="text-f1-red">LINEUP</span>
+                    </h2>
+                    <span class="h-[2px] flex-grow mx-10 bg-white/5 hidden md:block"></span>
+                    <span class="text-[10px] font-black uppercase tracking-[0.4em] text-gray-500">Season <?php echo date('Y'); ?></span>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-12">
+                    <?php foreach ($teamDrivers as $driver): 
+                        $driverSlug = strtolower(str_replace(' ', '-', $driver['first_name'] . '-' . $driver['last_name']));
+                    ?>
+                    <a href="driver-details.php?slug=<?php echo $driverSlug; ?>" 
+                       class="group relative bg-[#16161c] rounded-3xl overflow-hidden border border-white/5 transition-all duration-500 hover:border-f1-red/50">
                         
-                        <div class="relative z-10">
-                            <h3 class="text-sm font-bold text-gray-400 uppercase tracking-widest leading-none mb-1">
-                                <?php echo htmlspecialchars($driver['first_name']); ?>
-                            </h3>
-                            <h4 class="text-3xl font-oswald font-black uppercase italic tracking-tight group-hover:text-f1-red transition-colors">
-                                <?php echo htmlspecialchars($driver['last_name']); ?>
-                            </h4>
+                        <div class="flex flex-col sm:flex-row h-full">
+                            <div class="sm:w-1/2 h-80 sm:h-[450px] overflow-hidden bg-black relative">
+                                <img src="<?php echo htmlspecialchars($driver['image'] ?: '/afbeeldingen/coureurs/default.jpg'); ?>" 
+                                     alt="Driver" 
+                                     class="w-full h-full object-cover object-top grayscale group-hover:grayscale-0 transition-all duration-1000 group-hover:scale-105">
+                                <div class="absolute inset-0 bg-gradient-to-r from-transparent to-[#16161c] hidden sm:block"></div>
+                                <div class="absolute inset-0 bg-gradient-to-t from-[#16161c] to-transparent sm:hidden"></div>
+                            </div>
                             
-                            <div class="mt-6 flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-f1-red">
-                                <span>View Profile</span>
-                                <span class="group-hover:translate-x-2 transition-transform duration-300">→</span>
+                            <div class="sm:w-1/2 p-10 flex flex-col justify-between relative overflow-hidden">
+                                <div class="absolute -right-4 -top-4 text-[12rem] font-black italic opacity-[0.03] text-white group-hover:opacity-[0.08] transition-opacity">
+                                    <?php echo htmlspecialchars($driver['driver_number']); ?>
+                                </div>
+
+                                <div class="relative z-10">
+                                    <span class="text-f1-red font-black text-4xl italic font-oswald mb-2 block">#<?php echo htmlspecialchars($driver['driver_number']); ?></span>
+                                    <h3 class="text-gray-500 font-bold uppercase tracking-widest text-xs mb-1"><?php echo htmlspecialchars($driver['first_name']); ?></h3>
+                                    <h4 class="text-4xl font-oswald font-black uppercase italic tracking-tight group-hover:text-white transition-colors">
+                                        <?php echo htmlspecialchars($driver['last_name']); ?>
+                                    </h4>
+                                </div>
+
+                                <div class="mt-8 flex items-center gap-4 text-[10px] font-black uppercase tracking-[0.3em] group-hover:text-f1-red transition-colors">
+                                    <span>Bekijk Statistieken</span>
+                                    <div class="h-1 w-8 bg-white/10 group-hover:bg-f1-red transition-all group-hover:w-16"></div>
+                                </div>
                             </div>
                         </div>
+                    </a>
+                    <?php endforeach; ?>
+                </div>
+            </section>
+
+            <div class="text-center pt-20 border-t border-white/5">
+                <a href="teams.php" class="inline-flex items-center gap-6 group">
+                    <span class="text-[10px] font-black uppercase tracking-[0.4em] text-gray-500 group-hover:text-white transition-colors">Back to all constructors</span>
+                    <div class="w-12 h-12 rounded-full border border-white/10 flex items-center justify-center group-hover:bg-white group-hover:text-black transition-all">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                        </svg>
                     </div>
                 </a>
-                <?php endforeach; ?>
             </div>
-        </section>
-        <div class="text-center">
-            <a href="teams.php" class="inline-block bg-white text-black px-12 py-5 rounded-full font-black uppercase text-[10px] tracking-[0.3em] hover:bg-f1-red hover:text-white transition-all duration-300">
-                Back to Constructor list
-            </a>
         </div>
-
     </main>
+
     <?php include 'navigatie/footer.php'; ?>
+
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            AOS.init({ duration: 800, once: true });
-            window.toggleMenu = () => { document.getElementById('mobile-menu').classList.toggle('active'); };
+            AOS.init({ duration: 1000, once: true });
         });
     </script>
 </body>

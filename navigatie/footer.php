@@ -1,7 +1,5 @@
 <?php
 $current_page = basename($_SERVER['PHP_SELF']);
-
-// Base URL bepaling voor localhost of live
 $server = $_SERVER['SERVER_NAME'];
 if ($server === 'localhost' || $server === '127.0.0.1') {
     $baseUrl = "http://localhost:8080/formule1/";
@@ -9,11 +7,9 @@ if ($server === 'localhost' || $server === '127.0.0.1') {
     $baseUrl = "https://f1site.nl/";
 }
 ?>
-
 <footer class="bg-black mt-24 py-12 md:py-20 border-t-2 border-f1-red">
     <div class="max-w-7xl mx-auto px-6 lg:px-8">
         <div class="grid grid-cols-1 md:grid-cols-4 gap-12 text-center md:text-left pb-16">
-            
             <div class="md:col-span-2 space-y-6">
                 <a href="<?php echo $baseUrl; ?>" class="inline-block transition-transform active:scale-95">
                     <h3 class="text-4xl md:text-3xl font-oswald font-black text-white italic tracking-tighter uppercase">F1SITE<span class="text-f1-red">.NL</span></h3>
@@ -22,18 +18,16 @@ if ($server === 'localhost' || $server === '127.0.0.1') {
                     The premier digital destination for Formula 1 enthusiasts. Delivering real-time data, expert technical analysis, and the latest updates from the paddock directly to your screen.
                 </p>
             </div>
-
             <div>
                 <h4 class="text-[10px] font-black text-f1-red mb-6 uppercase tracking-[0.3em]">Navigation & Info</h4>
                 <ul class="space-y-4">
                     <?php
                     $nav_items = [
                         'sitemap.php' => 'Sitemap',
-                        'privacy-en.html' => 'Privacy Policy',
-                        'algemenevoorwaarden-en.html' => 'Terms & Conditions',
+                        'privacy-en.php' => 'Privacy Policy',
+                        'algemenevoorwaarden-en.php' => 'Terms & Conditions',
                         'contact.php' => 'Contact Us'
                     ];
-
                     foreach ($nav_items as $url => $label) {
                         $active_class = ($current_page === $url) ? 'text-f1-red' : 'text-gray-400';
                         echo "<li><a href=\"$url\" class=\"$active_class text-sm font-bold hover:text-white transition-colors duration-200 block uppercase tracking-wider py-1\">$label</a></li>";
@@ -41,7 +35,6 @@ if ($server === 'localhost' || $server === '127.0.0.1') {
                     ?>
                 </ul>
             </div>
-
             <div>
                 <h4 class="text-[10px] font-black text-f1-red mb-6 uppercase tracking-[0.3em]">Engineering</h4>
                 <div class="space-y-1">
@@ -50,16 +43,14 @@ if ($server === 'localhost' || $server === '127.0.0.1') {
                 </div>
             </div>
         </div>
-
         <div class="pt-8 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-8">
             <div class="flex flex-col md:flex-row items-center gap-4 md:gap-8">
                 <p class="text-gray-600 text-[9px] font-black uppercase tracking-[0.4em] italic text-center md:text-left">
                     &copy; <?php echo date('Y'); ?>  F1SITE.NL - All rights reserved.
                 </p>
                 <div class="hidden md:block h-4 w-[1px] bg-white/10"></div>
-                <p class="text-gray-700 text-[9px] font-bold uppercase tracking-widest text-center">Not affiliated with the Formula One Group | Developed by Bas Kamphuis</p>
+                <p class="text-gray-700 text-[9px] font-bold uppercase tracking-widest text-center">Not affiliated with the Formula One Group | Developed by <a href="https://www.linkedin.com/in/sebastiaan-kamphuis-04256b222/" target="_blank">Sebastiaan Kamphuis</a></p>
             </div>
-            
             <div class="flex items-center gap-4">
                 <span class="h-[1px] w-8 bg-f1-red/30"></span>
                 <span class="text-f1-red text-sm font-oswald italic font-black uppercase tracking-tighter">Faster than light</span>
@@ -132,7 +123,7 @@ if ($server === 'localhost' || $server === '127.0.0.1') {
         </div>
 
         <div class="pb-6 text-center">
-            <a href="cookiebeleid.html" class="text-[9px] text-gray-600 uppercase font-black tracking-widest hover:text-white transition">Privacy & Cookie Policy</a>
+            <a href="cookiebeleid.php" class="text-[9px] text-gray-600 uppercase font-black tracking-widest hover:text-white transition">Privacy & Cookie Policy</a>
         </div>
     </div>
 </div>
