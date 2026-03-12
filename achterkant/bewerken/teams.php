@@ -53,10 +53,9 @@ try {
             outline: none;
         }
 
-        tr { transition: all 0.3s ease; cursor: pointer; border-left: 4px solid transparent; }
+        tr { transition: all 0.3s ease; cursor: pointer; }
         tr:hover { 
             background: rgba(255, 255, 255, 0.03) !important; 
-            border-left-color: var(--f1-red);
             transform: translateX(5px);
         }
     </style>
@@ -114,13 +113,12 @@ try {
                                             <td class="p-8">
                                                 <div class="flex items-center gap-4">
                                                     <div class="w-10 h-10 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center font-oswald text-xl italic font-black text-white/20 group-hover:text-f1-red transition">
-                                                        <?php echo substr($team['full_team_name'], 0, 1); ?>
+                                                        <img src="<?php echo htmlspecialchars($team['logo_url']); ?>" alt="">
                                                     </div>
                                                     <div>
                                                         <p class="font-oswald text-lg font-black uppercase italic tracking-tight group-hover:text-f1-red transition">
                                                             <?php echo htmlspecialchars($team['full_team_name']); ?>
                                                         </p>
-                                                        <p class="text-[9px] font-black text-gray-600 uppercase tracking-widest">Team ID: #<?php echo $team['team_id']; ?></p>
                                                     </div>
                                                 </div>
                                             </td>

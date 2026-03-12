@@ -91,7 +91,7 @@ if ($teamId) {
             <div class="max-w-6xl mx-auto">
                 
                 <div class="flex justify-between items-center mb-10" data-aos="fade-down">
-                    <a href="teams.php" class="text-[10px] font-black uppercase tracking-[0.2em] text-gray-500 hover:text-white transition">← Grid Overview</a>
+                    <a href="bewerken/teams.php" class="text-[10px] font-black uppercase tracking-[0.2em] text-gray-500 hover:text-white transition">← Grid Overview</a>
                     <button type="button" id="editBtn" class="bg-white/5 border border-white/10 px-8 py-3 rounded-full text-[10px] font-black uppercase tracking-[0.2em] hover:bg-white/10 transition">Edit Constructor</button>
                 </div>
 
