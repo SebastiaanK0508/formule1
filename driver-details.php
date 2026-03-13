@@ -17,11 +17,8 @@ try {
     if (!$driver) { header("Location: drivers.php"); exit; }
 } catch (PDOException $e) { exit("Databasefout."); }
 
-// Teamkleur fallback
 $teamColor = htmlspecialchars($driver['team_color'] ?? '#E10600');
 list($r, $g, $b) = sscanf($teamColor, "#%02x%02x%02x");
-
-// Leeftijd berekenen (alleen als datum bestaat)
 $age = null;
 if (!empty($driver['date_of_birth'])) {
     $birthDate = new DateTime($driver['date_of_birth']);
@@ -49,8 +46,6 @@ if (!empty($driver['date_of_birth'])) {
             background: linear-gradient(180deg, #16161c 0%, #0b0b0f 100%);
             height: 75vh; width: 100%; position: absolute; top: 0; left: 0; z-index: -2;
         }
-
-        /* Foto focus op gezicht & responsive hoogte */
         .driver-hero-img {
             height: 400px;
             object-fit: cover;
@@ -126,7 +121,6 @@ if (!empty($driver['date_of_birth'])) {
                         <?php endif; ?>
                     </div>
                 </div>
-
                 <div class="w-full lg:w-5/12" data-aos="fade-right">
                     <div class="relative group bg-f1-card rounded-[3rem] overflow-hidden border border-white/10 shadow-2xl">
                         <?php if(!empty($driver['driver_number'])): ?>
@@ -134,39 +128,32 @@ if (!empty($driver['date_of_birth'])) {
                             <span class="text-4xl font-oswald font-black italic" style="color: var(--team-color);">#<?php echo htmlspecialchars($driver['driver_number']); ?></span>
                         </div>
                         <?php endif; ?>
-
                         <img src="<?php echo htmlspecialchars($driver['image'] ?? '/afbeeldingen/coureurs/default.jpg'); ?>" 
                              alt="Driver" 
                              class="driver-hero-img group-hover:scale-105 transition-transform duration-700">
                     </div>
                 </div>
-
             </div>
-
             <section class="grid grid-cols-2 lg:grid-cols-4 gap-4 mt-16 mb-24">
                 <div class="stat-card p-6 rounded-2xl border border-white/5">
                     <h4 class="text-gray-500 text-[10px] font-black uppercase tracking-widest mb-4">Racing Identity</h4>
                     <span class="text-5xl font-oswald font-black italic">#<?php echo htmlspecialchars($driver['driver_number'] ?? '00'); ?></span>
                 </div>
-
                 <div class="stat-card p-6 rounded-2xl border border-white/5">
                     <h4 class="text-gray-500 text-[10px] font-black uppercase tracking-widest mb-4">Performance</h4>
                     <span class="text-5xl font-oswald font-black italic text-f1-red"><?php echo number_format($driver['career_points'] ?? 0, 1, ',', '.'); ?></span>
                     <p class="text-[9px] font-black uppercase tracking-widest text-white mt-2">Points</p>
                 </div>
-
                 <div class="stat-card p-6 rounded-2xl border border-white/5">
                     <h4 class="text-gray-500 text-[10px] font-black uppercase tracking-widest mb-4">Hall of Fame</h4>
                     <span class="text-5xl font-oswald font-black italic"><?php echo htmlspecialchars($driver['championships_won'] ?? '0'); ?></span>
                     <p class="text-[9px] font-black uppercase tracking-widest text-white mt-2">Titles</p>
                 </div>
-
                 <div class="stat-card p-6 rounded-2xl border border-white/5">
                     <h4 class="text-gray-500 text-[10px] font-black uppercase tracking-widest mb-4">Grid Status</h4>
                     <p class="text-xl font-oswald font-black italic uppercase leading-tight text-white"><?php echo htmlspecialchars($driver['team_name'] ?? 'Free Agent'); ?></p>
                 </div>
             </section>
-
             <?php if (!empty($driver['description'])): ?>
             <section class="mb-32 max-w-5xl mx-auto" data-aos="fade-up">
                 <div class="relative p-8 md:p-12 border border-white/5 bg-f1-card/20 rounded-[2rem]">
@@ -179,7 +166,6 @@ if (!empty($driver['date_of_birth'])) {
                 </div>
             </section>
             <?php endif; ?>
-
             <div class="text-center pb-20 border-t border-white/5">
                 <a href="drivers.php" class="inline-flex items-center gap-6 group">
                     <span class="text-[10px] font-black uppercase tracking-[0.4em] text-gray-500 group-hover:text-white transition-colors">Back to all drivers</span>

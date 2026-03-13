@@ -37,12 +37,14 @@ try {
     </script>
 
     <style>
-        body { background-color: #0b0b0f; color: #fff; font-style: italic; overflow-x: hidden; }
+        body {color: #fff; font-style: italic; overflow-x: hidden; }
+        .bg-pattern {
+            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.02'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        }
         .grid-header {
             text-align: center;
             padding: 80px 20px 40px 20px;
         }
-
         .grid-title {
             font-family: 'Oswald', sans-serif;
             font-size: clamp(3rem, 10vw, 7rem);
@@ -52,7 +54,6 @@ try {
             letter-spacing: -2px;
             margin: 0;
         }
-
         .grid-subtitle {
             font-family: 'Inter', sans-serif;
             font-weight: 900;
@@ -68,20 +69,48 @@ try {
             width: 100%;
             padding: 5rem 0.5rem 15rem 0.5rem;
         }
-
         .starting-grid {
             display: grid;
             grid-template-columns: repeat(2, 240px); 
             column-gap: 5rem;
             row-gap: 0;
         }
-        @media (max-width: 640px) {
-            .starting-grid {
-                grid-template-columns: repeat(2, 1fr); 
-                max-width: 450px;
-                column-gap: 2rem;
-            }
-        }
+       @media (max-width: 640px) {
+    .grid-master-container {
+        padding: 2rem 10px 10rem 10px; 
+    }
+    .starting-grid {
+        grid-template-columns: repeat(2, minmax(0, 160px)); 
+        width: 100%;
+        max-width: 340px; 
+        column-gap: 10px;
+        margin: 0 auto; 
+    }
+    .grid-box {
+        padding: 10px !important; 
+    }
+
+    .grid-box::before, .grid-box::after {
+        height: 40px; 
+    }
+
+    .grid-slot-container:nth-child(odd) {
+        padding-bottom: 3rem; 
+    }
+
+    .grid-slot-container:nth-child(even) {
+        padding-top: 3rem; 
+    }
+
+    .name-outline {
+        font-size: 1.1rem; 
+    }
+    
+    .pos-label {
+        font-size: 1rem;
+        top: -25px;
+    }
+}
 
         .grid-slot-container:nth-child(odd) {
             padding-bottom: 8rem; 
@@ -155,7 +184,7 @@ try {
         }
     </style>
 </head>
-<body>
+<body class="bg-[#0b0b0f] bg-pattern min-h-screen flex flex-col italic selection:bg-f1-red">
 
     <?php include 'navigatie/header.php'; ?>
     <header class="grid-header" data-aos="fade-down">
