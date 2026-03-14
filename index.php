@@ -22,7 +22,6 @@ try {
     $dbNextGP = $stmtNextGP->fetch(PDO::FETCH_ASSOC);
 
     if ($dbNextGP) {
-        // Bepaal countdown target (eerstvolgende sessie)
         $sessionTimes = [
             $dbNextGP['fp1_datetime'] ?? null,
             $dbNextGP['fp2_datetime'] ?? $dbNextGP['sprint_quali_datetime'] ?? null,
@@ -199,7 +198,7 @@ require_once 'achterkant/aanpassing/api-koppelingen/1result_api.php';
                         </table>
                     </div>
                 </div>
-                <div class="bg-f1-card rounded-[2.5rem] border border-white/5 overflow-hidden shadow-2xl">
+                <!-- <div class="bg-f1-card rounded-[2.5rem] border border-white/5 overflow-hidden shadow-2xl">
                     <div class="p-6 bg-white/5 border-b border-white/5 flex justify-between items-center">
                         <div>
                             <span class="text-xs font-black uppercase tracking-widest text-white">Qualifying Standings</span>
@@ -242,10 +241,10 @@ require_once 'achterkant/aanpassing/api-koppelingen/1result_api.php';
                                 <?php else: ?>
                                     <tr><td class="p-10 text-center text-gray-500 italic">Kwalificatie data niet beschikbaar.</td></tr>
                                 <?php endif; ?>
-                            </tbody>
-                        </table>
+                            </tbody> -->
+                        <!-- </table>
                     </div>
-                </div>
+                </div> -->
             </div>
         </section>
 

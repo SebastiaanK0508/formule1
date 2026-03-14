@@ -1,22 +1,27 @@
 <?php
 require_once 'db_config.php';
 /** @var PDO $pdo */
-$current_year = date('Y');
-$selected_round = isset($_GET['round']) ? (int)$_GET['round'] : null;
+
+// 1. Basis instellingen
+$current_year = date('Y'); // 2026
+$selected_round = isset($_GET['round']) ? (int)$_GET['round'] : (isset($_GET['calendar_order']) ? (int)$_GET['calendar_order'] : 1);
+
 $races_in_season = [];
 $race_details = null;
 $race_results = [];
+$qualifying_results = [];
 $error_message = '';
 $team_colors_from_db = [];
- 
 $nextGrandPrix = null;
 $targetDateTime = null;
 
 try {
     $stmt = $pdo->query("SELECT team_name, team_color FROM teams");
     while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-        $team_colors_from_db[$row['team_name']] = $row['team_color'];
+        $clean_db_name = strtolower(trim($row['team_name']));
+        $team_colors_from_db[$clean_db_name] = $row['team_color'];
     }
+
     $stmt = $pdo->prepare("
         SELECT circuit_key, title, grandprix, location, race_datetime, calendar_order
         FROM circuits
@@ -30,26 +35,15 @@ try {
     if (!empty($db_races)) {
         foreach ($db_races as $race) {
             $races_in_season[] = [
-                'round' => $race['calendar_order'],
+                'round' => (int)$race['calendar_order'],
                 'raceName' => $race['grandprix'],
                 'date' => $race['race_datetime'],
                 'circuit_key' => $race['circuit_key']
             ];
         }
-        if ($selected_round === null) {
-            $latest_completed_round = 0;
-            $current_date_time = new DateTime();
-            foreach ($races_in_season as $race) {
-                $race_date_time = new DateTime($race['date']);
-                if ($race_date_time < $current_date_time && (int)$race['round'] > $latest_completed_round) {
-                    $latest_completed_round = (int)$race['round'];
-                }
-            }
-            $selected_round = ($latest_completed_round > 0) ? $latest_completed_round : 1;
-        }
-    } else {
-        $error_message = "Geen kalendergegevens gevonden voor seizoen " . $current_year . ".";
     }
+
+    // 4. Volgende Grand Prix ophalen voor de countdown
     $stmt = $pdo->prepare("
         SELECT grandprix, race_datetime, title, location
         FROM circuits
@@ -60,7 +54,6 @@ try {
     $stmt->bindParam(':current_year', $current_year, PDO::PARAM_INT);
     $stmt->execute();
     $next_race_data = $stmt->fetch(PDO::FETCH_ASSOC);
-
     if ($next_race_data) {
         $nextGrandPrix = [
             'grandprix' => $next_race_data['grandprix'],
@@ -72,100 +65,82 @@ try {
     }
 
 } catch (\PDOException $e) {
-    error_log("Fout bij het ophalen van databasegegevens: " . $e->getMessage());
-    if (empty($error_message)) {
-        $error_message = "Er is een probleem opgetreden bij het laden van de kalenderdata uit de database.";
-    }
+    error_log("Database fout: " . $e->getMessage());
 }
+
+// 5. RACE RESULTS OPHALEN
 try {
     if ($selected_round !== null) {
-        $current_race_name = null;
-        foreach ($races_in_season as $race) {
-            if ((int)$race['round'] === $selected_round) {
-                $current_race_name = $race['raceName'];
-                break;
-            }
-        }
-        if ($current_race_name === null) {
-             throw new Exception("Kon geen race-informatie vinden voor ronde " . $selected_round . ".");
-        }
-        $race_results_url = 'http://api.jolpi.ca/ergast/f1/' . $current_year . '/' . $selected_round . '/results.json';
-        $json_data_results = file_get_contents($race_results_url);
+        $race_results_url = "https://api.jolpi.ca/ergast/f1/{$current_year}/{$selected_round}/results.json";
+        $json_data_results = @file_get_contents($race_results_url);
 
-        if ($json_data_results === false) {
-            throw new Exception("Kon geen race-uitslagen ophalen voor ronde " . $selected_round . " van de Jolpica-f1 API.");
-        }
-        $results_data = json_decode($json_data_results, true);
+        if ($json_data_results) {
+            $results_data = json_decode($json_data_results, true);
+            if (isset($results_data['MRData']['RaceTable']['Races'][0])) {
+                $current_race_api_data = $results_data['MRData']['RaceTable']['Races'][0];
+                $race_details = [
+                    'name' => $current_race_api_data['raceName'],
+                    'circuit' => $current_race_api_data['Circuit']['circuitName'],
+                    'date' => $current_race_api_data['date']
+                ];
 
-        if (json_last_error() !== JSON_ERROR_NONE) {
-            throw new Exception("Fout bij het decoderen van resultaten JSON: " . json_last_error_msg());
-        }
-
-        if (isset($results_data['MRData']['RaceTable']['Races']) && !empty($results_data['MRData']['RaceTable']['Races'])) {
-            $current_race_api_data = $results_data['MRData']['RaceTable']['Races'][0];
-            $race_details = [
-                'name' => $current_race_api_data['raceName'] ?? 'Onbekende Race',
-                'circuit' => $current_race_api_data['Circuit']['circuitName'] ?? 'Onbekend Circuit',
-                'location' => $current_race_api_data['Circuit']['Location']['locality'] ?? 'N.v.t.',
-                'country' => $current_race_api_data['Circuit']['Location']['country'] ?? 'N.v.t.',
-                'date' => $current_race_api_data['date'] ?? 'Onbekende Datum',
-                'year' => $current_race_api_data['season'] ?? $current_year
-            ];
-
-            if (isset($current_race_api_data['Results']) && !empty($current_race_api_data['Results'])) {
-                foreach ($current_race_api_data['Results'] as $driver_result) {
-                    $driver_name = ($driver_result['Driver']['givenName'] ?? '') . ' ' . ($driver_result['Driver']['familyName'] ?? '');
-                    $team_name_from_api = $driver_result['Constructor']['name'] ?? 'Onbekend Team';
-                    $color_for_team = $team_colors_from_db[$team_name_from_api] ?? '#CCCCCC';
-                    $lap_time_or_status = 'N.v.t.';
-                    if (isset($driver_result['Time']['time'])) {
-                        $lap_time_or_status = $driver_result['Time']['time'];
-                    } elseif (isset($driver_result['status'])) {
-                        $lap_time_or_status = $driver_result['status'];
-                    }
+                foreach ($current_race_api_data['Results'] as $res) {
+                    $team_api_name = $res['Constructor']['name'];
+                    $clean_team_api = strtolower(trim($team_api_name));
+                    
                     $race_results[] = [
-                        'position' => $driver_result['position'] ?? '-',
-                        'driver_name' => $driver_name,
-                        'team_name' => $team_name_from_api,
-                        'lap_time_or_status' => $lap_time_or_status,
-                        'team_color' => $color_for_team
+                        'position' => $res['position'],
+                        'driver_name' => $res['Driver']['givenName'] . ' ' . $res['Driver']['familyName'],
+                        'team_name' => $team_api_name,
+                        'lap_time_or_status' => $res['Time']['time'] ?? $res['status'],
+                        'team_color' => $team_colors_from_db[$clean_team_api] ?? '#CCCCCC'
                     ];
                 }
-            } else {
-                $error_message = "Geen coureurresultaten gevonden voor deze race.";
             }
-        } else {
-            $error_message = "Geen race-informatie gevonden voor ronde " . $selected_round . " van seizoen " . $current_year . ".";
         }
     }
 } catch (Exception $e) {
-    $error_message = "Er is een probleem opgetreden bij het ophalen van de race-uitslagen: " . $e->getMessage();
+    error_log("Race API fout: " . $e->getMessage());
 }
-$qualifying_results = [];
+
+// 6. KWALIFICATIE OPHALEN (Gecorrigeerd volgens jouw URL-voorbeeld)
 try {
     if ($selected_round !== null) {
-        $cache_file_qual = "cache_qualifying_" . $selected_round . ".json";
+        $cache_file_qual = "cache_qualifying_{$current_year}_{$selected_round}.json";
         $json_data_qual = null;
+
+        // Controleer of cache bestaat en jonger is dan 1 uur
         if (file_exists($cache_file_qual) && (time() - filemtime($cache_file_qual) < 3600)) {
             $json_data_qual = file_get_contents($cache_file_qual);
         } else {
-            $qual_url = 'http://api.jolpi.ca/ergast/f1/' . $current_year . '/' . $selected_round . '/qualifying.json';
+            // Jouw werkende URL structuur:
+            $qual_url = "https://api.jolpi.ca/ergast/f1/{$current_year}/{$selected_round}/qualifying.json";
             $json_data_qual = @file_get_contents($qual_url);
+
             if ($json_data_qual) {
-                file_put_contents($cache_file_qual, $json_data_qual);
-            } elseif (file_exists($cache_file_qual)) {
-                $json_data_qual = file_get_contents($cache_file_qual);
+                $check_data = json_decode($json_data_qual, true);
+                // Sla de cache alleen op als er echt resultaten zijn gevonden
+                if (!empty($check_data['MRData']['RaceTable']['Races'][0]['QualifyingResults'])) {
+                    file_put_contents($cache_file_qual, $json_data_qual);
+                } else {
+                    // API is bereikbaar maar data is leeg (sessie nog niet gereden), dus niet cachen
+                    $json_data_qual = null;
+                    if (file_exists($cache_file_qual)) unlink($cache_file_qual);
+                }
             }
         }
+
         if ($json_data_qual) {
             $qual_data = json_decode($json_data_qual, true);
             if (isset($qual_data['MRData']['RaceTable']['Races'][0]['QualifyingResults'])) {
                 foreach ($qual_data['MRData']['RaceTable']['Races'][0]['QualifyingResults'] as $q_res) {
-                    $team = $q_res['Constructor']['name'];
+                    $team_api_name = $q_res['Constructor']['name'];
+                    $clean_team_api = strtolower(trim($team_api_name));
+                    
                     $qualifying_results[] = [
                         'position' => $q_res['position'],
                         'driver' => $q_res['Driver']['familyName'],
-                        'team_color' => $team_colors_from_db[$team] ?? '#E10600',
+                        'team_color' => $team_colors_from_db[$clean_team_api] ?? '#E10600', // Rood als fallback
                         'q1' => $q_res['Q1'] ?? '-',
                         'q2' => $q_res['Q2'] ?? '-',
                         'q3' => $q_res['Q3'] ?? '-'
@@ -175,6 +150,6 @@ try {
         }
     }
 } catch (Exception $e) {
-    error_log("Qualifying API error: " . $e->getMessage());
+    error_log("Qualifying API fout: " . $e->getMessage());
 }
 ?>
