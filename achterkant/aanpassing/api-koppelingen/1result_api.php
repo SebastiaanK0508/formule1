@@ -2,9 +2,29 @@
 require_once 'db_config.php';
 /** @var PDO $pdo */
 
-// 1. Basis instellingen
-$current_year = date('Y'); // 2026
-$selected_round = isset($_GET['round']) ? (int)$_GET['round'] : (isset($_GET['calendar_order']) ? (int)$_GET['calendar_order'] : 1);
+$current_year = date('Y');
+
+if (isset($_GET['round'])) {
+    $selected_round = (int)$_GET['round'];
+} elseif (isset($_GET['calendar_order'])) {
+    $selected_round = (int)$_GET['calendar_order'];
+} else {
+    try {
+        $stmt_latest = $pdo->prepare("
+            SELECT calendar_order 
+            FROM circuits 
+            WHERE race_datetime < NOW() 
+              AND YEAR(race_datetime) = :current_year
+            ORDER BY calendar_order DESC 
+            LIMIT 1
+        ");
+        $stmt_latest->execute([':current_year' => $current_year]);
+        $latest_race = $stmt_latest->fetch(PDO::FETCH_ASSOC);
+        $selected_round = $latest_race ? (int)$latest_race['calendar_order'] : 1;
+    } catch (\PDOException $e) {
+        $selected_round = 1; 
+    }
+}
 
 $races_in_season = [];
 $race_details = null;
@@ -43,7 +63,6 @@ try {
         }
     }
 
-    // 4. Volgende Grand Prix ophalen voor de countdown
     $stmt = $pdo->prepare("
         SELECT grandprix, race_datetime, title, location
         FROM circuits
@@ -67,8 +86,6 @@ try {
 } catch (\PDOException $e) {
     error_log("Database fout: " . $e->getMessage());
 }
-
-// 5. RACE RESULTS OPHALEN
 try {
     if ($selected_round !== null) {
         $race_results_url = "https://api.jolpi.ca/ergast/f1/{$current_year}/{$selected_round}/results.json";
@@ -103,44 +120,37 @@ try {
     error_log("Race API fout: " . $e->getMessage());
 }
 
-// 6. KWALIFICATIE OPHALEN (Gecorrigeerd volgens jouw URL-voorbeeld)
 try {
     if ($selected_round !== null) {
         $cache_file_qual = "cache_qualifying_{$current_year}_{$selected_round}.json";
         $json_data_qual = null;
 
-        // Controleer of cache bestaat en jonger is dan 1 uur
         if (file_exists($cache_file_qual) && (time() - filemtime($cache_file_qual) < 3600)) {
             $json_data_qual = file_get_contents($cache_file_qual);
         } else {
-            // Jouw werkende URL structuur:
             $qual_url = "https://api.jolpi.ca/ergast/f1/{$current_year}/{$selected_round}/qualifying.json";
             $json_data_qual = @file_get_contents($qual_url);
 
             if ($json_data_qual) {
                 $check_data = json_decode($json_data_qual, true);
-                // Sla de cache alleen op als er echt resultaten zijn gevonden
                 if (!empty($check_data['MRData']['RaceTable']['Races'][0]['QualifyingResults'])) {
                     file_put_contents($cache_file_qual, $json_data_qual);
                 } else {
-                    // API is bereikbaar maar data is leeg (sessie nog niet gereden), dus niet cachen
                     $json_data_qual = null;
                     if (file_exists($cache_file_qual)) unlink($cache_file_qual);
                 }
             }
         }
-
         if ($json_data_qual) {
             $qual_data = json_decode($json_data_qual, true);
             if (isset($qual_data['MRData']['RaceTable']['Races'][0]['QualifyingResults'])) {
                 foreach ($qual_data['MRData']['RaceTable']['Races'][0]['QualifyingResults'] as $q_res) {
                     $team_api_name = $q_res['Constructor']['name'];
                     $clean_team_api = strtolower(trim($team_api_name));
-                    
                     $qualifying_results[] = [
                         'position' => $q_res['position'],
                         'driver' => $q_res['Driver']['familyName'],
-                        'team_color' => $team_colors_from_db[$clean_team_api] ?? '#E10600', // Rood als fallback
+                        'team_color' => $team_colors_from_db[$clean_team_api] ?? '#E10600', 
                         'q1' => $q_res['Q1'] ?? '-',
                         'q2' => $q_res['Q2'] ?? '-',
                         'q3' => $q_res['Q3'] ?? '-'
