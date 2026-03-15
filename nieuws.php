@@ -1,5 +1,7 @@
 <?php
 require_once 'db_config.php';
+/** @var PDO $pdo */
+
 $pageTitle = "F1 News | Latest Updates & Grand Prix Insights | F1SITE.NL";
 $pageDesc = "Stay updated with the latest Formula 1 news. From race results to technical updates and team transfers, we cover the 2026 season in full speed.";
 $currentUrl = "https://f1site.nl" . $_SERVER['REQUEST_URI'];
@@ -82,7 +84,7 @@ try {
             <div class="flex items-center gap-2">
                 
                 <?php if ($page > 1): ?>
-                    <a href="?page=<?= $page - 1 ?>" class="pagination-btn group">
+                    <a href="nieuws.php?page=<?= $page - 1 ?>" class="pagination-btn group">
                         <span class="group-hover:-translate-x-1 transition-transform">←</span>
                     </a>
                 <?php endif; ?>
@@ -92,13 +94,13 @@ try {
                 $end = min($total_pages, $page + 2);
                 
                 for ($i = $start; $i <= $end; $i++): ?>
-                    <a href="?page=<?= $i ?>" class="pagination-btn <?= ($i == $page) ? 'active' : '' ?>">
+                    <a href="nieuws.php?page=<?= $i ?>" class="pagination-btn <?= ($i == $page) ? 'active' : '' ?>">
                         <?= $i ?>
                     </a>
                 <?php endfor; ?>
 
                 <?php if ($page < $total_pages): ?>
-                    <a href="?page=<?= $page + 1 ?>" class="pagination-btn group">
+                    <a href="nieuws.php?page=<?= $page + 1 ?>" class="pagination-btn group">
                         <span class="group-hover:translate-x-1 transition-transform">→</span>
                     </a>
                 <?php endif; ?>
