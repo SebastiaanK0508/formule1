@@ -3,163 +3,110 @@ require_once 'db_config.php';
 /** @var PDO $pdo */
 
 $current_year = date('Y');
-
-if (isset($_GET['round'])) {
-    $selected_round = (int)$_GET['round'];
-} elseif (isset($_GET['calendar_order'])) {
-    $selected_round = (int)$_GET['calendar_order'];
-} else {
-    try {
-        $stmt_latest = $pdo->prepare("
-            SELECT calendar_order 
-            FROM circuits 
-            WHERE race_datetime < NOW() 
-              AND YEAR(race_datetime) = :current_year
-            ORDER BY calendar_order DESC 
-            LIMIT 1
-        ");
-        $stmt_latest->execute([':current_year' => $current_year]);
-        $latest_race = $stmt_latest->fetch(PDO::FETCH_ASSOC);
-        $selected_round = $latest_race ? (int)$latest_race['calendar_order'] : 1;
-    } catch (\PDOException $e) {
-        $selected_round = 1; 
-    }
-}
-
+$selected_round = isset($_GET['round']) ? (int)$_GET['round'] : null;
 $races_in_season = [];
 $race_details = null;
 $race_results = [];
 $qualifying_results = [];
-$error_message = '';
+$sprint_results = [];
+$sprint_quali_results = [];
+$fp1_results = [];
+$fp2_results = [];
+$fp3_results = [];
 $team_colors_from_db = [];
-$nextGrandPrix = null;
-$targetDateTime = null;
+$error_message = '';
 
 try {
     $stmt = $pdo->query("SELECT team_name, team_color FROM teams");
     while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-        $clean_db_name = strtolower(trim($row['team_name']));
-        $team_colors_from_db[$clean_db_name] = $row['team_color'];
+        $team_colors_from_db[$row['team_name']] = $row['team_color'];
     }
-
-    $stmt = $pdo->prepare("
-        SELECT circuit_key, title, grandprix, location, race_datetime, calendar_order
-        FROM circuits
-        WHERE race_datetime IS NOT NULL AND YEAR(race_datetime) = :current_year
-        ORDER BY calendar_order ASC
-    ");
-    $stmt->bindParam(':current_year', $current_year, PDO::PARAM_INT);
-    $stmt->execute();
+    $stmt = $pdo->prepare("SELECT circuit_key, title, grandprix, race_datetime, calendar_order FROM circuits WHERE YEAR(race_datetime) = :year ORDER BY calendar_order ASC");
+    $stmt->execute([':year' => $current_year]);
     $db_races = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-    if (!empty($db_races)) {
-        foreach ($db_races as $race) {
-            $races_in_season[] = [
-                'round' => (int)$race['calendar_order'],
-                'raceName' => $race['grandprix'],
-                'date' => $race['race_datetime'],
-                'circuit_key' => $race['circuit_key']
+    foreach ($db_races as $race) {
+        $races_in_season[] = [
+            'round' => $race['calendar_order'],
+            'raceName' => $race['grandprix'],
+            'date' => $race['race_datetime']
+        ];
+    }
+    if ($selected_round === null && !empty($races_in_season)) {
+        $now = new DateTime();
+        $latest = 1;
+        foreach ($races_in_season as $r) {
+            if (new DateTime($r['date']) < $now) $latest = $r['round'];
+        }
+        $selected_round = $latest;
+    }
+} catch (PDOException $e) {
+    error_log("DB Error: " . $e->getMessage());
+}
+function fetchF1Data($url, $cacheName) {
+    $cacheFile = "cache/" . $cacheName . ".json";
+    if (!is_dir('cache')) mkdir('cache', 0777, true);
+
+    if (file_exists($cacheFile) && (time() - filemtime($cacheFile) < 3600)) {
+        return json_decode(file_get_contents($cacheFile), true);
+    }
+
+    $json = @file_get_contents($url);
+    if ($json) {
+        file_put_contents($cacheFile, $json);
+        return json_decode($json, true);
+    }
+    return null;
+}
+if ($selected_round !== null) {
+    $baseUrl = "http://api.jolpi.ca/ergast/f1/{$current_year}/{$selected_round}/";
+    $data = fetchF1Data($baseUrl . "results.json", "race_{$current_year}_{$selected_round}");
+    if (isset($data['MRData']['RaceTable']['Races'][0])) {
+        $race = $data['MRData']['RaceTable']['Races'][0];
+        $race_details = [
+            'name' => $race['raceName'],
+            'circuit' => $race['Circuit']['circuitName'],
+            'date' => $race['date']
+        ];
+        foreach ($race['Results'] as $res) {
+            $team = $res['Constructor']['name'];
+            $race_results[] = [
+                'position' => $res['position'],
+                'driver_name' => $res['Driver']['givenName'] . ' ' . $res['Driver']['familyName'],
+                'team_name' => $team,
+                'team_color' => $team_colors_from_db[$team] ?? '#E10600',
+                'lap_time_or_status' => $res['Time']['time'] ?? $res['status']
+            ];
+        }
+    }
+    $data = fetchF1Data($baseUrl . "qualifying.json", "qual_{$current_year}_{$selected_round}");
+    if (isset($data['MRData']['RaceTable']['Races'][0]['QualifyingResults'])) {
+        foreach ($data['MRData']['RaceTable']['Races'][0]['QualifyingResults'] as $q) {
+            $team = $q['Constructor']['name'];
+            $qualifying_results[] = [
+                'position' => $q['position'],
+                'driver' => $q['Driver']['familyName'],
+                'team_name' => $team,
+                'team_color' => $team_colors_from_db[$team] ?? '#E10600',
+                'q1' => $q['Q1'] ?? '-', 'q2' => $q['Q2'] ?? '-', 'q3' => $q['Q3'] ?? '-'
+            ];
+        }
+    }
+    $data = fetchF1Data($baseUrl . "sprint.json", "sprint_{$current_year}_{$selected_round}");
+    if (isset($data['MRData']['RaceTable']['Races'][0]['SprintResults'])) {
+        foreach ($data['MRData']['RaceTable']['Races'][0]['SprintResults'] as $s) {
+            $team = $s['Constructor']['name'];
+            $sprint_results[] = [
+                'position' => $s['position'],
+                'driver_name' => $s['Driver']['familyName'],
+                'team_color' => $team_colors_from_db[$team] ?? '#E10600',
+                'lap_time_or_status' => $s['Time']['time'] ?? $s['status']
             ];
         }
     }
 
-    $stmt = $pdo->prepare("
-        SELECT grandprix, race_datetime, title, location
-        FROM circuits
-        WHERE race_datetime > NOW() AND YEAR(race_datetime) = :current_year
-        ORDER BY race_datetime ASC
-        LIMIT 1
-    ");
-    $stmt->bindParam(':current_year', $current_year, PDO::PARAM_INT);
-    $stmt->execute();
-    $next_race_data = $stmt->fetch(PDO::FETCH_ASSOC);
-    if ($next_race_data) {
-        $nextGrandPrix = [
-            'grandprix' => $next_race_data['grandprix'],
-            'title'     => $next_race_data['title'],
-            'location'  => $next_race_data['location'], 
-            'circuit'   => $next_race_data['title']     
-        ];
-        $targetDateTime = $next_race_data['race_datetime'];
-    }
-
-} catch (\PDOException $e) {
-    error_log("Database fout: " . $e->getMessage());
+    
+    try {
+        $stmt = $pdo->prepare("SELECT * FROM f1_sessie_results WHERE circuit_id = :cid AND session_type = 'FP1' ORDER BY position ASC");
+    } catch (PDOException $e) { }
 }
-try {
-    if ($selected_round !== null) {
-        $race_results_url = "https://api.jolpi.ca/ergast/f1/{$current_year}/{$selected_round}/results.json";
-        $json_data_results = @file_get_contents($race_results_url);
-
-        if ($json_data_results) {
-            $results_data = json_decode($json_data_results, true);
-            if (isset($results_data['MRData']['RaceTable']['Races'][0])) {
-                $current_race_api_data = $results_data['MRData']['RaceTable']['Races'][0];
-                $race_details = [
-                    'name' => $current_race_api_data['raceName'],
-                    'circuit' => $current_race_api_data['Circuit']['circuitName'],
-                    'date' => $current_race_api_data['date']
-                ];
-
-                foreach ($current_race_api_data['Results'] as $res) {
-                    $team_api_name = $res['Constructor']['name'];
-                    $clean_team_api = strtolower(trim($team_api_name));
-                    
-                    $race_results[] = [
-                        'position' => $res['position'],
-                        'driver_name' => $res['Driver']['givenName'] . ' ' . $res['Driver']['familyName'],
-                        'team_name' => $team_api_name,
-                        'lap_time_or_status' => $res['Time']['time'] ?? $res['status'],
-                        'team_color' => $team_colors_from_db[$clean_team_api] ?? '#CCCCCC'
-                    ];
-                }
-            }
-        }
-    }
-} catch (Exception $e) {
-    error_log("Race API fout: " . $e->getMessage());
-}
-
-try {
-    if ($selected_round !== null) {
-        $cache_file_qual = "cache_qualifying_{$current_year}_{$selected_round}.json";
-        $json_data_qual = null;
-
-        if (file_exists($cache_file_qual) && (time() - filemtime($cache_file_qual) < 3600)) {
-            $json_data_qual = file_get_contents($cache_file_qual);
-        } else {
-            $qual_url = "https://api.jolpi.ca/ergast/f1/{$current_year}/{$selected_round}/qualifying.json";
-            $json_data_qual = @file_get_contents($qual_url);
-
-            if ($json_data_qual) {
-                $check_data = json_decode($json_data_qual, true);
-                if (!empty($check_data['MRData']['RaceTable']['Races'][0]['QualifyingResults'])) {
-                    file_put_contents($cache_file_qual, $json_data_qual);
-                } else {
-                    $json_data_qual = null;
-                    if (file_exists($cache_file_qual)) unlink($cache_file_qual);
-                }
-            }
-        }
-        if ($json_data_qual) {
-            $qual_data = json_decode($json_data_qual, true);
-            if (isset($qual_data['MRData']['RaceTable']['Races'][0]['QualifyingResults'])) {
-                foreach ($qual_data['MRData']['RaceTable']['Races'][0]['QualifyingResults'] as $q_res) {
-                    $team_api_name = $q_res['Constructor']['name'];
-                    $clean_team_api = strtolower(trim($team_api_name));
-                    $qualifying_results[] = [
-                        'position' => $q_res['position'],
-                        'driver' => $q_res['Driver']['familyName'],
-                        'team_color' => $team_colors_from_db[$clean_team_api] ?? '#E10600', 
-                        'q1' => $q_res['Q1'] ?? '-',
-                        'q2' => $q_res['Q2'] ?? '-',
-                        'q3' => $q_res['Q3'] ?? '-'
-                    ];
-                }
-            }
-        }
-    }
-} catch (Exception $e) {
-    error_log("Qualifying API fout: " . $e->getMessage());
-}
-?>

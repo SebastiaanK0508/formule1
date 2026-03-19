@@ -128,12 +128,12 @@ require_once 'achterkant/aanpassing/api-koppelingen/1result_api.php';
                                 'Grand Prix' => $dbNextGP['race_datetime'] ?? null
                             ];
 
-                            foreach($displaySessions as $label => $time): 
-                                if(empty($time) || $time === '0000-00-00 00:00:00') continue;
-                                $sessionTs = strtotime($time);
-                                $isPassed = $sessionTs < time();
-                                $isLive = (time() >= $sessionTs && time() <= ($sessionTs + 7200));
-                        ?>
+                    foreach($displaySessions as $label => $time): 
+                        if(empty($time) || $time === '0000-00-00 00:00:00') continue;
+                        $sessionTs = strtotime($time);
+                        $isPassed = $sessionTs < time();
+                        $isLive = (time() >= $sessionTs && time() <= ($sessionTs + 7200));
+                    ?>
                         <div class="flex items-center lg:flex-col lg:justify-center p-4 rounded-2xl border transition-all duration-500 <?php echo $isLive ? 'bg-f1-red/10 border-f1-red animate-pulse' : 'bg-white/[0.02] border-white/5'; ?> <?php echo ($isPassed && !$isLive) ? 'opacity-30 grayscale' : ''; ?>">                    
                             <div class="flex-1 lg:flex-none lg:mb-2 text-left lg:text-center">
                                 <p class="text-[8px] font-black uppercase tracking-widest <?php echo $isLive ? 'text-white' : 'text-f1-red'; ?>"><?php echo $label; ?></p>
@@ -155,10 +155,14 @@ require_once 'achterkant/aanpassing/api-koppelingen/1result_api.php';
                 <h2 class="text-4xl font-oswald font-black uppercase italic tracking-tighter">
                     Latest Results: <span class="text-f1-red"><?php echo htmlspecialchars($race_details['name'] ?? 'Grand Prix'); ?></span>
                 </h2>
-                <div class="hidden md:block h-[1px] flex-grow mx-10 bg-white/10"></div>
+                <a href="result_race.php?round=<?php echo $selected_round; ?>" class="hidden md:flex items-center gap-3 text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 hover:text-f1-red transition-all group">
+                    View Full Weekend Analysis
+                    <span class="w-8 h-[1px] bg-gray-700 group-hover:bg-f1-red group-hover:w-12 transition-all"></span>
+                </a>
             </div>
+
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-10 items-start">
-                <div class="bg-f1-card rounded-[2.5rem] border border-white/5 overflow-hidden shadow-2xl">
+                <div class="bg-f1-card rounded-[2.5rem] border border-white/5 overflow-hidden shadow-2xl flex flex-col">
                     <div class="p-6 bg-white/5 border-b border-white/5 flex justify-between items-center">
                         <div>
                             <span class="text-xs font-black uppercase tracking-widest text-white">Race Classification</span>
@@ -166,39 +170,40 @@ require_once 'achterkant/aanpassing/api-koppelingen/1result_api.php';
                         </div>
                         <span class="text-[10px] font-bold text-f1-red uppercase px-3 py-1 bg-f1-red/10 rounded-full border border-f1-red/20 italic">Round <?php echo $selected_round; ?></span>
                     </div>
-                    <div class="results-scroll">
-                        <table class="w-full text-left">
+                    
+                    <div class="results-scroll h-[450px]"> <table class="w-full text-left">
                             <tbody class="divide-y divide-white/5">
                                 <?php if (!empty($race_results)): ?>
-                                    <?php foreach ($race_results as $res): 
-                                        $posClass = ($res['position'] <= 3) ? 'pos-' . $res['position'] : ''; 
-                                    ?>
-                                    <tr class="hover:bg-white/[0.03] transition-colors group">
-                                        <td class="px-6 py-4 font-oswald font-bold text-2xl italic text-gray-700 w-16 <?php echo $posClass; ?>">
-                                            <?php echo str_pad($res['position'], 2, "0", STR_PAD_LEFT); ?>
-                                        </td>
-                                        <td class="px-4 py-4">
-                                            <div class="flex items-center gap-4">
-                                                <div class="w-1 h-10 rounded-full transition-all group-hover:scale-y-110" style="background-color: <?php echo $res['team_color']; ?>;"></div>
-                                                <div>
-                                                    <span class="text-white font-bold block text-base leading-none mb-1"><?php echo htmlspecialchars($res['driver_name']); ?></span>
-                                                    <span class="text-[10px] text-gray-500 uppercase tracking-widest font-medium"><?php echo htmlspecialchars($res['team_name']); ?></span>
+                                    <?php foreach (array_slice($race_results, 0, 10) as $res): // Toon top 10 op index ?>
+                                        <tr class="hover:bg-white/[0.03] transition-colors group">
+                                            <td class="px-6 py-4 font-oswald font-bold text-2xl italic text-gray-700 w-16 <?php echo ($res['position'] <= 3) ? 'pos-' . $res['position'] : ''; ?>">
+                                                <?php echo str_pad($res['position'], 2, "0", STR_PAD_LEFT); ?>
+                                            </td>
+                                            <td class="px-4 py-4">
+                                                <div class="flex items-center gap-4">
+                                                    <div class="w-1 h-10 rounded-full" style="background-color: <?php echo $res['team_color']; ?>;"></div>
+                                                    <div>
+                                                        <span class="text-white font-bold block text-base leading-none mb-1"><?php echo htmlspecialchars($res['driver_name']); ?></span>
+                                                        <span class="text-[10px] text-gray-500 uppercase tracking-widest"><?php echo htmlspecialchars($res['team_name']); ?></span>
+                                                    </div>
                                                 </div>
-                                            </div>
-                                        </td>
-                                        <td class="px-6 py-4 text-right">
-                                            <span class="text-[11px] font-mono text-gray-400 bg-white/5 px-2 py-1 rounded"><?php echo $res['lap_time_or_status']; ?></span>
-                                        </td>
-                                    </tr>
+                                            </td>
+                                            <td class="px-6 py-4 text-right">
+                                                <span class="text-[11px] font-mono text-gray-400 bg-white/5 px-2 py-1 rounded"><?php echo $res['lap_time_or_status']; ?></span>
+                                            </td>
+                                        </tr>
                                     <?php endforeach; ?>
-                                <?php else: ?>
-                                    <tr><td class="p-10 text-center text-gray-500 italic">Geen race uitslag gevonden.</td></tr>
                                 <?php endif; ?>
                             </tbody>
                         </table>
                     </div>
+                    
+                    <a href="result_race.php?round=<?php echo $selected_round; ?>" class="p-4 bg-white/[0.02] border-t border-white/5 text-center text-[10px] font-black uppercase tracking-widest text-gray-500 hover:text-white transition-colors">
+                        View All <?php echo count($race_results); ?> Finishers →
+                    </a>
                 </div>
-                <div class="bg-f1-card rounded-[2.5rem] border border-white/5 overflow-hidden shadow-2xl">
+
+                <div class="bg-f1-card rounded-[2.5rem] border border-white/5 overflow-hidden shadow-2xl flex flex-col">
                     <div class="p-6 bg-white/5 border-b border-white/5 flex justify-between items-center">
                         <div>
                             <span class="text-xs font-black uppercase tracking-widest text-white">Qualifying Standings</span>
@@ -209,45 +214,50 @@ require_once 'achterkant/aanpassing/api-koppelingen/1result_api.php';
                         </div>
                     </div>
 
-                    <div class="results-scroll">
+                    <div class="results-scroll h-[450px]">
                         <table class="w-full text-left">
                             <tbody class="divide-y divide-white/5">
                                 <?php if (!empty($qualifying_results)): ?>
-                                    <?php foreach ($qualifying_results as $q): 
-                                        $posClass = ($q['position'] <= 3) ? 'pos-' . $q['position'] : ''; 
-                                    ?>
-                                    <tr class="hover:bg-white/[0.03] transition-colors group">
-                                        <td class="px-6 py-4 font-oswald font-bold text-2xl italic text-gray-700 w-16 <?php echo $posClass; ?>">
-                                            <?php echo str_pad($q['position'], 2, "0", STR_PAD_LEFT); ?>
-                                        </td>
-                                        <td class="px-4 py-4">
-                                            <div class="flex items-center gap-4">
-                                                <div class="w-1 h-10 rounded-full transition-all group-hover:scale-y-110" style="background-color: <?php echo $q['team_color']; ?>;"></div>
-                                                <div>
-                                                    <span class="text-white font-bold block text-base leading-none mb-1"><?php echo htmlspecialchars($q['driver']); ?></span>
-                                                    <span class="text-[10px] text-gray-500 uppercase tracking-widest">
-                                                        <?php echo ($q['q3'] !== '-') ? 'Q3 Session' : (($q['q2'] !== '-') ? 'Q2 Session' : 'Q1 Session'); ?>
-                                                    </span>
+                                    <?php foreach (array_slice($qualifying_results, 0, 10) as $q): ?>
+                                        <tr class="hover:bg-white/[0.03] transition-colors group">
+                                            <td class="px-6 py-4 font-oswald font-bold text-2xl italic text-gray-700 w-16 <?php echo ($q['position'] <= 3) ? 'pos-' . $q['position'] : ''; ?>">
+                                                <?php echo str_pad($q['position'], 2, "0", STR_PAD_LEFT); ?>
+                                            </td>
+                                            <td class="px-4 py-4">
+                                                <div class="flex items-center gap-4">
+                                                    <div class="w-1 h-10 rounded-full" style="background-color: <?php echo $q['team_color']; ?>;"></div>
+                                                    <div>
+                                                        <span class="text-white font-bold block text-base leading-none mb-1"><?php echo htmlspecialchars($q['driver']); ?></span>
+                                                        <span class="text-[10px] text-gray-500 uppercase tracking-widest">
+                                                            <?php echo ($q['q3'] !== '-') ? 'Q3 Session' : (($q['q2'] !== '-') ? 'Q2 Session' : 'Q1 Session'); ?>
+                                                        </span>
+                                                    </div>
                                                 </div>
-                                            </div>
-                                        </td>
-                                        <td class="px-6 py-4 text-right">
-                                            <span class="text-xs font-mono text-f1-red font-bold">
-                                                <?php echo ($q['q3'] !== '-') ? $q['q3'] : (($q['q2'] !== '-') ? $q['q2'] : $q['q1']); ?>
-                                            </span>
-                                        </td>
-                                    </tr>
+                                            </td>
+                                            <td class="px-6 py-4 text-right">
+                                                <span class="text-xs font-mono text-f1-red font-bold">
+                                                    <?php echo ($q['q3'] !== '-') ? $q['q3'] : (($q['q2'] !== '-') ? $q['q2'] : $q['q1']); ?>
+                                                </span>
+                                            </td>
+                                        </tr>
                                     <?php endforeach; ?>
-                                <?php else: ?>
-                                    <tr><td class="p-10 text-center text-gray-500 italic">Kwalificatie data niet beschikbaar.</td></tr>
                                 <?php endif; ?>
                             </tbody>
                         </table>
                     </div>
+
+                    <a href="result_race.php?round=<?php echo $selected_round; ?>" class="p-4 bg-white/[0.02] border-t border-white/5 text-center text-[10px] font-black uppercase tracking-widest text-gray-500 hover:text-white transition-colors">
+                        Check Sprint & Practice Times →
+                    </a>
                 </div>
             </div>
+            <div class="flex justify-center mt-12">
+                <a href="result_race.php?round=<?php echo $selected_round; ?>" class="group flex items-center gap-4 bg-f1-red px-10 py-4 rounded-full font-oswald font-black uppercase italic tracking-widest hover:bg-white hover:text-black transition-all duration-500 shadow-xl shadow-f1-red/20">
+                    <span>Full Weekend Results</span>
+                    <span class="text-xl group-hover:translate-x-2 transition-transform">→</span>
+                </a>
+            </div>
         </section>
-
         <section>
             <div class="flex items-center justify-between mb-16">
                 <h2 class="text-4xl font-oswald font-black uppercase italic tracking-tighter">Latest <span class="text-f1-red">News</span></h2>

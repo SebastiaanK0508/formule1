@@ -63,16 +63,12 @@ if (!empty($driver['date_of_birth'])) {
         }
     </style>
 </head>
-<body class="bg-[#0b0b0f] text-white italic selection:bg-f1-red">
+<body class="bg-pattern text-white italic selection:bg-f1-red">
     <?php include 'navigatie/header.php'; ?>
-
     <main class="relative min-h-screen overflow-hidden pt-12 lg:pt-24">
         <div class="diagonal-bg"></div>
-
         <div class="max-w-7xl mx-auto px-6 relative z-10">
-            
             <div class="flex flex-col lg:flex-row-reverse gap-12 lg:items-center">
-                
                 <div class="w-full lg:w-7/12" data-aos="fade-left">
                     <div class="flex items-center gap-4 mb-8">
                         <span class="px-4 py-1 bg-f1-red text-white text-[10px] font-black uppercase tracking-widest italic rounded-sm">Driver Profile</span>
@@ -80,7 +76,6 @@ if (!empty($driver['date_of_birth'])) {
                             <span class="text-gray-500 font-bold uppercase tracking-widest text-[10px]"><?php echo htmlspecialchars($driver['full_team_name']); ?></span>
                         <?php endif; ?>
                     </div>
-                    
                     <h1 class="text-6xl md:text-9xl font-oswald font-black uppercase italic tracking-tighter leading-[0.8] mb-6">
                         <?php echo htmlspecialchars($driver['first_name'] ?? ''); ?><br>
                         <span class="font-outline"><?php echo htmlspecialchars($driver['last_name'] ?? ''); ?></span>
@@ -89,28 +84,28 @@ if (!empty($driver['date_of_birth'])) {
                     <div class="flex flex-wrap gap-6 py-8 border-y border-white/5 bg-black/20 px-6 rounded-2xl mb-12">
                         <?php if(!empty($driver['date_of_birth'])): ?>
                         <div class="flex flex-col">
-                            <span class="text-f1-red font-black uppercase text-[10px] tracking-widest mb-1">Geboren</span>
+                            <span class="text-f1-red font-black uppercase text-[10px] tracking-widest mb-1">Date of Birth</span>
                             <span class="text-lg font-bold uppercase italic"><?php echo date('d-m-Y', strtotime($driver['date_of_birth'])); ?></span>
                         </div>
                         <?php endif; ?>
 
                         <?php if($age): ?>
                         <div class="flex flex-col">
-                            <span class="text-f1-red font-black uppercase text-[10px] tracking-widest mb-1">Leeftijd</span>
-                            <span class="text-lg font-bold uppercase italic"><?php echo $age; ?> Jaar</span>
+                            <span class="text-f1-red font-black uppercase text-[10px] tracking-widest mb-1">Age</span>
+                            <span class="text-lg font-bold uppercase italic"><?php echo $age; ?> Year</span>
                         </div>
                         <?php endif; ?>
 
                         <?php if(!empty($driver['place_of_birth'])): ?>
                         <div class="flex flex-col">
-                            <span class="text-f1-red font-black uppercase text-[10px] tracking-widest mb-1">Geboorteplaats</span>
+                            <span class="text-f1-red font-black uppercase text-[10px] tracking-widest mb-1">place of birth</span>
                             <span class="text-lg font-bold uppercase italic"><?php echo htmlspecialchars($driver['place_of_birth']); ?></span>
                         </div>
                         <?php endif; ?>
 
                         <?php if(!empty($driver['nationality'])): ?>
                         <div class="flex flex-col">
-                            <span class="text-f1-red font-black uppercase text-[10px] tracking-widest mb-1">Nationaliteit</span>
+                            <span class="text-f1-red font-black uppercase text-[10px] tracking-widest mb-1">Nationality</span>
                             <div class="flex items-center gap-3">
                                 <?php if (!empty($driver['flag_url'])): ?>
                                     <img src="<?php echo htmlspecialchars($driver['flag_url']); ?>" class="w-6 h-auto rounded-sm" alt="Flag">
@@ -122,15 +117,19 @@ if (!empty($driver['date_of_birth'])) {
                     </div>
                 </div>
                 <div class="w-full lg:w-5/12" data-aos="fade-right">
-                    <div class="relative group bg-f1-card rounded-[3rem] overflow-hidden border border-white/10 shadow-2xl">
+                    <div class="relative group bg-f1-card rounded-[3rem] overflow-hidden border border-white/10 shadow-2xl h-[450px]">
                         <?php if(!empty($driver['driver_number'])): ?>
                         <div class="absolute top-6 left-6 z-20 bg-black/70 backdrop-blur-md px-5 py-3 rounded-2xl border border-white/10">
                             <span class="text-4xl font-oswald font-black italic" style="color: var(--team-color);">#<?php echo htmlspecialchars($driver['driver_number']); ?></span>
                         </div>
                         <?php endif; ?>
+                        
                         <img src="<?php echo htmlspecialchars($driver['image'] ?? '/afbeeldingen/coureurs/default.jpg'); ?>" 
-                             alt="Driver" 
-                             class="driver-hero-img group-hover:scale-105 transition-transform duration-700">
+                            class="w-full h-full object-cover object-top transition-transform duration-700 group-hover:scale-110" 
+                            loading="lazy" 
+                            alt="Driver">
+                            
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-60"></div>
                     </div>
                 </div>
             </div>
@@ -139,11 +138,11 @@ if (!empty($driver['date_of_birth'])) {
                     <h4 class="text-gray-500 text-[10px] font-black uppercase tracking-widest mb-4">Racing Identity</h4>
                     <span class="text-5xl font-oswald font-black italic">#<?php echo htmlspecialchars($driver['driver_number'] ?? '00'); ?></span>
                 </div>
-                <div class="stat-card p-6 rounded-2xl border border-white/5">
+                <!-- <div class="stat-card p-6 rounded-2xl border border-white/5">
                     <h4 class="text-gray-500 text-[10px] font-black uppercase tracking-widest mb-4">Performance</h4>
                     <span class="text-5xl font-oswald font-black italic text-f1-red"><?php echo number_format($driver['career_points'] ?? 0, 1, ',', '.'); ?></span>
                     <p class="text-[9px] font-black uppercase tracking-widest text-white mt-2">Points</p>
-                </div>
+                </div> -->
                 <div class="stat-card p-6 rounded-2xl border border-white/5">
                     <h4 class="text-gray-500 text-[10px] font-black uppercase tracking-widest mb-4">Hall of Fame</h4>
                     <span class="text-5xl font-oswald font-black italic"><?php echo htmlspecialchars($driver['championships_won'] ?? '0'); ?></span>
