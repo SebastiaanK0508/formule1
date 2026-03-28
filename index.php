@@ -155,7 +155,7 @@ require_once 'achterkant/aanpassing/api-koppelingen/1result_api.php';
                 <h2 class="text-4xl font-oswald font-black uppercase italic tracking-tighter">
                     Latest Results: <span class="text-f1-red"><?php echo htmlspecialchars($race_details['name'] ?? 'Grand Prix'); ?></span>
                 </h2>
-                <a href="result_race.php?round=<?php echo $selected_round; ?>" class="hidden md:flex items-center gap-3 text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 hover:text-f1-red transition-all group">
+                <a href="race_result.php?round=<?php echo $selected_round; ?>" class="hidden md:flex items-center gap-3 text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 hover:text-f1-red transition-all group">
                     View Full Weekend Analysis
                     <span class="w-8 h-[1px] bg-gray-700 group-hover:bg-f1-red group-hover:w-12 transition-all"></span>
                 </a>
@@ -198,7 +198,7 @@ require_once 'achterkant/aanpassing/api-koppelingen/1result_api.php';
                         </table>
                     </div>
                     
-                    <a href="result_race.php?round=<?php echo $selected_round; ?>" class="p-4 bg-white/[0.02] border-t border-white/5 text-center text-[10px] font-black uppercase tracking-widest text-gray-500 hover:text-white transition-colors">
+                    <a href="race_result.php?round=<?php echo $selected_round; ?>" class="p-4 bg-white/[0.02] border-t border-white/5 text-center text-[10px] font-black uppercase tracking-widest text-gray-500 hover:text-white transition-colors">
                         View All <?php echo count($race_results); ?> Finishers →
                     </a>
                 </div>
@@ -246,13 +246,13 @@ require_once 'achterkant/aanpassing/api-koppelingen/1result_api.php';
                         </table>
                     </div>
 
-                    <a href="result_race.php?round=<?php echo $selected_round; ?>" class="p-4 bg-white/[0.02] border-t border-white/5 text-center text-[10px] font-black uppercase tracking-widest text-gray-500 hover:text-white transition-colors">
+                    <a href="race_result.php?round=<?php echo $selected_round; ?>" class="p-4 bg-white/[0.02] border-t border-white/5 text-center text-[10px] font-black uppercase tracking-widest text-gray-500 hover:text-white transition-colors">
                         Check Sprint & Practice Times →
                     </a>
                 </div>
             </div>
             <div class="flex justify-center mt-12">
-                <a href="result_race.php?round=<?php echo $selected_round; ?>" class="group flex items-center gap-4 bg-f1-red px-10 py-4 rounded-full font-oswald font-black uppercase italic tracking-widest hover:bg-white hover:text-black transition-all duration-500 shadow-xl shadow-f1-red/20">
+                <a href="race_result.php?round=<?php echo $selected_round; ?>" class="group flex items-center gap-4 bg-f1-red px-10 py-4 rounded-full font-oswald font-black uppercase italic tracking-widest hover:bg-white hover:text-black transition-all duration-500 shadow-xl shadow-f1-red/20">
                     <span>Full Weekend Results</span>
                     <span class="text-xl group-hover:translate-x-2 transition-transform">→</span>
                 </a>
