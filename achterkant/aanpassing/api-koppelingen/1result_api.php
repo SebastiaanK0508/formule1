@@ -25,21 +25,27 @@ try {
     $stmt->execute([':year' => $current_year]);
     $db_races = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
+    $now = new DateTime();
+    $closest_round = null;
+    $min_diff = null;
+
     foreach ($db_races as $race) {
+        $race_date = new DateTime($race['race_datetime']);
         $races_in_season[] = [
             'round' => $race['calendar_order'],
             'raceName' => $race['grandprix'],
             'date' => $race['race_datetime']
         ];
-    }
-    if ($selected_round === null && !empty($races_in_season)) {
-        $now = new DateTime();
-        $latest = 1;
-        foreach ($races_in_season as $r) {
-            if (new DateTime($r['date']) < $now) $latest = $r['round'];
+        $diff = abs($now->getTimestamp() - $race_date->getTimestamp());
+        if ($min_diff === null || $diff < $min_diff) {
+            $min_diff = $diff;
+            $closest_round = $race['calendar_order'];
         }
-        $selected_round = $latest;
     }
+    if ($selected_round === null && $closest_round !== null) {
+        $selected_round = $closest_round;
+    }
+
 } catch (PDOException $e) {
     error_log("DB Error: " . $e->getMessage());
 }
