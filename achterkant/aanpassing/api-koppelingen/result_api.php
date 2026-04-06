@@ -26,7 +26,7 @@ try {
 }
 
 if ($selected_year === null) {
-    $selected_year = $available_years[0];
+    $selected_year = !empty($available_years) ? $available_years[0] : date('Y');
 }
 
 // 2. Teamkleuren ophalen
@@ -39,7 +39,7 @@ try {
     error_log("Fout teamkleuren: " . $e->getMessage());
 }
 
-// 3. Kalender voor geselecteerd jaar ophalen uit EIGEN database
+// 3. Kalender ophalen en huidige ronde bepalen
 try {
     $stmt = $pdo->prepare("
         SELECT circuit_key, title, grandprix, location, race_datetime, calendar_order
@@ -52,32 +52,43 @@ try {
     $db_races = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
     if (!empty($db_races)) {
+        $current_date_time = new DateTime();
+        $latest_completed_round = 0;
+
         foreach ($db_races as $race) {
+            $race_date_str = $race['race_datetime'] ?? null;
+            
             $races_in_season[] = [
                 'round' => $race['calendar_order'], 
                 'raceName' => $race['grandprix'],
-                'date' => $race['race_datetime'],
+                'date' => $race_date_str,
                 'circuit_key' => $race['circuit_key'] 
             ];
-        }
-        if ($selected_round === null) {
-            $latest_completed_round = 0;
-            $current_date_time = new DateTime();
-            foreach ($races_in_season as $race) {
-                if (new DateTime($race['date']) < $current_date_time) {
-                    $latest_completed_round = (int)$race['round'];
+            
+            // Bepaal de laatst gereden ronde voor de automatische selectie
+            if ($race_date_str) {
+                try {
+                    $race_dt = new DateTime($race_date_str);
+                    if ($race_dt < $current_date_time) {
+                        $latest_completed_round = (int)$race['calendar_order'];
+                    }
+                } catch (Exception $e) {
+                    error_log("Datum fout bij ronde " . $race['calendar_order']);
                 }
             }
+        }
+
+        if ($selected_round === null) {
             $selected_round = ($latest_completed_round > 0) ? $latest_completed_round : 1;
         }
     }
 } catch (\PDOException $e) {
-    $error_message = "Fout bij laden kalender.";
+    $error_message = "Fout bij laden kalender: " . $e->getMessage();
 }
 
-// 4. RESULTATEN OPHALEN (Alleen als de race al geweest is)
+// 4. RESULTATEN OPHALEN
 try {
-    if ($selected_round !== null) {
+    if ($selected_round !== null && !empty($db_races)) {
         $selected_race_db = null;
         foreach ($db_races as $race) {
             if ((int)$race['calendar_order'] === $selected_round) {
@@ -87,13 +98,24 @@ try {
         }
 
         if ($selected_race_db) {
-            $race_date = new DateTime($selected_race_db['race_datetime']);
+            $race_date_str = $selected_race_db['race_datetime'];
+            $race_date = new DateTime($race_date_str);
             $now = new DateTime();
 
-            // BELANGRIJK: Alleen API aanroepen als de race in het verleden ligt
+            // API alleen aanroepen als de race in het verleden ligt
             if ($race_date < $now) {
-                $race_results_url = 'http://api.jolpi.ca/ergast/f1/' . $selected_year . '/' . $selected_round . '/results.json';
-                $json_data_results = @file_get_contents($race_results_url);
+                // Gebruik HTTPS en zorg voor een correcte URL-structuur
+                $race_results_url = "https://api.jolpi.ca/ergast/f1/{$selected_year}/{$selected_round}/results.json";
+                
+                $ch = curl_init();
+                curl_setopt($ch, CURLOPT_URL, $race_results_url);
+                curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+                curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+                curl_setopt($ch, CURLOPT_TIMEOUT, 5); 
+                curl_setopt($ch, CURLOPT_USERAGENT, 'F1Site-Bot/1.0');
+                
+                $json_data_results = curl_exec($ch);
+                // curl_close($ch); // Deprecated in PHP 8.5+, PHP ruimt dit zelf op.
                 
                 if ($json_data_results) {
                     $results_data = json_decode($json_data_results, true);
@@ -109,21 +131,21 @@ try {
                         ];
                         
                         foreach ($api_race['Results'] as $driver_result) {
+                            $team_name = $driver_result['Constructor']['name'];
                             $race_results[] = [
                                 'position' => $driver_result['position'],
                                 'driver_name' => $driver_result['Driver']['givenName'] . ' ' . $driver_result['Driver']['familyName'],
-                                'team_name' => $driver_result['Constructor']['name'],
+                                'team_name' => $team_name,
                                 'lap_time_or_status' => $driver_result['Time']['time'] ?? $driver_result['status'],
-                                'team_color' => $team_colors_from_db[$driver_result['Constructor']['name']] ?? '#CCCCCC'
+                                'team_color' => $team_colors_from_db[$team_name] ?? '#CCCCCC'
                             ];
                         }
                     }
                 }
             }
 
-            // Als er GEEN API resultaten zijn (omdat het 2026 is of race nog moet komen), 
-            // vul dan de details vanuit je eigen database zodat de pagina niet leeg is.
-            if (empty($race_results)) {
+            // Fallback: Als API faalt of race is nog niet geweest, gebruik eigen DB info
+            if ($race_details === null) {
                 $race_details = [
                     'name' => $selected_race_db['grandprix'],
                     'circuit' => $selected_race_db['title'],
@@ -132,10 +154,9 @@ try {
                     'date' => $selected_race_db['race_datetime'],
                     'year' => $selected_year
                 ];
-                // $error_message blijft leeg, de HTML zal nu zeggen "Geen uitslagen beschikbaar"
             }
         }
     }
 } catch (Exception $e) {
-    $error_message = "Fout: " . $e->getMessage();
+    $error_message = "Systeemfout: " . $e->getMessage();
 }
