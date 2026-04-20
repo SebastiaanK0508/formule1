@@ -4,6 +4,8 @@ function log_message($message) {
 }
 
 require_once 'db_config.php'; 
+/** @var PDO $pdo */
+
 log_message("--- START F1 NIEUWS SCRAPER (STRICTE F1 FILTER) ---");
 
 $apiKey = '967a1f5bab57402eba78e99d0f157d64';

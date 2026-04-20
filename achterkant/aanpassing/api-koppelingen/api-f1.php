@@ -62,8 +62,6 @@ try {
             }
             $sql .= " ORDER BY res.race_year DESC, c.calendar_order ASC, res.position ASC";
             /** @var PDO $pdo */
-
-
             $stmt = $pdo->prepare($sql);
             $stmt->execute($params);
             $response['data'] = $stmt->fetchAll();
