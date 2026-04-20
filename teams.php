@@ -36,13 +36,11 @@ try {
             transition: width 0.6s ease;
         }
         .team-card:hover .speed-line { width: 100%; }
-        
-        /* Custom scrollbar voor het grid */
         .history-grid::-webkit-scrollbar { width: 4px; }
         .history-grid::-webkit-scrollbar-thumb { background: #E10600; border-radius: 10px; }
     </style>
 </head>
-<body class="bg-[#0b0b0f] text-white italic">
+<body class="bg-pattern text-white italic">
     <?php include 'navigatie/header.php'; ?>
 
     <main class="max-w-7xl mx-auto px-6 py-16">
@@ -53,7 +51,7 @@ try {
                 THE <span class="text-f1-red">GRID</span>
             </h1>
             <p class="text-gray-500 mt-6 max-w-xl mx-auto text-sm md:text-base leading-relaxed">
-                Ontdek de engineering-giganten van het <?php echo date('Y'); ?> seizoen. Van historische namen tot moderne powerhouse teams.
+                Explore the engineering titans of the <?php echo date('Y'); ?> season. An elite lineup ranging from heritage legends to modern-day powerhouses.
             </p>
         </header>
 
@@ -62,7 +60,6 @@ try {
                 <?php if (!empty($activeTeams)): ?>
                     <?php foreach ($activeTeams as $i => $team): 
                         $teamColor = htmlspecialchars($team['team_color'] ?? '#E10600');
-                        // Maak een RGB variant voor de schaduw
                         list($r, $g, $b) = sscanf($teamColor, "#%02x%02x%02x");
                     ?>
                         <article data-aos="fade-up" data-aos-delay="<?php echo $i*50; ?>" 

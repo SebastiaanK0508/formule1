@@ -41,7 +41,7 @@ try {
         .animate-float { animation: float 8s ease-in-out infinite; }
     </style>
 </head>
-<body class="bg-[#0b0b0f] text-white italic selection:bg-f1-red selection:text-white">
+<body class="bg-pattern bg-[var(--team-color)]text-white italic selection:bg-f1-red selection:text-white">
     <?php include 'navigatie/header.php'; ?>
 
     <main class="relative min-h-screen">
