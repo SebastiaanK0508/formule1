@@ -102,7 +102,7 @@
 
             <section>
                 <h2 class="policy-h2">6. Privacy <span class="red-speed-line"></span></h2>
-                <p class="policy-p">Processing of personal data is described in our <a href="privacy-en.html" class="text-f1-red hover:underline">Privacy Policy</a>. By using this site, you acknowledge and agree to our data handling practices.</p>
+                <p class="policy-p">Processing of personal data is described in our <a href="privacy-en.php" class="text-f1-red hover:underline">Privacy Policy</a>. By using this site, you acknowledge and agree to our data handling practices.</p>
             </section>
 
             <section>

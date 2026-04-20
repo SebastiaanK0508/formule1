@@ -9,7 +9,7 @@ require_once 'db_config.php';
 log_message("--- START F1 NIEUWS SCRAPER (STRICTE F1 FILTER) ---");
 
 $apiKey = '967a1f5bab57402eba78e99d0f157d64';
-$keywords = '("Formula 1" OR "F1" OR "Grand Prix" OR "Verstappen" OR "Hamilton" OR "Norris" OR "Leclerc" OR "Piastri" OR "Sainz" OR "Alonso" OR "Russell" OR "Christian Horner" OR "Toto Wolff" OR "Adrian Newey" OR "Red Bull Racing" OR "Mercedes F1" OR "Scuderia Ferrari" OR "McLaren F1" OR "Silly Season" OR "Paddock" OR "FIA" OR "Qualifying")';
+$keywords = '("Formula 1" OR "F1" OR "Grand Prix" OR "Verstappen" OR "Hamilton" OR "Norris" OR "Leclerc" OR "Piastri" OR "Sainz" OR "Alonso" OR "Russell" OR "Red Bull Racing" OR "Mercedes F1" OR "Scuderia Ferrari" OR "McLaren F1" OR "Silly Season" OR "Paddock" OR "FIA" OR "Qualifying")';
 $query = urlencode($keywords);
 $domains = "autosport.com,skysports.com,motorsport.com,espn.com,f1i.com,gpblog.com,racefans.net,f1.com";
 
@@ -49,8 +49,6 @@ if (count($articles) > 0) {
         $url = $article['url'] ?? '';
         $image_url = $article['urlToImage'] ?? '';
         $source = $article['source']['name'] ?? 'F1 Official';
-
-        // EXTRA CHECK: Bevat de titel wel echt F1 gerelateerde woorden? (Dubbele veiligheid)
         $cleanTitle = strtolower($titel);
         if (!str_contains($cleanTitle, 'f1') && !str_contains($cleanTitle, 'formula') && !str_contains($cleanTitle, 'grand prix') && !str_contains($cleanTitle, 'verstappen')) {
             continue;
