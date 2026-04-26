@@ -7,15 +7,18 @@ $selectedYear = null;
 
 try {
     $stmt = $pdo->query("SELECT DISTINCT YEAR(race_datetime) AS race_year FROM circuits ORDER BY race_year DESC");
-    $availableYears = $stmt->fetchAll(PDO::FETCH_COLUMN);
+    $availableYears = $stmt->fetchAll(PDO::FETCH_COLUMN) ?: []; // Zorg dat het altijd een array is
 } catch (\PDOException $e) {
     error_log($e->getMessage());
 }
 
+// Veilig jaar selecteren (Null check)
 if (isset($_GET['year']) && in_array($_GET['year'], $availableYears)) {
     $selectedYear = $_GET['year'];
 } elseif (!empty($availableYears)) {
     $selectedYear = $availableYears[0];
+} else {
+    $selectedYear = date('Y'); // Fallback naar huidig jaar als DB leeg is
 }
 
 if ($selectedYear) {
@@ -33,6 +36,16 @@ if ($selectedYear) {
         error_log($e->getMessage());
     }
 }
+
+// Formatter voor Nederlandse datums (Vervangt strftime)
+$dateFormatter = new IntlDateFormatter(
+    'nl_NL',
+    IntlDateFormatter::LONG,
+    IntlDateFormatter::NONE,
+    null,
+    null,
+    'd MMMM'
+);
 ?>
 <!DOCTYPE html>
 <html lang="nl" class="scroll-smooth">
@@ -46,34 +59,49 @@ if ($selectedYear) {
         .img-ratio { position: relative; width: 100%; padding-top: 56.25%; overflow: hidden; background: #000; }
         .img-ratio img { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; padding: 10px; transition: transform 0.5s ease; }
         .race-card:hover img { transform: scale(1.1); }
-
-        #mobile-menu { transform: translateX(100%); transition: transform 0.4s ease-in-out; background: #0b0b0f; z-index: 101; }
-        #mobile-menu.active { transform: translateX(0); }
-
-        select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23E10600'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E"); background-position: right 0.5rem center; background-repeat: no-repeat; background-size: 1.5em 1.5em; padding-right: 2.5rem; -webkit-appearance: none; }
+        
+        /* Fix voor de select styling en compatibiliteit */
+        select {
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none; 
+            background-repeat: no-repeat;
+        }
+        select option { background: #15151e; color: white; }
     </style>
 </head>
-<body class="bg-pattern">
+<body class="bg-pattern text-white">
     <?php include 'navigatie/header.php'; ?>
+    
     <main class="max-w-7xl mx-auto px-6 py-12">
         
         <section class="mb-16" data-aos="fade-down">
-            <div class="bg-f1-card border border-white/5 p-8 md:p-12 rounded-[2.5rem] flex flex-col md:flex-row justify-between items-center gap-8">
-                <div>
-                    <h2 class="text-4xl md:text-6xl font-oswald font-black uppercase italic tracking-tighter">
+            <div class="bg-f1-card border border-white/5 p-8 md:p-12 rounded-[2.5rem] flex flex-col md:flex-row justify-between items-center gap-8 overflow-hidden">
+                <div class="min-w-0">
+                    <h2 class="text-4xl md:text-6xl font-oswald font-black uppercase italic tracking-tighter truncate">
                         F1 SEASON <span class="text-f1-red"><?php echo htmlspecialchars($selectedYear); ?></span>
                     </h2>
                     <p class="text-gray-400 uppercase tracking-[0.3em] text-xs font-bold mt-2">Official Race Calendar</p>
                 </div>
 
-                <form method="GET" action="kalender.php" class="relative">
+                <form method="GET" action="kalender.php" class="w-full md:w-auto shrink-0">
                     <select name="year" onchange="this.form.submit()" 
-                            class="bg-f1-dark border-2 border-f1-red/30 text-white px-6 py-3 rounded-full font-bold focus:border-f1-red outline-none transition-all cursor-pointer hover:bg-f1-red/10">
-                        <?php foreach ($availableYears as $year): ?>
-                            <option value="<?php echo htmlspecialchars($year); ?>" <?php echo ($year == $selectedYear) ? 'selected' : ''; ?>>
-                                SEASON <?php echo htmlspecialchars($year); ?>
-                            </option>
-                        <?php endforeach; ?>
+                            class="w-full md:w-56 bg-f1-dark border-2 border-f1-red/30 text-white pl-6 pr-12 py-3 rounded-full font-bold focus:border-f1-red outline-none transition-all cursor-pointer hover:bg-f1-red/10 appearance-none bg-[right_1.2rem_center] bg-[length:1.2em_1.2em]"
+                            style="background-image: url('data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' fill=\'none\' viewBox=\'0 0 24 24\' stroke=\'%23E10600\'%3E%3Cpath stroke-linecap=\'round\' stroke-linejoin=\'round\' stroke-width=\'3\' d=\'M19 9l-7 7-7-7\'%3E%3C/path%3E%3C/svg%3E');">
+                        
+                        <?php if (empty($availableYears)): ?>
+                            <option value="">Geen seizoenen beschikbaar</option>
+                        <?php else: ?>
+                            <?php foreach ($availableYears as $year): ?>
+                                <?php if ($year !== null): ?>
+                                    <option value="<?php echo htmlspecialchars($year); ?>" 
+                                        <?php echo ((string)$year === (string)$selectedYear) ? 'selected' : ''; ?>>
+                                        SEASON <?php echo htmlspecialchars($year); ?>
+                                    </option>
+                                <?php endif; ?>
+                            <?php endforeach; ?>
+                        <?php endif; ?>
+                        
                     </select>
                 </form>
             </div>
@@ -86,12 +114,11 @@ if ($selectedYear) {
                         $raceDateTime = new DateTime($circuit['race_datetime']);
                         $raceDay = $raceDateTime->format('j');
                         $raceYear = $raceDateTime->format('Y');
-                        setlocale(LC_TIME, 'nl_NL', 'Dutch');
-                        $raceMonth = strftime('%B', $raceDateTime->getTimestamp());
-                        
-                        $displayDate = ($raceDay - 2) . ' - ' . $raceDay . ' ' . $raceMonth;
+                        $formattedDate = $dateFormatter->format($raceDateTime);
+                        $startDay = $raceDay - 2;
+                        $displayDate = $startDay . ' - ' . $formattedDate;
                         if ($circuit['circuit_key'] === 'las_vegas') {
-                            $displayDate = ($raceDay - 1) . ' - ' . $raceDay . ' ' . $raceMonth . ' (Sat)';
+                            $displayDate = ($raceDay - 1) . ' - ' . $formattedDate . ' (Sat)';
                         }
                     ?>
                     <article data-aos="fade-up" data-aos-delay="<?php echo $i*50; ?>" 
@@ -99,7 +126,7 @@ if ($selectedYear) {
                         
                         <a href="circuit-details.php?key=<?php echo htmlspecialchars($circuit['circuit_key']); ?>" class="block group">
                             <div class="img-ratio">
-                                <img src="<?php echo htmlspecialchars($circuit['map_url']); ?>" alt="<?php echo htmlspecialchars($circuit['grandprix']); ?>">
+                                <img src="<?php echo htmlspecialchars($circuit['map_url']); ?>" alt="<?php echo htmlspecialchars($circuit['grandprix']); ?>" loading="lazy">
                                 <div class="absolute inset-0 bg-gradient-to-t from-f1-card to-transparent opacity-60"></div>
                             </div>
                             
@@ -117,11 +144,11 @@ if ($selectedYear) {
 
                                 <div class="space-y-3">
                                     <div class="flex items-center gap-3 text-sm">
-                                        <span class="text-f1-red font-bold">DATE:</span>
+                                        <span class="text-f1-red font-bold uppercase w-12">Date:</span>
                                         <span class="text-gray-300 font-medium"><?php echo htmlspecialchars($displayDate); ?></span>
                                     </div>
                                     <div class="flex items-center gap-3 text-sm">
-                                        <span class="text-f1-red font-bold">LOC:</span>
+                                        <span class="text-f1-red font-bold uppercase w-12">Loc:</span>
                                         <span class="text-gray-400"><?php echo htmlspecialchars($circuit['location']); ?></span>
                                     </div>
                                 </div>
@@ -141,11 +168,19 @@ if ($selectedYear) {
             <?php endif; ?>
         </section>
     </main>
+
     <?php include 'navigatie/footer.php'; ?>
+
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            AOS.init({ duration: 1000, once: true });
+            if (typeof AOS !== 'undefined') {
+                AOS.init({ 
+                    duration: 1000, 
+                    once: true,
+                    disable: 'mobile' 
+                });
+            }
         });
     </script>
 </body>
