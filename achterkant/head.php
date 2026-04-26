@@ -5,10 +5,10 @@ $current_page = basename($_SERVER['PHP_SELF']);
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <!-- <link rel="icon" type="image/x-icon" href="../afbeeldingen/logo/f1_icon.png">
-    <link rel="icon" type="image/png" sizes="32x32" href="../afbeeldingen/logo/f1_icon.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="../afbeeldingen/logo/f1_icon.png">
-    <link rel="apple-touch-icon" sizes="180x180" href="../afbeeldingen/logo/f1_icon.png"> deze later nog aanpassen -->
+    <link rel="icon" type="image/x-icon" href="../afbeeldingen/logo/f1_icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="../afbeeldingen/f1_icon.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="../afbeeldingen/f1_icon.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="../afbeeldingen/f1_icon.png"> 
     <link rel="manifest" href="/site.webmanifest">    
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
