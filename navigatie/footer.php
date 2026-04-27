@@ -25,7 +25,7 @@ $baseUrl = ($server === 'localhost' || $server === '127.0.0.1') ? "http://localh
                 </p>
                 <div class="flex gap-4">
                     <div class="px-4 py-2 border border-white/10 rounded-full text-[9px] font-black text-white uppercase tracking-[0.2em] bg-white/5">
-                        Est. 2024
+                        Est. 2025
                     </div>
                     <div class="px-4 py-2 border border-f1-red/20 rounded-full text-[9px] font-black text-f1-red uppercase tracking-[0.2em] bg-f1-red/5">
                         High Performance Content
@@ -80,7 +80,7 @@ $baseUrl = ($server === 'localhost' || $server === '127.0.0.1') ? "http://localh
                     © <?php echo date('Y'); ?> F1SITE.NL | ALL RIGHTS RESERVED
                 </p>
                 <p class="text-gray-800 text-[8px] font-bold uppercase tracking-[0.2em]">
-                    Built by <a href="#" class="hover:text-gray-400">Sebastiaan Kamphuis</a> • Independent Media
+                    Built by <a href="https://www.linkedin.com/in/sebastiaan-kamphuis-04256b222/" target="_blank" class="hover:text-gray-400">Sebastiaan Kamphuis</a>
                 </p>
             </div>
             <div class="flex items-center gap-6">

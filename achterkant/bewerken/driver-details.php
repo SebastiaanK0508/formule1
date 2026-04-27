@@ -6,12 +6,9 @@ if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) {
 }
 require_once '../db_config.php';
 /** @var PDO $pdo */
-
 $driverDetails = null; 
 $teams = [];
 $message = '';
-
-// Verwerk Verwijderen
 if (isset($_POST['delete_driver']) && isset($_POST['driver_id'])) {
     try {
         $stmt = $pdo->prepare("DELETE FROM drivers WHERE driver_id = :id");
@@ -22,8 +19,6 @@ if (isset($_POST['delete_driver']) && isset($_POST['driver_id'])) {
         $message = "<div class='bg-red-900/50 border border-red-500 text-white p-4 rounded-xl mb-6 font-bold text-xs uppercase tracking-widest'>Error: Kan coureur niet verwijderen (mogelijk nog gekoppeld aan resultaten)</div>";
     }
 }
-
-// Teams ophalen voor de selectie
 try {
     $stmt_teams = $pdo->query("SELECT team_id, team_name FROM teams ORDER BY team_name ASC");
     $teams = $stmt_teams->fetchAll(PDO::FETCH_ASSOC);
@@ -32,8 +27,6 @@ try {
 }
 
 $driverId = isset($_GET['id']) && is_numeric($_GET['id']) ? (int)$_GET['id'] : null;
-
-// Verwerk Update
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && $driverId && !isset($_POST['delete_driver'])) {
     try {
         $sql = "UPDATE drivers SET
@@ -70,8 +63,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $driverId && !isset($_POST['delete_
         $message = "<div class='bg-red-900/50 border border-red-500 text-white p-4 rounded-xl mb-6'>Error: " . $e->getMessage() . "</div>";
     }
 }
-
-// Coureur gegevens ophalen
 if ($driverId) {
     $stmt = $pdo->prepare("SELECT d.*, t.team_name, t.team_color FROM drivers d LEFT JOIN teams t ON d.team_id = t.team_id WHERE d.driver_id = :id");
     $stmt->execute([':id' => $driverId]);
@@ -93,7 +84,6 @@ if ($driverId) {
         .bg-f1-card { background: rgba(22, 22, 28, 0.9); backdrop-filter: blur(15px); }
         .bg-pattern { background-color: #0b0b0f; background-image: radial-gradient(rgba(255,255,255,0.03) 1px, transparent 0); background-size: 40px 40px; }
         .font-oswald { font-family: 'Oswald', sans-serif; }
-        
         input, select, textarea { 
             background: rgba(255,255,255,0.03) !important;
             border: 1px solid rgba(255,255,255,0.1) !important;
@@ -118,12 +108,10 @@ if ($driverId) {
 <body class="bg-pattern text-white font-sans min-h-screen antialiased" x-data="{ editing: false, deleteModal: false }">
     <div class="flex">
         <?php include '../nav.php'; ?>
-        
         <main class="flex-grow p-6 lg:p-12">
-            <div class="max-w-5xl mx-auto">
-                
+            <div class="max-w-5xl mx-auto"> 
                 <div class="flex justify-between items-center mb-8" data-aos="fade-down">
-                    <a href="../drivers.php" class="text-xs font-black uppercase tracking-widest text-gray-500 hover:text-f1-red transition flex items-center gap-2">
+                    <a href="bewerken/drivers.php" class="text-xs font-black uppercase tracking-widest text-gray-500 hover:text-f1-red transition flex items-center gap-2">
                         <i data-lucide="arrow-left" class="w-3 h-3"></i> Back to Grid
                     </a>
                     <div class="flex gap-4">
@@ -131,9 +119,7 @@ if ($driverId) {
                         <button type="button" @click="deleteModal = true" class="bg-red-600/10 border border-red-500/20 text-red-500 px-6 py-2 rounded-full text-[10px] font-black uppercase tracking-[0.2em] hover:bg-red-600 hover:text-white transition">Retire Driver</button>
                     </div>
                 </div>
-
                 <?php echo $message; ?>
-
                 <?php if ($driverDetails): ?>
                 <form method="POST" id="driverForm">
                     <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -143,7 +129,6 @@ if ($driverId) {
                                 <div class="absolute top-4 right-6 font-oswald text-6xl italic opacity-10 font-black" style="color: <?php echo $driverDetails['team_color'] ?? '#E10600'; ?>">
                                     #<?php echo htmlspecialchars((string)$driverDetails['driver_number']); ?>
                                 </div>
-                                
                                 <div class="relative w-48 h-48 mx-auto mb-6">
                                     <img src="<?php echo htmlspecialchars((string)($driverDetails['image'] ?? '../assets/img/default-driver.png')); ?>" 
                                          class="w-full h-full rounded-full object-cover object-top border-4 border-white/5 shadow-2xl" 
@@ -152,7 +137,6 @@ if ($driverId) {
                                         <img src="<?php echo htmlspecialchars((string)$driverDetails['flag_url']); ?>" class="absolute bottom-2 right-2 w-8 h-5 object-cover rounded shadow-md">
                                     <?php endif; ?>
                                 </div>
-                                
                                 <h1 class="text-3xl font-oswald font-black uppercase italic tracking-tighter leading-none mb-2">
                                     <?php echo htmlspecialchars((string)$driverDetails['first_name']); ?> <br>
                                     <span class="text-f1-red"><?php echo htmlspecialchars((string)$driverDetails['last_name']); ?></span>
@@ -161,7 +145,6 @@ if ($driverId) {
                                     <?php echo htmlspecialchars((string)($driverDetails['team_name'] ?? 'Free Agent')); ?>
                                 </p>
                             </div>
-
                             <div class="bg-f1-card rounded-[2.5rem] border border-white/5 p-8 transition-all" :class="editing ? 'border-f1-red/30 bg-f1-red/5' : ''">
                                 <label class="form-label">Active Status</label>
                                 <div class="flex items-center gap-3">
@@ -170,14 +153,12 @@ if ($driverId) {
                                 </div>
                             </div>
                         </div>
-
                         <div class="lg:col-span-2 space-y-6" data-aos="fade-left">
                             <div class="bg-f1-card rounded-[2.5rem] border border-white/5 p-10 shadow-2xl">
                                 <h3 class="font-oswald font-black uppercase italic text-xl tracking-tighter mb-8 border-b border-white/5 pb-4 flex items-center gap-3">
                                     Driver <span class="text-f1-red">Telemetry Data</span>
                                     <span x-show="editing" class="text-[9px] bg-f1-red text-white px-2 py-0.5 rounded ml-auto tracking-widest uppercase" x-cloak>Edit Mode</span>
                                 </h3>
-
                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                                     <div>
                                         <label class="form-label">First Name</label>
@@ -272,7 +253,6 @@ if ($driverId) {
             </form>
         </div>
     </div>
-
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script>
