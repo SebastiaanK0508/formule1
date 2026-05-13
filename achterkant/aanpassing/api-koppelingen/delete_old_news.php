@@ -3,7 +3,8 @@ function log_message($message) {
     echo "[" . date('Y-m-d H:i:s') . "] " . $message . "\n";
 }
 
-require_once 'db_config.php'; 
+require_once 'db_config.php';
+/** @var PDO $pdo */
 log_message("--- START Oude Nieuws Opschoning ---");
 $cutoff_datetime = date('Y-m-d H:i:s', strtotime('-5 days'));
 
