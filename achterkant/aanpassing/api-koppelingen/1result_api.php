@@ -45,13 +45,9 @@ try {
             $latest_completed_round = $race['calendar_order'];
         }
     }
-
-    // Bepaal welke ronde we tonen
     if ($selected_round === null) {
         $selected_round = $latest_completed_round ?? 1;
     }
-
-    // Zoek de database-details voor de geselecteerde ronde
     foreach ($db_races as $race) {
         if ((int)$race['calendar_order'] === $selected_round) {
             $selected_race_db = $race;
@@ -79,8 +75,6 @@ function fetchF1Data($url, $cacheName) {
     curl_setopt($ch, CURLOPT_USERAGENT, 'F1Site-Bot/1.0');
 
     $json = curl_exec($ch);
-    // curl_close($ch); // Deprecated in PHP 8.5
-
     if ($json) {
         file_put_contents($cacheFile, $json);
         return json_decode($json, true);
@@ -89,10 +83,7 @@ function fetchF1Data($url, $cacheName) {
 }
 
 if ($selected_round !== null) {
-    // API URL hersteld (geen dubbele results meer)
     $baseUrl = "https://api.jolpi.ca/ergast/f1/{$current_year}/{$selected_round}/";
-
-    // Race resultaten
     $data = fetchF1Data($baseUrl . "results.json", "race_{$current_year}_{$selected_round}");
     if (isset($data['MRData']['RaceTable']['Races'][0])) {
         $race = $data['MRData']['RaceTable']['Races'][0];
@@ -112,37 +103,31 @@ if ($selected_round !== null) {
             ];
         }
     }
-
-    // Kwalificatie
     $data = fetchF1Data($baseUrl . "qualifying.json", "qual_{$current_year}_{$selected_round}");
     if (isset($data['MRData']['RaceTable']['Races'][0]['QualifyingResults'])) {
         foreach ($data['MRData']['RaceTable']['Races'][0]['QualifyingResults'] as $q) {
             $team = $q['Constructor']['name'];
             $qualifying_results[] = [
                 'position' => $q['position'],
-                'driver' => $q['Driver']['familyName'],
+                'driver' => $q['Driver']['givenName'] . ' ' . $q['Driver']['familyName'],
                 'team_name' => $team,
                 'team_color' => $team_colors_from_db[$team] ?? '#E10600',
                 'q1' => $q['Q1'] ?? '-', 'q2' => $q['Q2'] ?? '-', 'q3' => $q['Q3'] ?? '-'
             ];
         }
     }
-
-    // Sprint
     $data = fetchF1Data($baseUrl . "sprint.json", "sprint_{$current_year}_{$selected_round}");
     if (isset($data['MRData']['RaceTable']['Races'][0]['SprintResults'])) {
         foreach ($data['MRData']['RaceTable']['Races'][0]['SprintResults'] as $s) {
             $team = $s['Constructor']['name'];
             $sprint_results[] = [
                 'position' => $s['position'],
-                'driver_name' => $s['Driver']['familyName'],
+                'driver_name' => $s['Driver']['givenName'] . ' ' . $s['Driver']['familyName'],
                 'team_color' => $team_colors_from_db[$team] ?? '#E10600',
                 'lap_time_or_status' => $s['Time']['time'] ?? $s['status']
             ];
         }
     }
-
-    // Vrije trainingen uit eigen DB (FP1, FP2, FP3)
     if ($selected_race_db) {
         $cid = $selected_race_db['circuit_key'];
         $sessions = ['FP1' => &$fp1_results, 'FP2' => &$fp2_results, 'FP3' => &$fp3_results];
@@ -157,8 +142,6 @@ if ($selected_round !== null) {
             }
         }
     }
-
-    // Fallback voor race_details als API faalt
     if ($race_details === null && $selected_race_db) {
         $race_details = [
             'name' => $selected_race_db['grandprix'],
