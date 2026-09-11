@@ -45,7 +45,7 @@ try {
 require_once 'achterkant/aanpassing/api-koppelingen/1result_api.php';
 ?>
 <!DOCTYPE html>
-<html lang="nl">
+<html lang="en">
 <head>
     <?php include 'navigatie/head.php'; ?>
     <script type="application/ld+json">
@@ -53,7 +53,7 @@ require_once 'achterkant/aanpassing/api-koppelingen/1result_api.php';
       "@context": "https://schema.org",
       "@type": "SportsEvent",
       "name": "Formula 1 World Championship 2026",
-      "description": "De ultieme bron voor Formule 1 nieuws en statistieken.",
+      "description": "The ultimate source for Formula 1 news and stats.",
       "publisher": {
         "@type": "Organization",
         "name": "F1SITE.NL",
@@ -88,6 +88,13 @@ require_once 'achterkant/aanpassing/api-koppelingen/1result_api.php';
 <body class="bg-pattern">
     <?php include 'navigatie/header.php'; ?>
     <main class="max-w-7xl mx-auto px-6 py-12">
+        <section id="my-favorites-section" class="mb-16 hidden" data-aos="fade-down">
+            <div class="flex items-center gap-3 mb-6">
+                <span class="h-[2px] w-8 bg-f1-red"></span>
+                <span class="text-f1-red text-[10px] font-black uppercase tracking-[0.3em]">My F1</span>
+            </div>
+            <div id="my-favorites-list" class="flex gap-4 overflow-x-auto pb-2"></div>
+        </section>
         <section class="mb-24" data-aos="fade-down">
             <div class="relative p-6 md:p-12 rounded-[2.5rem] bg-f1-card border border-white/5 overflow-hidden">
                 <div class="relative z-10">
@@ -101,9 +108,10 @@ require_once 'achterkant/aanpassing/api-koppelingen/1result_api.php';
                                 <?php echo ($dbNextGP) ? htmlspecialchars($dbNextGP['grandprix']) : "Aankomende Race"; ?>
                             </h2>
                             <p class="text-gray-400 text-sm md:text-lg flex items-center justify-center lg:justify-start gap-2">
-                                <span class="opacity-60 text-f1-red">📍</span> 
+                                <span class="opacity-60 text-f1-red">📍</span>
                                 <?php echo htmlspecialchars($dbNextGP['title'] ?? 'Circuit info...'); ?>
                             </p>
+                            <div id="weather-widget" class="hidden mt-4 inline-flex items-center gap-3 bg-white/5 border border-white/10 rounded-2xl px-5 py-3"></div>
                         </div>
                         
                         <div class="grid grid-cols-4 gap-2 md:gap-4" id="countdown">
@@ -144,7 +152,7 @@ require_once 'achterkant/aanpassing/api-koppelingen/1result_api.php';
                             </div>
                         </div>
                         <?php endforeach; else: ?>
-                            <p class="text-gray-500 text-xs italic p-4">Geen data beschikbaar in database.</p>
+                            <p class="text-gray-500 text-xs italic p-4">No data available in the database.</p>
                         <?php endif; ?>
                     </div>
                 </div>
@@ -304,9 +312,79 @@ require_once 'achterkant/aanpassing/api-koppelingen/1result_api.php';
 
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script>
+        async function loadMyFavorites() {
+            if (!window.F1Favorites) return;
+            const driverIds = window.F1Favorites.getDrivers();
+            const teamIds = window.F1Favorites.getTeams();
+            if (!driverIds.length && !teamIds.length) return;
+
+            try {
+                const params = new URLSearchParams();
+                if (driverIds.length) params.set('drivers', driverIds.join(','));
+                if (teamIds.length) params.set('teams', teamIds.join(','));
+                const res = await fetch(`favorites_api.php?${params.toString()}`);
+                const data = await res.json();
+                const section = document.getElementById('my-favorites-section');
+                const list = document.getElementById('my-favorites-list');
+                if (!data.drivers.length && !data.teams.length) return;
+
+                let html = '';
+                data.drivers.forEach(d => {
+                    html += `<a href="driver-details.php?slug=${d.slug}" class="shrink-0 w-40 bg-f1-card rounded-2xl border border-white/5 overflow-hidden hover:border-f1-red/40 transition-all">
+                        <div class="h-24 overflow-hidden bg-black/30"><img src="${d.image || ''}" class="w-full h-full object-cover object-top" onerror="this.style.opacity=0" alt="${d.name}"></div>
+                        <div class="p-3 border-t-2" style="border-color:${d.team_color}">
+                            <span class="block text-[10px] font-black uppercase tracking-widest text-white truncate">${d.name}</span>
+                        </div>
+                    </a>`;
+                });
+                data.teams.forEach(t => {
+                    html += `<a href="team-details.php?id=${t.id}" class="shrink-0 w-40 bg-f1-card rounded-2xl border border-white/5 overflow-hidden hover:border-f1-red/40 transition-all flex flex-col items-center justify-center p-4 gap-3" style="border-top:2px solid ${t.team_color}">
+                        <img src="${t.logo || ''}" class="h-10 object-contain" onerror="this.style.opacity=0" alt="${t.name}">
+                        <span class="block text-[10px] font-black uppercase tracking-widest text-white text-center truncate">${t.name}</span>
+                    </a>`;
+                });
+                list.innerHTML = html;
+                section.classList.remove('hidden');
+            } catch (e) { /* silently ignore */ }
+        }
+
+        function weatherIcon(code) {
+            if (code === 0) return '☀️';
+            if ([1,2,3].includes(code)) return '⛅';
+            if ([45,48].includes(code)) return '🌫️';
+            if ([51,53,55,56,57,61,63,65,66,67,80,81,82].includes(code)) return '🌧️';
+            if ([71,73,75,77,85,86].includes(code)) return '❄️';
+            if ([95,96,99].includes(code)) return '⛈️';
+            return '🌡️';
+        }
+
+        async function loadWeatherWidget() {
+            <?php if ($dbNextGP): ?>
+            try {
+                const res = await fetch(`achterkant/aanpassing/api-koppelingen/weather_api.php?circuit=<?php echo urlencode($dbNextGP['circuit_key']); ?>&date=<?php echo urlencode(date('Y-m-d', strtotime($dbNextGP['race_datetime']))); ?>&location=<?php echo urlencode($dbNextGP['location'] ?? ''); ?>`);
+                const data = await res.json();
+                const widget = document.getElementById('weather-widget');
+                if (data.status === 'success') {
+                    widget.innerHTML = `
+                        <span class="text-3xl">${weatherIcon(data.weather_code)}</span>
+                        <div class="text-left">
+                            <p class="text-white font-oswald font-black italic text-lg leading-none">${data.temp_min}° &ndash; ${data.temp_max}°C</p>
+                            <p class="text-[9px] text-gray-500 uppercase font-black tracking-widest mt-1">🌧️ ${data.rain_chance}% chance of rain · Race day</p>
+                        </div>`;
+                    widget.classList.remove('hidden');
+                } else if (data.status === 'too_far') {
+                    widget.innerHTML = `<span class="text-[10px] text-gray-500 uppercase font-black tracking-widest">Forecast available from 15 days before the race</span>`;
+                    widget.classList.remove('hidden');
+                }
+            } catch (e) { /* silently ignore */ }
+            <?php endif; ?>
+        }
+
         document.addEventListener('DOMContentLoaded', () => {
             AOS.init({ duration: 1000, once: true });
-            
+            loadMyFavorites();
+            loadWeatherWidget();
+
             <?php if ($targetDateTime): ?>
             const target = new Date('<?php echo $targetDateTime; ?>').getTime();
             function update() {

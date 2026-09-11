@@ -20,7 +20,7 @@ try {
 
     if (!$team) {
         http_response_code(404);
-        exit("Team niet gevonden.");
+        exit("Team not found.");
     }
     $stmtDrivers = $pdo->prepare("SELECT * FROM drivers WHERE team_id = :tid ORDER BY last_name ASC");
     $stmtDrivers->execute(['tid' => $team['team_id']]);
@@ -33,7 +33,7 @@ try {
 $teamColor = htmlspecialchars($team['team_color'] ?? '#E10600');
 ?>
 <!DOCTYPE html>
-<html lang="nl">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">

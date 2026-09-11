@@ -42,7 +42,7 @@ $dateFormatter = new IntlDateFormatter(
 );
 ?>
 <!DOCTYPE html>
-<html lang="nl" class="scroll-smooth">
+<html lang="en" class="scroll-smooth">
 <head>
     <title>F1 Schedule <?php echo htmlspecialchars($selectedYear); ?> | F1SITE.NL</title>
     <?php include 'navigatie/head.php'; ?>
@@ -77,7 +77,7 @@ $dateFormatter = new IntlDateFormatter(
                             class="w-full md:w-56 bg-f1-dark border-2 border-f1-red/30 text-white pl-6 pr-12 py-3 rounded-full font-bold focus:border-f1-red outline-none transition-all cursor-pointer hover:bg-f1-red/10 appearance-none bg-[right_1.2rem_center] bg-[length:1.2em_1.2em]"
                             style="background-image: url('data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' fill=\'none\' viewBox=\'0 0 24 24\' stroke=\'%23E10600\'%3E%3Cpath stroke-linecap=\'round\' stroke-linejoin=\'round\' stroke-width=\'3\' d=\'M19 9l-7 7-7-7\'%3E%3C/path%3E%3C/svg%3E');">
                         <?php if (empty($availableYears)): ?>
-                            <option value="">Geen seizoenen beschikbaar</option>
+                            <option value="">No seasons available</option>
                         <?php else: ?>
                             <?php foreach ($availableYears as $year): ?>
                                 <?php if ($year !== null): ?>
@@ -146,7 +146,7 @@ $dateFormatter = new IntlDateFormatter(
                 <?php $i++; endforeach; ?>
             <?php else: ?>
                 <div class="lg:col-span-3 text-center py-20 bg-f1-card rounded-3xl border border-white/5">
-                    <p class="text-gray-400 font-bold uppercase tracking-widest">Geen races gevonden voor dit jaar.</p>
+                    <p class="text-gray-400 font-bold uppercase tracking-widest">No races found for this year.</p>
                 </div>
             <?php endif; ?>
         </section>

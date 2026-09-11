@@ -4,6 +4,7 @@ $server = $_SERVER['SERVER_NAME'];
 $baseUrl = ($server === 'localhost' || $server === '127.0.0.1') ? "http://localhost:8080/formule1/" : "https://f1site.nl/";
 ?>
 
+<script src="<?php echo $baseUrl; ?>favorites.js" defer></script>
 <footer class="bg-[#050505] mt-24 pt-20 pb-10 relative overflow-hidden">
     <div class="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-f1-red/50 to-transparent"></div>
     <div class="absolute -top-24 -left-24 w-96 h-96 bg-f1-red/5 rounded-full blur-[120px]"></div>

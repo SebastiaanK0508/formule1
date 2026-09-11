@@ -35,18 +35,18 @@ if (isset($_COOKIE['f1_consent'])) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title><?php echo isset($page_title) ? $page_title . " | F1SITE.NL" : "F1SITE.NL | Het laatste Formule 1 nieuws & statistieken"; ?></title>
-    <meta name="description" content="Blijf op de hoogte van het laatste Formule 1 nieuws, uitslagen, standen en de volledige racekalender. Volg de actie op de voet bij F1SITE.NL.">
-    <meta name="keywords" content="Formule 1, F1, Max Verstappen, Grand Prix, F1 uitslagen, F1 kalender, F1 stand">
+    <title><?php echo isset($page_title) ? $page_title . " | F1SITE.NL" : "F1SITE.NL | The Latest Formula 1 News & Stats"; ?></title>
+    <meta name="description" content="Stay up to date with the latest Formula 1 news, results, standings and the full race calendar. Follow the action at F1SITE.NL.">
+    <meta name="keywords" content="Formula 1, F1, Max Verstappen, Grand Prix, F1 results, F1 calendar, F1 standings">
     <meta name="author" content="Webius">
     <meta property="og:type" content="website">
     <meta property="og:url" content="<?php echo $baseUrl; ?>">
-    <meta property="og:title" content="F1SITE.NL - Alles over Formule 1">
-    <meta property="og:description" content="Check de laatste resultaten en standen in het F1 kampioenschap.">
+    <meta property="og:title" content="F1SITE.NL - Everything Formula 1">
+    <meta property="og:description" content="Check the latest results and standings in the F1 championship.">
     <meta property="og:image" content="<?php echo $baseUrl; ?>afbeeldingen/logo/f1_icon.png">
     <meta property="twitter:card" content="summary_large_image">
-    <meta property="twitter:title" content="F1SITE.NL - Alles over Formule 1">
-    <meta property="twitter:description" content="Check de laatste resultaten en standen in het F1 kampioenschap.">
+    <meta property="twitter:title" content="F1SITE.NL - Everything Formula 1">
+    <meta property="twitter:description" content="Check the latest results and standings in the F1 championship.">
     <link rel="icon" type="image/x-icon" href="../afbeeldingen/logo/f1_icon.png">
     <link rel="icon" type="image/png" sizes="32x32" href="../afbeeldingen/logo/f1_icon.png">
     <link rel="icon" type="image/png" sizes="16x16" href="../afbeeldingen/logo/f1_icon.png">

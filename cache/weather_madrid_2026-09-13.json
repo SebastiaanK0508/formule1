@@ -1,0 +1,33 @@
+{
+    "latitude": 40.4375,
+    "longitude": -3.6875,
+    "generationtime_ms": 0.08845329284667969,
+    "utc_offset_seconds": 7200,
+    "timezone": "Europe/Madrid",
+    "timezone_abbreviation": "GMT+2",
+    "elevation": 651.0,
+    "daily_units": {
+        "time": "iso8601",
+        "temperature_2m_max": "°C",
+        "temperature_2m_min": "°C",
+        "precipitation_probability_max": "%",
+        "weathercode": "wmo code"
+    },
+    "daily": {
+        "time": [
+            "2026-09-13"
+        ],
+        "temperature_2m_max": [
+            32.3
+        ],
+        "temperature_2m_min": [
+            17.1
+        ],
+        "precipitation_probability_max": [
+            0
+        ],
+        "weathercode": [
+            1
+        ]
+    }
+}

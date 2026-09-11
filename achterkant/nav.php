@@ -109,7 +109,7 @@ $unreadCount = $stmtUnread->fetchColumn();
                 ['url' => 'bewerken/kalender.php', 'label' => 'Kalender', 'icon' => 'calendar'],
                 ['url' => 'bewerken/teams.php', 'label' => 'F1 Teams', 'icon' => 'shield'],
                 ['url' => 'bewerken/drivers.php', 'label' => 'Coureurs', 'icon' => 'user-circle'],
-                ['url' => 'bewerken/contact.php', 'label' => 'Contact', 'icon' => 'mail','badge' => ($unreadCount > 0) ? $unreadCount : null],            
+                ['url' => 'bewerken/contact.php', 'label' => 'Contact', 'icon' => 'mail','badge' => ($unreadCount > 0) ? $unreadCount : null],
             ];
             foreach ($menuItems as $item): 
                 $isActive = (strpos($requestUri, $item['url']) !== false);

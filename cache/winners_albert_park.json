@@ -1,0 +1,397 @@
+{
+    "MRData": {
+        "xmlns": "",
+        "series": "f1",
+        "url": "https://api.jolpi.ca/ergast/f1/circuits/albert_park/results/1.json",
+        "limit": "8",
+        "offset": "0",
+        "total": "29",
+        "RaceTable": {
+            "position": "1",
+            "circuitId": "albert_park",
+            "Races": [
+                {
+                    "season": "1996",
+                    "round": "1",
+                    "url": "https://en.wikipedia.org/wiki/1996_Australian_Grand_Prix",
+                    "raceName": "Australian Grand Prix",
+                    "Circuit": {
+                        "circuitId": "albert_park",
+                        "url": "https://en.wikipedia.org/wiki/Albert_Park_Circuit",
+                        "circuitName": "Albert Park Grand Prix Circuit",
+                        "Location": {
+                            "lat": "-37.8497",
+                            "long": "144.968",
+                            "locality": "Melbourne",
+                            "country": "Australia"
+                        }
+                    },
+                    "date": "1996-03-10",
+                    "Results": [
+                        {
+                            "number": "5",
+                            "position": "1",
+                            "positionText": "1",
+                            "points": "10",
+                            "Driver": {
+                                "driverId": "damon_hill",
+                                "url": "http://en.wikipedia.org/wiki/Damon_Hill",
+                                "givenName": "Damon",
+                                "familyName": "Hill",
+                                "dateOfBirth": "1960-09-17",
+                                "nationality": "British"
+                            },
+                            "Constructor": {
+                                "constructorId": "williams",
+                                "url": "https://en.wikipedia.org/wiki/Williams_Racing",
+                                "name": "Williams",
+                                "nationality": "British"
+                            },
+                            "grid": "2",
+                            "laps": "58",
+                            "status": "Finished",
+                            "Time": {
+                                "millis": "5570400",
+                                "time": "1:32:50.400"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "season": "1997",
+                    "round": "1",
+                    "url": "https://en.wikipedia.org/wiki/1997_Australian_Grand_Prix",
+                    "raceName": "Australian Grand Prix",
+                    "Circuit": {
+                        "circuitId": "albert_park",
+                        "url": "https://en.wikipedia.org/wiki/Albert_Park_Circuit",
+                        "circuitName": "Albert Park Grand Prix Circuit",
+                        "Location": {
+                            "lat": "-37.8497",
+                            "long": "144.968",
+                            "locality": "Melbourne",
+                            "country": "Australia"
+                        }
+                    },
+                    "date": "1997-03-09",
+                    "Results": [
+                        {
+                            "number": "10",
+                            "position": "1",
+                            "positionText": "1",
+                            "points": "10",
+                            "Driver": {
+                                "driverId": "coulthard",
+                                "code": "COU",
+                                "url": "http://en.wikipedia.org/wiki/David_Coulthard",
+                                "givenName": "David",
+                                "familyName": "Coulthard",
+                                "dateOfBirth": "1971-03-27",
+                                "nationality": "British"
+                            },
+                            "Constructor": {
+                                "constructorId": "mclaren",
+                                "url": "https://en.wikipedia.org/wiki/McLaren",
+                                "name": "McLaren",
+                                "nationality": "British"
+                            },
+                            "grid": "4",
+                            "laps": "58",
+                            "status": "Finished",
+                            "Time": {
+                                "millis": "5428718",
+                                "time": "1:30:28.718"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "season": "1998",
+                    "round": "1",
+                    "url": "https://en.wikipedia.org/wiki/1998_Australian_Grand_Prix",
+                    "raceName": "Australian Grand Prix",
+                    "Circuit": {
+                        "circuitId": "albert_park",
+                        "url": "https://en.wikipedia.org/wiki/Albert_Park_Circuit",
+                        "circuitName": "Albert Park Grand Prix Circuit",
+                        "Location": {
+                            "lat": "-37.8497",
+                            "long": "144.968",
+                            "locality": "Melbourne",
+                            "country": "Australia"
+                        }
+                    },
+                    "date": "1998-03-08",
+                    "Results": [
+                        {
+                            "number": "8",
+                            "position": "1",
+                            "positionText": "1",
+                            "points": "10",
+                            "Driver": {
+                                "driverId": "hakkinen",
+                                "url": "http://en.wikipedia.org/wiki/Mika_H%C3%A4kkinen",
+                                "givenName": "Mika",
+                                "familyName": "Häkkinen",
+                                "dateOfBirth": "1968-09-28",
+                                "nationality": "Finnish"
+                            },
+                            "Constructor": {
+                                "constructorId": "mclaren",
+                                "url": "https://en.wikipedia.org/wiki/McLaren",
+                                "name": "McLaren",
+                                "nationality": "British"
+                            },
+                            "grid": "1",
+                            "laps": "58",
+                            "status": "Finished",
+                            "Time": {
+                                "millis": "5506000",
+                                "time": "1:31"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "season": "1999",
+                    "round": "1",
+                    "url": "https://en.wikipedia.org/wiki/1999_Australian_Grand_Prix",
+                    "raceName": "Australian Grand Prix",
+                    "Circuit": {
+                        "circuitId": "albert_park",
+                        "url": "https://en.wikipedia.org/wiki/Albert_Park_Circuit",
+                        "circuitName": "Albert Park Grand Prix Circuit",
+                        "Location": {
+                            "lat": "-37.8497",
+                            "long": "144.968",
+                            "locality": "Melbourne",
+                            "country": "Australia"
+                        }
+                    },
+                    "date": "1999-03-07",
+                    "Results": [
+                        {
+                            "number": "4",
+                            "position": "1",
+                            "positionText": "1",
+                            "points": "10",
+                            "Driver": {
+                                "driverId": "irvine",
+                                "url": "http://en.wikipedia.org/wiki/Eddie_Irvine",
+                                "givenName": "Eddie",
+                                "familyName": "Irvine",
+                                "dateOfBirth": "1965-11-10",
+                                "nationality": "British"
+                            },
+                            "Constructor": {
+                                "constructorId": "ferrari",
+                                "url": "https://en.wikipedia.org/wiki/Scuderia_Ferrari",
+                                "name": "Ferrari",
+                                "nationality": "Italian"
+                            },
+                            "grid": "6",
+                            "laps": "57",
+                            "status": "Finished",
+                            "Time": {
+                                "millis": "5701659",
+                                "time": "1:35:01.659"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "season": "2000",
+                    "round": "1",
+                    "url": "https://en.wikipedia.org/wiki/2000_Australian_Grand_Prix",
+                    "raceName": "Australian Grand Prix",
+                    "Circuit": {
+                        "circuitId": "albert_park",
+                        "url": "https://en.wikipedia.org/wiki/Albert_Park_Circuit",
+                        "circuitName": "Albert Park Grand Prix Circuit",
+                        "Location": {
+                            "lat": "-37.8497",
+                            "long": "144.968",
+                            "locality": "Melbourne",
+                            "country": "Australia"
+                        }
+                    },
+                    "date": "2000-03-12",
+                    "Results": [
+                        {
+                            "number": "3",
+                            "position": "1",
+                            "positionText": "1",
+                            "points": "10",
+                            "Driver": {
+                                "driverId": "michael_schumacher",
+                                "code": "MSC",
+                                "url": "http://en.wikipedia.org/wiki/Michael_Schumacher",
+                                "givenName": "Michael",
+                                "familyName": "Schumacher",
+                                "dateOfBirth": "1969-01-03",
+                                "nationality": "German"
+                            },
+                            "Constructor": {
+                                "constructorId": "ferrari",
+                                "url": "https://en.wikipedia.org/wiki/Scuderia_Ferrari",
+                                "name": "Ferrari",
+                                "nationality": "Italian"
+                            },
+                            "grid": "3",
+                            "laps": "58",
+                            "status": "Finished",
+                            "Time": {
+                                "millis": "5641987",
+                                "time": "1:34:01.987"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "season": "2001",
+                    "round": "1",
+                    "url": "https://en.wikipedia.org/wiki/2001_Australian_Grand_Prix",
+                    "raceName": "Australian Grand Prix",
+                    "Circuit": {
+                        "circuitId": "albert_park",
+                        "url": "https://en.wikipedia.org/wiki/Albert_Park_Circuit",
+                        "circuitName": "Albert Park Grand Prix Circuit",
+                        "Location": {
+                            "lat": "-37.8497",
+                            "long": "144.968",
+                            "locality": "Melbourne",
+                            "country": "Australia"
+                        }
+                    },
+                    "date": "2001-03-04",
+                    "Results": [
+                        {
+                            "number": "1",
+                            "position": "1",
+                            "positionText": "1",
+                            "points": "10",
+                            "Driver": {
+                                "driverId": "michael_schumacher",
+                                "code": "MSC",
+                                "url": "http://en.wikipedia.org/wiki/Michael_Schumacher",
+                                "givenName": "Michael",
+                                "familyName": "Schumacher",
+                                "dateOfBirth": "1969-01-03",
+                                "nationality": "German"
+                            },
+                            "Constructor": {
+                                "constructorId": "ferrari",
+                                "url": "https://en.wikipedia.org/wiki/Scuderia_Ferrari",
+                                "name": "Ferrari",
+                                "nationality": "Italian"
+                            },
+                            "grid": "1",
+                            "laps": "58",
+                            "status": "Finished",
+                            "Time": {
+                                "millis": "5906533",
+                                "time": "1:38:26.533"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "season": "2002",
+                    "round": "1",
+                    "url": "https://en.wikipedia.org/wiki/2002_Australian_Grand_Prix",
+                    "raceName": "Australian Grand Prix",
+                    "Circuit": {
+                        "circuitId": "albert_park",
+                        "url": "https://en.wikipedia.org/wiki/Albert_Park_Circuit",
+                        "circuitName": "Albert Park Grand Prix Circuit",
+                        "Location": {
+                            "lat": "-37.8497",
+                            "long": "144.968",
+                            "locality": "Melbourne",
+                            "country": "Australia"
+                        }
+                    },
+                    "date": "2002-03-03",
+                    "Results": [
+                        {
+                            "number": "1",
+                            "position": "1",
+                            "positionText": "1",
+                            "points": "10",
+                            "Driver": {
+                                "driverId": "michael_schumacher",
+                                "code": "MSC",
+                                "url": "http://en.wikipedia.org/wiki/Michael_Schumacher",
+                                "givenName": "Michael",
+                                "familyName": "Schumacher",
+                                "dateOfBirth": "1969-01-03",
+                                "nationality": "German"
+                            },
+                            "Constructor": {
+                                "constructorId": "ferrari",
+                                "url": "https://en.wikipedia.org/wiki/Scuderia_Ferrari",
+                                "name": "Ferrari",
+                                "nationality": "Italian"
+                            },
+                            "grid": "2",
+                            "laps": "58",
+                            "status": "Finished",
+                            "Time": {
+                                "millis": "5736792",
+                                "time": "1:35:36.792"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "season": "2003",
+                    "round": "1",
+                    "url": "https://en.wikipedia.org/wiki/2003_Australian_Grand_Prix",
+                    "raceName": "Australian Grand Prix",
+                    "Circuit": {
+                        "circuitId": "albert_park",
+                        "url": "https://en.wikipedia.org/wiki/Albert_Park_Circuit",
+                        "circuitName": "Albert Park Grand Prix Circuit",
+                        "Location": {
+                            "lat": "-37.8497",
+                            "long": "144.968",
+                            "locality": "Melbourne",
+                            "country": "Australia"
+                        }
+                    },
+                    "date": "2003-03-09",
+                    "Results": [
+                        {
+                            "number": "5",
+                            "position": "1",
+                            "positionText": "1",
+                            "points": "10",
+                            "Driver": {
+                                "driverId": "coulthard",
+                                "code": "COU",
+                                "url": "http://en.wikipedia.org/wiki/David_Coulthard",
+                                "givenName": "David",
+                                "familyName": "Coulthard",
+                                "dateOfBirth": "1971-03-27",
+                                "nationality": "British"
+                            },
+                            "Constructor": {
+                                "constructorId": "mclaren",
+                                "url": "https://en.wikipedia.org/wiki/McLaren",
+                                "name": "McLaren",
+                                "nationality": "British"
+                            },
+                            "grid": "11",
+                            "laps": "58",
+                            "status": "Finished",
+                            "Time": {
+                                "millis": "5682100",
+                                "time": "1:34:42.100"
+                            }
+                        }
+                    ]
+                }
+            ]
+        }
+    }
+}

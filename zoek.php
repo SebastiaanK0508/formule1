@@ -34,7 +34,7 @@ if (!empty($query)) {
 }
 ?>
 <!DOCTYPE html>
-<html lang="nl">
+<html lang="en">
 <head>
     <?php include 'navigatie/head.php'; ?>
     <style>

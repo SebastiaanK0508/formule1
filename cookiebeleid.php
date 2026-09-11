@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="nl">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cookiebeleid | F1SITE.NL</title>
+    <title>Cookie Policy | F1SITE.NL</title>
     
     <?php include 'navigatie/head.php'; ?>
 
@@ -62,45 +62,45 @@
         <div class="mb-16 text-center">
             <span class="text-f1-red font-black tracking-[0.3em] text-xs uppercase mb-4 block underline decoration-f1-red/30 underline-offset-8">Data Configuration</span>
             <h1 class="text-6xl md:text-8xl font-oswald font-black uppercase italic tracking-tighter leading-none mb-4">
-                COOKIE<span class="text-f1-red">BELEID</span>
+                COOKIE<span class="text-f1-red">POLICY</span>
             </h1>
             <div class="h-1 w-24 bg-f1-red mx-auto mt-6"></div>
         </div>
 
         <div class="elite-card space-y-12">
             <section>
-                <h2 class="policy-h2">1. Wat zijn cookies? <span class="red-speed-line"></span></h2>
+                <h2 class="policy-h2">1. What are cookies? <span class="red-speed-line"></span></h2>
                 <p class="policy-p">
-                    Cookies zijn kleine data-pakketjes die door je browser op je apparaat worden opgeslagen. Zie ze als de 'telemetrie' van je bezoek: ze helpen ons om de website aerodynamisch te laten functioneren en de snelheid van je gebruikerservaring te optimaliseren.
+                    Cookies are small data packets stored on your device by your browser. Think of them as the 'telemetry' of your visit: they help us keep the website running aerodynamically and optimize the speed of your user experience.
                 </p>
             </section>
 
             <section>
-                <h2 class="policy-h2">2. Telemetrie Data Type <span class="red-speed-line"></span></h2>
+                <h2 class="policy-h2">2. Telemetry Data Types <span class="red-speed-line"></span></h2>
                 <div class="overflow-x-auto mt-6 bg-black/20 rounded-2xl p-6 border border-white/5">
                     <table class="w-full text-left f1-table">
                         <thead>
                             <tr>
                                 <th>Type</th>
-                                <th>Doel</th>
-                                <th class="text-right">Retentie</th>
+                                <th>Purpose</th>
+                                <th class="text-right">Retention</th>
                             </tr>
                         </thead>
                         <tbody class="text-gray-400">
                             <tr class="hover:bg-white/5 transition-colors group">
-                                <td class="text-white font-bold italic uppercase tracking-tighter">Noodzakelijk</td>
-                                <td>Cruciaal voor de veiligheid en basisfunctionaliteit.</td>
-                                <td class="text-right font-mono text-f1-red">12 Maanden</td>
+                                <td class="text-white font-bold italic uppercase tracking-tighter">Essential</td>
+                                <td>Crucial for security and basic functionality.</td>
+                                <td class="text-right font-mono text-f1-red">12 Months</td>
                             </tr>
                             <tr class="hover:bg-white/5 transition-colors group">
-                                <td class="text-white font-bold italic uppercase tracking-tighter">Analyse</td>
-                                <td>Anonieme data om onze content-snelheid te verbeteren.</td>
-                                <td class="text-right font-mono text-f1-red">24 Maanden</td>
+                                <td class="text-white font-bold italic uppercase tracking-tighter">Analytics</td>
+                                <td>Anonymous data to improve our content speed.</td>
+                                <td class="text-right font-mono text-f1-red">24 Months</td>
                             </tr>
                             <tr class="hover:bg-white/5 transition-colors group">
                                 <td class="text-white font-bold italic uppercase tracking-tighter">Marketing</td>
-                                <td>Gepersonaliseerde updates en relevante advertenties.</td>
-                                <td class="text-right font-mono text-f1-red">12 Maanden</td>
+                                <td>Personalized updates and relevant advertising.</td>
+                                <td class="text-right font-mono text-f1-red">12 Months</td>
                             </tr>
                         </tbody>
                     </table>
@@ -108,19 +108,19 @@
             </section>
 
             <section>
-                <h2 class="policy-h2">3. Pitstop: Voorkeuren <span class="red-speed-line"></span></h2>
+                <h2 class="policy-h2">3. Pit Stop: Preferences <span class="red-speed-line"></span></h2>
                 <p class="policy-p">
-                    Wil je je instellingen resetten? Door je voorkeuren te verwijderen, wordt de cookie-banner bij je volgende bezoek opnieuw geactiveerd, zodat je je keuze kunt herzien.
+                    Want to reset your settings? Clearing your preferences reactivates the cookie banner on your next visit, so you can review your choice.
                 </p>
                 <button onclick="clearPreferences()" class="group relative overflow-hidden bg-f1-red text-white py-4 px-8 rounded-xl font-black uppercase tracking-widest text-[11px] transition-all hover:scale-105 active:scale-95 shadow-lg shadow-f1-red/20">
-                    <span class="relative z-10">Reset Mijn Voorkeuren</span>
+                    <span class="relative z-10">Reset My Preferences</span>
                     <div class="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
                 </button>
             </section>
 
             <section class="mt-12 pt-8 border-t border-white/5">
                 <p class="text-[10px] text-gray-600 uppercase font-black leading-loose italic tracking-widest">
-                    Dit beleid is gesynchroniseerd met onze <a href="algemenevoorwaarden.html" class="text-gray-400 hover:text-f1-red">Algemene Voorwaarden</a>.
+                    This policy is synchronized with our <a href="algemenevoorwaarden-en.php" class="text-gray-400 hover:text-f1-red">Terms & Conditions</a>.
                 </p>
             </section>
         </div>
@@ -131,7 +131,7 @@
     <script>
         function clearPreferences() {
             document.cookie = "f1_consent=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-            alert('Settings Reset: De browser-cache is opgeschoond. De cookie-banner verschijnt bij je volgende bezoek.');            
+            alert('Settings reset: your cookie preferences have been cleared. The cookie banner will appear on your next visit.');
             window.location.href = 'index.php';
         }
     </script>

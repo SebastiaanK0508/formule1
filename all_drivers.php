@@ -11,11 +11,11 @@ if (file_exists($jsonFile)) {
         $error_message = "Data corrupt.";
     }
 } else {
-    $error_message = "Bestand niet gevonden.";
+    $error_message = "File not found.";
 }
 ?>
 <!DOCTYPE html>
-<html lang="nl" class="scroll-smooth">
+<html lang="en" class="scroll-smooth">
 <head>
     <?php include 'navigatie/head.php'; ?>
     <style>

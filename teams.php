@@ -10,7 +10,7 @@ try {
 }
 ?>
 <!DOCTYPE html>
-<html lang="nl" class="scroll-smooth">
+<html lang="en" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">

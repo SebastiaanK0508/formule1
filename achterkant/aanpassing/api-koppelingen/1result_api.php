@@ -15,6 +15,9 @@ $fp2_results = [];
 $fp3_results = [];
 $team_colors_from_db = [];
 $error_message = '';
+$fastest_lap_holder = null;
+$pit_stops = [];
+$driver_id_map = [];
 
 try {
     // 1. Teamkleuren ophalen
@@ -94,14 +97,47 @@ if ($selected_round !== null) {
         ];
         foreach ($race['Results'] as $res) {
             $team = $res['Constructor']['name'];
+            $driverFullName = $res['Driver']['givenName'] . ' ' . $res['Driver']['familyName'];
+            $driver_id_map[$res['Driver']['driverId']] = [
+                'name' => $driverFullName,
+                'team_color' => $team_colors_from_db[$team] ?? '#E10600',
+            ];
             $race_results[] = [
                 'position' => $res['position'],
-                'driver_name' => $res['Driver']['givenName'] . ' ' . $res['Driver']['familyName'],
+                'driver_name' => $driverFullName,
                 'team_name' => $team,
                 'team_color' => $team_colors_from_db[$team] ?? '#E10600',
-                'lap_time_or_status' => $res['Time']['time'] ?? $res['status']
+                'lap_time_or_status' => $res['Time']['time'] ?? $res['status'],
+                'grid' => $res['grid'] ?? null,
+                'laps' => $res['laps'] ?? null,
+                'fastest_lap_rank' => $res['FastestLap']['rank'] ?? null,
+                'fastest_lap_time' => $res['FastestLap']['Time']['time'] ?? null,
+            ];
+            if (($res['FastestLap']['rank'] ?? null) === '1') {
+                $fastest_lap_holder = [
+                    'driver_name' => $driverFullName,
+                    'team_name' => $team,
+                    'team_color' => $team_colors_from_db[$team] ?? '#E10600',
+                    'time' => $res['FastestLap']['Time']['time'] ?? '-',
+                    'lap' => $res['FastestLap']['lap'] ?? '-',
+                ];
+            }
+        }
+    }
+    $data = fetchF1Data($baseUrl . "pitstops.json", "pitstops_{$current_year}_{$selected_round}");
+    if (isset($data['MRData']['RaceTable']['Races'][0]['PitStops'])) {
+        foreach ($data['MRData']['RaceTable']['Races'][0]['PitStops'] as $ps) {
+            $driverInfo = $driver_id_map[$ps['driverId']] ?? ['name' => $ps['driverId'], 'team_color' => '#E10600'];
+            $pit_stops[] = [
+                'driver_name' => $driverInfo['name'],
+                'team_color' => $driverInfo['team_color'],
+                'stop' => $ps['stop'],
+                'lap' => $ps['lap'],
+                'time' => $ps['time'],
+                'duration' => $ps['duration'] ?? '-',
             ];
         }
+        usort($pit_stops, fn($a, $b) => (int)$a['lap'] <=> (int)$b['lap']);
     }
     $data = fetchF1Data($baseUrl . "qualifying.json", "qual_{$current_year}_{$selected_round}");
     if (isset($data['MRData']['RaceTable']['Races'][0]['QualifyingResults'])) {

@@ -24,7 +24,7 @@ try {
 } catch (PDOException $e) { error_log($e->getMessage()); }
 ?>
 <!DOCTYPE html>
-<html lang="nl" class="scroll-smooth">
+<html lang="en" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -36,6 +36,7 @@ try {
         .bg-blur-dot { position: absolute; width: 40vw; height: 40vw; background: rgba(var(--team-rgb), 0.15); filter: blur(120px); border-radius: 50%; z-index: -1; }
         .stat-card { background: linear-gradient(145deg, rgba(255,255,255,0.03) 0%, rgba(255,255,255,0.01) 100%); transition: all 0.4s ease; }
         .stat-card:hover { border-color: var(--team-color); transform: translateY(-5px); }
+        .follow-btn.is-following { background: var(--team-color); border-color: var(--team-color); color: #fff; }
         .diagonal-bg { clip-path: polygon(0 0, 100% 0, 100% 85%, 0% 100%); background: #16161c; height: 60vh; width: 100%; position: absolute; top: 0; left: 0; z-index: -2; }
         @keyframes float { 0%, 100% { transform: translateY(0) rotate(0deg); } 50% { transform: translateY(-15px) rotate(2deg); } }
         .animate-float { animation: float 8s ease-in-out infinite; }
@@ -61,9 +62,11 @@ try {
                         <?php echo htmlspecialchars($team['team_name']); ?>
                     </h1>
                     
-                    <p class="text-2xl md:text-3xl font-oswald text-gray-400 uppercase italic tracking-tight mb-10 max-w-2xl leading-none">
+                    <p class="text-2xl md:text-3xl font-oswald text-gray-400 uppercase italic tracking-tight mb-6 max-w-2xl leading-none">
                         <?php echo htmlspecialchars($team['full_team_name']); ?>
                     </p>
+
+                    <button data-follow-team="<?php echo (int)$team['team_id']; ?>" class="follow-btn inline-flex items-center gap-2 px-6 py-3 rounded-full border border-white/20 text-xs font-black uppercase tracking-widest text-white hover:border-f1-red transition-all mb-10 not-italic"></button>
 
                     <div class="flex flex-wrap gap-8 py-8 border-y border-white/5">
                         <div class="flex flex-col">

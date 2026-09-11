@@ -13,19 +13,54 @@ if ($circuitKey) {
         $circuitDetails = $stmt->fetch(PDO::FETCH_ASSOC);
 
         if (!$circuitDetails) {
-            $message = "Circuit niet gevonden.";
+            $message = "Circuit not found.";
         }
     } catch (\PDOException $e) {
-        $message = "Fout bij het ophalen van data.";
+        $message = "Error retrieving data.";
     }
 } else {
-    $message = "Geen circuit geselecteerd.";
+    $message = "No circuit selected.";
 }
 
 if (!is_array($circuitDetails)) { $circuitDetails = []; }
+
+$pastWinners = [];
+if ($circuitKey) {
+    $cacheDir = __DIR__ . '/cache';
+    if (!is_dir($cacheDir)) mkdir($cacheDir, 0777, true);
+    $cacheFile = $cacheDir . "/winners_{$circuitKey}.json";
+    $json = null;
+    if (file_exists($cacheFile) && (time() - filemtime($cacheFile) < 86400)) {
+        $json = file_get_contents($cacheFile);
+    } else {
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, "https://api.jolpi.ca/ergast/f1/circuits/{$circuitKey}/results/1.json?limit=8&order=season&sort=desc");
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+        curl_setopt($ch, CURLOPT_TIMEOUT, 6);
+        curl_setopt($ch, CURLOPT_USERAGENT, 'F1Site-Bot/1.0');
+        $json = curl_exec($ch);
+        if ($json) file_put_contents($cacheFile, $json);
+    }
+    $winnersData = $json ? json_decode($json, true) : null;
+    if (isset($winnersData['MRData']['RaceTable']['Races'])) {
+        $races = $winnersData['MRData']['RaceTable']['Races'];
+        usort($races, fn($a, $b) => (int)$b['season'] <=> (int)$a['season']);
+        foreach (array_slice($races, 0, 6) as $race) {
+            $res = $race['Results'][0] ?? null;
+            if ($res) {
+                $pastWinners[] = [
+                    'year' => $race['season'],
+                    'driver' => $res['Driver']['givenName'] . ' ' . $res['Driver']['familyName'],
+                    'team' => $res['Constructor']['name'],
+                ];
+            }
+        }
+    }
+}
 ?>
 <!DOCTYPE html>
-<html lang="nl" class="scroll-smooth">
+<html lang="en" class="scroll-smooth">
 <head>
     <?php include 'navigatie/head.php'; ?>
 
@@ -72,11 +107,11 @@ if (!is_array($circuitDetails)) { $circuitDetails = []; }
                 </div>
                 <div class="stat-card p-6 rounded-2xl" data-aos="fade-up" data-aos-delay="200">
                     <span class="text-[10px] font-black uppercase tracking-widest text-gray-500">Circuit Length</span>
-                    <p class="text-2xl font-oswald font-black italic mt-2"><?php echo number_format($circuitDetails['circuit_length_km'] ?? 0, 3, ',', '.'); ?> <span class="text-xs text-f1-red">KM</span></p>
+                    <p class="text-2xl font-oswald font-black italic mt-2"><?php echo number_format($circuitDetails['circuit_length_km'] ?? 0, 3, '.', ','); ?> <span class="text-xs text-f1-red">KM</span></p>
                 </div>
                 <div class="stat-card p-6 rounded-2xl" data-aos="fade-up" data-aos-delay="300">
                     <span class="text-[10px] font-black uppercase tracking-widest text-gray-500">Race Distance</span>
-                    <p class="text-2xl font-oswald font-black italic mt-2"><?php echo number_format($circuitDetails['race_distance_km'] ?? 0, 3, ',', '.'); ?> <span class="text-xs text-f1-red">KM</span></p>
+                    <p class="text-2xl font-oswald font-black italic mt-2"><?php echo number_format($circuitDetails['race_distance_km'] ?? 0, 3, '.', ','); ?> <span class="text-xs text-f1-red">KM</span></p>
                 </div>
             </section>
 
@@ -88,6 +123,25 @@ if (!is_array($circuitDetails)) { $circuitDetails = []; }
                             <img src="<?php echo htmlspecialchars($circuitDetails['map_url']); ?>" class="relative z-10 w-full h-auto drop-shadow-[0_0_30px_rgba(0,0,0,0.5)] transform group-hover:scale-105 transition-transform duration-700" alt="Track Map">
                         <?php endif; ?>
                     </div>
+
+                    <?php if (!empty($pastWinners)): ?>
+                    <div class="mt-8 bg-f1-card rounded-[2rem] border border-white/5 overflow-hidden" data-aos="fade-up">
+                        <div class="p-6 bg-white/5 border-b border-white/5">
+                            <span class="text-xs font-black uppercase tracking-widest text-white">Past Winners</span>
+                        </div>
+                        <table class="w-full text-left">
+                            <tbody class="divide-y divide-white/5">
+                                <?php foreach ($pastWinners as $w): ?>
+                                <tr class="hover:bg-white/[0.02] transition-colors">
+                                    <td class="px-6 py-4 font-oswald font-black italic text-xl text-f1-red w-20"><?php echo htmlspecialchars($w['year']); ?></td>
+                                    <td class="px-6 py-4 text-white font-bold text-sm"><?php echo htmlspecialchars($w['driver']); ?></td>
+                                    <td class="px-6 py-4 text-right text-[10px] text-gray-500 uppercase font-black tracking-widest"><?php echo htmlspecialchars($w['team']); ?></td>
+                                </tr>
+                                <?php endforeach; ?>
+                            </tbody>
+                        </table>
+                    </div>
+                    <?php endif; ?>
                 </div>
 
                 <div class="order-1 lg:order-2 space-y-8" data-aos="fade-left">

@@ -21,7 +21,7 @@ if (!empty($race_results) && $race_details) {
     $schemaData = [
         '@context' => 'https://schema.org',
         '@type' => 'SportsEvent',
-        'name' => 'Grand Prix van ' . htmlspecialchars($race_details['name']) . ' ' . htmlspecialchars($race_details['year']),
+        'name' => htmlspecialchars($race_details['name']) . ' ' . htmlspecialchars($race_details['year'] ?? ''),
         'startDate' => $raceDate,
         'location' => ['@type' => 'Place', 'name' => htmlspecialchars($race_details['circuit'])],
         'result' => [
@@ -35,7 +35,7 @@ if (!empty($race_results) && $race_details) {
 }
 ?>
 <!DOCTYPE html>
-<html lang="nl" class="scroll-smooth">
+<html lang="en" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">

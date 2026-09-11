@@ -25,9 +25,85 @@ if (!empty($driver['date_of_birth'])) {
     $today = new DateTime();
     $age = $today->diff($birthDate)->y;
 }
+
+function fetchJsonCached($url, $cacheFile, $ttl) {
+    if (file_exists($cacheFile) && (time() - filemtime($cacheFile) < $ttl)) {
+        return json_decode(file_get_contents($cacheFile), true);
+    }
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, $url);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+    curl_setopt($ch, CURLOPT_TIMEOUT, 6);
+    curl_setopt($ch, CURLOPT_USERAGENT, 'F1Site-Bot/1.0');
+    $json = curl_exec($ch);
+    if ($json) {
+        file_put_contents($cacheFile, $json);
+        return json_decode($json, true);
+    }
+    return file_exists($cacheFile) ? json_decode(file_get_contents($cacheFile), true) : null;
+}
+
+$cacheDir = __DIR__ . '/cache';
+if (!is_dir($cacheDir)) mkdir($cacheDir, 0777, true);
+
+$driverIdMapFile = $cacheDir . '/ergast_driver_id_map.json';
+$driverSurnameMapFile = $cacheDir . '/ergast_driver_surname_map.json';
+$driverIdMap = [];
+$driverSurnameMap = [];
+if (file_exists($driverIdMapFile) && (time() - filemtime($driverIdMapFile) < 30 * 86400)) {
+    $driverIdMap = json_decode(file_get_contents($driverIdMapFile), true) ?: [];
+    $driverSurnameMap = json_decode(file_get_contents($driverSurnameMapFile), true) ?: [];
+} else {
+    $offset = 0;
+    do {
+        $page = fetchJsonCached(
+            "https://api.jolpi.ca/ergast/f1/drivers.json?limit=100&offset={$offset}",
+            $cacheDir . "/ergast_drivers_page_{$offset}.json",
+            30 * 86400
+        );
+        $list = $page['MRData']['DriverTable']['Drivers'] ?? [];
+        foreach ($list as $dr) {
+            $key = strtolower(trim($dr['givenName'] . ' ' . $dr['familyName']));
+            $driverIdMap[$key] = $dr['driverId'];
+            $surnameKey = strtolower(trim($dr['familyName']));
+            // Only keep a surname mapping when it's unambiguous across F1 history,
+            // so e.g. multiple "Hill"s or "Schumacher"s don't collide with each other.
+            if (!array_key_exists($surnameKey, $driverSurnameMap)) {
+                $driverSurnameMap[$surnameKey] = $dr['driverId'];
+            } elseif ($driverSurnameMap[$surnameKey] !== $dr['driverId']) {
+                $driverSurnameMap[$surnameKey] = false;
+            }
+        }
+        $total = (int)($page['MRData']['total'] ?? 0);
+        $offset += 100;
+    } while ($offset < $total && $offset < 1000);
+    file_put_contents($driverIdMapFile, json_encode($driverIdMap));
+    file_put_contents($driverSurnameMapFile, json_encode($driverSurnameMap));
+}
+
+$careerStats = null;
+$fullNameKey = strtolower(trim($driver['first_name'] . ' ' . $driver['last_name']));
+$surnameKey = strtolower(trim($driver['last_name']));
+$ergastId = $driverIdMap[$fullNameKey] ?? ($driverSurnameMap[$surnameKey] ?? null);
+if ($ergastId === false) $ergastId = null;
+if ($ergastId) {
+    $racesData = fetchJsonCached("https://api.jolpi.ca/ergast/f1/drivers/{$ergastId}/results.json?limit=1", "$cacheDir/career_races_{$ergastId}.json", 86400);
+    $winsData = fetchJsonCached("https://api.jolpi.ca/ergast/f1/drivers/{$ergastId}/results/1.json?limit=1", "$cacheDir/career_wins_{$ergastId}.json", 86400);
+    $p2Data = fetchJsonCached("https://api.jolpi.ca/ergast/f1/drivers/{$ergastId}/results/2.json?limit=1", "$cacheDir/career_p2_{$ergastId}.json", 86400);
+    $p3Data = fetchJsonCached("https://api.jolpi.ca/ergast/f1/drivers/{$ergastId}/results/3.json?limit=1", "$cacheDir/career_p3_{$ergastId}.json", 86400);
+    $polesData = fetchJsonCached("https://api.jolpi.ca/ergast/f1/drivers/{$ergastId}/qualifying/1.json?limit=1", "$cacheDir/career_poles_{$ergastId}.json", 86400);
+
+    $careerStats = [
+        'races' => (int)($racesData['MRData']['total'] ?? 0),
+        'wins' => (int)($winsData['MRData']['total'] ?? 0),
+        'podiums' => (int)($winsData['MRData']['total'] ?? 0) + (int)($p2Data['MRData']['total'] ?? 0) + (int)($p3Data['MRData']['total'] ?? 0),
+        'poles' => (int)($polesData['MRData']['total'] ?? 0),
+    ];
+}
 ?>
 <!DOCTYPE html>
-<html lang="nl" class="scroll-smooth">
+<html lang="en" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -61,6 +137,7 @@ if (!empty($driver['date_of_birth'])) {
             background: linear-gradient(145deg, rgba(255,255,255,0.03) 0%, rgba(255,255,255,0.01) 100%);
             transition: all 0.4s ease;
         }
+        .follow-btn.is-following { background: var(--team-color); border-color: var(--team-color); color: #fff; }
     </style>
 </head>
 <body class="bg-pattern text-white italic selection:bg-f1-red">
@@ -80,6 +157,8 @@ if (!empty($driver['date_of_birth'])) {
                         <?php echo htmlspecialchars($driver['first_name'] ?? ''); ?><br>
                         <span class="font-outline"><?php echo htmlspecialchars($driver['last_name'] ?? ''); ?></span>
                     </h1>
+
+                    <button data-follow-driver="<?php echo (int)$driver['driver_id']; ?>" class="follow-btn inline-flex items-center gap-2 px-6 py-3 rounded-full border border-white/20 text-xs font-black uppercase tracking-widest text-white hover:border-f1-red transition-all mb-8 not-italic"></button>
 
                     <div class="flex flex-wrap gap-6 py-8 border-y border-white/5 bg-black/20 px-6 rounded-2xl mb-12">
                         <?php if(!empty($driver['date_of_birth'])): ?>
@@ -153,6 +232,32 @@ if (!empty($driver['date_of_birth'])) {
                     <p class="text-xl font-oswald font-black italic uppercase leading-tight text-white"><?php echo htmlspecialchars($driver['team_name'] ?? 'Free Agent'); ?></p>
                 </div>
             </section>
+
+            <?php if ($careerStats): ?>
+            <section class="mb-24" data-aos="fade-up">
+                <h2 class="text-2xl font-oswald font-black uppercase italic tracking-tighter mb-8 flex items-center gap-4 not-italic">
+                    <span class="w-12 h-1 bg-f1-red"></span> <span class="italic">Career Record</span>
+                </h2>
+                <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                    <div class="stat-card p-6 rounded-2xl border border-white/5 text-center">
+                        <span class="text-5xl font-oswald font-black italic block"><?php echo $careerStats['races']; ?></span>
+                        <p class="text-[9px] font-black uppercase tracking-widest text-gray-500 mt-2">Grands Prix</p>
+                    </div>
+                    <div class="stat-card p-6 rounded-2xl border border-white/5 text-center">
+                        <span class="text-5xl font-oswald font-black italic block text-f1-red"><?php echo $careerStats['wins']; ?></span>
+                        <p class="text-[9px] font-black uppercase tracking-widest text-gray-500 mt-2">Wins</p>
+                    </div>
+                    <div class="stat-card p-6 rounded-2xl border border-white/5 text-center">
+                        <span class="text-5xl font-oswald font-black italic block"><?php echo $careerStats['podiums']; ?></span>
+                        <p class="text-[9px] font-black uppercase tracking-widest text-gray-500 mt-2">Podiums</p>
+                    </div>
+                    <div class="stat-card p-6 rounded-2xl border border-white/5 text-center">
+                        <span class="text-5xl font-oswald font-black italic block" style="color: var(--team-color);"><?php echo $careerStats['poles']; ?></span>
+                        <p class="text-[9px] font-black uppercase tracking-widest text-gray-500 mt-2">Pole Positions</p>
+                    </div>
+                </div>
+            </section>
+            <?php endif; ?>
             <?php if (!empty($driver['description'])): ?>
             <section class="mb-32 max-w-5xl mx-auto" data-aos="fade-up">
                 <div class="relative p-8 md:p-12 border border-white/5 bg-f1-card/20 rounded-[2rem]">

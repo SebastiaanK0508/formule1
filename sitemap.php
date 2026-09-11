@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="nl">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -17,7 +17,7 @@
             <h1 class="text-6xl md:text-8xl font-oswald font-black uppercase italic tracking-tighter leading-none mb-4">
                 SITE<span class="text-f1-red">MAP</span>
             </h1>
-            <p class="text-gray-500 font-bold uppercase tracking-[0.4em] text-xs">Volledig index overzicht van het 2025/2026 seizoen</p>
+            <p class="text-gray-500 font-bold uppercase tracking-[0.4em] text-xs">Full index overview of the 2025/2026 season</p>
         </div>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             <section class="section-card">

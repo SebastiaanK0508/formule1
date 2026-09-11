@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="nl" class="scroll-smooth">
+<html lang="en" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>F1 Standings <?php echo date('Y'); ?> | F1SITE.NL</title>
-    <meta name="description" content="De actuele stand in het wereldkampioenschap Formule 1 voor coureurs en constructeurs." />
+    <meta name="description" content="The current standings in the Formula 1 world championship for drivers and constructors." />
     <?php include 'navigatie/head.php'; ?>
     <style>
         .f1-border { position: relative; }
@@ -32,11 +32,70 @@
             </div>
         </section>
 
+        <section class="mt-16" data-aos="fade-up">
+            <div class="bg-f1-card rounded-[2.5rem] border border-white/5 p-6 md:p-10">
+                <div class="flex items-center justify-between mb-8">
+                    <div>
+                        <h4 class="text-xl font-oswald font-black uppercase italic tracking-wider">Points Progression</h4>
+                        <p class="text-[10px] text-gray-500 uppercase tracking-widest mt-1">Top 6 · Round by Round</p>
+                    </div>
+                </div>
+                <div id="progress-chart-wrap" class="relative h-[350px] md:h-[420px]">
+                    <canvas id="progressChart"></canvas>
+                </div>
+                <p id="progress-empty" class="hidden text-center text-gray-500 italic uppercase text-xs tracking-widest py-10">No race round data available yet this season.</p>
+            </div>
+        </section>
+
     </main>
     <?php include 'navigatie/footer.php'; ?>
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.4/chart.umd.min.js"></script>
     <script>
         const standingsContent = document.getElementById('standings-content');
+
+        async function fetchProgressionChart() {
+            try {
+                const response = await fetch('achterkant/aanpassing/api-koppelingen/standings_progress_api.php');
+                const data = await response.json();
+                if (data.status !== 'success' || !data.rounds.length || !data.drivers.length) {
+                    document.getElementById('progress-chart-wrap').classList.add('hidden');
+                    document.getElementById('progress-empty').classList.remove('hidden');
+                    return;
+                }
+                const ctx = document.getElementById('progressChart').getContext('2d');
+                new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: data.rounds,
+                        datasets: data.drivers.map(d => ({
+                            label: d.name,
+                            data: d.points,
+                            borderColor: d.team_color,
+                            backgroundColor: d.team_color + '33',
+                            tension: 0.3,
+                            pointRadius: 2,
+                            borderWidth: 2,
+                        }))
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        interaction: { mode: 'index', intersect: false },
+                        plugins: {
+                            legend: { labels: { color: '#d1d5db', font: { weight: 'bold', size: 10 } } },
+                        },
+                        scales: {
+                            x: { ticks: { color: '#6b7280' }, grid: { color: 'rgba(255,255,255,0.05)' } },
+                            y: { ticks: { color: '#6b7280' }, grid: { color: 'rgba(255,255,255,0.05)' } },
+                        }
+                    }
+                });
+            } catch (e) {
+                document.getElementById('progress-chart-wrap').classList.add('hidden');
+                document.getElementById('progress-empty').classList.remove('hidden');
+            }
+        }
         
         async function fetchChampionshipStandings() {
             try {
@@ -130,6 +189,7 @@
         document.addEventListener('DOMContentLoaded', () => {
             AOS.init({ duration: 800, once: true });
             fetchChampionshipStandings();
+            fetchProgressionChart();
             
             window.toggleMenu = () => {
                 document.getElementById('mobile-menu').classList.toggle('active');
