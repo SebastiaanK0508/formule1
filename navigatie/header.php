@@ -141,9 +141,9 @@ $predictUrl = 'https://predict.f1site.nl';
 
             <span class="w-px h-3 bg-white/10"></span>
 
-            <a href="<?php echo $predictUrl; ?>" target="_blank" rel="noopener" class="desktop-link hover:text-f1-red transition-all pb-1 border-b-2 border-transparent inline-flex items-center gap-1">
+            <!-- <a href="<?php echo $predictUrl; ?>" target="_blank" rel="noopener" class="desktop-link hover:text-f1-red transition-all pb-1 border-b-2 border-transparent inline-flex items-center gap-1">
                 Predict <span class="text-f1-red text-xs">↗</span>
-            </a>
+            </a> -->
         </nav>
 
         <button id="mobile-menu-btn" class="xl:hidden flex flex-col justify-between w-6 h-3.5">

@@ -63,8 +63,9 @@ try {
 }
 
 function fetchF1Data($url, $cacheName) {
-    $cacheFile = "cache/" . $cacheName . ".json";
-    if (!is_dir('cache')) mkdir('cache', 0777, true);
+    $cacheDir = __DIR__ . "/../../../cache";
+    $cacheFile = $cacheDir . "/" . $cacheName . ".json";
+    if (!is_dir($cacheDir)) mkdir($cacheDir, 0777, true);
 
     if (file_exists($cacheFile) && (time() - filemtime($cacheFile) < 3600)) {
         return json_decode(file_get_contents($cacheFile), true);
