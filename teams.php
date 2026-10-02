@@ -40,10 +40,10 @@ try {
         .history-grid::-webkit-scrollbar-thumb { background: #E10600; border-radius: 10px; }
     </style>
 </head>
-<body class="bg-pattern text-white italic">
+<body class="bg-pattern text-white">
     <?php include 'navigatie/header.php'; ?>
 
-    <main class="max-w-7xl mx-auto px-6 py-16">
+    <main class="max-w-7xl mx-auto px-6 py-16 italic">
         
         <header class="mb-20 text-center" data-aos="zoom-out">
             <span class="text-f1-red font-black tracking-[0.4em] text-xs uppercase mb-4 block underline decoration-f1-red/30 underline-offset-8">Constructor Standings</span>
