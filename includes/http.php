@@ -16,6 +16,12 @@ function http_json(string $url, int $ttl, ?string $cacheKey = null): ?array
 {
     static $memo = [];
     static $lastNetworkCall = 0.0;
+    static $warnedNotWritable = false;
+
+    if (!$warnedNotWritable && !cache_writable()) {
+        $warnedNotWritable = true;
+        error_log('Cache directory is not writable: ' . CACHE_DIR . ' — every request goes to the API and will hit its rate limit. Fix the permissions of storage/.');
+    }
 
     $key = $cacheKey !== null ? preg_replace('/[^a-z0-9_\-]/i', '_', $cacheKey) : 'url_' . sha1($url);
     if (array_key_exists($key, $memo)) {
@@ -45,8 +51,10 @@ function http_json(string $url, int $ttl, ?string $cacheKey = null): ?array
         return $memo[$key] = $stale();
     }
     // After a rate-limit response, leave the whole host alone for a while.
-    $limitFile = CACHE_DIR . '/.ratelimit_' . preg_replace('/[^a-z0-9.]/i', '', (string)parse_url($url, PHP_URL_HOST));
-    if (is_file($limitFile) && time() - (int)filemtime($limitFile) < 90) {
+    // Remembered in memory too, so it works even when the cache is not writable.
+    $host = (string)parse_url($url, PHP_URL_HOST);
+    $limitFile = CACHE_DIR . '/.ratelimit_' . preg_replace('/[^a-z0-9.]/i', '', $host);
+    if (http_rate_limited($host) || (is_file($limitFile) && time() - (int)filemtime($limitFile) < 90)) {
         return $memo[$key] = $stale();
     }
 
@@ -74,8 +82,14 @@ function http_json(string $url, int $ttl, ?string $cacheKey = null): ?array
 
     $data = ($body !== false && $status === 200) ? json_decode((string)$body, true) : null;
     if (!is_array($data)) {
-        error_log("HTTP fetch failed ($status): $url");
-        @touch($status === 429 ? $limitFile : $failFile);
+        if ($status === 429) {
+            http_rate_limited($host, true);
+            error_log("Rate limited by $host (HTTP 429): pausing requests to this host for 90 seconds.");
+            @touch($limitFile);
+        } else {
+            error_log("HTTP fetch failed ($status): $url");
+            @touch($failFile);
+        }
         return $memo[$key] = $stale();
     }
 
@@ -85,6 +99,23 @@ function http_json(string $url, int $ttl, ?string $cacheKey = null): ?array
     }
     @unlink($failFile);
     return $memo[$key] = $data;
+}
+
+/** Whether a host rate-limited us during this request; pass $set = true to record it. */
+function http_rate_limited(string $host, bool $set = false): bool
+{
+    static $hosts = [];
+    if ($set) {
+        $hosts[$host] = true;
+    }
+    return isset($hosts[$host]);
+}
+
+/** Whether the API cache can be written (if not, every page load hits the APIs). */
+function cache_writable(): bool
+{
+    static $ok = null;
+    return $ok ??= is_dir(CACHE_DIR) && is_writable(CACHE_DIR);
 }
 
 /** Remove cached API responses. Returns the number of files deleted. */

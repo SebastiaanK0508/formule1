@@ -128,6 +128,9 @@ function task_sync_sessions(int $year): array
 /** Pre-load the API cache for the current season so visitors get fast pages. */
 function task_warm_cache(): array
 {
+    if (!cache_writable()) {
+        return ['Cache directory ' . CACHE_DIR . ' is not writable for user ' . (function_exists('posix_getpwuid') ? (posix_getpwuid(posix_geteuid())['name'] ?? '?') : '?') . '. Fix it with: sudo chown -R www-data:www-data storage && sudo chmod -R 775 storage'];
+    }
     $year = current_season();
     $start = microtime(true);
     f1_schedule($year);
@@ -137,12 +140,20 @@ function task_warm_cache(): array
         f1_season($year, $type);
     }
     foreach (db_drivers() as $d) {
+        if (http_rate_limited('api.jolpi.ca')) {
+            break; // Stop instead of hammering the API; the next run continues where we left off.
+        }
         if ((int)$d['is_active'] === 1 && ($id = api_driver_id($d))) {
             f1_driver_career($id);
         }
     }
     require_once INC_DIR . '/quiz.php';
-    daily_quiz(date('Y-m-d'));
-    daily_quiz(date('Y-m-d', strtotime('+1 day')));
+    if (!http_rate_limited('api.jolpi.ca')) {
+        daily_quiz(date('Y-m-d'));
+        daily_quiz(date('Y-m-d', strtotime('+1 day')));
+    }
+    if (http_rate_limited('api.jolpi.ca')) {
+        return [sprintf('Cache partially warmed in %.1fs: the API rate limit was reached, the next run continues (cached data stays available).', microtime(true) - $start)];
+    }
     return [sprintf('Cache warmed for %d (incl. daily quiz) in %.1fs.', $year, microtime(true) - $start)];
 }

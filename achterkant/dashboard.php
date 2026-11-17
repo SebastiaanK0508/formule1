@@ -33,6 +33,9 @@ if ($unmatched) {
 if ($newsAge !== null && $newsAge > 24) {
     $issues[] = ['Het nieuwste nieuwsbericht is ' . round($newsAge) . ' uur oud — draait de nieuws-cronjob nog?', admin_url('tools.php'), 'Nu ophalen'];
 }
+if (!cache_writable()) {
+    $issues[] = ['De cachemap (storage/cache) is niet schrijfbaar voor de webserver. Elke pagina vraagt dan live de API aan en loopt tegen de rate limit aan. Oplossen: sudo chown -R www-data:www-data storage', admin_url('tools.php'), 'Onderhoud'];
+}
 if (!$races) {
     $issues[] = ["Er staan nog geen races voor $year in de kalender.", admin_url('edit.php', ['type' => 'circuits', 'race_year' => $year]), 'Toevoegen'];
 }
