@@ -1,248 +1,147 @@
 <?php
-require_once 'achterkant/aanpassing/api-koppelingen/result_api.php';
+declare(strict_types=1);
+require __DIR__ . '/includes/bootstrap.php';
 
-$available_years = $available_years ?? range(date("Y"), 1950);
-$races_in_season = $races_in_season ?? [];
-$selected_year = $_GET['year'] ?? date("Y");
-$selected_round = $_GET['round'] ?? 1;
+$year = int_param('year', current_season(), FIRST_SEASON, current_season());
 
-$schemaData = [];
-if (!empty($race_results) && $race_details) {
-    $results = [];
-    foreach ($race_results as $result) {
-        $results[] = [
-            '@type' => 'Person',
-            'name' => htmlspecialchars($result['driver_name']),
-            'alumniOf' => ['@type' => 'SportsTeam', 'name' => htmlspecialchars($result['team_name'])],
-            'sport' => 'Formula 1',
-        ];
-    }
-    $raceDate = (new DateTime($race_details['date']))->format('Y-m-d');
-    $schemaData = [
-        '@context' => 'https://schema.org',
-        '@type' => 'SportsEvent',
-        'name' => htmlspecialchars($race_details['name']) . ' ' . htmlspecialchars($race_details['year'] ?? ''),
-        'startDate' => $raceDate,
-        'location' => ['@type' => 'Place', 'name' => htmlspecialchars($race_details['circuit'])],
-        'result' => [
-            '@type' => 'SportsResults',
-            'winningTeam' => $race_results[0]['team_name'] ?? 'N/A',
-            'winningTies' => ['@type' => 'Win', 'winner' => ['@type' => 'Person', 'name' => $race_results[0]['driver_name'] ?? 'N/A']],
-            'performer' => $results,
-        ],
-        'sport' => 'Formula 1'
-    ];
+// Old links pointed to results.php?year=&round= — the race page now lives elsewhere.
+if (isset($_GET['round'])) {
+    redirect(race_url($year, int_param('round', 1, 1, 30)), 301);
 }
+
+$schedule = f1_schedule($year);
+$results = f1_season($year, 'results');
+$quali = $year >= 2003 ? f1_season($year, 'qualifying') : [];
+$sprints = $year >= 2021 ? f1_season($year, 'sprint') : [];
+$now = new DateTimeImmutable();
+
+$rows = [];
+foreach ($schedule as $round => $race) {
+    $res = $results[$round]['rows'] ?? [];
+    $winner = $res[0] ?? null;
+    $pole = $quali[$round]['rows'][0] ?? null;
+    if (!$pole && $res) {
+        foreach ($res as $r) {
+            if ($r['grid'] === 1) { $pole = $r; break; }
+        }
+    }
+    $fastest = null;
+    foreach ($res as $r) {
+        if ($r['fastestLapRank'] === 1) { $fastest = $r; break; }
+    }
+    $rows[] = compact('race', 'winner', 'pole', 'fastest') + ['done' => (bool)$res, 'sprint' => $sprints[$round]['rows'][0] ?? null];
+}
+$completed = count(array_filter($rows, static fn($r) => $r['done']));
+
+// Win tally for the season summary.
+$winCounts = [];
+foreach ($rows as $r) {
+    if ($r['winner']) {
+        $id = $r['winner']['driverId'];
+        $winCounts[$id] ??= ['row' => $r['winner'], 'wins' => 0];
+        $winCounts[$id]['wins']++;
+    }
+}
+usort($winCounts, static fn($a, $b) => $b['wins'] <=> $a['wins']);
+
+$page = [
+    'title'       => "$year Formula 1 Results",
+    'description' => "Every Grand Prix of the $year Formula 1 season: winners, pole positions, fastest laps and full race results.",
+    'nav'         => 'results',
+];
+require INC_DIR . '/layout/header.php';
 ?>
-<!DOCTYPE html>
-<html lang="en" class="scroll-smooth">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>F1 Results <?php echo $race_details['name'] ?? 'Overview'; ?> | F1SITE.NL</title>
-    <?php include 'navigatie/head.php'; ?>
-    <style>
-        .active-drawer { transform: translateY(0) !important; }
+<div class="container">
+    <header class="page-head">
+        <div class="spread">
+            <div>
+                <div class="eyebrow"><?= $completed ?> of <?= count($rows) ?> races completed</div>
+                <h1 class="page-title"><?= e($year) ?> Results</h1>
+            </div>
+            <form method="get" action="<?= e(url('results.php')) ?>">
+                <label class="sr-only" for="year">Season</label>
+                <select class="select select-sm" id="year" name="year" data-autosubmit>
+                    <?php for ($y = current_season(); $y >= FIRST_SEASON; $y--): ?>
+                        <option value="<?= $y ?>"<?= $y === $year ? ' selected' : '' ?>><?= $y ?> season</option>
+                    <?php endfor; ?>
+                </select>
+                <noscript><button class="btn btn-secondary btn-sm">Go</button></noscript>
+            </form>
+        </div>
+    </header>
 
-        .sidebar-scroll::-webkit-scrollbar { width: 4px; }
-        .sidebar-scroll::-webkit-scrollbar-thumb { background: #E10600; border-radius: 10px; }
-
-        .standing-row { transition: all 0.2s ease; border-bottom: 1px solid rgba(255,255,255,0.03); }
-        .standing-row:hover { background: rgba(225, 6, 0, 0.05); }
-    </style>
-    
-    <?php if (!empty($schemaData)): ?>
-    <script type="application/ld+json"><?php echo json_encode($schemaData); ?></script>
+    <?php if ($winCounts): ?>
+    <section class="section" style="padding-bottom: 0">
+        <div class="stats" style="--cols: <?= min(4, count($winCounts) + 1) ?>">
+            <div class="stat">
+                <div class="stat-label">Different winners</div>
+                <div class="stat-value"><?= count($winCounts) ?></div>
+                <div class="stat-sub">from <?= $completed ?> races</div>
+            </div>
+            <?php foreach (array_slice($winCounts, 0, 3) as $w): ?>
+                <div class="stat accent-top" style="--c: <?= e($w['row']['color']) ?>">
+                    <div class="stat-label"><?= e($w['row']['constructor']) ?></div>
+                    <div class="stat-value"><?= (int)$w['wins'] ?> <span class="text-sm muted" style="font-family: var(--font-sans)">win<?= $w['wins'] === 1 ? '' : 's' ?></span></div>
+                    <div class="stat-sub"><?= driver_link($w['row']) ?></div>
+                </div>
+            <?php endforeach; ?>
+        </div>
+    </section>
     <?php endif; ?>
-</head>
-<body class="bg-pattern">
-    <?php include 'navigatie/header.php'; ?>
-    <div id="mobile-selection-drawer" class="fixed inset-0 z-[120] bg-f1-dark/98 backdrop-blur-xl translate-y-full lg:hidden">
-        <div class="flex flex-col h-full">
-            <div class="p-6 border-b border-white/10 flex justify-between items-center">
-                <h3 class="font-oswald font-black italic uppercase text-xl">Archive Select</h3>
-                <button onclick="toggleSelectionDrawer()" class="text-4xl text-f1-red">&times;</button>
-            </div>
-            
-            <div class="p-4 border-b border-white/5">
-                <input type="text" id="raceSearch" placeholder="Search Grand Prix..." 
-                       class="w-full bg-white/5 border border-white/10 rounded-xl p-4 text-sm font-bold focus:outline-none focus:ring-1 focus:ring-f1-red">
-            </div>
 
-            <div class="flex-grow overflow-y-auto p-6 space-y-8 sidebar-scroll">
-                <div>
-                    <label class="text-[10px] font-black uppercase tracking-[0.3em] text-f1-red mb-4 block">Select Season</label>
-                    <div class="grid grid-cols-3 gap-2">
-                        <?php foreach ($available_years as $year): ?>
-                            <a href="results.php?year=<?php echo $year; ?>" 
-                               class="py-3 text-center rounded-xl font-bold text-sm border <?php echo ($selected_year == $year) ? 'bg-f1-red border-f1-red text-white' : 'bg-white/5 border-white/10 text-gray-400'; ?>">
-                                <?php echo $year; ?>
-                            </a>
-                        <?php endforeach; ?>
-                    </div>
-                </div>
-
-                <div id="raceListContainer">
-                    <label class="text-[10px] font-black uppercase tracking-[0.3em] text-f1-red mb-4 block">Select Race (<?php echo $selected_year; ?>)</label>
-                    <div class="space-y-2">
-                        <?php foreach ($races_in_season as $race): ?>
-                            <a href="results.php?year=<?php echo $selected_year; ?>&round=<?php echo $race['round']; ?>"
-                               class="race-item flex items-center justify-between p-4 rounded-2xl border <?php echo ($selected_round == $race['round']) ? 'bg-f1-red border-f1-red text-white' : 'bg-white/5 border-white/10 text-gray-300'; ?>">
-                                <span class="text-xs font-black uppercase italic tracking-tight race-name"><?php echo htmlspecialchars($race['raceName']); ?></span>
-                                <span class="opacity-50 text-[10px]">#<?php echo $race['round']; ?></span>
-                            </a>
-                        <?php endforeach; ?>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <main class="max-w-7xl mx-auto px-6 py-12">
-        <div class="lg:hidden mb-8">
-            <button onclick="toggleSelectionDrawer()" class="w-full flex items-center justify-center gap-3 bg-f1-red py-4 rounded-2xl font-black uppercase text-xs tracking-widest shadow-xl shadow-f1-red/30 active:scale-95 transition-transform">
-                <span>🏁</span> Filter Season & Race
-            </button>
-        </div>
-
-        <div class="flex flex-col lg:flex-row gap-10">
-            <aside class="hidden lg:block w-72 shrink-0 space-y-8" data-aos="fade-right">
-                <div class="bg-f1-card p-6 rounded-3xl border border-white/5 shadow-2xl">
-                    <form action="results.php" method="get">
-                        <label class="text-[9px] font-black uppercase tracking-[0.3em] text-f1-red mb-3 block">Archive</label>
-                        <select name="year" onchange="this.form.submit()" class="w-full bg-black border border-white/10 text-white p-3 rounded-xl text-xs font-bold focus:ring-1 focus:ring-f1-red cursor-pointer">
-                            <?php foreach ($available_years as $year): ?>
-                                <option value="<?php echo $year; ?>" <?php echo ($selected_year == $year) ? 'selected' : ''; ?>>Season <?php echo $year; ?></option>
-                            <?php endforeach; ?>
-                        </select>
-                    </form>
-                </div>
-
-                <div class="bg-f1-card rounded-3xl border border-white/5 overflow-hidden shadow-2xl">
-                    <div class="p-6 border-b border-white/5 bg-white/5">
-                        <h4 class="text-[10px] font-black uppercase tracking-[0.2em] italic">Season Calendar</h4>
-                    </div>
-                    <nav class="p-4 space-y-1 max-h-[500px] overflow-y-auto sidebar-scroll">
-                        <?php foreach ($races_in_season as $race): ?>
-                            <a href="results.php?year=<?php echo $selected_year; ?>&round=<?php echo $race['round']; ?>"
-                               class="flex items-center gap-3 p-3 rounded-xl text-[10px] font-bold uppercase transition-all
-                               <?php echo ($selected_round == $race['round']) ? 'bg-f1-red text-white' : 'text-gray-500 hover:text-white hover:bg-white/5'; ?>">
-                                <span class="opacity-30">#<?php echo $race['round']; ?></span>
-                                <?php echo htmlspecialchars($race['raceName']); ?>
-                            </a>
-                        <?php endforeach; ?>
-                    </nav>
-                </div>
-            </aside>
-
-            <div class="flex-grow min-w-0">
-                <?php if (!empty($error_message)): ?>
-                    <div class="bg-red-500/10 border border-red-500/50 p-6 rounded-3xl text-red-500 font-bold uppercase text-xs tracking-widest italic">
-                        ⚠️ <?php echo $error_message; ?>
-                    </div>
-                <?php else: ?>
-                    
-                    <div class="bg-f1-card rounded-[3rem] p-8 md:p-12 border border-white/5 mb-10 relative overflow-hidden" data-aos="fade-down">
-                        <div class="relative z-10">
-                            <div class="flex items-center gap-3 mb-4">
-                                <span class="w-8 h-[1px] bg-f1-red"></span>
-                                <span class="text-[10px] font-black uppercase tracking-[0.4em] text-gray-500 italic">Grand Prix Result</span>
-                            </div>
-                            <h2 class="text-4xl md:text-6xl font-oswald font-black uppercase italic tracking-tighter leading-none mb-6">
-                                <?php echo htmlspecialchars($race_details['name'] ?? ''); ?> <span class="text-f1-red"><?php echo $race_details['year'] ?? ''; ?></span>
-                            </h2>
-                            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 pt-6 border-t border-white/5">
+    <section class="section">
+        <?php if (!$rows): ?>
+            <div class="card empty"><?= icon('calendar', 'icon-lg') ?><h3>No races found for <?= e($year) ?></h3></div>
+        <?php else: ?>
+        <div class="card table-wrap">
+            <table class="table">
+                <thead>
+                    <tr><th class="w-pos">Rd</th><th>Grand Prix</th><th class="hide-sm">Date</th><th>Winner</th><th class="hide-sm">Pole</th><th class="hide-sm">Fastest lap</th><th></th></tr>
+                </thead>
+                <tbody>
+                <?php foreach ($rows as $r): $race = $r['race']; ?>
+                    <tr>
+                        <td class="muted tabular"><?= (int)$race['round'] ?></td>
+                        <td>
+                            <div class="row" style="gap: 10px">
+                                <?= flag_img(country_iso($race['country']), $race['country']) ?>
                                 <div>
-                                    <span class="text-[9px] font-black text-gray-500 uppercase tracking-widest">Circuit</span>
-                                    <p class="text-xs font-bold text-white mt-1"><?php echo htmlspecialchars($race_details['circuit'] ?? 'N/A'); ?></p>
-                                </div>
-                                <div>
-                                    <span class="text-[9px] font-black text-gray-500 uppercase tracking-widest">Location</span>
-                                    <p class="text-xs font-bold text-white mt-1"><?php echo htmlspecialchars($race_details['location'] ?? ''); ?>, <?php echo htmlspecialchars($race_details['country'] ?? ''); ?></p>
-                                </div>
-                                <div>
-                                    <span class="text-[9px] font-black text-gray-500 uppercase tracking-widest">Date</span>
-                                    <p class="text-xs font-bold text-white mt-1"><?php echo isset($race_details['date']) ? (new DateTime($race_details['date']))->format('d-m-Y') : 'N/A'; ?></p>
+                                    <?php if ($r['done']): ?>
+                                        <a class="fw-600 link-plain" href="<?= e(race_url($year, $race['round'])) ?>"><?= e($race['name']) ?></a>
+                                    <?php else: ?>
+                                        <span class="fw-600"><?= e($race['name']) ?></span>
+                                    <?php endif; ?>
+                                    <div class="text-xs subtle"><?= e($race['circuitName']) ?><?= $race['hasSprint'] ? ' · Sprint' : '' ?></div>
                                 </div>
                             </div>
-                        </div>
-                    </div>
-
-                    <div class="bg-f1-card rounded-[2.5rem] border border-white/5 overflow-hidden shadow-2xl" data-aos="fade-up">
-                        <?php if (empty($race_results)): ?>
-                            <div class="p-20 text-center italic">
-                                <div class="text-4xl mb-4">🏁</div>
-                                <p class="text-gray-500 font-black uppercase text-[10px] tracking-widest">No results available for this session.</p>
-                            </div>
-                        <?php else: ?>
-                            <div class="overflow-x-auto">
-                                <table class="w-full text-left">
-                                    <thead>
-                                        <tr class="bg-black/40 text-[9px] font-black uppercase tracking-[0.2em] text-gray-500">
-                                            <th class="px-6 py-5">Pos</th>
-                                            <th class="px-6 py-5">Driver</th>
-                                            <th class="px-6 py-5">Team</th>
-                                            <th class="px-6 py-5 text-right">Time / Status</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody class="divide-y divide-white/5">
-                                        <?php foreach ($race_results as $result): 
-                                            $tColor = htmlspecialchars($result['team_color'] ?? '#3A3A40');
-                                            $teamSlug = strtolower(str_replace(' ', '-', $result['team_name']));
-                                        ?>
-                                            <tr class="standing-row group">
-                                                <td class="px-6 py-5">
-                                                    <span class="font-oswald font-black italic text-xl group-hover:text-f1-red transition-colors"><?php echo $result['position']; ?></span>
-                                                </td>
-                                                <td class="px-6 py-5">
-                                                    <div class="text-sm font-bold text-white uppercase"><?php echo htmlspecialchars($result['driver_name']); ?></div>
-                                                </td>
-                                                <td class="px-6 py-5">
-                                                    <a href="team-details.php?slug=<?php echo $teamSlug; ?>" class="flex items-center gap-2 group/team">
-                                                        <span class="w-1 h-3 rounded-full" style="background: <?php echo $tColor; ?>;"></span>
-                                                        <span class="text-[10px] font-black uppercase tracking-wider group-hover/team:underline" style="color: <?php echo $tColor; ?>;">
-                                                            <?php echo htmlspecialchars($result['team_name']); ?>
-                                                        </span>
-                                                    </a>
-                                                </td>
-                                                <td class="px-6 py-5 text-right font-mono text-[11px] text-gray-400">
-                                                    <?php echo htmlspecialchars($result['lap_time_or_status']); ?>
-                                                </td>
-                                            </tr>
-                                        <?php endforeach; ?>
-                                    </tbody>
-                                </table>
-                            </div>
-                        <?php endif; ?>
-                    </div>
-                <?php endif; ?>
-            </div>
+                        </td>
+                        <td class="hide-sm nowrap muted"><?= e(fmt_date($race['date'], 'j M')) ?></td>
+                        <td>
+                            <?php if ($r['winner']): ?>
+                                <div class="driver-cell"><span class="swatch" style="--c: <?= e($r['winner']['color']) ?>"></span><?= driver_link($r['winner']) ?></div>
+                            <?php elseif ($race['datetime'] && $race['datetime'] > $now): ?>
+                                <span class="badge">Upcoming</span>
+                            <?php else: ?>
+                                <span class="subtle">Awaiting results</span>
+                            <?php endif; ?>
+                        </td>
+                        <td class="hide-sm"><?= $r['pole'] ? driver_link($r['pole'], true) : '<span class="subtle">–</span>' ?></td>
+                        <td class="hide-sm">
+                            <?php if ($r['fastest']): ?>
+                                <span class="row" style="gap: 6px"><?= driver_link($r['fastest'], true) ?> <span class="mono subtle text-xs"><?= e($r['fastest']['fastestLapTime']) ?></span></span>
+                            <?php else: ?><span class="subtle">–</span><?php endif; ?>
+                        </td>
+                        <td class="num">
+                            <?php if ($r['done']): ?>
+                                <a class="btn btn-ghost btn-sm" href="<?= e(race_url($year, $race['round'])) ?>" aria-label="Results <?= e($race['name']) ?>"><?= icon('chevron-right', 'icon-sm') ?></a>
+                            <?php endif; ?>
+                        </td>
+                    </tr>
+                <?php endforeach; ?>
+                </tbody>
+            </table>
         </div>
-    </main>
-    <?php include 'navigatie/footer.php'; ?>
-    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            AOS.init({ duration: 800, once: true });
-            window.toggleSelectionDrawer = () => {
-                const drawer = document.getElementById('mobile-selection-drawer');
-                drawer.classList.toggle('active-drawer');
-                document.body.style.overflow = drawer.classList.contains('active-drawer') ? 'hidden' : '';
-            };
-            const searchInput = document.getElementById('raceSearch');
-            searchInput.addEventListener('input', function(e) {
-                const term = e.target.value.toLowerCase();
-                const items = document.querySelectorAll('.race-item');
-                items.forEach(item => {
-                    const name = item.querySelector('.race-name').textContent.toLowerCase();
-                    if (name.includes(term)) {
-                        item.style.display = 'flex';
-                    } else {
-                        item.style.display = 'none';
-                    }
-                });
-            });
-        });
-    </script> 
-</body>
-</html>
+        <?php endif; ?>
+    </section>
+</div>
+<?php require INC_DIR . '/layout/footer.php'; ?>

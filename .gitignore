@@ -1,0 +1,12 @@
+# Local configuration with credentials — never commit
+config.local.php
+
+# Runtime cache
+storage/cache/*
+!storage/cache/.gitkeep
+
+# OS / editor files
+.DS_Store
+*:Zone.Identifier
+.idea/
+.vscode/

@@ -1,96 +1,58 @@
 <?php
-session_start();
-require_once 'db_config.php';
-/** @var PDO $pdo */
-$error_message = '';
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $user = $_POST['username'] ?? '';
-    $pass = $_POST['password'] ?? '';
-    if (!empty($user) && !empty($pass)) {
-        try {
-            $stmt = $pdo->prepare("SELECT id, username, password_hash FROM admin_users WHERE username = :username LIMIT 1");
-            $stmt->execute(['username' => $user]);
-            $admin = $stmt->fetch(PDO::FETCH_ASSOC);
-            if ($admin && password_verify($pass, $admin['password_hash'])) {
-                $_SESSION['admin_id'] = $admin['id'];
-                $_SESSION['admin_name'] = $admin['username'];
-                $_SESSION['logged_in'] = true;
-                header("Location: dashboard.php");
-                exit;
-            } else {
-                $error_message = "Onjuiste inloggegevens.";
-            }
-        } catch (PDOException $e) {
-            error_log($e->getMessage());
-            $error_message = "Systeemfout in de pitstraat. Probeer het later opnieuw.";
-        }
-    } else {
-        $error_message = "Vul alle velden in.";
-    }
+declare(strict_types=1);
+require __DIR__ . '/_bootstrap.php';
+
+$next = (string)($_GET['next'] ?? $_POST['next'] ?? '');
+// Only allow redirects back into the admin panel.
+$safeNext = static fn(string $n): string => preg_match('#^/(?![/\\\\])#', $n) ? $n : admin_url('dashboard.php');
+
+if (is_logged_in()) {
+    redirect(admin_url('dashboard.php'));
 }
+
+$error = '';
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $attempts = $_SESSION['login_attempts'] ?? [];
+    $attempts = array_filter($attempts, static fn($t) => $t > time() - 900);
+    if (count($attempts) >= 5) {
+        $error = 'Te veel mislukte pogingen. Probeer het over 15 minuten opnieuw.';
+    } elseif (!csrf_valid()) {
+        $error = 'Je sessie is verlopen. Probeer het opnieuw.';
+    } else {
+        $user = trim((string)($_POST['username'] ?? ''));
+        $pass = (string)($_POST['password'] ?? '');
+        $admin = $user !== '' ? db_one('SELECT id, username, password_hash FROM admin_users WHERE username = ? LIMIT 1', [$user]) : null;
+        // Always run password_verify to keep response times uniform.
+        $valid = password_verify($pass, $admin['password_hash'] ?? '$2y$12$invalidinvalidinvalidinvalidinvalidinvalidinvalidinvali');
+        if ($admin && $valid) {
+            if (password_needs_rehash($admin['password_hash'], PASSWORD_DEFAULT)) {
+                db()->prepare('UPDATE admin_users SET password_hash = ? WHERE id = ?')->execute([password_hash($pass, PASSWORD_DEFAULT), $admin['id']]);
+            }
+            session_regenerate_id(true);
+            $_SESSION = ['admin_id' => (int)$admin['id'], 'admin_name' => $admin['username'], 'admin_seen' => time()];
+            redirect($safeNext($next));
+        }
+        $attempts[] = time();
+        usleep(400_000);
+        $error = 'Onjuiste gebruikersnaam of wachtwoord.';
+    }
+    $_SESSION['login_attempts'] = $attempts;
+}
+
+admin_header('Inloggen');
 ?>
-<!DOCTYPE html>
-<html lang="nl">
-<head>
-    <?php include 'head.php'; ?>
-</head>
-<body class="bg-pattern min-h-screen flex items-center justify-center p-6 text-white">
-    <main class="w-full max-w-[450px]" data-aos="zoom-in">
-        <div class="text-center mb-10">
-            <h1 class="text-5xl font-oswald font-black uppercase italic tracking-tighter leading-none">
-                F1SITE<span class="text-f1-red">.NL</span><span class="text-sm block font-sans font-bold tracking-[0.5em] text-gray-500 mt-2">DASHBOARD</span>
-            </h1>
+<div class="login-wrap">
+    <form class="card card-pad login-card stack" method="post" action="<?= e(admin_url('index.php')) ?>">
+        <div>
+            <span class="brand">F1SITE<span>.NL</span></span>
+            <p class="muted text-sm mt-1">Log in om de website te beheren.</p>
         </div>
-        <div class="news-card f1-border bg-f1-card rounded-br-[3rem] border-r border-b border-white/5 p-10 md:p-12 shadow-2xl relative overflow-hidden">
-            <div class="absolute -top-24 -right-24 w-48 h-48 bg-f1-red/10 blur-[80px] rounded-full"></div>
-            <div class="relative z-10">
-                <div class="flex items-center gap-3 mb-8">
-                    <span class="h-[2px] w-8 bg-f1-red"></span>
-                    <span class="text-f1-red text-[10px] font-black uppercase tracking-[0.3em]">Identity Verification</span>
-                </div>
-                <h2 class="text-3xl font-oswald font-black uppercase italic mb-8 tracking-tighter">Paddock <span class="text-f1-red">Access</span></h2>
-                <?php if ($error_message): ?>
-                    <div class="bg-f1-red/20 border border-f1-red text-f1-red px-4 py-3 rounded-xl mb-6 text-xs font-bold uppercase tracking-widest">
-                        <?php echo $error_message; ?>
-                    </div>
-                <?php endif; ?>
-                <form action="" method="POST" class="relative z-50 space-y-6">
-                    <div class="space-y-2 text-left">
-                        <label class="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-1">Engineer ID</label>
-                        <input type="text" name="username" required 
-                            class="w-full px-5 py-4 rounded-xl font-bold text-white bg-white/5 border border-white/10 outline-none focus:border-f1-red transition-all duration-300 placeholder:text-gray-700"
-                            placeholder="Gebruikersnaam">
-                    </div>
-                    <div class="space-y-2 text-left">
-                        <label class="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-1">Security Token</label>
-                        <input type="password" name="password" required 
-                            class="w-full px-5 py-4 rounded-xl font-bold text-white bg-white/5 border border-white/10 outline-none focus:border-f1-red transition-all duration-300 placeholder:text-gray-700"
-                            placeholder="••••••••••••">
-                    </div>
-                    <div class="pt-4">
-                        <button type="submit" 
-                            class="group relative w-full flex items-center justify-center px-8 py-5 overflow-hidden font-black uppercase tracking-[0.4em] text-[11px] text-white bg-white/5 border border-white/10 rounded-full hover:border-f1-red/50 shadow-xl active:scale-95 transition-all duration-300 cursor-pointer">
-                            
-                            <span class="relative z-10 flex items-center gap-3 pointer-events-none">
-                                Start Session <span class="text-f1-red text-xl group-hover:translate-x-2 transition-transform duration-300">→</span>
-                            </span>
-
-                            <div class="absolute inset-0 w-full h-full bg-gradient-to-r from-f1-red/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
-                        </button>
-                    </div>
-
-                </form>
-            </div>
-        </div>
-        <div class="mt-10 text-center">
-            <p class="text-[9px] font-black uppercase tracking-[0.5em] text-gray-600">
-                &copy; 2026 Formula 1 World Championship Database
-            </p>
-        </div>
-    </main>
-    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
-    <script>
-        AOS.init({ duration: 800, once: true });
-    </script>
-</body>
-</html>
+        <?php if ($error): ?><div class="alert alert-error"><?= icon('alert') ?><span><?= e($error) ?></span></div><?php endif; ?>
+        <?= csrf_field() ?>
+        <input type="hidden" name="next" value="<?= e($next) ?>">
+        <div class="field"><label for="username">Gebruikersnaam</label><input class="input" id="username" name="username" autocomplete="username" required autofocus></div>
+        <div class="field"><label for="password">Wachtwoord</label><input class="input" id="password" type="password" name="password" autocomplete="current-password" required></div>
+        <button class="btn btn-primary w-full" type="submit">Inloggen</button>
+    </form>
+</div>
+<?php admin_footer();

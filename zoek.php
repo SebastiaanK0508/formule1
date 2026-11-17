@@ -1,141 +1,107 @@
 <?php
-require_once 'db_config.php';
-/** @var PDO $pdo */
+declare(strict_types=1);
+require __DIR__ . '/includes/bootstrap.php';
 
-$query = isset($_GET['q']) ? trim($_GET['q']) : '';
-$results = [
-    'drivers' => [],
-    'teams' => [],
-    'circuits' => []
-];
+$q = mb_substr(str_param('q'), 0, 80);
+$results = ['drivers' => [], 'teams' => [], 'races' => [], 'news' => []];
 
-if (!empty($query)) {
-    $searchWildcard = "%$query%";
-
-    try {
-        // 1. Zoek Coureurs
-        $stmt = $pdo->prepare("SELECT * FROM drivers WHERE name LIKE :q OR nationality LIKE :q LIMIT 5");
-        $stmt->execute([':q' => $searchWildcard]);
-        $results['drivers'] = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-        // 2. Zoek Teams
-        $stmt = $pdo->prepare("SELECT * FROM teams WHERE team_name LIKE :q LIMIT 5");
-        $stmt->execute([':q' => $searchWildcard]);
-        $results['teams'] = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-        // 3. Zoek Circuits/Races
-        $stmt = $pdo->prepare("SELECT * FROM circuits WHERE grandprix LIKE :q OR title LIKE :q OR location LIKE :q ORDER BY race_datetime DESC LIMIT 10");
-        $stmt->execute([':q' => $searchWildcard]);
-        $results['circuits'] = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-    } catch (PDOException $e) {
-        error_log("Search Error: " . $e->getMessage());
-    }
+if (mb_strlen($q) >= 2) {
+    $like = '%' . addcslashes($q, '%_\\') . '%';
+    $results['drivers'] = db_all(
+        "SELECT d.*, t.team_name, t.team_color FROM drivers d LEFT JOIN teams t ON t.team_id = d.team_id
+         WHERE d.first_name <> '' AND (CONCAT(d.first_name, ' ', d.last_name) LIKE ? OR d.nationality LIKE ? OR d.driver_number = ?)
+         ORDER BY d.is_active DESC, d.last_name LIMIT 12",
+        [$like, $like, ctype_digit($q) ? (int)$q : -1]
+    );
+    $results['teams'] = db_all(
+        'SELECT * FROM teams WHERE team_name LIKE ? OR full_team_name LIKE ? OR team_principal LIKE ? OR base_location LIKE ? ORDER BY is_active DESC, team_name LIMIT 8',
+        [$like, $like, $like, $like]
+    );
+    $results['races'] = db_all(
+        'SELECT * FROM circuits WHERE race_datetime IS NOT NULL AND (grandprix LIKE ? OR title LIKE ? OR location LIKE ?) ORDER BY race_year DESC, calendar_order LIMIT 10',
+        [$like, $like, $like]
+    );
+    $results['news'] = db_all(
+        'SELECT titel, artikel_url, publicatie_datum, source FROM f1_nieuws WHERE titel LIKE ? ORDER BY publicatie_datum DESC LIMIT 6',
+        [$like]
+    );
 }
+$count = array_sum(array_map('count', $results));
+
+$page = [
+    'title'   => $q !== '' ? "Search: $q" : 'Search',
+    'noindex' => true,
+];
+require INC_DIR . '/layout/header.php';
 ?>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <?php include 'navigatie/head.php'; ?>
-    <style>
-        .search-result-card {
-            background: rgba(255, 255, 255, 0.02);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            transition: all 0.3s ease;
-        }
-        .search-result-card:hover {
-            background: rgba(225, 6, 0, 0.05);
-            border-color: rgba(225, 6, 0, 0.3);
-            transform: translateY(-2px);
-        }
-        .result-tag {
-            font-size: 9px;
-            font-weight: 900;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-            padding: 2px 8px;
-            border-radius: 4px;
-            background: rgba(255,255,255,0.05);
-            color: rgba(255,255,255,0.4);
-        }
-    </style>
-</head>
-<body class="bg-pattern text-white">
-    <?php include 'navigatie/header.php'; ?>
+<div class="container" style="max-width: 880px">
+    <header class="page-head">
+        <h1 class="page-title">Search</h1>
+        <form class="row mt-4" action="<?= e(url('zoek.php')) ?>" method="get" role="search">
+            <label class="sr-only" for="q">Search</label>
+            <input class="input" id="q" type="search" name="q" value="<?= e($q) ?>" placeholder="Driver, team, Grand Prix or circuit…" autofocus>
+            <button class="btn btn-primary" type="submit"><?= icon('search', 'icon-sm') ?> Search</button>
+        </form>
+        <?php if ($q !== ''): ?><p class="muted mt-3"><?= $count ?> result<?= $count === 1 ? '' : 's' ?> for “<?= e($q) ?>”</p><?php endif; ?>
+    </header>
 
-    <main class="max-w-5xl mx-auto px-6 py-12">
-        <header class="mb-16" data-aos="fade-down">
-            <h1 class="text-4xl md:text-6xl font-oswald font-black uppercase italic tracking-tighter mb-4">
-                Search <span class="text-f1-red">Results</span>
-            </h1>
-            <p class="text-gray-500 uppercase tracking-widest text-xs font-bold">
-                Showing results for: <span class="text-white">"<?php echo htmlspecialchars($query); ?>"</span>
-            </p>
-        </header>
-
-        <?php if (empty($results['drivers']) && empty($results['teams']) && empty($results['circuits'])): ?>
-            <div class="py-20 text-center border border-dashed border-white/10 rounded-[2.5rem]">
-                <span class="text-4xl mb-4 block">🏎️💨</span>
-                <h2 class="text-xl font-bold uppercase italic">No results found</h2>
-                <p class="text-gray-500 text-sm mt-2">Try searching for a driver name, team, or Grand Prix.</p>
-                <button onclick="document.getElementById('search-btn-desktop').click()" class="mt-8 text-f1-red font-black uppercase text-[10px] tracking-widest hover:underline">Try Again</button>
-            </div>
-        <?php else: ?>
-            
-            <div class="space-y-12">
-                <?php if (!empty($results['circuits'])): ?>
-                <section data-aos="fade-up">
-                    <h3 class="text-sm font-black uppercase tracking-[0.3em] text-f1-red mb-6 flex items-center gap-4">
-                        Grands Prix <span class="h-[1px] flex-grow bg-white/5"></span>
-                    </h3>
-                    <div class="grid grid-cols-1 gap-4">
-                        <?php foreach ($results['circuits'] as $race): ?>
-                        <a href="result_race.php?round=<?php echo $race['calendar_order']; ?>" class="search-result-card p-6 rounded-2xl flex items-center justify-between group">
-                            <div class="flex items-center gap-6">
-                                <div class="text-center">
-                                    <span class="block text-[10px] font-black text-gray-500 uppercase"><?php echo date('M', strtotime($race['race_datetime'])); ?></span>
-                                    <span class="text-2xl font-oswald font-black italic"><?php echo date('d', strtotime($race['race_datetime'])); ?></span>
-                                </div>
-                                <div>
-                                    <span class="result-tag mb-2 inline-block">Race Session</span>
-                                    <h4 class="text-lg font-bold group-hover:text-f1-red transition-colors"><?php echo htmlspecialchars($race['grandprix']); ?></h4>
-                                    <p class="text-xs text-gray-500"><?php echo htmlspecialchars($race['title']); ?> • <?php echo htmlspecialchars($race['location']); ?></p>
-                                </div>
-                            </div>
-                            <span class="text-f1-red opacity-0 group-hover:opacity-100 transition-all translate-x-[-10px] group-hover:translate-x-0">→</span>
-                        </a>
-                        <?php endforeach; ?>
-                    </div>
-                </section>
-                <?php endif; ?>
-
-                <?php if (!empty($results['drivers'])): ?>
-                <section data-aos="fade-up">
-                    <h3 class="text-sm font-black uppercase tracking-[0.3em] text-f1-red mb-6 flex items-center gap-4">
-                        Drivers <span class="h-[1px] flex-grow bg-white/5"></span>
-                    </h3>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <?php foreach ($results['drivers'] as $driver): ?>
-                        <a href="drivers.php#<?php echo $driver['id']; ?>" class="search-result-card p-5 rounded-2xl flex items-center gap-4 group">
-                            <div class="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center font-oswald font-black italic text-xl text-white/20">
-                                <?php echo substr($driver['name'], 0, 1); ?>
-                            </div>
-                            <div>
-                                <span class="result-tag mb-1 inline-block">Athlete</span>
-                                <h4 class="font-bold group-hover:text-f1-red transition-colors"><?php echo htmlspecialchars($driver['name']); ?></h4>
-                            </div>
-                        </a>
-                        <?php endforeach; ?>
-                    </div>
-                </section>
-                <?php endif; ?>
-
-            </div>
+    <section class="section stack-lg">
+        <?php if ($q !== '' && mb_strlen($q) < 2): ?>
+            <div class="alert alert-info">Please enter at least two characters.</div>
+        <?php elseif ($q !== '' && !$count): ?>
+            <div class="card empty"><?= icon('search', 'icon-lg') ?><h3>No results</h3><p>Try a driver's surname, a team name or a country.</p></div>
         <?php endif; ?>
-    </main>
 
-    <?php include 'navigatie/footer.php'; ?>
-    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
-    <script>AOS.init({ duration: 800, once: true });</script>
-</body>
-</html>
+        <?php if ($results['drivers']): ?>
+        <div class="card">
+            <div class="card-head"><h2>Drivers</h2></div>
+            <?php foreach ($results['drivers'] as $d): ?>
+                <a class="result-item" href="<?= e(driver_url($d)) ?>">
+                    <?php if ($d['image']): ?><img class="avatar" src="<?= e($d['image']) ?>" alt=""><?php endif; ?>
+                    <div><div class="fw-600"><?= e($d['first_name'] . ' ' . $d['last_name']) ?></div><div class="text-sm muted"><?= e($d['team_name'] ?? 'No team') ?> · #<?= e($d['driver_number']) ?></div></div>
+                    <span class="kind badge"><?= $d['is_active'] ? 'Driver' : 'Former' ?></span>
+                </a>
+            <?php endforeach; ?>
+        </div>
+        <?php endif; ?>
+
+        <?php if ($results['teams']): ?>
+        <div class="card">
+            <div class="card-head"><h2>Teams</h2></div>
+            <?php foreach ($results['teams'] as $t): ?>
+                <a class="result-item" href="<?= e(team_url($t)) ?>">
+                    <span class="swatch" style="--c: <?= e(safe_color($t['team_color'])) ?>; height: 32px"></span>
+                    <div><div class="fw-600"><?= e($t['team_name']) ?></div><div class="text-sm muted"><?= e($t['full_team_name']) ?></div></div>
+                    <span class="kind badge">Team</span>
+                </a>
+            <?php endforeach; ?>
+        </div>
+        <?php endif; ?>
+
+        <?php if ($results['races']): ?>
+        <div class="card">
+            <div class="card-head"><h2>Grands Prix</h2></div>
+            <?php foreach ($results['races'] as $r): ?>
+                <a class="result-item" href="<?= e(url('circuit-details.php', ['key' => $r['circuit_key'], 'year' => $r['race_year']])) ?>">
+                    <?php if ($r['country_flag_url']): ?><img class="flag" src="<?= e($r['country_flag_url']) ?>" alt=""><?php endif; ?>
+                    <div><div class="fw-600"><?= e($r['grandprix']) ?> <?= e($r['race_year']) ?></div><div class="text-sm muted"><?= e($r['title']) ?> · <?= e(weekend_range($r)) ?></div></div>
+                    <span class="kind badge">Race</span>
+                </a>
+            <?php endforeach; ?>
+        </div>
+        <?php endif; ?>
+
+        <?php if ($results['news']): ?>
+        <div class="card">
+            <div class="card-head"><h2>News</h2></div>
+            <?php foreach ($results['news'] as $n): ?>
+                <a class="result-item" href="<?= e($n['artikel_url']) ?>" target="_blank" rel="noopener">
+                    <div><div class="fw-600"><?= e($n['titel']) ?></div><div class="text-sm muted"><?= e($n['source']) ?></div></div>
+                    <span class="kind"><?= icon('external', 'icon-sm') ?></span>
+                </a>
+            <?php endforeach; ?>
+        </div>
+        <?php endif; ?>
+    </section>
+</div>
+<?php require INC_DIR . '/layout/footer.php'; ?>

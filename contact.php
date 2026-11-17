@@ -1,69 +1,87 @@
-<!DOCTYPE html>
-<html lang="en" class="scroll-smooth">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Contact | F1SITE.NL</title>
-    <?php include 'navigatie/head.php'; ?>
-    <style>
-        .elite-card { @apply bg-f1-card p-8 md:p-12 rounded-[2.5rem] border border-white/5 shadow-2xl; }
-    </style>
-</head>
-<body class="bg-pattern font-sans">
-    <?php include 'navigatie/header.php'; ?>
-    <main class="max-w-3xl mx-auto px-6 py-16 flex-grow">
-        <div class="mb-16 text-center" data-aos="fade-down">
-            <h1 class="text-6xl md:text-8xl font-oswald font-black uppercase italic tracking-tighter leading-none mb-4">
-                RADIO <span class="text-f1-red">CHECK</span>
-            </h1>
-        </div>
-        <div class="elite-card relative overflow-hidden" data-aos="fade-up">
-            <div id="status-box" class="hidden mb-8 p-5 rounded-xl border italic font-bold uppercase tracking-widest text-xs text-center"></div>
+<?php
+declare(strict_types=1);
+require __DIR__ . '/includes/bootstrap.php';
+start_session();
 
-            <h2 class="text-4xl font-oswald font-black uppercase italic tracking-tighter mb-8 border-l-4 border-f1-red pl-6">
-                Send a <span class="text-f1-red">Message</span>
-            </h2>
-            
-            <form class="space-y-4" id="contact-form" action="contact_connect" method="post">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <input class="w-full bg-black/40 border-l-2 border-white/10 p-5 text-white focus:border-f1-red transition-all outline-none italic text-sm placeholder:text-white/20" 
-                           type="text" name="contact_name" placeholder="YOUR NAME" required>
-                    <input class="w-full bg-black/40 border-l-2 border-white/10 p-5 text-white focus:border-f1-red transition-all outline-none italic text-sm placeholder:text-white/20" 
-                           type="email" name="contact_email" placeholder="YOUR EMAIL" required>
-                </div>
-                <input class="w-full bg-black/40 border-l-2 border-white/10 p-5 text-white focus:border-f1-red transition-all outline-none italic text-sm placeholder:text-white/20" 
-                       type="text" name="contact_subject" placeholder="SUBJECT" required>
-                <textarea class="w-full bg-black/40 border-l-2 border-white/10 p-5 text-white focus:border-f1-red transition-all outline-none italic text-sm placeholder:text-white/20 min-h-[150px] resize-none" 
-                          name="contact_message" placeholder="TYPE YOUR MESSAGE HERE..." required></textarea>
-                <div class="flex justify-end pt-4">
-                    <button type="submit" class="group relative flex items-center gap-4 bg-transparent border-2 border-f1-red px-10 py-4 overflow-hidden transition-all hover:bg-f1-red">
-                        <span class="relative z-10 text-xs font-black uppercase tracking-[0.3em] text-white">
-                            Transmit Data
-                        </span>
-                        <svg class="relative z-10 w-5 h-5 text-f1-red group-hover:text-white group-hover:translate-x-2 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M13 7l5 5m0 0l-5 5m5-5H6" />
-                        </svg>
-                    </button>
-                </div>
-            </form>
-        </div>
-    </main>
-    <?php include 'navigatie/footer.php'; ?>
-    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            AOS.init({ duration: 1000, once: true });
-            window.toggleMenu = () => { 
-                document.getElementById('mobile-menu').classList.toggle('active'); 
-            };
-            const params = new URLSearchParams(window.location.search);
-            if (params.get('status') === 'success') {
-                const box = document.getElementById('status-box');
-                box.textContent = "Message successfully transmitted!";
-                box.classList.remove('hidden');
-                box.classList.add('bg-green-500/10', 'border-green-500/50', 'text-green-500');
-            }
-        });
-    </script>
-</body>
-</html>
+$errors = [];
+$old = ['name' => '', 'email' => '', 'subject' => '', 'message' => ''];
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    foreach ($old as $k => $_) {
+        $old[$k] = trim((string)($_POST[$k] ?? ''));
+    }
+
+    if (!csrf_valid()) {
+        $errors[] = 'Your session expired. Please submit the form again.';
+    }
+    // Honeypot field: real visitors never fill it in.
+    if (!empty($_POST['website'])) {
+        redirect(url('contact.php'));
+    }
+    if (time() - (int)($_SESSION['contact_last'] ?? 0) < 60) {
+        $errors[] = 'Please wait a minute before sending another message.';
+    }
+    if (mb_strlen($old['name']) < 2 || mb_strlen($old['name']) > 100) {
+        $errors[] = 'Please enter your name.';
+    }
+    if (!filter_var($old['email'], FILTER_VALIDATE_EMAIL) || mb_strlen($old['email']) > 200) {
+        $errors[] = 'Please enter a valid email address.';
+    }
+    if (mb_strlen($old['subject']) < 2 || mb_strlen($old['subject']) > 150) {
+        $errors[] = 'Please enter a subject.';
+    }
+    if (mb_strlen($old['message']) < 10 || mb_strlen($old['message']) > 5000) {
+        $errors[] = 'Your message should be between 10 and 5,000 characters.';
+    }
+
+    if (!$errors) {
+        try {
+            db()->prepare('INSERT INTO contact (contact_name, contact_email, contact_subject, contact_message) VALUES (?, ?, ?, ?)')
+                ->execute([$old['name'], $old['email'], $old['subject'], $old['message']]);
+            $_SESSION['contact_last'] = time();
+            flash('success', 'Thanks — your message has been sent. We usually reply within a few days.');
+            redirect(url('contact.php'));
+        } catch (PDOException $e) {
+            error_log('Contact form failed: ' . $e->getMessage());
+            $errors[] = 'Something went wrong while sending your message. Please try again later.';
+        }
+    }
+}
+
+$page = [
+    'title'       => 'Contact',
+    'description' => 'Questions, corrections or feedback about F1SITE.NL? Send us a message.',
+];
+require INC_DIR . '/layout/header.php';
+?>
+<div class="container" style="max-width: 760px">
+    <header class="page-head">
+        <div class="eyebrow">Get in touch</div>
+        <h1 class="page-title">Contact</h1>
+        <p class="page-lead">Spotted an error, have a suggestion or a business enquiry? Send a message and we will get back to you.</p>
+    </header>
+
+    <section class="section" style="padding-top: 16px">
+        <?php if ($errors): ?>
+            <div class="alert alert-error mb-4" role="alert">
+                <?= icon('alert') ?>
+                <div><?php foreach ($errors as $err): ?><div><?= e($err) ?></div><?php endforeach; ?></div>
+            </div>
+        <?php endif; ?>
+        <form class="card card-pad stack" method="post" action="<?= e(url('contact.php')) ?>" novalidate>
+            <?= csrf_field() ?>
+            <div class="sr-only" aria-hidden="true"><label for="website">Website</label><input id="website" name="website" tabindex="-1" autocomplete="off"></div>
+            <div class="grid-2" style="gap: 16px">
+                <div class="field"><label for="name">Name</label><input class="input" id="name" name="name" value="<?= e($old['name']) ?>" required maxlength="100" autocomplete="name"></div>
+                <div class="field"><label for="email">Email</label><input class="input" id="email" type="email" name="email" value="<?= e($old['email']) ?>" required maxlength="200" autocomplete="email"></div>
+            </div>
+            <div class="field"><label for="subject">Subject</label><input class="input" id="subject" name="subject" value="<?= e($old['subject']) ?>" required maxlength="150"></div>
+            <div class="field"><label for="message">Message</label><textarea class="textarea" id="message" name="message" required minlength="10" maxlength="5000" rows="7"><?= e($old['message']) ?></textarea></div>
+            <div class="spread">
+                <p class="text-xs subtle">We only use your details to reply. See our <a href="<?= e(url('privacy-en.php')) ?>">privacy policy</a>.</p>
+                <button class="btn btn-primary" type="submit"><?= icon('mail', 'icon-sm') ?> Send message</button>
+            </div>
+        </form>
+    </section>
+</div>
+<?php require INC_DIR . '/layout/footer.php'; ?>

@@ -1,135 +1,171 @@
 <?php
-require_once 'db_config.php';
-/** @var PDO $pdo */
-$drivers = [];
-try {
-    $stmt = $pdo->query("SELECT driver_id, first_name, last_name, team_name FROM drivers WHERE is_active = 1 ORDER BY last_name ASC");
-    $drivers = $stmt->fetchAll(PDO::FETCH_ASSOC);
-} catch (PDOException $e) {
-    error_log("Compare page DB error: " . $e->getMessage());
+declare(strict_types=1);
+require __DIR__ . '/includes/bootstrap.php';
+
+$all = array_values(array_filter(db_drivers(), static fn($d) => (int)$d['is_active'] === 1));
+usort($all, static fn($a, $b) => strcmp($a['last_name'], $b['last_name']));
+$byId = array_column($all, null, 'driver_id');
+
+// Default comparison: the top two of the championship.
+$season = latest_results_season();
+$standings = f1_driver_standings($season)['rows'];
+$defaults = [];
+foreach ($standings as $row) {
+    if (($d = driver_for_api($row)) && isset($byId[$d['driver_id']])) {
+        $defaults[] = (int)$d['driver_id'];
+    }
+    if (count($defaults) === 2) {
+        break;
+    }
 }
-$d1 = isset($_GET['d1']) ? (int)$_GET['d1'] : ($drivers[0]['driver_id'] ?? 0);
-$d2 = isset($_GET['d2']) ? (int)$_GET['d2'] : ($drivers[1]['driver_id'] ?? 0);
+$id1 = int_param('d1', $defaults[0] ?? (int)($all[0]['driver_id'] ?? 0));
+$id2 = int_param('d2', $defaults[1] ?? (int)($all[1]['driver_id'] ?? 0));
+if ($id1 === $id2) {
+    foreach ($defaults as $alt) {
+        if ($alt !== $id1) { $id2 = $alt; break; }
+    }
+}
+
+$build = static function (int $id) use ($season, $standings): ?array {
+    $d = db_drivers()[$id] ?? null;
+    if (!$d) {
+        return null;
+    }
+    $apiId = api_driver_id($d);
+    $standing = null;
+    foreach ($standings as $row) {
+        if ($row['driverId'] === $apiId) { $standing = $row; }
+    }
+    $seasonRows = $apiId ? f1_driver_season($season, $apiId) : [];
+    return [
+        'db'       => $d,
+        'apiId'    => $apiId,
+        'color'    => safe_color($d['team_color'], '#e10600'),
+        'standing' => $standing,
+        'season'   => $seasonRows,
+        'summary'  => season_summary($seasonRows),
+        'career'   => $apiId ? f1_driver_career($apiId) : null,
+    ];
+};
+$a = $build($id1);
+$b = $build($id2);
+
+// Direct duels in races both drivers started this season.
+$duel = ['race' => [0, 0], 'quali' => [0, 0], 'races' => 0];
+if ($a && $b) {
+    foreach ($a['season'] as $round => $ra) {
+        $rb = $b['season'][$round] ?? null;
+        if (!$rb) {
+            continue;
+        }
+        $duel['races']++;
+        $duel['race'][$ra['result']['position'] < $rb['result']['position'] ? 0 : 1]++;
+        if ($ra['quali'] && $rb['quali']) {
+            $duel['quali'][$ra['quali']['position'] < $rb['quali']['position'] ? 0 : 1]++;
+        }
+    }
+}
+
+$rows = [];
+if ($a && $b) {
+    $rows = [
+        ["$season season", null, null, null],
+        ['Championship position', $a['standing']['position'] ?? null, $b['standing']['position'] ?? null, false],
+        ['Points', $a['standing']['points'] ?? $a['summary']['points'], $b['standing']['points'] ?? $b['summary']['points'], true],
+        ['Wins', $a['summary']['wins'], $b['summary']['wins'], true],
+        ['Podiums', $a['summary']['podiums'], $b['summary']['podiums'], true],
+        ['Pole positions', $a['summary']['poles'], $b['summary']['poles'], true],
+        ['Fastest laps', $a['summary']['fastestLaps'], $b['summary']['fastestLaps'], true],
+        ['Average finish', $a['summary']['avgFinish'], $b['summary']['avgFinish'], false],
+        ['Best finish', $a['summary']['best'], $b['summary']['best'], false],
+        ['Retirements', $a['summary']['dnfs'], $b['summary']['dnfs'], false],
+        ['Career', null, null, null],
+        ['World titles', (int)$a['db']['championships_won'], (int)$b['db']['championships_won'], true],
+        ['Grands Prix', $a['career']['races'] ?? null, $b['career']['races'] ?? null, true],
+        ['Wins', $a['career']['wins'] ?? null, $b['career']['wins'] ?? null, true],
+        ['Podiums', $a['career']['podiums'] ?? null, $b['career']['podiums'] ?? null, true],
+        ['Pole positions', $a['career']['poles'] ?? null, $b['career']['poles'] ?? null, true],
+        ['Age', age_from($a['db']['date_of_birth']), age_from($b['db']['date_of_birth']), null],
+    ];
+}
+
+$title = ($a && $b) ? "{$a['db']['last_name']} vs {$b['db']['last_name']}" : 'Compare drivers';
+$page = [
+    'title'       => "$title — Driver comparison",
+    'description' => 'Compare two Formula 1 drivers head to head: season results, direct duels, career wins, podiums and pole positions.',
+    'nav'         => 'compare',
+];
+require INC_DIR . '/layout/header.php';
+
+$select = static function (string $name, int $selected) use ($all): string {
+    $html = '<select class="select" name="' . e($name) . '" id="' . e($name) . '" data-autosubmit>';
+    foreach ($all as $d) {
+        $html .= '<option value="' . (int)$d['driver_id'] . '"' . ((int)$d['driver_id'] === $selected ? ' selected' : '') . '>' . e($d['first_name'] . ' ' . $d['last_name']) . ($d['team_name'] ? ' — ' . e($d['team_name']) : '') . '</option>';
+    }
+    return $html . '</select>';
+};
 ?>
-<!DOCTYPE html>
-<html lang="en" class="scroll-smooth">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Driver Comparison | F1SITE.NL</title>
-    <meta name="description" content="Compare two Formula 1 drivers side by side: season performance, career stats and more." />
-    <?php include 'navigatie/head.php'; ?>
-    <style>
-        .f1-border { position: relative; }
-        .f1-border::before { content: ""; position: absolute; top: 0; left: 0; width: 45px; height: 4px; background: #E10600; z-index: 10; }
-        .vs-badge { background: radial-gradient(circle, #E10600 0%, #7a0300 100%); }
-        select.driver-select { appearance: none; -webkit-appearance: none; }
-        .stat-row:nth-child(odd) { background: rgba(255,255,255,0.02); }
-    </style>
-</head>
-<body class="bg-pattern">
-    <?php include 'navigatie/header.php'; ?>
-    <main class="max-w-6xl mx-auto px-6 py-12">
-        <section class="mb-12" data-aos="fade-down">
-            <h2 class="text-4xl md:text-6xl font-oswald font-black uppercase italic tracking-tighter leading-none">
-                DRIVER <span class="text-f1-red">COMPARISON</span>
-            </h2>
-            <p class="text-gray-500 text-xs font-black uppercase tracking-[0.4em] mt-4 flex items-center gap-2">
-                <span class="w-8 h-[1px] bg-f1-red"></span> Head-to-head stats
-            </p>
-        </section>
+<div class="container" style="max-width: 980px">
+    <header class="page-head">
+        <div class="eyebrow">Head to head</div>
+        <h1 class="page-title">Compare drivers</h1>
+        <p class="page-lead">Pick two drivers to compare their <?= e($season) ?> season and their careers side by side.</p>
+    </header>
 
-        <section class="grid grid-cols-1 md:grid-cols-[1fr_auto_1fr] gap-4 items-center mb-12" data-aos="fade-up">
-            <select id="select-d1" class="driver-select w-full bg-f1-card border border-white/10 rounded-2xl px-6 py-4 font-oswald font-bold uppercase italic text-white focus:outline-none focus:border-f1-red">
-                <?php foreach ($drivers as $d): ?>
-                    <option value="<?php echo $d['driver_id']; ?>" <?php echo ($d['driver_id'] == $d1) ? 'selected' : ''; ?>><?php echo htmlspecialchars($d['first_name'] . ' ' . $d['last_name']); ?></option>
-                <?php endforeach; ?>
-            </select>
-            <div class="vs-badge w-14 h-14 rounded-full flex items-center justify-center text-white font-oswald font-black italic mx-auto shrink-0">VS</div>
-            <select id="select-d2" class="driver-select w-full bg-f1-card border border-white/10 rounded-2xl px-6 py-4 font-oswald font-bold uppercase italic text-white focus:outline-none focus:border-f1-red">
-                <?php foreach ($drivers as $d): ?>
-                    <option value="<?php echo $d['driver_id']; ?>" <?php echo ($d['driver_id'] == $d2) ? 'selected' : ''; ?>><?php echo htmlspecialchars($d['first_name'] . ' ' . $d['last_name']); ?></option>
-                <?php endforeach; ?>
-            </select>
-        </section>
-
-        <section id="compare-content" class="min-h-[400px]">
-            <div class="flex flex-col items-center justify-center p-20">
-                <div class="w-12 h-12 border-4 border-f1-red border-t-transparent rounded-full animate-spin"></div>
+    <section class="section" style="padding-top: 16px">
+        <form class="card card-pad" method="get" action="<?= e(url('compare.php')) ?>">
+            <div class="compare-head">
+                <div class="field"><label for="d1">Driver 1</label><?= $select('d1', $id1) ?></div>
+                <a class="vs" href="<?= e(url('compare.php', ['d1' => $id2, 'd2' => $id1])) ?>" title="Swap drivers" aria-label="Swap drivers">VS</a>
+                <div class="field"><label for="d2">Driver 2</label><?= $select('d2', $id2) ?></div>
             </div>
-        </section>
-    </main>
+            <noscript><button class="btn btn-primary mt-4">Compare</button></noscript>
+        </form>
 
-    <?php include 'navigatie/footer.php'; ?>
-    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
-    <script>
-        const content = document.getElementById('compare-content');
-        const select1 = document.getElementById('select-d1');
-        const select2 = document.getElementById('select-d2');
+        <?php if ($a && $b): ?>
+        <div class="card card-pad mt-6">
+            <div class="compare-head mb-6">
+                <?php foreach ([$a, $b] as $i => $x): $d = $x['db']; ?>
+                    <?php if ($i === 1): ?><span></span><?php endif; ?>
+                    <a class="compare-driver link-plain" href="<?= e(driver_url($d)) ?>" style="--c: <?= e($x['color']) ?>">
+                        <?php if ($d['image']): ?><img class="avatar" src="<?= e($d['image']) ?>" alt=""><?php endif; ?>
+                        <h2><?= e($d['last_name']) ?></h2>
+                        <span class="team-name text-sm"><span class="swatch"></span><?= e($d['team_name'] ?? '—') ?> · #<?= e($d['driver_number']) ?></span>
+                    </a>
+                <?php endforeach; ?>
+            </div>
 
-        function statRow(label, v1, v2, higherIsBetter = true) {
-            const n1 = parseFloat(v1) || 0, n2 = parseFloat(v2) || 0;
-            let c1 = 'text-white', c2 = 'text-white';
-            if (n1 !== n2) {
-                const win1 = higherIsBetter ? n1 > n2 : n1 < n2;
-                c1 = win1 ? 'text-f1-red' : 'text-gray-500';
-                c2 = win1 ? 'text-gray-500' : 'text-f1-red';
-            }
-            return `<div class="stat-row grid grid-cols-3 items-center px-6 py-4 rounded-xl">
-                <span class="font-oswald font-black text-xl italic ${c1} text-left">${v1 ?? '–'}</span>
-                <span class="text-[10px] font-black uppercase tracking-widest text-gray-500 text-center">${label}</span>
-                <span class="font-oswald font-black text-xl italic ${c2} text-right">${v2 ?? '–'}</span>
-            </div>`;
-        }
+            <?php if ($duel['races']): ?>
+            <div class="h2h mb-6">
+                <?php foreach (['Ahead in races' => $duel['race'], 'Ahead in qualifying' => $duel['quali']] as $label => [$x, $y]): $tot = $x + $y; ?>
+                    <div class="a <?= $x > $y ? 'win' : '' ?>"><?= $x ?></div>
+                    <div class="label"><?= e($label) ?></div>
+                    <div class="b <?= $y > $x ? 'win' : '' ?>"><?= $y ?></div>
+                    <div class="h2h-bar"><span style="width: <?= $tot ? round($x / $tot * 100) : 50 ?>%; background: <?= e($a['color']) ?>"></span><span style="flex: 1; background: <?= e($a['color'] === $b['color'] ? 'var(--text-subtle)' : $b['color']) ?>"></span></div>
+                <?php endforeach; ?>
+                <p class="text-xs subtle text-center" style="grid-column: 1 / -1">Based on the <?= $duel['races'] ?> races both drivers started in <?= e($season) ?>.</p>
+            </div>
+            <?php endif; ?>
 
-        function driverHeader(d) {
-            return `<div class="flex flex-col items-center text-center">
-                <div class="w-32 h-32 rounded-full overflow-hidden border-4 mb-4" style="border-color:${d.team_color}">
-                    <img src="${d.image || ''}" class="w-full h-full object-cover object-top" onerror="this.style.display='none'" alt="${d.name}">
+            <?php foreach ($rows as [$label, $va, $vb, $higherBetter]):
+                if ($va === null && $vb === null && $higherBetter === null && !in_array($label, ['Age'], true)): ?>
+                    <h3 class="text-sm subtle mt-6 mb-2" style="text-transform: uppercase; letter-spacing: .08em"><?= e($label) ?></h3>
+                <?php continue; endif;
+                $winA = $winB = false;
+                if ($higherBetter !== null && $va !== null && $vb !== null && $va != $vb) {
+                    $winA = $higherBetter ? $va > $vb : $va < $vb;
+                    $winB = !$winA;
+                } ?>
+                <div class="compare-row">
+                    <div class="v <?= $winA ? 'win' : '' ?>"><?= $va === null ? '–' : e(fmt_number($va)) ?></div>
+                    <div class="label"><?= e($label) ?></div>
+                    <div class="v <?= $winB ? 'win' : '' ?>"><?= $vb === null ? '–' : e(fmt_number($vb)) ?></div>
                 </div>
-                <h3 class="text-2xl font-oswald font-black uppercase italic">${d.name}</h3>
-                <p class="text-[10px] font-black uppercase tracking-widest mt-1" style="color:${d.team_color}">${d.team_name || 'Free Agent'} · #${d.number || '–'}</p>
-                <a href="driver-details.php?slug=${d.name.toLowerCase().replace(/\s+/g,'-')}" class="mt-3 text-[9px] text-gray-500 hover:text-white uppercase tracking-widest border-b border-white/20">Full profile →</a>
-            </div>`;
-        }
-
-        async function loadComparison() {
-            content.innerHTML = `<div class="flex flex-col items-center justify-center p-20"><div class="w-12 h-12 border-4 border-f1-red border-t-transparent rounded-full animate-spin"></div></div>`;
-            const d1 = select1.value, d2 = select2.value;
-            try {
-                const res = await fetch(`achterkant/aanpassing/api-koppelingen/compare_api.php?d1=${d1}&d2=${d2}`);
-                const data = await res.json();
-                if (!data.driver1 || !data.driver2) {
-                    content.innerHTML = `<div class="bg-f1-card border border-white/5 p-12 rounded-[2rem] text-center text-gray-500 uppercase text-xs font-black tracking-widest">Could not load driver data.</div>`;
-                    return;
-                }
-                const a = data.driver1, b = data.driver2;
-                content.innerHTML = `
-                    <div class="bg-f1-card rounded-[2.5rem] border border-white/5 p-8 md:p-12" data-aos="fade-up">
-                        <div class="grid grid-cols-2 gap-8 mb-10 pb-10 border-b border-white/5">
-                            ${driverHeader(a)}
-                            ${driverHeader(b)}
-                        </div>
-                        <div class="space-y-1">
-                            ${statRow('Season Points', a.season.points, b.season.points)}
-                            ${statRow('Season Position', a.season.position, b.season.position, false)}
-                            ${statRow('Season Wins', a.season.wins, b.season.wins)}
-                            ${statRow('Career Points', a.career_points, b.career_points)}
-                            ${statRow('Championships', a.championships_won, b.championships_won)}
-                            ${statRow('Age', a.age, b.age, false)}
-                        </div>
-                    </div>`;
-            } catch (e) {
-                content.innerHTML = `<div class="bg-f1-card border border-f1-red/30 p-12 rounded-[2rem] text-center text-f1-red uppercase text-xs font-black tracking-widest">Connection error.</div>`;
-            }
-        }
-
-        select1.addEventListener('change', loadComparison);
-        select2.addEventListener('change', loadComparison);
-        document.addEventListener('DOMContentLoaded', () => {
-            AOS.init({ duration: 800, once: true });
-            loadComparison();
-        });
-    </script>
-</body>
-</html>
+            <?php endforeach; ?>
+        </div>
+        <?php else: ?>
+            <div class="card empty mt-6"><h3>Select two drivers to compare</h3></div>
+        <?php endif; ?>
+    </section>
+</div>
+<?php require INC_DIR . '/layout/footer.php'; ?>

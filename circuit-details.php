@@ -1,196 +1,187 @@
 <?php
-require_once 'db_config.php';
-/** @var PDO $pdo */
-$circuitKey = isset($_GET['key']) ? htmlspecialchars($_GET['key']) : null;
-$circuitDetails = [];
-$message = '';
+declare(strict_types=1);
+require __DIR__ . '/includes/bootstrap.php';
 
-if ($circuitKey) {
-    try {
-        $stmt = $pdo->prepare("SELECT * FROM circuits WHERE circuit_key = :circuit_key");
-        $stmt->bindParam(':circuit_key', $circuitKey);
-        $stmt->execute();
-        $circuitDetails = $stmt->fetch(PDO::FETCH_ASSOC);
-
-        if (!$circuitDetails) {
-            $message = "Circuit not found.";
-        }
-    } catch (\PDOException $e) {
-        $message = "Error retrieving data.";
-    }
-} else {
-    $message = "No circuit selected.";
+$key = str_param('key');
+if ($key === '' || !preg_match('/^[a-z0-9_\-]{1,50}$/i', $key)) {
+    abort_404('No circuit selected.');
 }
-
-if (!is_array($circuitDetails)) { $circuitDetails = []; }
-
-$pastWinners = [];
-if ($circuitKey) {
-    $cacheDir = __DIR__ . '/cache';
-    if (!is_dir($cacheDir)) mkdir($cacheDir, 0777, true);
-    $cacheFile = $cacheDir . "/winners_{$circuitKey}.json";
-    $json = null;
-    if (file_exists($cacheFile) && (time() - filemtime($cacheFile) < 86400)) {
-        $json = file_get_contents($cacheFile);
-    } else {
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, "https://api.jolpi.ca/ergast/f1/circuits/{$circuitKey}/results/1.json?limit=8&order=season&sort=desc");
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
-        curl_setopt($ch, CURLOPT_TIMEOUT, 6);
-        curl_setopt($ch, CURLOPT_USERAGENT, 'F1Site-Bot/1.0');
-        $json = curl_exec($ch);
-        if ($json) file_put_contents($cacheFile, $json);
-    }
-    $winnersData = $json ? json_decode($json, true) : null;
-    if (isset($winnersData['MRData']['RaceTable']['Races'])) {
-        $races = $winnersData['MRData']['RaceTable']['Races'];
-        usort($races, fn($a, $b) => (int)$b['season'] <=> (int)$a['season']);
-        foreach (array_slice($races, 0, 6) as $race) {
-            $res = $race['Results'][0] ?? null;
-            if ($res) {
-                $pastWinners[] = [
-                    'year' => $race['season'],
-                    'driver' => $res['Driver']['givenName'] . ' ' . $res['Driver']['familyName'],
-                    'team' => $res['Constructor']['name'],
-                ];
-            }
-        }
-    }
+$years = array_map('intval', array_column(db_all('SELECT race_year FROM circuits WHERE circuit_key = ? ORDER BY race_year DESC', [$key]), 'race_year'));
+if (!$years) {
+    abort_404('We could not find this circuit.');
 }
+$year = int_param('year', in_array(current_season(), $years, true) ? current_season() : $years[0]);
+$c = db_one('SELECT * FROM circuits WHERE circuit_key = ? AND race_year = ?', [$key, $year])
+    ?? db_one('SELECT * FROM circuits WHERE circuit_key = ? ORDER BY race_year DESC LIMIT 1', [$key]);
+$year = (int)$c['race_year'];
+
+$sessions = weekend_sessions($c);
+$now = new DateTimeImmutable('now', new DateTimeZone('UTC'));
+$raceAt = db_datetime($c['race_datetime']);
+$apiRace = api_race_for_calendar($c);
+$hasResults = $apiRace && $raceAt && $raceAt < $now && f1_race($year, $apiRace['round']);
+$showWeather = $raceAt && $raceAt > $now && $raceAt->getTimestamp() - time() < 15 * 86400;
+
+$winners = $apiRace ? f1_circuit_winners($apiRace['circuitId']) : [];
+$mostWins = [];
+foreach ($winners as $w) {
+    $mostWins[$w['driverId']] ??= ['row' => $w, 'n' => 0];
+    $mostWins[$w['driverId']]['n']++;
+}
+usort($mostWins, static fn($a, $b) => $b['n'] <=> $a['n']);
+
+$highlights = array_filter(array_map('trim', explode(',', (string)($c['highlights'] ?? ''))));
+
+$page = [
+    'title'       => "{$c['grandprix']} $year — {$c['title']}",
+    'description' => "{$c['grandprix']} $year at {$c['title']}: weekend schedule in your timezone, circuit facts, lap record and past winners.",
+    'nav'         => 'schedule',
+    'image'       => $c['map_url'] ?: null,
+    'schema'      => [
+        '@context'  => 'https://schema.org',
+        '@type'     => 'SportsEvent',
+        'name'      => "{$c['grandprix']} $year",
+        'startDate' => $raceAt?->format(DATE_ATOM),
+        'sport'     => 'Formula 1',
+        'location'  => ['@type' => 'Place', 'name' => $c['title'], 'address' => $c['location']],
+    ],
+];
+if (!$page['image']) {
+    unset($page['image']);
+}
+require INC_DIR . '/layout/header.php';
 ?>
-<!DOCTYPE html>
-<html lang="en" class="scroll-smooth">
-<head>
-    <?php include 'navigatie/head.php'; ?>
+<div class="container">
+    <header class="page-head">
+        <nav class="breadcrumb" aria-label="Breadcrumb">
+            <a href="<?= e(url('kalender.php', ['year' => $year])) ?>"><?= e($year) ?> calendar</a><span class="sep">/</span><span><?= e($c['grandprix']) ?></span>
+        </nav>
+        <div class="spread">
+            <div>
+                <div class="eyebrow">Round <?= (int)$c['calendar_order'] ?> · <?= e(weekend_range($c)) ?> <?= e($year) ?></div>
+                <h1 class="page-title"><?= e($c['grandprix']) ?></h1>
+                <p class="page-lead row" style="gap: 8px">
+                    <?php if (!empty($c['country_flag_url'])): ?><img class="flag" src="<?= e($c['country_flag_url']) ?>" alt=""><?php endif; ?>
+                    <?= e($c['title']) ?> · <?= e($c['location']) ?>
+                </p>
+            </div>
+            <div class="row-wrap">
+                <?php if ($hasResults): ?>
+                    <a class="btn btn-primary" href="<?= e(race_url($year, $apiRace['round'])) ?>"><?= icon('flag', 'icon-sm') ?> Race results</a>
+                <?php endif; ?>
+                <?php if (count($years) > 1): ?>
+                <form method="get" action="<?= e(url('circuit-details.php')) ?>">
+                    <input type="hidden" name="key" value="<?= e($key) ?>">
+                    <label class="sr-only" for="year">Season</label>
+                    <select class="select select-sm" id="year" name="year" data-autosubmit>
+                        <?php foreach ($years as $y): ?><option value="<?= $y ?>"<?= $y === $year ? ' selected' : '' ?>><?= $y ?></option><?php endforeach; ?>
+                    </select>
+                </form>
+                <?php endif; ?>
+            </div>
+        </div>
+    </header>
 
-    <style>
-        .header-glass { background: rgba(11, 11, 15, 0.9); backdrop-filter: blur(15px); border-bottom: 1px solid rgba(225, 6, 0, 0.3); }
-        .stat-card { background: rgba(22, 22, 28, 0.6); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.05); transition: all 0.3s ease; }
-        .stat-card:hover { border-color: rgba(225, 6, 0, 0.4); transform: translateY(-2px); }
-    </style>
-</head>
-<body class="bg-pattern">
-    <?php include 'navigatie/header.php'; ?> 
-    <main class="max-w-7xl mx-auto px-6 py-12">
-        <?php if ($circuitDetails && $circuitKey): ?>
-            <section class="mb-12" data-aos="fade-down">
-                <div class="flex flex-col md:flex-row items-end justify-between gap-6">
-                    <div>
-                        <div class="flex items-center gap-3 mb-4">
-                            <?php if (!empty($circuitDetails['country_flag_url'])): ?>
-                                <img src="<?php echo htmlspecialchars($circuitDetails['country_flag_url']); ?>" class="w-10 h-auto shadow-lg" alt="Flag">
-                            <?php endif; ?>
-                            <span class="text-f1-red font-black text-xs uppercase tracking-[0.4em] italic">Circuit Profile</span>
-                        </div>
-                        <h1 class="text-5xl md:text-7xl font-oswald font-black uppercase italic tracking-tighter leading-none">
-                            <?php echo htmlspecialchars($circuitDetails['grandprix']); ?>
-                        </h1>
-                        <p class="text-gray-400 text-xl mt-4 font-light uppercase tracking-widest"><?php echo htmlspecialchars($circuitDetails['location']); ?></p>
+    <section class="section">
+        <div class="layout-sidebar">
+            <div class="stack-lg">
+                <?php if ($sessions): ?>
+                <div class="card">
+                    <div class="card-head">
+                        <h2>Weekend schedule</h2>
+                        <a class="btn btn-ghost btn-sm" href="<?= e(url('calendar.ics.php', ['year' => $year])) ?>"><?= icon('calendar', 'icon-sm') ?> Add to calendar</a>
                     </div>
-                    <div class="hidden md:block">
-                        <a href="kalender.php" class="text-[10px] font-black uppercase tracking-[0.3em] text-gray-500 hover:text-white transition flex items-center gap-2">
-                           <span class="text-f1-red text-xl">←</span> Back to schedule
-                        </a>
-                    </div>
-                </div>
-            </section>
-
-            <section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
-                <div class="stat-card p-6 rounded-2xl f1-border" data-aos="fade-up" data-aos-delay="0">
-                    <span class="text-[10px] font-black uppercase tracking-widest text-gray-500">First Grand Prix</span>
-                    <p class="text-2xl font-oswald font-black italic mt-2"><?php echo htmlspecialchars($circuitDetails['first_gp_year'] ?? 'N/A'); ?></p>
-                </div>
-                <div class="stat-card p-6 rounded-2xl" data-aos="fade-up" data-aos-delay="100">
-                    <span class="text-[10px] font-black uppercase tracking-widest text-gray-500">Number of Laps</span>
-                    <p class="text-2xl font-oswald font-black italic mt-2"><?php echo htmlspecialchars($circuitDetails['lap_count'] ?? 'N/A'); ?></p>
-                </div>
-                <div class="stat-card p-6 rounded-2xl" data-aos="fade-up" data-aos-delay="200">
-                    <span class="text-[10px] font-black uppercase tracking-widest text-gray-500">Circuit Length</span>
-                    <p class="text-2xl font-oswald font-black italic mt-2"><?php echo number_format($circuitDetails['circuit_length_km'] ?? 0, 3, '.', ','); ?> <span class="text-xs text-f1-red">KM</span></p>
-                </div>
-                <div class="stat-card p-6 rounded-2xl" data-aos="fade-up" data-aos-delay="300">
-                    <span class="text-[10px] font-black uppercase tracking-widest text-gray-500">Race Distance</span>
-                    <p class="text-2xl font-oswald font-black italic mt-2"><?php echo number_format($circuitDetails['race_distance_km'] ?? 0, 3, '.', ','); ?> <span class="text-xs text-f1-red">KM</span></p>
-                </div>
-            </section>
-
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-12 items-start mb-12">
-                <div class="lg:col-span-2 order-2 lg:order-1" data-aos="zoom-in">
-                    <div class="bg-f1-card p-8 md:p-12 rounded-[3rem] border border-white/5 relative overflow-hidden group">
-                        <div class="absolute inset-0 bg-gradient-to-tr from-f1-red/5 to-transparent"></div>
-                        <?php if (!empty($circuitDetails['map_url'])): ?>
-                            <img src="<?php echo htmlspecialchars($circuitDetails['map_url']); ?>" class="relative z-10 w-full h-auto drop-shadow-[0_0_30px_rgba(0,0,0,0.5)] transform group-hover:scale-105 transition-transform duration-700" alt="Track Map">
-                        <?php endif; ?>
-                    </div>
-
-                    <?php if (!empty($pastWinners)): ?>
-                    <div class="mt-8 bg-f1-card rounded-[2rem] border border-white/5 overflow-hidden" data-aos="fade-up">
-                        <div class="p-6 bg-white/5 border-b border-white/5">
-                            <span class="text-xs font-black uppercase tracking-widest text-white">Past Winners</span>
-                        </div>
-                        <table class="w-full text-left">
-                            <tbody class="divide-y divide-white/5">
-                                <?php foreach ($pastWinners as $w): ?>
-                                <tr class="hover:bg-white/[0.02] transition-colors">
-                                    <td class="px-6 py-4 font-oswald font-black italic text-xl text-f1-red w-20"><?php echo htmlspecialchars($w['year']); ?></td>
-                                    <td class="px-6 py-4 text-white font-bold text-sm"><?php echo htmlspecialchars($w['driver']); ?></td>
-                                    <td class="px-6 py-4 text-right text-[10px] text-gray-500 uppercase font-black tracking-widest"><?php echo htmlspecialchars($w['team']); ?></td>
+                    <div class="table-wrap">
+                        <table class="table">
+                            <tbody>
+                            <?php foreach ($sessions as $s): $past = $s['at'] < $now; ?>
+                                <tr<?= $past ? ' style="opacity:.6"' : '' ?>>
+                                    <td class="fw-600"><?= e($s['label']) ?></td>
+                                    <td><?= local_time($s['at'], 'date') ?></td>
+                                    <td class="num fw-600"><?= local_time($s['at'], 'time') ?></td>
+                                    <td class="num" style="width: 110px"><?= $past ? '<span class="badge">Done</span>' : '' ?></td>
                                 </tr>
-                                <?php endforeach; ?>
+                            <?php endforeach; ?>
                             </tbody>
                         </table>
                     </div>
+                    <?php if ($showWeather && $apiRace): ?>
+                        <div class="card-foot"><div class="weather" style="margin: 0" data-weather="<?= e(url('api/weather.php', ['year' => $year, 'round' => $c['calendar_order']])) ?>" hidden></div></div>
+                    <?php endif; ?>
+                </div>
+                <?php endif; ?>
+
+                <?php if (!empty($c['map_url'])): ?>
+                <div class="card card-pad" style="background: #fff">
+                    <img src="<?= e($c['map_url']) ?>" alt="Track layout of <?= e($c['title']) ?>" style="margin: 0 auto; max-height: 520px">
+                </div>
+                <?php endif; ?>
+
+                <?php if (!empty($c['description']) || $highlights): ?>
+                <div class="card card-pad prose" style="max-width: none">
+                    <h2 style="margin-top: 0">About the circuit</h2>
+                    <?php if (!empty($c['description'])): ?><p><?= nl2br(e($c['description'])) ?></p><?php endif; ?>
+                    <?php if ($highlights): ?>
+                        <div class="chips mt-3"><?php foreach ($highlights as $h): ?><span class="chip"><?= e($h) ?></span><?php endforeach; ?></div>
+                    <?php endif; ?>
+                </div>
+                <?php endif; ?>
+
+                <?php if ($winners): ?>
+                <div class="card">
+                    <div class="card-head"><h2>Previous winners</h2><span class="meta"><?= count($winners) ?> races at this circuit</span></div>
+                    <div class="table-wrap">
+                        <table class="table table-compact">
+                            <thead><tr><th>Year</th><th>Driver</th><th class="hide-sm">Team</th><th class="num hide-sm">Time</th></tr></thead>
+                            <tbody>
+                            <?php foreach (array_slice($winners, 0, 12) as $w): ?>
+                                <tr>
+                                    <td><a class="fw-600" href="<?= e(race_url($w['season'], $w['round'])) ?>"><?= (int)$w['season'] ?></a></td>
+                                    <td><div class="driver-cell"><span class="swatch" style="--c: <?= e($w['color']) ?>"></span><?= driver_link($w) ?></div></td>
+                                    <td class="hide-sm"><?= team_link($w) ?></td>
+                                    <td class="num mono hide-sm muted"><?= e($w['time'] ?? '') ?></td>
+                                </tr>
+                            <?php endforeach; ?>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <?php endif; ?>
+            </div>
+
+            <aside class="stack">
+                <div class="card card-pad">
+                    <h2 class="text-lg mb-4">Circuit facts</h2>
+                    <dl class="facts" style="grid-template-columns: 1fr 1fr">
+                        <div class="fact"><dt>First Grand Prix</dt><dd><?= e($c['first_gp_year'] ?: '–') ?></dd></div>
+                        <div class="fact"><dt>Number of laps</dt><dd><?= e($c['lap_count'] ?: '–') ?></dd></div>
+                        <div class="fact"><dt>Circuit length</dt><dd><?= $c['circuit_length_km'] > 0 ? e(number_format((float)$c['circuit_length_km'], 3)) . ' km' : '–' ?></dd></div>
+                        <div class="fact"><dt>Race distance</dt><dd><?= $c['race_distance_km'] > 0 ? e(number_format((float)$c['race_distance_km'], 3)) . ' km' : '–' ?></dd></div>
+                    </dl>
+                    <?php if (!empty($c['lap_record'])): ?>
+                        <hr class="divider">
+                        <div class="fact"><dt class="text-xs subtle">Lap record</dt><dd class="fw-600 mono"><?= e($c['lap_record']) ?></dd></div>
                     <?php endif; ?>
                 </div>
 
-                <div class="order-1 lg:order-2 space-y-8" data-aos="fade-left">
-                    <div class="bg-f1-card p-8 rounded-[2rem] border border-white/5">
-                        <h3 class="text-xl font-oswald font-black uppercase italic mb-6 flex items-center gap-2">
-                            <span class="w-2 h-2 bg-f1-red rounded-full"></span> Technical Specs
-                        </h3>
-                        <div class="space-y-6">
-                            <div>
-                                <span class="text-[9px] font-black uppercase tracking-widest text-gray-500 block mb-1">Official Name</span>
-                                <p class="text-sm font-bold text-gray-200"><?php echo htmlspecialchars($circuitDetails['title'] ?? 'N/A'); ?></p>
+                <?php if ($mostWins && $mostWins[0]['n'] > 1): ?>
+                <div class="card card-pad">
+                    <h2 class="text-lg mb-4">Most wins here</h2>
+                    <div class="stack" style="gap: 10px">
+                        <?php foreach (array_slice($mostWins, 0, 5) as $m): ?>
+                            <div class="spread text-sm">
+                                <span class="row" style="gap: 8px"><span class="swatch" style="--c: <?= e($m['row']['color']) ?>"></span><?= driver_link($m['row']) ?></span>
+                                <span class="fw-700"><?= (int)$m['n'] ?></span>
                             </div>
-                            <div>
-                                <span class="text-[9px] font-black uppercase tracking-widest text-gray-500 block mb-1">Lap Record</span>
-                                <p class="text-xl font-oswald font-black italic text-f1-red"><?php echo htmlspecialchars($circuitDetails['lap_record'] ?? 'N/A'); ?></p>
-                            </div>
-                            <div>
-                                <span class="text-[9px] font-black uppercase tracking-widest text-gray-500 block mb-1">Race Start</span>
-                                <p class="text-sm font-bold text-gray-200"><?php echo $circuitDetails['race_datetime'] ? date('d-m-Y | H:i', strtotime($circuitDetails['race_datetime'])) : 'N/A'; ?></p>
-                            </div>
-                        </div>
+                        <?php endforeach; ?>
                     </div>
-                    
-                    <div class="flex flex-col gap-4">
-                        <a href="kalender.php" class="w-full bg-f1-red py-5 rounded-2xl text-center font-black uppercase text-xs tracking-widest hover:bg-white hover:text-black transition-all duration-300">
-                            Full Season Schedule
-                        </a>
-                    </div>
+                    <p class="text-xs subtle mt-3">Based on the last <?= count($winners) ?> Grands Prix held at this circuit.</p>
                 </div>
-            </div>
+                <?php endif; ?>
 
-        <?php else: ?>
-            <div class="py-20 text-center" data-aos="fade-up">
-                <div class="text-6xl mb-6">⚠️</div>
-                <h2 class="text-3xl font-oswald font-black uppercase italic italic tracking-tighter"><?php echo $message; ?></h2>
-                <a href="kalender.php" class="inline-block mt-8 text-f1-red font-black uppercase tracking-widest border-b border-f1-red pb-1">Return to base</a>
-            </div>
-        <?php endif; ?>
-        
-    </main>
-
-    <?php include 'navigatie/footer.php'; ?>
-    
-    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            AOS.init({ duration: 800, once: true });
-            window.toggleMenu = () => { document.getElementById('mobile-menu').classList.toggle('active'); };
-        });
-    </script>
-</body>
-</html>
+                <a class="btn btn-secondary w-full" href="<?= e(url('kalender.php', ['year' => $year])) ?>"><?= icon('arrow-left', 'icon-sm') ?> Back to the <?= e($year) ?> calendar</a>
+            </aside>
+        </div>
+    </section>
+</div>
+<?php require INC_DIR . '/layout/footer.php'; ?>

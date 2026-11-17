@@ -1,0 +1,6 @@
+User-agent: *
+Disallow: /api/
+Disallow: /zoek.php
+Disallow: /achterkant/
+
+Sitemap: https://f1site.nl/sitemap.xml
