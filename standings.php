@@ -56,7 +56,7 @@ require INC_DIR . '/layout/header.php';
         </div>
 
         <div id="p-drivers" role="tabpanel" aria-labelledby="t-drivers" class="stack-lg">
-            <?php $fight = f1_title_fight($year); require INC_DIR . '/partials/title-fight.php'; ?>
+            <?php title_fight_card(f1_title_fight($year)); ?>
             <div class="card table-wrap">
                 <table class="table">
                     <thead><tr><th class="w-pos">Pos</th><th>Driver</th><th class="hide-sm">Team</th><th class="num hide-sm">Wins</th><th class="hide-sm"></th><th class="num">Points</th><th class="num hide-sm">Gap</th></tr></thead>
@@ -86,7 +86,7 @@ require INC_DIR . '/layout/header.php';
 
         <?php if ($constructors['rows']): ?>
         <div id="p-constructors" role="tabpanel" aria-labelledby="t-constructors" class="stack-lg" hidden>
-            <?php $fight = f1_title_fight($year, 'constructors'); require INC_DIR . '/partials/title-fight.php'; ?>
+            <?php title_fight_card(f1_title_fight($year, 'constructors')); ?>
             <div class="card table-wrap">
                 <table class="table">
                     <thead><tr><th class="w-pos">Pos</th><th>Team</th><th class="num hide-sm">Wins</th><th class="hide-sm"></th><th class="num">Points</th><th class="num hide-sm">Gap</th></tr></thead>

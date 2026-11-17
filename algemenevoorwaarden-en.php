@@ -2,7 +2,7 @@
 declare(strict_types=1);
 require __DIR__ . '/includes/bootstrap.php';
 
-$legal = [
+legal_page([
     'eyebrow'  => 'Legal',
     'title'    => 'Terms of use',
     'intro'    => 'The conditions that apply when you visit and use F1SITE.NL.',
@@ -16,5 +16,4 @@ $legal = [
         'Privacy' => '<p>Processing of personal data is described in our <a href="' . e(url('privacy-en.php')) . '">privacy policy</a>.</p>',
         'Applicable law' => '<p>These terms are governed by Dutch law. Disputes are submitted to the competent court in the Netherlands.</p>',
     ],
-];
-require INC_DIR . '/partials/legal.php';
+]);

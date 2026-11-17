@@ -2,7 +2,7 @@
 declare(strict_types=1);
 require __DIR__ . '/includes/bootstrap.php';
 
-$legal = [
+legal_page([
     'eyebrow'  => 'Legal',
     'title'    => 'Privacy policy',
     'intro'    => 'How F1SITE.NL, operated by Webius, collects, uses and protects your personal data.',
@@ -18,5 +18,4 @@ $legal = [
         'Your rights (GDPR)' => '<ul><li>Right of access, rectification and data portability.</li><li>Right to erasure and to object to processing.</li><li>Right to withdraw your consent at any time.</li><li>Right to lodge a complaint with the Dutch Data Protection Authority (Autoriteit Persoonsgegevens).</li></ul>',
         'Contact' => '<p>For questions about this policy or to exercise your rights, please use our <a href="' . e(url('contact.php')) . '">contact form</a>.</p>',
     ],
-];
-require INC_DIR . '/partials/legal.php';
+]);

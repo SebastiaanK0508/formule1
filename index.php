@@ -112,7 +112,7 @@ require INC_DIR . '/layout/header.php';
 
     <?php $fight = f1_title_fight($season); if ($fight): ?>
     <section class="section" style="padding-bottom: 0">
-        <?php require INC_DIR . '/partials/title-fight.php'; ?>
+        <?php title_fight_card($fight); ?>
     </section>
     <?php endif; ?>
 
@@ -217,7 +217,7 @@ require INC_DIR . '/layout/header.php';
             <a class="link-more" href="<?= e(url('nieuws.php')) ?>">All news <?= icon('arrow-right', 'icon-sm') ?></a>
         </div>
         <div class="grid-3">
-            <?php foreach ($news as $article): require INC_DIR . '/partials/news-card.php'; endforeach; ?>
+            <?php foreach ($news as $article) { news_card($article); } ?>
         </div>
     </section>
     <?php endif; ?>

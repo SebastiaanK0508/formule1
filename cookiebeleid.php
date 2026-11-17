@@ -2,7 +2,7 @@
 declare(strict_types=1);
 require __DIR__ . '/includes/bootstrap.php';
 
-$legal = [
+legal_page([
     'eyebrow'  => 'Legal',
     'title'    => 'Cookie policy',
     'intro'    => 'Which cookies and browser storage F1SITE.NL uses, and how you can change your choice.',
@@ -17,5 +17,4 @@ $legal = [
             . '</tbody></table></div>',
         'Change your preferences' => '<p>You can change your choice at any time. Clicking the button below shows the cookie banner again.</p><p><button class="btn btn-secondary" type="button" data-consent-reset>Change cookie settings</button></p><p>You can also delete cookies through your browser settings.</p>',
     ],
-];
-require INC_DIR . '/partials/legal.php';
+]);

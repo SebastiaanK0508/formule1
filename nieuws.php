@@ -29,7 +29,7 @@ require INC_DIR . '/layout/header.php';
             <div class="card empty"><?= icon('newspaper', 'icon-lg') ?><h3>No news right now</h3><p>New headlines are added several times a day.</p></div>
         <?php else: ?>
             <div class="grid-3">
-                <?php foreach ($articles as $article): require INC_DIR . '/partials/news-card.php'; endforeach; ?>
+                <?php foreach ($articles as $article) { news_card($article); } ?>
             </div>
             <?php if ($pages > 1): ?>
             <nav class="pagination" aria-label="Pagination">
