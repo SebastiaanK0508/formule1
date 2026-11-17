@@ -1,7 +1,8 @@
 # Local configuration with credentials — never commit
 config.local.php
 
-# Runtime cache
+# Runtime cache and Discord notifier state
+storage/discord-state.json
 storage/cache/*
 !storage/cache/.gitkeep
 

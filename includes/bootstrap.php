@@ -59,6 +59,7 @@ require INC_DIR . '/helpers.php';
 require INC_DIR . '/db.php';
 require INC_DIR . '/http.php';
 require INC_DIR . '/f1data.php';
+require INC_DIR . '/discord.php';
 require INC_DIR . '/partials/news-card.php';
 require INC_DIR . '/partials/title-fight.php';
 require INC_DIR . '/partials/legal.php';

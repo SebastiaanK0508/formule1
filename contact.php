@@ -39,6 +39,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             db()->prepare('INSERT INTO contact (contact_name, contact_email, contact_subject, contact_message) VALUES (?, ?, ?, ?)')
                 ->execute([$old['name'], $old['email'], $old['subject'], $old['message']]);
             $_SESSION['contact_last'] = time();
+            discord_admin('📬 New contact message: ' . $old['subject'], mb_substr($old['message'], 0, 600) . (mb_strlen($old['message']) > 600 ? '…' : ''), [
+                ['name' => 'From', 'value' => $old['name'], 'inline' => true],
+            ], (string)config('admin_url', '') !== '' ? rtrim((string)config('admin_url'), '/') . '/messages.php' : null);
             flash('success', 'Thanks — your message has been sent. We usually reply within a few days.');
             redirect(url('contact.php'));
         } catch (PDOException $e) {

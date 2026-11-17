@@ -27,6 +27,13 @@ return [
     // https://newsapi.org key used by scripts/fetch-news.php
     'newsapi_key'    => '',                // F1_NEWSAPI_KEY
 
+    // Discord notifications (Server settings → Integrations → Webhooks → New webhook → Copy URL).
+    'discord' => [
+        'webhook'       => '',             // F1_DISCORD_WEBHOOK — public channel: results, previews, reminders, news
+        'admin_webhook' => '',             // F1_DISCORD_ADMIN_WEBHOOK — private channel: contact messages, cron errors
+        'post_news'     => true,           // F1_DISCORD_POST_NEWS — also post new news articles
+    ],
+
     // Show PHP errors in the browser. Never enable this in production.
     'debug'          => false,             // F1_DEBUG
 

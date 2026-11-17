@@ -20,6 +20,7 @@ Onafhankelijke Formule 1-site met live standen, uitslagen sinds 1950, coureur- e
 | Titelstrijd | Op home en standen: wie kan nog kampioen worden en wat de leider nodig heeft om het in de volgende race te beslissen |
 | Rondegrafiek | Tab op de uitslagpagina met de positie van elke coureur per ronde (vanaf 1996) |
 | Snel zoeken | `⌘K` / `Ctrl+K` of `/` opent overal een zoekvenster; `#search` in een URL opent het direct |
+| Discord | Meldingen via webhooks: uitslagen (kwalificatie, sprint, race), raceweekend-preview, herinnering 30 min voor elke sessie, kampioenen en nieuws. Contactberichten en cron-fouten naar een apart admin-kanaal |
 | LIVE-balk | Verschijnt bovenaan elke pagina zodra een sessie bezig is (of binnen 15 minuten begint) |
 | `nieuws.php`, `zoek.php`, `contact.php` | Nieuws (via NewsAPI), zoeken in coureurs/teams/races/nieuws, contactformulier met CSRF- en spambescherming |
 | `achterkant/` | Beheerpaneel: kalender, coureurs, teams, nieuws, berichten-inbox en onderhoudstaken |
@@ -64,7 +65,16 @@ Licht en donker thema, volledig responsive, `sitemap.xml`, `robots.txt`, JSON-LD
 30 4 * * *   php /pad/naar/site/scripts/prune-news.php 5     # nieuws ouder dan 5 dagen opruimen
 0 5 * * *    php /pad/naar/site/scripts/sync-sessions.php    # sessietijden van OpenF1
 15 * * * *   php /pad/naar/site/scripts/warm-cache.php       # API-cache voorverwarmen (optioneel)
+*/5 * * * *  php /pad/naar/site/scripts/discord-notify.php   # Discord-meldingen (optioneel)
 ```
+
+## Discord
+
+1. Maak in Discord een webhook aan: *Serverinstellingen → Integraties → Webhooks → Nieuwe webhook → URL kopiëren*.
+2. Zet de URL in `config.local.php` onder `'discord' => ['webhook' => '…']`. Optioneel een tweede webhook voor een privékanaal als `admin_webhook` (contactberichten en cron-fouten), en `post_news => false` om nieuws niet te posten.
+3. Stuur een testbericht via **Beheer → Onderhoud → Discord** en zet de cronjob `scripts/discord-notify.php` (elke 5 minuten) aan.
+
+De eerste run markeert bestaande uitslagen als al gepost, zodat er geen oude berichten worden gespamd. Wat al gepost is, staat in `storage/discord-state.json` (niet in git). `php scripts/discord-notify.php --dry-run` laat zien wat er gepost zou worden zonder iets te versturen.
 
 Alle taken zijn ook handmatig uit te voeren via **Beheer → Onderhoud**.
 

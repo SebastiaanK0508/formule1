@@ -34,6 +34,7 @@ function task_fetch_news(): array
 
     $stmt = db()->prepare('INSERT IGNORE INTO f1_nieuws (titel, artikel_url, publicatie_datum, afbeelding_url, source) VALUES (?, ?, ?, ?, ?)');
     $added = $skipped = 0;
+    $new = [];
     foreach ($data['articles'] ?? [] as $a) {
         $title = trim((string)($a['title'] ?? ''));
         $link = trim((string)($a['url'] ?? ''));
@@ -44,15 +45,23 @@ function task_fetch_news(): array
             $skipped++;
             continue;
         }
-        $stmt->execute([
-            mb_substr($title, 0, 255),
-            mb_substr($link, 0, 512),
-            gmdate('Y-m-d H:i:s', strtotime((string)($a['publishedAt'] ?? 'now')) ?: time()),
-            mb_substr($image, 0, 512),
-            mb_substr((string)($a['source']['name'] ?? 'News'), 0, 255),
-        ]);
-        $stmt->rowCount() ? $added++ : $skipped++;
+        $row = [
+            'titel'            => mb_substr($title, 0, 255),
+            'artikel_url'      => mb_substr($link, 0, 512),
+            'publicatie_datum' => gmdate('Y-m-d H:i:s', strtotime((string)($a['publishedAt'] ?? 'now')) ?: time()),
+            'afbeelding_url'   => mb_substr($image, 0, 512),
+            'source'           => mb_substr((string)($a['source']['name'] ?? 'News'), 0, 255),
+        ];
+        $stmt->execute(array_values($row));
+        if ($stmt->rowCount()) {
+            $added++;
+            $new[] = $row;
+        } else {
+            $skipped++;
+        }
     }
+    // Oldest first, so the newest headline ends up at the bottom of the Discord channel.
+    discord_post_news(array_reverse($new));
     return ["News fetched: $added new, $skipped skipped or already present."];
 }
 

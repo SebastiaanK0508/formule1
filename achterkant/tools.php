@@ -13,6 +13,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         'prune'  => task_prune_news(max(1, (int)($_POST['days'] ?? 5))),
         'cache'  => ['API-cache geleegd: ' . http_cache_clear() . ' bestanden verwijderd.'],
         'warm'   => task_warm_cache(),
+        'discord_test' => [
+            discord_send([['title' => '✅ F1SITE.NL is connected', 'description' => 'Race results, weekend previews, session reminders and news will be posted in this channel.', 'color' => DISCORD_RED, 'url' => url()]])
+                ? 'Testbericht verstuurd naar het publieke kanaal.' : 'Versturen mislukt — controleer de webhook-URL.',
+            discord_enabled('admin')
+                ? (discord_send([['title' => '✅ Admin notifications connected', 'description' => 'Contact messages and cron errors will be posted here.', 'color' => 0x5865F2]], 'admin') ? 'Testbericht verstuurd naar het admin-kanaal.' : 'Versturen naar admin-kanaal mislukt.')
+                : 'Geen admin-webhook ingesteld (optioneel).',
+        ],
+        'discord_dry' => discord_notify(true),
+        'discord_run' => discord_notify(),
+        'discord_last' => (static function (): array {
+            $year = latest_results_season();
+            $round = f1_driver_standings($year)['round'];
+            $embed = $round ? discord_result_embed($year, $round, 'results') : null;
+            return [$embed && discord_send([$embed]) ? "Uitslag van ronde $round ($year) gepost." : 'Kon de laatste uitslag niet posten.'];
+        })(),
         default  => ['Onbekende taak.'],
     };
 }
@@ -59,6 +74,27 @@ admin_header('Onderhoud', 'tools');
     </div>
 </div>
 
+<div class="card card-pad mt-6 stack">
+    <div class="spread">
+        <div><h2 class="text-lg">Discord</h2><p class="muted text-sm mt-1">Uitslagen, raceweekend-previews, herinneringen 30 min voor elke sessie, kampioenen en nieuws in je Discord-kanaal. Contactberichten en cron-fouten gaan naar het (optionele) admin-kanaal.</p></div>
+        <div class="row-wrap">
+            <span class="badge <?= discord_enabled() ? 'badge-green' : '' ?>">Publiek: <?= discord_enabled() ? 'actief' : 'niet ingesteld' ?></span>
+            <span class="badge <?= discord_enabled('admin') ? 'badge-green' : '' ?>">Admin: <?= discord_enabled('admin') ? 'actief' : 'niet ingesteld' ?></span>
+        </div>
+    </div>
+    <?php if (discord_enabled()): ?>
+        <div class="row-wrap">
+            <?php foreach (['discord_test' => ['Testbericht sturen', 'check'], 'discord_dry' => ['Bekijk wat er gepost zou worden', 'eye'], 'discord_run' => ['Nu controleren en posten', 'refresh'], 'discord_last' => ['Laatste race-uitslag opnieuw posten', 'flag']] as $task => [$label, $ico]): ?>
+                <form method="post"><?= csrf_field() ?><input type="hidden" name="task" value="<?= $task ?>"><button class="btn btn-secondary btn-sm" type="submit"><?= icon($ico, 'icon-sm') ?> <?= e($label) ?></button></form>
+            <?php endforeach; ?>
+        </div>
+        <?php $ds = discord_state(); ?>
+        <p class="text-xs subtle">Notifier <?= !empty($ds['initialised']) ? 'actief sinds ' . e(date('j M Y H:i', (int)$ds['initialised'])) . ' · ' . count($ds['sent'] ?? []) . ' meldingen bijgehouden' : 'nog niet gedraaid — de eerste run markeert bestaande uitslagen als al gepost' ?>.</p>
+    <?php else: ?>
+        <div class="alert alert-info"><?= icon('info') ?><div class="text-sm">Maak in Discord een webhook aan (<strong>Serverinstellingen → Integraties → Webhooks → Nieuwe webhook → URL kopiëren</strong>) en zet de URL in <code>config.local.php</code> onder <code>'discord' => ['webhook' => '…']</code>. Optioneel een tweede webhook voor een privékanaal als <code>admin_webhook</code>.</div></div>
+    <?php endif; ?>
+</div>
+
 <div class="card card-pad mt-6">
     <h2 class="text-lg mb-2">Cronjobs</h2>
     <p class="muted text-sm mb-4">Stel deze in bij je hostingprovider (pas het pad aan):</p>
@@ -67,6 +103,7 @@ admin_header('Onderhoud', 'tools');
         '30 4 * * *   php ' . ROOT_DIR . '/scripts/prune-news.php 5',
         '0 5 * * *    php ' . ROOT_DIR . '/scripts/sync-sessions.php',
         '15 * * * *   php ' . ROOT_DIR . '/scripts/warm-cache.php',
+        '*/5 * * * *  php ' . ROOT_DIR . '/scripts/discord-notify.php',
     ])) ?></pre>
 </div>
 <?php admin_footer();
