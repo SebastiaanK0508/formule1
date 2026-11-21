@@ -28,6 +28,24 @@ $constructorStandings = f1_constructor_standings($season);
 $lastRound = $driverStandings['round'];
 $lastRace = $lastRound ? f1_race($season, $lastRound) : null;
 $lastQuali = $lastRound ? f1_race($season, $lastRound, 'qualifying') : null;
+$resultRound = $lastRound;
+$resultType = 'race';
+if (!$lastRace && $lastRound) {
+    // The race of this round has not been run yet: show the newest session
+    // instead (qualifying always follows the sprint on a sprint weekend).
+    $sprint = f1_race($season, $lastRound, 'sprint');
+    if ($lastQuali) {
+        $lastRace = $lastQuali;
+        $resultType = 'qualifying';
+    } elseif ($sprint) {
+        $lastRace = $sprint;
+        $resultType = 'sprint';
+    } elseif ($lastRound > 1) {
+        $resultRound = $lastRound - 1;
+        $lastRace = f1_race($season, $resultRound);
+        $lastQuali = f1_race($season, $resultRound, 'qualifying');
+    }
+}
 $leaderPts = $driverStandings['rows'][0]['points'] ?? 0;
 $leaderTeamPts = $constructorStandings['rows'][0]['points'] ?? 0;
 
@@ -122,11 +140,28 @@ require INC_DIR . '/layout/header.php';
             <div class="card">
                 <div class="card-head">
                     <div>
-                        <h2><?= e($lastRace['race']['name']) ?></h2>
-                        <div class="meta"><?= e($season) ?> · Round <?= (int)$lastRound ?> · <?= e(fmt_date($lastRace['race']['date'])) ?></div>
+                        <h2><?= e($lastRace['race']['name']) ?><?= $resultType !== 'race' ? ' — ' . ($resultType === 'qualifying' ? 'Qualifying' : 'Sprint') : '' ?></h2>
+                        <div class="meta"><?= e($season) ?> · Round <?= (int)$resultRound ?> · <?= e(fmt_date($lastRace['race']['date'])) ?></div>
                     </div>
-                    <a class="btn btn-secondary btn-sm" href="<?= e(race_url($season, $lastRound)) ?>">Full results</a>
+                    <a class="btn btn-secondary btn-sm" href="<?= e(race_url($season, $resultRound)) ?>">Full results</a>
                 </div>
+                <?php if ($resultType === 'qualifying'): ?>
+                <div class="table-wrap">
+                    <table class="table table-compact">
+                        <thead><tr><th class="w-pos">Pos</th><th>Driver</th><th class="hide-sm">Team</th><th class="num">Time</th></tr></thead>
+                        <tbody>
+                        <?php foreach (array_slice($lastRace['rows'], 0, 10) as $r): ?>
+                            <tr>
+                                <td><span class="<?= pos_class($r['position']) ?>"><?= e($r['positionText']) ?></span></td>
+                                <td><div class="driver-cell"><span class="swatch" style="--c: <?= e($r['color']) ?>"></span><?= driver_link($r) ?></div></td>
+                                <td class="hide-sm"><?= team_link($r) ?></td>
+                                <td class="num mono"><?= e($r['q3'] ?? $r['q2'] ?? $r['q1'] ?? '') ?></td>
+                            </tr>
+                        <?php endforeach; ?>
+                        </tbody>
+                    </table>
+                </div>
+                <?php else: ?>
                 <div class="card-pad">
                     <div class="podium">
                         <?php foreach ([1, 0, 2] as $i):
@@ -156,12 +191,13 @@ require INC_DIR . '/layout/header.php';
                         </tbody>
                     </table>
                 </div>
-                <?php if ($lastQuali): $pole = $lastQuali['rows'][0]; ?>
+                <?php if ($lastQuali && $resultType === 'race'): $pole = $lastQuali['rows'][0]; ?>
                 <div class="card-foot row">
                     <span class="badge">Pole</span>
                     <span><?= driver_link($pole) ?></span>
                     <span class="mono muted" style="margin-left:auto"><?= e($pole['q3'] ?? $pole['q2'] ?? $pole['q1'] ?? '') ?></span>
                 </div>
+                <?php endif; ?>
                 <?php endif; ?>
             </div>
             <?php endif; ?>

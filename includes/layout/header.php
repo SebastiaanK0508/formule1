@@ -16,6 +16,8 @@ $page = ($page ?? []) + [
     'noindex'     => false,
     'body_class'  => '',
 ];
+// Read flash messages before any output: starting a session needs to send a cookie header.
+$flashes = take_flashes();
 $siteName = 'F1SITE.NL';
 $fullTitle = $page['title'] ? $page['title'] . ' | ' . $siteName : $siteName . ' — Formula 1 results, standings & stats';
 $canonical = $page['canonical'] ?? url(
@@ -140,6 +142,6 @@ $live = live_session();
 </div>
 
 <main id="main">
-<?php foreach (take_flashes() as $flash): ?>
+<?php foreach ($flashes as $flash): ?>
     <div class="container mt-4"><div class="alert alert-<?= e($flash['type']) ?>"><?= e($flash['message']) ?></div></div>
 <?php endforeach; ?>

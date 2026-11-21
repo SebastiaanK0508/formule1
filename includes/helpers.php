@@ -267,12 +267,15 @@ function flash(string $type, string $message): void
 }
 
 /** @return list<array{type:string,message:string}> */
-function take_flashes(): array
+function take_flashes(string $name = 'f1site'): array
 {
-    if (session_status() !== PHP_SESSION_ACTIVE && !isset($_COOKIE[session_name()])) {
+    if (session_status() !== PHP_SESSION_ACTIVE && !isset($_COOKIE[$name])) {
         return [];
     }
-    start_session();
+    if (session_status() !== PHP_SESSION_ACTIVE && headers_sent()) {
+        return []; // too late to start a session; the flash survives until the next page
+    }
+    start_session($name);
     $flashes = $_SESSION['_flash'] ?? [];
     unset($_SESSION['_flash']);
     return $flashes;
